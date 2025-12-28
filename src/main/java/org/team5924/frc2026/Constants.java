@@ -1,0 +1,103 @@
+/*
+ * Constants.java
+ */
+
+/* 
+ * Copyright (C) 2025-2026 Team 5924 - Golden Gate Robotics and/or its affiliates.
+ *
+ * This file, and the associated project, are offered under the GNU General
+ * Public License v3.0. A copy of this license can be found in LICENSE.md
+ * at the root of this project.
+ *
+ * If this file has been separated from the original project, you should have
+ * received a copy of the GNU General Public License along with it.
+ * If you did not, see <https://www.gnu.org/licenses>.
+ */
+
+package org.team5924.frc2026;
+
+import com.ctre.phoenix6.configs.CANdiConfiguration;
+import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.DigitalInputsConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.S1CloseStateValue;
+import com.ctre.phoenix6.signals.S2CloseStateValue;
+import edu.wpi.first.wpilibj.RobotBase;
+
+/**
+ * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
+ * on a roboRIO. Change the value of "simMode" to switch between "sim" (physics sim) and "replay"
+ * (log replay from a file).
+ */
+public final class Constants {
+    public static final Mode simMode = Mode.REPLAY;
+    public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+
+    public static enum Mode {
+        /** Running on a real robot. */
+        REAL,
+
+        /** Running a physics simulator. */
+        SIM,
+
+        /** Replaying from a log file. */
+        REPLAY
+    }
+
+    public static final boolean TUNING_MODE = false;
+    public static final boolean ALLOW_ASSERTS = false;
+    public static final double SLOW_MODE_MULTI = 0.5;
+
+    //   /* Field */
+    //   public static final double FIELD_BORDER_MARGIN = 0.5;
+    //   public static final AprilTagFieldLayout field =
+    //       AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
+    //   public static final double FIELD_WIDTH = field.getFieldWidth();
+    //   public static final double FIELD_LENGTH = field.getFieldLength();
+    //   public static final double CORAL_STATION_RADIANS_NORMAL = 0.959931;
+
+
+    /* General */
+    public static final double LOOP_PERIODIC_SECONDS = 0.02;
+
+    public final class ExampleSubsystem {
+        public static final int CAN_ID = 0;
+        public static final String BUS = "rio";
+        public static final double REDUCTION = 1.0;
+
+        public static final TalonFXConfiguration CONFIG =
+            new TalonFXConfiguration()
+                .withCurrentLimits(
+                    new CurrentLimitsConfigs()
+                        .withSupplyCurrentLimit(35)
+                        .withStatorCurrentLimit(35))
+                .withMotorOutput(
+                    new MotorOutputConfigs()
+                        .withInverted(InvertedValue.CounterClockwise_Positive)
+                        .withNeutralMode(NeutralModeValue.Brake));
+
+        public static final CANdiConfiguration CANDI_CONFIG =
+            new CANdiConfiguration()
+                .withDigitalInputs(
+                    new DigitalInputsConfigs()
+                        .withS1CloseState(S1CloseStateValue.CloseWhenLow)
+                        .withS2CloseState(S2CloseStateValue.CloseWhenLow));
+
+        public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
+            new OpenLoopRampsConfigs()
+                .withDutyCycleOpenLoopRampPeriod(0.02)
+                .withTorqueOpenLoopRampPeriod(0.02)
+                .withVoltageOpenLoopRampPeriod(0.02);
+
+        public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
+            new ClosedLoopRampsConfigs()
+                .withDutyCycleClosedLoopRampPeriod(0.02)
+                .withTorqueClosedLoopRampPeriod(0.02)
+                .withVoltageClosedLoopRampPeriod(0.02);
+    }
+}
