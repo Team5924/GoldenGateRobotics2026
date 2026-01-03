@@ -21,27 +21,30 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import lombok.Getter;
 import lombok.Setter;
 import org.littletonrobotics.junction.AutoLogOutput;
-import org.team5924.frc2026.subsystems.exampleSubsystem.ExampleSubsystem.ExampleSubsystemState;
+import org.team5924.frc2026.subsystems.exampleSystem.ExampleSystem.ExampleSystemState;
+import org.team5924.frc2026.subsystems.rollers.exampleRoller.ExampleRoller.ExampleRollerState;
 
 @Getter
 public class RobotState {
-    private static RobotState instance;
+  private static RobotState instance;
 
-    public static RobotState getInstance() {
-        if (instance == null) instance = new RobotState();
-        return instance;
-    }
+  public static RobotState getInstance() {
+    if (instance == null) instance = new RobotState();
+    return instance;
+  }
 
-    // Pose Estimation Members
-    @AutoLogOutput(key = "RobotState/OdometryPose")
-    @Getter
-    @Setter
-    private Pose2d odometryPose = new Pose2d();
+  // Pose Estimation Members
+  @AutoLogOutput(key = "RobotState/OdometryPose")
+  @Getter
+  @Setter
+  private Pose2d odometryPose = new Pose2d();
 
-    @Getter @Setter private Rotation2d yawPosition = new Rotation2d();
-    @Getter @Setter private double yawVelocityRadPerSec = 0.0;
+  @Getter @Setter private Rotation2d yawPosition = new Rotation2d();
+  @Getter @Setter private double yawVelocityRadPerSec = 0.0;
 
-    /* ### Example Subsystem ### */
-    @Getter @Setter
-    private ExampleSubsystemState exampleSubsystemState = ExampleSubsystemState.STOW;
+  /* ### Example Subsystem ### */
+  @Getter @Setter private ExampleSystemState exampleSystemState = ExampleSystemState.STOW;
+
+  /* ### Example Roller ### */
+  @Getter @Setter private ExampleRollerState exampleRollerState = ExampleRollerState.IDLE;
 }

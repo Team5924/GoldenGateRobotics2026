@@ -1,5 +1,5 @@
 /*
- * GyroIO.java
+ * ExampleRollerIO.java
  */
 
 /* 
@@ -14,20 +14,15 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.drive;
+package org.team5924.frc2026.subsystems.rollers.exampleRoller;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO;
 
-public interface GyroIO {
+public interface ExampleRollerIO extends GenericRollerSystemIO {
   @AutoLog
-  public static class GyroIOInputs {
-    public boolean connected = false;
-    public Rotation2d yawPosition = new Rotation2d();
-    public double yawVelocityRadPerSec = 0.0;
-    public double[] odometryYawTimestamps = new double[] {};
-    public Rotation2d[] odometryYawPositions = new Rotation2d[] {};
-  }
+  public class ExampleRollerIOInputs extends GenericRollerSystemIOInputs {}
 
-  public default void updateInputs(GyroIOInputs inputs) {}
+  /* Run roller at volts */
+  default void runVolts(double volts) {}
 }

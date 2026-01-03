@@ -35,69 +35,93 @@ import edu.wpi.first.wpilibj.RobotBase;
  * (log replay from a file).
  */
 public final class Constants {
-    public static final Mode simMode = Mode.REPLAY;
-    public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+  public static final Mode simMode = Mode.REPLAY;
+  public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 
-    public static enum Mode {
-        /** Running on a real robot. */
-        REAL,
+  public static enum Mode {
+    /** Running on a real robot. */
+    REAL,
 
-        /** Running a physics simulator. */
-        SIM,
+    /** Running a physics simulator. */
+    SIM,
 
-        /** Replaying from a log file. */
-        REPLAY
-    }
+    /** Replaying from a log file. */
+    REPLAY
+  }
 
-    public static final boolean TUNING_MODE = false;
-    public static final boolean ALLOW_ASSERTS = false;
-    public static final double SLOW_MODE_MULTI = 0.5;
+  public static final boolean TUNING_MODE = false;
+  public static final boolean ALLOW_ASSERTS = false;
+  public static final double SLOW_MODE_MULTI = 0.5;
 
-    //   /* Field */
-    //   public static final double FIELD_BORDER_MARGIN = 0.5;
-    //   public static final AprilTagFieldLayout field =
-    //       AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
-    //   public static final double FIELD_WIDTH = field.getFieldWidth();
-    //   public static final double FIELD_LENGTH = field.getFieldLength();
-    //   public static final double CORAL_STATION_RADIANS_NORMAL = 0.959931;
+  //   /* Field */
+  //   public static final double FIELD_BORDER_MARGIN = 0.5;
+  //   public static final AprilTagFieldLayout field =
+  //     AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
+  //   public static final double FIELD_WIDTH = field.getFieldWidth();
+  //   public static final double FIELD_LENGTH = field.getFieldLength();
+  //   public static final double CORAL_STATION_RADIANS_NORMAL = 0.959931;
 
 
-    /* General */
-    public static final double LOOP_PERIODIC_SECONDS = 0.02;
+  /* General */
+  public static final double LOOP_PERIODIC_SECONDS = 0.02;
 
-    public final class ExampleSubsystem {
-        public static final int CAN_ID = 0;
-        public static final String BUS = "rio";
-        public static final double REDUCTION = 1.0;
+  public final class Example {
+    public static final int CAN_ID = 0;
+    public static final String BUS = "rio";
+    public static final double REDUCTION = 1.0;
+    public static final double SIM_MOI = 0.001;
 
-        public static final TalonFXConfiguration CONFIG =
-            new TalonFXConfiguration()
-                .withCurrentLimits(
-                    new CurrentLimitsConfigs()
-                        .withSupplyCurrentLimit(35)
-                        .withStatorCurrentLimit(35))
-                .withMotorOutput(
-                    new MotorOutputConfigs()
-                        .withInverted(InvertedValue.CounterClockwise_Positive)
-                        .withNeutralMode(NeutralModeValue.Brake));
+    public static final TalonFXConfiguration CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(35)
+            .withStatorCurrentLimit(35))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake));
 
-        public static final CANdiConfiguration CANDI_CONFIG =
-            new CANdiConfiguration()
-                .withDigitalInputs(
-                    new DigitalInputsConfigs()
-                        .withS1CloseState(S1CloseStateValue.CloseWhenLow)
-                        .withS2CloseState(S2CloseStateValue.CloseWhenLow));
+    public static final CANdiConfiguration CANDI_CONFIG =
+      new CANdiConfiguration()
+        .withDigitalInputs(
+          new DigitalInputsConfigs()
+            .withS1CloseState(S1CloseStateValue.CloseWhenLow)
+            .withS2CloseState(S2CloseStateValue.CloseWhenLow));
 
-        public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
-            new OpenLoopRampsConfigs()
-                .withDutyCycleOpenLoopRampPeriod(0.02)
-                .withTorqueOpenLoopRampPeriod(0.02)
-                .withVoltageOpenLoopRampPeriod(0.02);
+    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
+      new OpenLoopRampsConfigs()
+        .withDutyCycleOpenLoopRampPeriod(0.02)
+        .withTorqueOpenLoopRampPeriod(0.02)
+        .withVoltageOpenLoopRampPeriod(0.02);
 
-        public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
-            new ClosedLoopRampsConfigs()
-                .withDutyCycleClosedLoopRampPeriod(0.02)
-                .withTorqueClosedLoopRampPeriod(0.02)
-                .withVoltageClosedLoopRampPeriod(0.02);
-    }
+    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
+      new ClosedLoopRampsConfigs()
+        .withDutyCycleClosedLoopRampPeriod(0.02)
+        .withTorqueClosedLoopRampPeriod(0.02)
+        .withVoltageClosedLoopRampPeriod(0.02);
+  }
+
+  public final class GenericRollerSystem {
+    public static final double REDUCTION = 1.0;
+    public static final double SIM_MOI = 0.001;
+  }
+
+  public final class ExampleRoller {
+    public static final int CAN_ID = 0;
+    public static final String BUS = "rio";
+    public static final double REDUCTION = 1.0;
+    public static final double SIM_MOI = 0.001;
+
+    public static final TalonFXConfiguration CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(35)
+            .withStatorCurrentLimit(35))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake));
+  }
 }

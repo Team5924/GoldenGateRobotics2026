@@ -186,14 +186,14 @@ spotless {
     java {
         target fileTree(".") {
             include "**/*.java"
-            exclude "**/build/**", "**/build-*/**", "**.json", "**/Constants.java", "src/main/java/org/team5924/frc2026/util/swerve/**", "src/main/java/org/team5924/frc2026/util/GeomUtil.java", "src/main/java/org/team5924/frc2026/util/EqualsUtil.java", "src/main/java/org/team5924/frc2026/RobotContainer.java"
+            exclude "**/build/**", "**/build-*/**", "**.json", "**/Constants.java", "src/main/java/org/team5924/frc2026/util/swerve/**", "src/main/java/org/team5924/frc2026/util/GeomUtil.java", "src/main/java/org/team5924/frc2026/util/EqualsUtil.java"//, "src/main/java/org/team5924/frc2026/RobotContainer.java"
         }
         importOrder()
         toggleOffOn()
         removeUnusedImports()
         trimTrailingWhitespace()
         endWithNewline()
-        googleJavaFormat().aosp()
+        googleJavaFormat()/*.aosp()*/ // 4 space indent
         formatAnnotations()
         licenseHeaderFile 'licenseHeaderFile'
     }
