@@ -17,7 +17,6 @@
 package org.team5924.frc2026;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -36,22 +35,12 @@ import org.team5924.frc2026.subsystems.drive.GyroIOPigeon2;
 import org.team5924.frc2026.subsystems.drive.ModuleIO;
 import org.team5924.frc2026.subsystems.drive.ModuleIOSim;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
-import org.team5924.frc2026.subsystems.exampleSystem.ExampleSystem;
-import org.team5924.frc2026.subsystems.exampleSystem.ExampleSystem.ExampleSystemState;
-import org.team5924.frc2026.subsystems.exampleSystem.ExampleSystemIO;
-import org.team5924.frc2026.subsystems.exampleSystem.ExampleSystemIOSim;
-import org.team5924.frc2026.subsystems.exampleSystem.ExampleSystemIOTalonFX;
-import org.team5924.frc2026.subsystems.rollers.exampleRoller.ExampleRoller;
-import org.team5924.frc2026.subsystems.rollers.exampleRoller.ExampleRoller.ExampleRollerState;
-import org.team5924.frc2026.subsystems.rollers.exampleRoller.ExampleRollerIO;
-import org.team5924.frc2026.subsystems.rollers.exampleRoller.ExampleRollerIOKrakenFOC;
-import org.team5924.frc2026.subsystems.rollers.exampleRoller.ExampleRollerIOSim;
 
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final ExampleSystem exampleSystem;
-  private final ExampleRoller exampleRoller;
+  // private final ExampleSystem exampleSystem;
+  // private final ExampleRoller exampleRoller;
 
   // Controller
   private final CommandXboxController driveController = new CommandXboxController(0);
@@ -72,8 +61,8 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
-        exampleSystem = new ExampleSystem(new ExampleSystemIOTalonFX());
-        exampleRoller = new ExampleRoller(new ExampleRollerIOKrakenFOC());
+        // exampleSystem = new ExampleSystem(new ExampleSystemIOTalonFX());
+        // exampleRoller = new ExampleRoller(new ExampleRollerIOKrakenFOC());
         break;
 
       case SIM:
@@ -85,8 +74,8 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-        exampleSystem = new ExampleSystem(new ExampleSystemIOSim());
-        exampleRoller = new ExampleRoller(new ExampleRollerIOSim());
+        // exampleSystem = new ExampleSystem(new ExampleSystemIOSim());
+        // exampleRoller = new ExampleRoller(new ExampleRollerIOSim());
         break;
 
       default:
@@ -98,8 +87,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        exampleSystem = new ExampleSystem(new ExampleSystemIO() {});
-        exampleRoller = new ExampleRoller(new ExampleRollerIO() {});
+        // exampleSystem = new ExampleSystem(new ExampleSystemIO() {});
+        // exampleRoller = new ExampleRoller(new ExampleRollerIO() {});
         break;
     }
 
@@ -113,12 +102,12 @@ public class RobotContainer {
     // (stream) ->
     //     isCompetition ? stream.filter(auto -> auto.getName().startsWith("2")) : stream);
 
-    NamedCommands.registerCommand(
-        "Stow Example Subsystem",
-        Commands.runOnce(
-            () -> {
-              exampleSystem.setGoalState(ExampleSystemState.STOW);
-            }));
+    // NamedCommands.registerCommand(
+    //     "Stow Example Subsystem",
+    //     Commands.runOnce(
+    //         () -> {
+    //           exampleSystem.setGoalState(ExampleSystemState.STOW);
+    //         }));
 
     // Set up SysId routines
     autoChooser.addOption(
@@ -181,25 +170,25 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    // [operator] press a -> deploy example subystem up
-    operatorController
-        .a()
-        .onTrue(Commands.runOnce(() -> exampleSystem.setGoalState(ExampleSystemState.UP)));
+    // // [operator] press a -> deploy example subystem up
+    // operatorController
+    //     .a()
+    //     .onTrue(Commands.runOnce(() -> exampleSystem.setGoalState(ExampleSystemState.UP)));
 
-    // [operator] release a -> stow example subystem
-    operatorController
-        .a()
-        .onFalse(Commands.runOnce(() -> exampleSystem.setGoalState(ExampleSystemState.STOW)));
+    // // [operator] release a -> stow example subystem
+    // operatorController
+    //     .a()
+    //     .onFalse(Commands.runOnce(() -> exampleSystem.setGoalState(ExampleSystemState.STOW)));
 
-    // [operator] press b -> run example roller
-    operatorController
-        .b()
-        .onTrue(Commands.runOnce(() -> exampleRoller.setGoalState(ExampleRollerState.INTAKE)));
+    // // [operator] press b -> run example roller
+    // operatorController
+    //     .b()
+    //     .onTrue(Commands.runOnce(() -> exampleRoller.setGoalState(ExampleRollerState.INTAKE)));
 
-    // [operator] release b -> run example roller
-    operatorController
-        .b()
-        .onFalse(Commands.runOnce(() -> exampleRoller.setGoalState(ExampleRollerState.IDLE)));
+    // // [operator] release b -> run example roller
+    // operatorController
+    //     .b()
+    //     .onFalse(Commands.runOnce(() -> exampleRoller.setGoalState(ExampleRollerState.IDLE)));
   }
 
   /**

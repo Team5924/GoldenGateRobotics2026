@@ -22,9 +22,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lombok.Getter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.RobotState;
+import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
-import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class ExampleSystem extends SubsystemBase {
@@ -75,8 +75,8 @@ public class ExampleSystem extends SubsystemBase {
     exampleMotorDisconnected.set(!inputs.exampleMotorConnected);
 
     // prevents error spam
-    if (!inputs.exampleMotorConnected && wasExampleMotorConnected){
-        Elastic.sendNotification(exampleMotorDisconnectedNotification);
+    if (!inputs.exampleMotorConnected && wasExampleMotorConnected) {
+      Elastic.sendNotification(exampleMotorDisconnectedNotification);
     }
     wasExampleMotorConnected = inputs.exampleMotorConnected;
   }

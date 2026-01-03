@@ -51,10 +51,7 @@ public abstract class GenericRollerSystem<G extends GenericRollerSystem.VoltageS
   private final Notification disconnectedNotification;
   private boolean wasMotorConnected = true;
 
-
   protected final Timer stateTimer = new Timer();
-
-
 
   public GenericRollerSystem(String name, GenericRollerSystemIO io) {
     this.name = name;
@@ -82,10 +79,9 @@ public abstract class GenericRollerSystem<G extends GenericRollerSystem.VoltageS
 
     io.runVolts(getGoalState().getVoltageSupplier().getAsDouble());
     Logger.recordOutput("Rollers/" + name + "Goal", getGoalState().toString());
-    
+
     // prevents error spam
-    if (!genericInputs.motorConnected && wasMotorConnected)
-    {
+    if (!genericInputs.motorConnected && wasMotorConnected) {
       Elastic.sendNotification(disconnectedNotification);
     }
     wasMotorConnected = genericInputs.motorConnected;

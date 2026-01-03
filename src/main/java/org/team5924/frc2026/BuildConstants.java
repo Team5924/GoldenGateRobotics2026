@@ -19,14 +19,14 @@ package org.team5924.frc2026;
 /** Automatically generated file containing build version information. */
 public final class BuildConstants {
   public static final String MAVEN_GROUP = "";
-  public static final String MAVEN_NAME = "GoldenGateRobotics2026";
+  public static final String MAVEN_NAME = "alpha bot";
   public static final String VERSION = "unspecified";
-  public static final int GIT_REVISION = 1;
-  public static final String GIT_SHA = "92d0a75f4ec730875cc3234ca133a15cf18ecc37";
-  public static final String GIT_DATE = "2025-12-27 21:09:49 EST";
+  public static final int GIT_REVISION = 3;
+  public static final String GIT_SHA = "3710b35e041421bb3ac92a2d1d18cbaddf6ebecf";
+  public static final String GIT_DATE = "2026-01-02 21:09:20 EST";
   public static final String GIT_BRANCH = "main";
-  public static final String BUILD_DATE = "2026-01-02 19:09:52 EST";
-  public static final long BUILD_UNIX_TIME = 1767398992062L;
+  public static final String BUILD_DATE = "2026-01-03 16:07:41 EST";
+  public static final long BUILD_UNIX_TIME = 1767474461181L;
   public static final int DIRTY = 1;
 
   private BuildConstants() {}
