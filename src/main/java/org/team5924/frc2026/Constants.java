@@ -16,6 +16,9 @@
 
 package org.team5924.frc2026;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -27,6 +30,14 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S2CloseStateValue;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -102,6 +113,32 @@ public final class Constants {
         .withVoltageClosedLoopRampPeriod(0.02);
   }
 
+  public final class Vision {
+    public static final String FRONT_RIGHT_NAME = "Front Right";
+    public static final String FRONT_LEFT_NAME = "Front Left";
+    public static final String BACK_RIGHT_NAME = "Back Right";
+    public static final String BACK_LEFT_NAME = "Back Left";
+
+    public static final Transform3d FRONT_RIGHT_TRANSFORM =
+        new Transform3d(
+            new Translation3d(-0.012552, -0.319809, 0.191168),
+            new Rotation3d(0.0, Math.toRadians(-20.0), Math.toRadians(-70.0)));
+    public static final Transform3d BACK_RIGHT_TRANSFORM =
+        new Transform3d(
+            new Translation3d(-0.081165, -0.322330, 0.191168),
+            new Rotation3d(0.0, Math.toRadians(-20.0), Math.toRadians(-(180.0 - 55.0))));
+    public static final Transform3d FRONT_LEFT_TRANSFORM =
+        new Transform3d(
+            new Translation3d(-0.012552, 0.319809, 0.191168),
+            new Rotation3d(0.0, Math.toRadians(-20.0), Math.toRadians(70.0)));
+    public static final Transform3d BACK_LEFT_TRANSFORM =
+        new Transform3d(
+            new Translation3d(-0.081165, 0.322330, 0.191168),
+            new Rotation3d(0.0, Math.toRadians(-20.0), Math.toRadians(180.0 - 55.0)));
+    public static final ArrayList<Integer> BARGE_TAG_IDS =
+        new ArrayList<Integer>(Arrays.asList(4, 5, 14, 15));
+  }
+
   public final class GenericRollerSystem {
     public static final double REDUCTION = 1.0;
     public static final double SIM_MOI = 0.001;
@@ -123,5 +160,21 @@ public final class Constants {
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
+  }
+
+  public static final class Field { // TODO: update all of these when new field released
+      public static final double FIELD_BORDER_MARGIN = 0.5;
+      public static final AprilTagFields FIELD_TYPE = AprilTagFields.k2025Reefscape; // TODO: update to new field
+      public static final AprilTagFieldLayout field = AprilTagFieldLayout.loadField(FIELD_TYPE);
+      public static final double FIELD_WIDTH = field.getFieldWidth();
+      public static final double FIELD_LENGTH = field.getFieldLength();
+
+      public static final double faceLength = Units.inchesToMeters(36.792600);
+      public static final double fieldWidth = field.getFieldWidth();
+      public static final Translation2d blueCenter =
+          new Translation2d(Units.inchesToMeters(176.745), Units.inchesToMeters(158.5));
+
+      public static final Translation2d redCenter =
+          new Translation2d(Units.inchesToMeters(514.13), Units.inchesToMeters(158.5));
   }
 }
