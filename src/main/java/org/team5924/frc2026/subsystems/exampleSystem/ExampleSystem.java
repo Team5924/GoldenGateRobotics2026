@@ -37,7 +37,7 @@ public class ExampleSystem extends SubsystemBase {
     MOVING(new LoggedTunableNumber("ExampleSystem/Moving", 0)),
     UP(new LoggedTunableNumber("ExampleSystem/Stow", Math.toRadians(90))),
 
-    // voltage at which the intake pivot moves when controlled by the operator
+    // voltage at which the example subsystem motor moves when controlled by the operator
     OPERATOR_CONTROL(new LoggedTunableNumber("ExampleSystem/OperatorVoltage", 4.5));
 
     private final LoggedTunableNumber rads;
@@ -57,20 +57,20 @@ public class ExampleSystem extends SubsystemBase {
     this.io = io;
     this.goalState = ExampleSystemState.MOVING;
     this.exampleMotorDisconnected =
-        new Alert("Intake Pivot Motor Disconnected!", Alert.AlertType.kWarning);
+        new Alert("Example System Motor Disconnected!", Alert.AlertType.kWarning);
     this.exampleMotorDisconnectedNotification =
-        new Notification(NotificationLevel.WARNING, "Example Subsystem Motor Disconnected", "");
+        new Notification(NotificationLevel.WARNING, "Example System Motor Disconnected", "");
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("IntakePivot", inputs);
+    Logger.processInputs("ExampleSystem", inputs);
 
-    Logger.recordOutput("IntakePivot/GoalState", goalState.toString());
+    Logger.recordOutput("ExampleSystem/GoalState", goalState.toString());
     Logger.recordOutput(
-        "IntakePivot/CurrentState", RobotState.getInstance().getExampleSystemState());
-    Logger.recordOutput("IntakePivot/TargetRads", goalState.rads);
+        "ExampleSystem/CurrentState", RobotState.getInstance().getExampleSystemState());
+    Logger.recordOutput("ExampleSystem/TargetRads", goalState.rads);
 
     exampleMotorDisconnected.set(!inputs.exampleMotorConnected);
 
