@@ -20,6 +20,8 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,8 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.util.Elastic.Notification;
+import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 
 public class Vision extends SubsystemBase implements VisionIO {
   private final VisionIOCameraInputsAutoLogged inputs[] = new VisionIOCameraInputsAutoLogged[4];
@@ -56,6 +60,9 @@ public class Vision extends SubsystemBase implements VisionIO {
 
   private final Camera[] cameras;
 
+  private final Alert[] cameraDisconnected;
+  private final Notification[] cameraDisconnectedNotifications;
+
   public Vision() {
     // initialize all the cameras
     cameras =
@@ -69,6 +76,22 @@ public class Vision extends SubsystemBase implements VisionIO {
     for (int i = 0; i < inputs.length; ++i) {
       inputs[i] = new VisionIOCameraInputsAutoLogged();
     }
+
+    cameraDisconnected =
+        new Alert[] {
+          new Alert("Front Right Camera Disconnected!", AlertType.kWarning),
+          new Alert("Front Left Camera Disconnected!", AlertType.kWarning),
+          new Alert("Back Right Camera Disconnected!", AlertType.kWarning),
+          new Alert("Back Left Camera Disconnected!", AlertType.kWarning)
+        };
+
+    cameraDisconnectedNotifications =
+        new Notification[] {
+          new Notification(NotificationLevel.WARNING, "Front Right Camera Disconnected", ""),
+          new Notification(NotificationLevel.WARNING, "Front Left Camera Disconnected", ""),
+          new Notification(NotificationLevel.WARNING, "Back Right Camera Disconnected", ""),
+          new Notification(NotificationLevel.WARNING, "Back Left Camera Disconnected", "")
+        };
   }
 
   // TODO: add camera disconnected alerts sometime later

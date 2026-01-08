@@ -39,6 +39,7 @@ import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  //   private final Vision vision;
   // private final ExampleSystem exampleSystem;
   // private final ExampleRoller exampleRoller;
 
@@ -61,6 +62,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
+        // vision = new Vision();
         // exampleSystem = new ExampleSystem(new ExampleSystemIOTalonFX());
         // exampleRoller = new ExampleRoller(new ExampleRollerIOKrakenFOC());
         break;
@@ -74,6 +76,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
+        // vision = new VisionIOSim();
         // exampleSystem = new ExampleSystem(new ExampleSystemIOSim());
         // exampleRoller = new ExampleRoller(new ExampleRollerIOSim());
         break;
