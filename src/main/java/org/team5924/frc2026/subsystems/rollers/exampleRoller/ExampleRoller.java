@@ -30,8 +30,8 @@ public class ExampleRoller extends GenericRollerSystem<ExampleRoller.ExampleRoll
   @Getter
   public enum ExampleRollerState implements VoltageState {
     IDLE(new LoggedTunableNumber("ExampleRoller/Idle", 0.0)),
-    SHOOTING(new LoggedTunableNumber("ExampleRoller/SHOOTING", 12.0)),
-    INTAKE(new LoggedTunableNumber("ExampleRoller/Idle", -12.0));
+    SHOOTING(new LoggedTunableNumber("ExampleRoller/Shooting", 12.0)),
+    INTAKE(new LoggedTunableNumber("ExampleRoller/Intake", -12.0));
 
     private final DoubleSupplier voltageSupplier;
   }
