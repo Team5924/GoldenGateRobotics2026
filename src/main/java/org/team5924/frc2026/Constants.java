@@ -17,7 +17,9 @@
 package org.team5924.frc2026;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
+
+import org.photonvision.simulation.SimCameraProperties;
 
 import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
@@ -136,7 +138,12 @@ public final class Constants {
             new Translation3d(-0.081165, 0.322330, 0.191168),
             new Rotation3d(0.0, Math.toRadians(-20.0), Math.toRadians(180.0 - 55.0)));
     public static final ArrayList<Integer> BARGE_TAG_IDS =
-        new ArrayList<Integer>(Arrays.asList(4, 5, 14, 15));
+        new ArrayList<Integer>(List.of(4, 5, 14, 15));
+    
+    // https://www.arducam.com/100fps-global-shutter-color-usb-camera-board-1mp-ov9782-uvc-webcam-module-with-low-distortion-m12-lens-without-microphones-for-computer-laptop-android-device-and-raspberry-pi-arducam.html
+    public static final SimCameraProperties SIM_ARDUCAM_PROPERIES =
+        new SimCameraProperties()
+            .setCalibration(1280, 800, null);
   }
 
   public final class GenericRollerSystem {

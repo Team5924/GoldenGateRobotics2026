@@ -33,6 +33,7 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 
@@ -62,6 +63,7 @@ public class Vision extends SubsystemBase implements VisionIO {
 
   private final Alert[] cameraDisconnected;
   private final Notification[] cameraDisconnectedNotifications;
+  private final boolean[] wasCameraConnected;
 
   public Vision() {
     // initialize all the cameras
@@ -92,6 +94,8 @@ public class Vision extends SubsystemBase implements VisionIO {
           new Notification(NotificationLevel.WARNING, "Back Right Camera Disconnected", ""),
           new Notification(NotificationLevel.WARNING, "Back Left Camera Disconnected", "")
         };
+
+    wasCameraConnected = new boolean[] {true, true, true, true};
   }
 
   // TODO: add camera disconnected alerts sometime later
@@ -101,6 +105,16 @@ public class Vision extends SubsystemBase implements VisionIO {
     // This method will be called once per scheduler run
     updateInputs(inputs);
     for (int i = 0; i < inputs.length; ++i) Logger.processInputs("Vision - Camera " + i, inputs[i]);
+
+    for (int i = 0; i < cameraDisconnected.length; ++i) {
+      cameraDisconnected[i].set(inputs[i].isConnected);
+
+      if (!inputs[i].isConnected && wasCameraConnected[i]) {
+        Elastic.sendNotification(cameraDisconnectedNotifications[i]);
+      }
+
+      wasCameraConnected[i] = inputs[i].isConnected;
+    }
   }
 
   /** Updates AdvantageKit inputs */

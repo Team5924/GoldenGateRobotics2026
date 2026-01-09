@@ -16,13 +16,20 @@
 
 package org.team5924.frc2026.subsystems.vision;
 
+import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.team5924.frc2026.Constants;
 
 public class VisionIOSim extends Vision {
-  private final VisionSystemSim visionSim = new VisionSystemSim("main");
+  private final VisionSystemSim visionSim;
+  private final SimCameraProperties cameraProperties;
 
   public VisionIOSim() {
+    super();
+
+    // configure vision sim
+    visionSim = new VisionSystemSim("main");
     visionSim.addAprilTags(Constants.Field.field);
+    cameraProperties = new SimCameraProperties();
   }
 }
