@@ -29,5 +29,10 @@ public final class BuildConstants {
   public static final long BUILD_UNIX_TIME = 1768362943567L;
   public static final int DIRTY = 0;
 
-  private BuildConstants() {}
+  /**
+ * Prevents instantiation of BuildConstants.
+ *
+ * This private constructor ensures the class remains a non-instantiable container of static build/version constants.
+ */
+private BuildConstants() {}
 }
