@@ -171,7 +171,7 @@ public final class Constants {
 
   public static final class Field { // TODO: update all of these when new field released
       public static final double FIELD_BORDER_MARGIN = 0.5;
-      public static final AprilTagFields FIELD_TYPE = AprilTagFields.k2025Reefscape; // TODO: update to new field
+      public static final AprilTagFields FIELD_TYPE = AprilTagFields.k2025ReefscapeWelded; // TODO: update to new field
       public static final AprilTagFieldLayout field = AprilTagFieldLayout.loadField(FIELD_TYPE);
       public static final double FIELD_WIDTH = field.getFieldWidth();
       public static final double FIELD_LENGTH = field.getFieldLength();
