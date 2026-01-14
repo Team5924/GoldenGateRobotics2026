@@ -33,11 +33,11 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.team5924.frc2026.generated.TunerConstants;
+import org.team5924.frc2026.util.Elastic;
 
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
-
-  private final RobotContainer robotContainer;
+  private RobotContainer robotContainer;
 
   public Robot() {
     // Record metadata
@@ -46,17 +46,13 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
     Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
     Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
-    switch (BuildConstants.DIRTY) {
-      case 0:
-        Logger.recordMetadata("GitDirty", "All changes committed");
-        break;
-      case 1:
-        Logger.recordMetadata("GitDirty", "Uncomitted changes");
-        break;
-      default:
-        Logger.recordMetadata("GitDirty", "Unknown");
-        break;
-    }
+    Logger.recordMetadata(
+        "GitDirty",
+        switch (BuildConstants.DIRTY) {
+          case 0 -> "All changes committed";
+          case 1 -> "Uncommitted changes";
+          default -> "Unknown";
+        });
 
     // Set up data receivers & replay source
     switch (Constants.currentMode) {
@@ -113,9 +109,11 @@ public class Robot extends LoggedRobot {
     robotContainer = new RobotContainer();
   }
 
+  /** This function is called periodically during all modes. */
   @Override
   public void robotPeriodic() {
-    // Switch thread to high priority to improve loop timing
+    // Optionally switch the thread to high priority to improve loop
+    // timing (see the template project documentation for details)
     Threads.setCurrentThreadPriority(true, 99);
 
     // Runs the Scheduler. This is responsible for polling buttons, adding
@@ -125,58 +123,67 @@ public class Robot extends LoggedRobot {
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    // Return to normal thread priority
+    // Return to non-RT thread priority (do not modify the first argument)
     Threads.setCurrentThreadPriority(false, 10);
   }
 
+  /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {}
 
+  /** This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic() {}
 
-  @Override
-  public void disabledExit() {}
-
+  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
     autonomousCommand = robotContainer.getAutonomousCommand();
 
-    autonomousCommand.toString();
-
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
-      autonomousCommand.schedule();
+      CommandScheduler.getInstance().schedule(autonomousCommand);
     }
   }
 
+  /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {}
 
-  @Override
-  public void autonomousExit() {}
-
+  /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
+    // This makes sure that the autonomous stops running when
+    // teleop starts running. If you want the autonomous to
+    // continue until interrupted by another command, remove
+    // this line or comment it out.
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+
+    Elastic.selectTab("Teleoperated");
   }
 
+  /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {}
 
-  @Override
-  public void teleopExit() {}
-
+  /** This function is called once when test mode is enabled. */
   @Override
   public void testInit() {
+    // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
   }
 
+  /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
 
+  /** This function is called once when the robot is first started up. */
   @Override
-  public void testExit() {}
+  public void simulationInit() {}
+
+  /** This function is called periodically whilst in simulation. */
+  @Override
+  public void simulationPeriodic() {}
 }
