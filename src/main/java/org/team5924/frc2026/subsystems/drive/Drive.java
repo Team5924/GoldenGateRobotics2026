@@ -27,6 +27,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.PathPlannerLogging;
+
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
@@ -125,12 +126,10 @@ public class Drive extends SubsystemBase {
         new SwerveModulePosition()
       };
   private SwerveDrivePoseEstimator poseEstimator =
-      new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
+      new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, Pose2d.kZero);
 
   private final SwerveSetpointGenerator setpointGenerator;
   private SwerveSetpoint previousSetpoint;
-
-  private final Field2d field = new Field2d();
 
   public Drive(
       GyroIO gyroIO,
@@ -184,8 +183,6 @@ public class Drive extends SubsystemBase {
 
     setpointGenerator = new SwerveSetpointGenerator(kinematics, getModuleTranslations());
     previousSetpoint = new SwerveSetpoint(getChassisSpeeds(), getModuleStates());
-
-    SmartDashboard.putData("Field", field);
 
     SmartDashboard.putData(
         "Swerve Drive",
@@ -282,8 +279,6 @@ public class Drive extends SubsystemBase {
 
     // Update RobotState
     RobotState.getInstance().setOdometryPose(getPose());
-
-    field.setRobotPose(getPose());
 
     // prevents error spam
     if (!gyroInputs.connected && wasGyroConnected) {
