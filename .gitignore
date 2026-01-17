@@ -185,3 +185,4 @@ compile_commands.json
 
 # Eclipse generated file for annotation processors
 .factorypath
+src/main/java/org/team5924/frc2026/BuildConstants.java

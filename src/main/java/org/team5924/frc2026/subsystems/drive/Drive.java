@@ -19,7 +19,6 @@ package org.team5924.frc2026.subsystems.drive;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
@@ -28,12 +27,11 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.PathPlannerLogging;
+
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -65,6 +63,7 @@ import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.Constants.Mode;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.generated.TunerConstants;
+import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 import org.team5924.frc2026.util.LocalADStarAK;
@@ -73,8 +72,7 @@ import org.team5924.frc2026.util.swerve.SwerveSetpointGenerator;
 
 public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
-  static final double ODOMETRY_FREQUENCY =
-      new CANBus(TunerConstants.DrivetrainConstants.CANBusName).isNetworkFD() ? 250.0 : 100.0;
+  static final double ODOMETRY_FREQUENCY = TunerConstants.kCANBus.isNetworkFD() ? 250.0 : 100.0;
   public static final double DRIVE_BASE_RADIUS =
       Math.max(
           Math.max(
@@ -85,7 +83,7 @@ public class Drive extends SubsystemBase {
               Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
 
   // PathPlanner config constants
-  private static final double ROBOT_MASS_KG = 58.4;
+  private static final double ROBOT_MASS_KG = 52.16; // TODO: update
   private static final double ROBOT_MOI = 4.39;
   private static final double WHEEL_COF = 1.2;
   private static final RobotConfig PP_CONFIG =
@@ -116,11 +114,10 @@ public class Drive extends SubsystemBase {
           "Gyro Disconnected",
           "Disconnected gyro, using kinematics as fallback.");
 
-  boolean isFlipped =
-      DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+  private boolean wasGyroConnected = true;
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
-  private Rotation2d rawGyroRotation = new Rotation2d(isFlipped ? 0 : Math.PI);
+  private Rotation2d rawGyroRotation = Rotation2d.kZero;
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
         new SwerveModulePosition(),
@@ -129,30 +126,10 @@ public class Drive extends SubsystemBase {
         new SwerveModulePosition()
       };
   private SwerveDrivePoseEstimator poseEstimator =
-      new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
+      new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, Pose2d.kZero);
 
   private final SwerveSetpointGenerator setpointGenerator;
   private SwerveSetpoint previousSetpoint;
-
-  private final Field2d field = new Field2d();
-
-  // in radians
-  private double desiredHeading = 0.0;
-  private boolean snapToHeading = false;
-
-  PIDController headingPid = new PIDController(3, 0, 0);
-
-  public boolean toggleSnapToHeading() {
-    return snapToHeading = !snapToHeading;
-  }
-
-  public void setSnapToHeading(boolean snap) {
-    snapToHeading = snap;
-  }
-
-  public void setDesiredHeading(double heading) {
-    desiredHeading = heading;
-  }
 
   public Drive(
       GyroIO gyroIO,
@@ -179,15 +156,14 @@ public class Drive extends SubsystemBase {
         this::getChassisSpeeds,
         this::runVelocity,
         new PPHolonomicDriveController(
-            new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5, 0, 0.3)),
+            new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
         PP_CONFIG,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
     Pathfinding.setPathfinder(new LocalADStarAK());
     PathPlannerLogging.setLogActivePathCallback(
         (activePath) -> {
-          Logger.recordOutput(
-              "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
+          Logger.recordOutput("Odometry/Trajectory", activePath.toArray(new Pose2d[0]));
         });
     PathPlannerLogging.setLogTargetPoseCallback(
         (targetPose) -> {
@@ -207,8 +183,6 @@ public class Drive extends SubsystemBase {
 
     setpointGenerator = new SwerveSetpointGenerator(kinematics, getModuleTranslations());
     previousSetpoint = new SwerveSetpoint(getChassisSpeeds(), getModuleStates());
-
-    SmartDashboard.putData("Field", field);
 
     SmartDashboard.putData(
         "Swerve Drive",
@@ -240,8 +214,6 @@ public class Drive extends SubsystemBase {
             builder.addDoubleProperty("Robot Angle", () -> getRotation().getRadians(), null);
           }
         });
-
-    headingPid.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   @Override
@@ -308,34 +280,11 @@ public class Drive extends SubsystemBase {
     // Update RobotState
     RobotState.getInstance().setOdometryPose(getPose());
 
-    field.setRobotPose(getPose());
-  }
-
-  /**
-   * rotates the speeds towards the desired heading with a ±3 degree tolerance
-   *
-   * @param speeds input speeds that will be updated
-   * @param targetHeading the desired heading (rotation)
-   * @return updated speeds
-   */
-  public ChassisSpeeds updateSpeedsWithDesiredHeading(ChassisSpeeds speeds, double targetHeading) {
-    // tolerance of ±3 deg
-    double currentHeading = getRotation().getRadians();
-    double error = MathUtil.angleModulus(targetHeading - currentHeading);
-    boolean isWithinTolerance = Math.abs(error) <= Math.toRadians(3.0);
-
-    if (isWithinTolerance)
-      return new ChassisSpeeds(
-          speeds.vxMetersPerSecond,
-          speeds.vyMetersPerSecond,
-          0.0); // within tolerance; don't rotate
-
-    // calculate omega
-    double omega = headingPid.calculate(currentHeading, targetHeading);
-    omega = MathUtil.clamp(omega, -getMaxAngularSpeedRadPerSec(), getMaxAngularSpeedRadPerSec());
-    headingPid.close();
-
-    return new ChassisSpeeds(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, omega);
+    // prevents error spam
+    if (!gyroInputs.connected && wasGyroConnected) {
+      Elastic.sendNotification(gyroDisconnectedNotification);
+    }
+    wasGyroConnected = gyroInputs.connected;
   }
 
   /**
@@ -345,11 +294,6 @@ public class Drive extends SubsystemBase {
    */
   public void runVelocity(ChassisSpeeds speeds) {
     // Calculate module setpoints
-
-    if (snapToHeading) {
-      speeds = updateSpeedsWithDesiredHeading(speeds, desiredHeading);
-    }
-
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
     previousSetpoint =
         setpointGenerator.generateSetpoint(
@@ -451,7 +395,7 @@ public class Drive extends SubsystemBase {
 
   /** Returns the measured chassis speeds of the robot. */
   @AutoLogOutput(key = "SwerveChassisSpeeds/Measured")
-  public ChassisSpeeds getChassisSpeeds() {
+  private ChassisSpeeds getChassisSpeeds() {
     return kinematics.toChassisSpeeds(getModuleStates());
   }
 
