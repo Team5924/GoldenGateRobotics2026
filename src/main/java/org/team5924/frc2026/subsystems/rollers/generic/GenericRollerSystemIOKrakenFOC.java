@@ -17,6 +17,7 @@
 package org.team5924.frc2026.subsystems.rollers.generic;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
@@ -48,7 +49,7 @@ public abstract class GenericRollerSystemIOKrakenFOC implements GenericRollerSys
   public GenericRollerSystemIOKrakenFOC(
       int id, String bus, TalonFXConfiguration config, double reduction) {
     this.reduction = reduction;
-    talon = new TalonFX(id, bus);
+    talon = new TalonFX(id, new CANBus(bus));
 
     // Configure TalonFX
     talon.getConfigurator().apply(config);

@@ -44,6 +44,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import java.util.Queue;
+import lombok.Getter;
 import org.team5924.frc2026.generated.TunerConstants;
 
 /**
@@ -58,9 +59,11 @@ public class ModuleIOTalonFX implements ModuleIO {
       constants;
 
   // Hardware objects
-  private final TalonFX driveTalon;
-  private final TalonFX turnTalon;
-  private final CANcoder cancoder;
+  @Getter private final TalonFX driveTalon;
+
+  @Getter private final TalonFX turnTalon;
+
+  @Getter private final CANcoder cancoder;
 
   // Voltage control requests
   private final VoltageOut voltageRequest = new VoltageOut(0);
