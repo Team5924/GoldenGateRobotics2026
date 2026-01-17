@@ -16,6 +16,15 @@
 
 package org.team5924.frc2026;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.team5924.frc2026.commands.drive.DriveCommands;
 import org.team5924.frc2026.generated.TunerConstants;
@@ -26,20 +35,10 @@ import org.team5924.frc2026.subsystems.drive.ModuleIO;
 import org.team5924.frc2026.subsystems.drive.ModuleIOSim;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private SwerveDriveSimulation driveSimulation = null;
   // private final ExampleSystem exampleSystem;
   // private final ExampleRoller exampleRoller;
 
@@ -68,13 +67,23 @@ public class RobotContainer {
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
+        driveSimulation =
+            new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
+        SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
         drive =
             new Drive(
-                new GyroIO() {},
+                new GyroIOSim(driveSimulation.getGyroSimulation()),
                 new ModuleIOSim(TunerConstants.FrontLeft),
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
+        // vision = new Vision(drive,
+        //                     new VisionIOPhotonVisionSim(
+        //                         camera0Name, robotToCamera0,
+        // driveSimulation::getSimulatedDriveTrainPose),
+        //                     new VisionIOPhotonVisionSim(
+        //                         camera0Name, robotToCamera0,
+        // driveSimulation::getSimulatedDriveTrainPose);
         // exampleSystem = new ExampleSystem(new ExampleSystemIOSim());
         // exampleRoller = new ExampleRoller(new ExampleRollerIOSim());
         break;
@@ -90,6 +99,7 @@ public class RobotContainer {
                 new ModuleIO() {});
         // exampleSystem = new ExampleSystem(new ExampleSystemIO() {});
         // exampleRoller = new ExampleRoller(new ExampleRollerIO() {});
+        vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
         break;
     }
 
@@ -114,6 +124,18 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    final Runnable resetGyro =
+        Constants.currentMode == Constants.Mode.SIM
+            ? () ->
+                drive.setPose(
+                    driveSimulation
+                        .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose during
+            // simulation
+            : () ->
+                drive.setPose(
+                    new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
+    controller.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
   }
 
   /**
@@ -157,23 +179,27 @@ public class RobotContainer {
 
     // // [operator] press a -> deploy example subystem up
     // operatorController
-    //     .a()
-    //     .onTrue(Commands.runOnce(() -> exampleSystem.setGoalState(ExampleSystemState.UP)));
+    // .a()
+    // .onTrue(Commands.runOnce(() ->
+    // exampleSystem.setGoalState(ExampleSystemState.UP)));
 
     // // [operator] release a -> stow example subystem
     // operatorController
-    //     .a()
-    //     .onFalse(Commands.runOnce(() -> exampleSystem.setGoalState(ExampleSystemState.STOW)));
+    // .a()
+    // .onFalse(Commands.runOnce(() ->
+    // exampleSystem.setGoalState(ExampleSystemState.STOW)));
 
     // // [operator] press b -> run example roller
     // operatorController
-    //     .b()
-    //     .onTrue(Commands.runOnce(() -> exampleRoller.setGoalState(ExampleRollerState.INTAKE)));
+    // .b()
+    // .onTrue(Commands.runOnce(() ->
+    // exampleRoller.setGoalState(ExampleRollerState.INTAKE)));
 
     // // [operator] release b -> run example roller
     // operatorController
-    //     .b()
-    //     .onFalse(Commands.runOnce(() -> exampleRoller.setGoalState(ExampleRollerState.IDLE)));
+    // .b()
+    // .onFalse(Commands.runOnce(() ->
+    // exampleRoller.setGoalState(ExampleRollerState.IDLE)));
   }
 
   /**
@@ -183,5 +209,24 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void resetSimulationField() {
+    if (Constants.currentMode != Constants.Mode.SIM) return;
+
+    driveSimulation.setSimulationWorldPose(new Pose2d(3, 3, new Rotation2d()));
+    SimulatedArena.getInstance().resetFieldForAuto();
+  }
+
+  public void updateSimulation() {
+    if (Constants.currentMode != Constants.Mode.SIM) return;
+
+    SimulatedArena.getInstance().simulationPeriodic();
+    Logger.recordOutput(
+        "FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
+    Logger.recordOutput(
+        "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
+    Logger.recordOutput(
+        "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
   }
 }

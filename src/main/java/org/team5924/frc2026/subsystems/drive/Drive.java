@@ -27,7 +27,6 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.PathPlannerLogging;
-
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
@@ -50,13 +49,13 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
@@ -67,8 +66,6 @@ import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 import org.team5924.frc2026.util.LocalADStarAK;
-import org.team5924.frc2026.util.swerve.SwerveSetpoint;
-import org.team5924.frc2026.util.swerve.SwerveSetpointGenerator;
 
 public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
@@ -100,6 +97,23 @@ public class Drive extends SubsystemBase {
               1),
           getModuleTranslations());
 
+  public static final DriveTrainSimulationConfig mapleSimConfig =
+      DriveTrainSimulationConfig.Default()
+          .withRobotMass(Kilograms.of(ROBOT_MASS_KG))
+          .withCustomModuleTranslations(getModuleTranslations())
+          .withGyro(COTS.ofPigeon2())
+          .withSwerveModule(
+              new SwerveModuleSimulationConfig(
+                  DCMotor.getKrakenX60(1),
+                  DCMotor.getFalcon500(1),
+                  TunerConstants.FrontLeft.DriveMotorGearRatio,
+                  TunerConstants.FrontLeft.SteerMotorGearRatio,
+                  Volts.of(TunerConstants.FrontLeft.DriveFrictionVoltage),
+                  Volts.of(TunerConstants.FrontLeft.SteerFrictionVoltage),
+                  Meters.of(TunerConstants.FrontLeft.WheelRadius),
+                  KilogramSquareMeters.of(TunerConstants.FrontLeft.SteerInertia),
+                  WHEEL_COF));
+
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
@@ -128,8 +142,10 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, Pose2d.kZero);
 
-  private final SwerveSetpointGenerator setpointGenerator;
-  private SwerveSetpoint previousSetpoint;
+  private final Consumer<Pose2d> resetSimulationPoseCallBack;
+
+  // private final SwerveSetpointGenerator setpointGenerator;
+  // private SwerveSetpoint previousSetpoint;
 
   public Drive(
       GyroIO gyroIO,
@@ -181,8 +197,9 @@ public class Drive extends SubsystemBase {
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
 
-    setpointGenerator = new SwerveSetpointGenerator(kinematics, getModuleTranslations());
-    previousSetpoint = new SwerveSetpoint(getChassisSpeeds(), getModuleStates());
+    // setpointGenerator = new SwerveSetpointGenerator(kinematics,
+    // getModuleTranslations());
+    // previousSetpoint = new SwerveSetpoint(getChassisSpeeds(), getModuleStates());
 
     SmartDashboard.putData(
         "Swerve Drive",
@@ -275,7 +292,7 @@ public class Drive extends SubsystemBase {
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
 
     // if (!gyroInputs.connected && Constants.currentMode != Mode.SIM)
-    //   Elastic.sendNotification(gyroDisconnectedNotification);
+    // Elastic.sendNotification(gyroDisconnectedNotification);
 
     // Update RobotState
     RobotState.getInstance().setOdometryPose(getPose());
@@ -293,19 +310,22 @@ public class Drive extends SubsystemBase {
    * @param speeds Speeds in meters/sec
    */
   public void runVelocity(ChassisSpeeds speeds) {
-    // Calculate module setpoints
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
-    previousSetpoint =
-        setpointGenerator.generateSetpoint(
-            TunerConstants.moduleLimitsFree,
-            previousSetpoint,
-            discreteSpeeds,
-            Constants.LOOP_PERIODIC_SECONDS);
-    SwerveModuleState[] setpointStates = previousSetpoint.moduleStates();
+    SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
+    SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, TunerConstants.kSpeedAt12Volts);
+
+    // Calculate module setpoints
+    // ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
+    // previousSetpoint = setpointGenerator.generateSetpoint(
+    // TunerConstants.moduleLimitsFree,
+    // previousSetpoint,
+    // discreteSpeeds,
+    // Constants.LOOP_PERIODIC_SECONDS);
+    // SwerveModuleState[] setpointStates = previousSetpoint.moduleStates();
     // SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates,
     // TunerConstants.kSpeedAt12Volts);
 
-    // Log unoptimized setpoints and setpoint speeds
+    // // Log unoptimized setpoints and setpoint speeds
     Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
     Logger.recordOutput("SwerveChassisSpeeds/Setpoints", discreteSpeeds);
 
