@@ -51,7 +51,7 @@ public abstract class GenericRollerSystemIOKrakenFOC implements GenericRollerSys
     talon = new TalonFX(id, bus);
 
     // Configure TalonFX
-    talon.getConfigurator().apply(config);
+   talon.getConfigurator().apply(config);
 
     // Get select status signals and set update frequency
     position = talon.getPosition();
