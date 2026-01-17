@@ -16,6 +16,8 @@
 
 package org.team5924.frc2026.util;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+
 public class VisionUtil {
   /**
    * @param width width of the viewpoint in pixels
@@ -23,12 +25,14 @@ public class VisionUtil {
    * @param hFov horizontal field of view of the camera in degrees
    * @return the diagonal fov
    */
-  public static double getDiagFov(double width, double height, double hFov) {
-    return Math.toDegrees(
+  public static Rotation2d getDiagFov(double width, double height, double hFov) {
+    double diag =
         2
             * Math.atan(
                 Math.tan(Math.toRadians(hFov) / 2)
                     * Math.sqrt(width * width + height * height)
-                    / width));
+                    / width);
+
+    return new Rotation2d(diag);
   }
 }

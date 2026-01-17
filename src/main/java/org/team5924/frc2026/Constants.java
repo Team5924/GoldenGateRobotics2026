@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.photonvision.simulation.SimCameraProperties;
+import org.team5924.frc2026.util.VisionUtil;
 
 import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
@@ -143,7 +144,11 @@ public final class Constants {
     // https://www.arducam.com/100fps-global-shutter-color-usb-camera-board-1mp-ov9782-uvc-webcam-module-with-low-distortion-m12-lens-without-microphones-for-computer-laptop-android-device-and-raspberry-pi-arducam.html
     public static final SimCameraProperties SIM_ARDUCAM_PROPERIES =
         new SimCameraProperties()
-            .setCalibration(1280, 800, null);
+            .setCalibration(1280, 800, VisionUtil.getDiagFov(1280, 800, 70))
+            .setFPS(20)
+            .setCalibError(0, 0) // TODO: update values below here
+            .setAvgLatencyMs(0)
+            .setLatencyStdDevMs(0);
   }
 
   public final class GenericRollerSystem {

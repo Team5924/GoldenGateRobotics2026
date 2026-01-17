@@ -24,12 +24,12 @@ public class VisionIOSim extends Vision {
   private final VisionSystemSim visionSim;
   private final SimCameraProperties cameraProperties;
 
-  public VisionIOSim() {
+  public VisionIOSim(SimCameraProperties properties) {
     super();
 
     // configure vision sim
     visionSim = new VisionSystemSim("main");
     visionSim.addAprilTags(Constants.Field.field);
-    cameraProperties = new SimCameraProperties();
+    cameraProperties = properties;
   }
 }
