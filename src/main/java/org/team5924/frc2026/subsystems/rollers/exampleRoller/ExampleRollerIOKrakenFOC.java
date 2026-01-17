@@ -1,5 +1,5 @@
 /*
- * HopperKrakenFOC.java
+ * ExampleRollerIOKrakenFOC.java
  */
 
 /* 
@@ -14,27 +14,23 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.hopperAgitator;
+package org.team5924.frc2026.subsystems.rollers.exampleRoller;
 
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOKrakenFOC;
 
-public class HopperKrakenFOC extends GenericRollerSystemIOKrakenFOC implements HopperIO {
-  /* Still undecided whether add a beambreak for if hopper is full*/
+public class ExampleRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC
+    implements ExampleRollerIO {
 
-  // private static final DigitalInput fullBeamBreakSensor;
-
-  public HopperKrakenFOC() {
+  public ExampleRollerIOKrakenFOC() {
     super(
-      Constants.HOPPER_CAN_ID, 
-      Constants.HOPPER_BUS, 
-      Constants.HOPPER_CONFIG, 
-      Constants.HOPPER_REDUCTION);
-
-    // fullBeamBreakSensor = Constants.HOPPER_BEAM_BREAK_ID
+        Constants.ExampleRoller.CAN_ID,
+        Constants.ExampleRoller.BUS,
+        Constants.ExampleRoller.CONFIG,
+        Constants.ExampleRoller.REDUCTION);
   }
 
-  public void updateInputs(HopperIOInputs inputs) {
+  public void updateInputs(ExampleRollerIOInputs inputs) {
     super.updateInputs(inputs);
   }
 

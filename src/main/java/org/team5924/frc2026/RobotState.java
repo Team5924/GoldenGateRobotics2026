@@ -44,7 +44,8 @@ public class RobotState {
 
   /* ### Example Subsystem ### */
   @Getter @Setter private ExampleSystemState exampleSystemState = ExampleSystemState.STOW;
-
+  /* ### Example Rollers ### */
+  @Getter @Setter private ExampleRollerState exampleRollerState = ExampleRollerState.IDLE;
   /* ### HopperState ### */
   @Getter @Setter private HopperState hopperState = HopperState.OFF;
 }
