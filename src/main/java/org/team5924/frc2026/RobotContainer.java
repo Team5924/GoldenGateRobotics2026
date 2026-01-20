@@ -84,11 +84,11 @@ public class RobotContainer {
                 new ModuleIOTalonFXSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
                 driveSimulation::setSimulationWorldPose);
         // vision = new Vision(drive,
-        //                     new VisionIOPhotonVisionSim(
-        //                         camera0Name, robotToCamera0,
+        // new VisionIOPhotonVisionSim(
+        // camera0Name, robotToCamera0,
         // driveSimulation::getSimulatedDriveTrainPose),
-        //                     new VisionIOPhotonVisionSim(
-        //                         camera0Name, robotToCamera0,
+        // new VisionIOPhotonVisionSim(
+        // camera0Name, robotToCamera0,
         // driveSimulation::getSimulatedDriveTrainPose);
         // exampleSystem = new ExampleSystem(new ExampleSystemIOSim());
         // exampleRoller = new ExampleRoller(new ExampleRollerIOSim());
@@ -141,13 +141,21 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -driveController.getLeftY(),
-            () -> -driveController.getLeftX(),
-            () -> -driveController.getRightX()));
-
+    if (Constants.currentMode == Constants.Mode.SIM) {
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> -driveController.getLeftY(),
+              () -> -driveController.getRawAxis(0),
+              () -> -driveController.getRawAxis(2)));
+    } else {
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> -driveController.getLeftY(),
+              () -> -driveController.getLeftX(),
+              () -> -driveController.getRightX()));
+    }
     // [driver] SLOW MODE YIPE
     driveController
         .a()
