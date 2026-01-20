@@ -26,10 +26,10 @@ public class HopperKrakenFOC extends GenericRollerSystemIOKrakenFOC implements H
 
   public HopperKrakenFOC() {
     super(
-      Constants.HOPPER_CAN_ID, 
-      Constants.HOPPER_BUS, 
-      Constants.HOPPER_CONFIG, 
-      Constants.HOPPER_REDUCTION);
+        Constants.HOPPER_CAN_ID,
+        Constants.HOPPER_BUS,
+        Constants.HOPPER_CONFIG,
+        Constants.HOPPER_REDUCTION);
 
     // fullBeamBreakSensor = Constants.HOPPER_BEAM_BREAK_ID
   }

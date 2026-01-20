@@ -16,13 +16,10 @@
 
 package org.team5924.frc2026.subsystems.rollers.hopperAgitator;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.function.DoubleSupplier;
 import org.team5924.frc2026.RobotState;
-import org.team5924.frc2026.subsystems.rollers.exampleRoller.ExampleRollerIO;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
 import org.team5924.frc2026.util.LoggedTunableNumber;
@@ -32,7 +29,7 @@ public class Hopper extends GenericRollerSystem<Hopper.HopperState> {
 
   @RequiredArgsConstructor
   @Getter
-  public enum HopperState implements VoltageState{
+  public enum HopperState implements VoltageState {
 
     // Hopper States: On is on; spit is for when we spit out from intake; off is off
     ON(new LoggedTunableNumber("HopperAgitatorOnVoltage", 0.0)),
@@ -44,6 +41,7 @@ public class Hopper extends GenericRollerSystem<Hopper.HopperState> {
     HopperState(LoggedTunableNumber hopperVoltage) {
       this.hopperVoltage = hopperVoltage;
     }
+
     @Override
     public DoubleSupplier getVoltageSupplier() {
       return hopperVoltage;
@@ -66,5 +64,4 @@ public class Hopper extends GenericRollerSystem<Hopper.HopperState> {
     this.goalState = goalState;
     RobotState.getInstance().setHopperState(goalState);
   }
-
 }

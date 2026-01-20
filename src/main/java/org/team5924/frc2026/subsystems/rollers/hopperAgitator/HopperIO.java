@@ -25,9 +25,6 @@ public interface HopperIO extends GenericRollerSystemIO {
     // public boolean isFull = false;
   }
 
-  // Updates motor (and beam break if we add) inputs
-  public default void updateInputs(HopperIOInputs inputs) {}
-
   // Runs Motor at inputted volts
   default void runVolts(double volts) {}
 }
