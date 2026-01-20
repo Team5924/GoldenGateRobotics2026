@@ -333,7 +333,7 @@ public class Drive extends SubsystemBase {
     // SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates,
     // TunerConstants.kSpeedAt12Volts);
 
-    // // Log unoptimized setpoints and setpoint speeds
+    // Log unoptimized setpoints and setpoint speeds
     Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
     Logger.recordOutput("SwerveChassisSpeeds/Setpoints", discreteSpeeds);
 
