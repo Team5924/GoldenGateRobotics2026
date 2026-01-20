@@ -1,0 +1,39 @@
+package org.team5924.frc2026.subsystems.rollers.shooterRoller;
+
+import java.util.function.DoubleSupplier;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.team5924.frc2026.RobotState;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
+import org.team5924.frc2026.util.LoggedTunableNumber;
+
+@Getter
+public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRollerState> {
+  @RequiredArgsConstructor
+  @Getter
+  public enum ShooterRollerState implements VoltageState {
+    SHOOTING(new LoggedTunableNumber("ShooterRoller/Shooting", 12.0)),
+    SHUFFLING(new LoggedTunableNumber("ShooterRoller/Shooting", 12.0)),
+    OFF(new LoggedTunableNumber("ShooterRoller/Off", 0.0));
+
+    private final DoubleSupplier voltageSupplier;
+  }
+
+  private ShooterRollerState goalState = ShooterRollerState.OFF;
+
+  public ShooterRoller(ShooterRollerIO inputs) {
+    super("ShooterRoller", inputs);
+  }
+
+  @Override
+  public void periodic() {
+    ((ShooterRollerIO) io).runVolts(goalState.getVoltageSupplier().getAsDouble());
+    super.periodic();
+  }
+
+  public void setGoalState(ShooterRollerState goalState) {
+    this.goalState = goalState;
+    RobotState.getInstance().setShooterRollerState(goalState);
+  }
+}
