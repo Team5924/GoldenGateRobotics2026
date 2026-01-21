@@ -1,3 +1,19 @@
+/*
+ * ShooterRoller.java
+ */
+
+/* 
+ * Copyright (C) 2025-2026 Team 5924 - Golden Gate Robotics and/or its affiliates.
+ *
+ * This file, and the associated project, are offered under the GNU General
+ * Public License v3.0. A copy of this license can be found in LICENSE.md
+ * at the root of this project.
+ *
+ * If this file has been separated from the original project, you should have
+ * received a copy of the GNU General Public License along with it.
+ * If you did not, see <https://www.gnu.org/licenses>.
+ */
+
 package org.team5924.frc2026.subsystems.rollers.shooterRoller;
 
 import java.util.function.DoubleSupplier;
@@ -14,7 +30,7 @@ public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRoll
   @Getter
   public enum ShooterRollerState implements VoltageState {
     SHOOTING(new LoggedTunableNumber("ShooterRoller/Shooting", 12.0)),
-    SHUFFLING(new LoggedTunableNumber("ShooterRoller/Shooting", 12.0)),
+    SHUFFLING(new LoggedTunableNumber("ShooterRoller/Shuffling", 12.0)),
     OFF(new LoggedTunableNumber("ShooterRoller/Off", 0.0));
 
     private final DoubleSupplier voltageSupplier;
