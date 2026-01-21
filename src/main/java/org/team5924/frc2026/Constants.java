@@ -62,30 +62,26 @@ public final class Constants {
   //   public static final double CORAL_STATION_RADIANS_NORMAL = 0.959931;
 
   /* Hopper Agitator */
+  public final class Hopper {
+    public static final int HOPPER_CAN_ID = 0; //TODO: Update value to real ID 
+    public static final String HOPPER_BUS = "rio";
+    public static final double HOPPER_REDUCTION = 1.0; //TODO: If reduction is needed, update
+
+    // public static final int HOPPER_BEAM_BREAK_ID = 0;
+    // public static final boolean HOPPER_BEAM_BREAK = false;
   
-  public static final int HOPPER_CAN_ID = 0; //TODO: Update value to real ID 
-  public static final String HOPPER_BUS = "rio";
-  public static final double HOPPER_CURRENT_LIMIT = 12.0; //TODO: Update value if needed 
-  public static final boolean HOPPER_INVERT = false; //Change these if needed
-  public static final boolean HOPPER_BRAKE = true; //Change these if needed
-  public static final double HOPPER_REDUCTION = 1.0; //TODO: If reduction is needed, update
-  
-  // Hopper Motor Config
-  public static final TalonFXConfiguration HOPPER_CONFIG = 
-    new TalonFXConfiguration()
-          .withCurrentLimits(
-            new CurrentLimitsConfigs()
-              .withSupplyCurrentLimit(35)
-              .withStatorCurrentLimit(35))
-          .withMotorOutput(
-            new MotorOutputConfigs()
-              .withInverted(InvertedValue.CounterClockwise_Positive)
-              .withNeutralMode(NeutralModeValue.Brake));
-
-
-  // public static final int HOPPER_BEAM_BREAK_ID = 0;
-  // public static final boolean HOPPER_BEAM_BREAK = false;
-
+    // Hopper Motor Config
+    public static final TalonFXConfiguration HOPPER_CONFIG = 
+      new TalonFXConfiguration()
+            .withCurrentLimits(
+              new CurrentLimitsConfigs()
+                .withSupplyCurrentLimit(35)
+                .withStatorCurrentLimit(35))
+            .withMotorOutput(
+              new MotorOutputConfigs()
+                .withInverted(InvertedValue.CounterClockwise_Positive)
+                .withNeutralMode(NeutralModeValue.Brake));
+  }
   /* General */
   public static final double LOOP_PERIODIC_SECONDS = 0.02;
 
