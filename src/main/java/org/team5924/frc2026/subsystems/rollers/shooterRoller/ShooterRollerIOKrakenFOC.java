@@ -24,10 +24,10 @@ public class ShooterRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC
 
   public ShooterRollerIOKrakenFOC() {
     super(
-        Constants.ExampleRoller.CAN_ID,
-        Constants.ExampleRoller.BUS,
-        Constants.ExampleRoller.CONFIG,
-        Constants.ExampleRoller.REDUCTION);
+        Constants.ShooterRoller.CAN_ID,
+        Constants.ShooterRoller.BUS,
+        Constants.ShooterRoller.CONFIG,
+        Constants.ShooterRoller.REDUCTION);
   }
 
   public void updateInputs(ShooterRollerIOInputs inputs) {

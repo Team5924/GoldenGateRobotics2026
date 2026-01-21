@@ -44,8 +44,8 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
       new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true);
 
   public ShooterHoodIOTalonFX() {
-    shooterHoodTalon = new TalonFX(Constants.Example.CAN_ID, Constants.Example.BUS);
-    shooterHoodTalon.getConfigurator().apply(Constants.Example.CONFIG);
+    shooterHoodTalon = new TalonFX(Constants.ShooterHood.CAN_ID, Constants.ShooterHood.BUS);
+    shooterHoodTalon.getConfigurator().apply(Constants.ShooterHood.CONFIG);
 
     // Get select status signals and set update frequency
     shooterHoodPosition = shooterHoodTalon.getPosition();
@@ -80,10 +80,10 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
             .isOK();
     inputs.shooterHoodPositionRads =
         Units.rotationsToRadians(shooterHoodPosition.getValueAsDouble())
-            / Constants.Example.REDUCTION;
+            / Constants.ShooterHood.REDUCTION;
     inputs.shooterHoodVelocityRadsPerSec =
         Units.rotationsToRadians(shooterHoodVelocity.getValueAsDouble())
-            / Constants.Example.REDUCTION;
+            / Constants.ShooterHood.REDUCTION;
     inputs.shooterHoodAppliedVoltage = shooterHoodAppliedVoltage.getValueAsDouble();
     inputs.shooterHoodSupplyCurrentAmps = shooterHoodSupplyCurrent.getValueAsDouble();
     inputs.shooterHoodTorqueCurrentAmps = shooterHoodTorqueCurrent.getValueAsDouble();
