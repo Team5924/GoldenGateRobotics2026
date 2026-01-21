@@ -18,8 +18,10 @@ package org.team5924.frc2026.subsystems.rollers.indexer;
 
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOKrakenFOC;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 public class IndexerIOTalonFX extends GenericRollerSystemIOKrakenFOC implements IndexerIO {
+  private final DigitalInput beamBreak = new DigitalInput(0);
 
   public IndexerIOTalonFX() {
     super(
