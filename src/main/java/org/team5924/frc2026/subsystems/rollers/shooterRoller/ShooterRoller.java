@@ -19,13 +19,21 @@ package org.team5924.frc2026.subsystems.rollers.shooterRoller;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+
 @Getter
 public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRollerState> {
+  
+  private static DigitalInput beamBreak;
+
+
   @RequiredArgsConstructor
   @Getter
   public enum ShooterRollerState implements VoltageState {
@@ -40,6 +48,7 @@ public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRoll
 
   public ShooterRoller(ShooterRollerIO inputs) {
     super("ShooterRoller", inputs);
+    beamBreak = new DigitalInput(Constants.ShooterRoller.BEAM_BREAK_PORT);
   }
 
   @Override
@@ -52,4 +61,8 @@ public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRoll
     this.goalState = goalState;
     RobotState.getInstance().setShooterRollerState(goalState);
   }
+
+  public static boolean isGamePieceDetected() {
+    return beamBreak.get();
+}
 }

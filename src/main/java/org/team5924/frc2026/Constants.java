@@ -167,6 +167,7 @@ public final class ShooterHood {
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
     public static final double SIM_MOI = 0.001;
+    public static final int BEAM_BREAK_PORT = 0;
 
     public static final TalonFXConfiguration CONFIG =
       new TalonFXConfiguration()

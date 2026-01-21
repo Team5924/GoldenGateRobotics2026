@@ -25,6 +25,7 @@ import org.team5924.frc2026.subsystems.drive.GyroIOPigeon2;
 import org.team5924.frc2026.subsystems.drive.ModuleIO;
 import org.team5924.frc2026.subsystems.drive.ModuleIOSim;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -35,6 +36,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 public class RobotContainer {
@@ -49,6 +51,9 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+
+  // Trigger for Beam Break
+  Trigger gamePieceTrigger = new Trigger(() -> ShooterRoller.isGamePieceDetected());
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
