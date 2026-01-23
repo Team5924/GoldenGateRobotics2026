@@ -18,17 +18,18 @@ package org.team5924.frc2026.subsystems.rollers.exampleRoller;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
-import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
 public class ExampleRoller
     extends GenericRollerSystem<
-        ExampleRoller.ExampleRollerState, ExampleRollerIOInputs, ExampleRollerIO> {
+        ExampleRoller.ExampleRollerState,
+        ExampleRollerIOInputs,
+        ExampleRollerIO,
+        ExampleRollerIOInputsAutoLogged> {
   @RequiredArgsConstructor
   @Getter
   public enum ExampleRollerState implements VoltageState {
@@ -41,24 +42,8 @@ public class ExampleRoller
 
   private ExampleRollerState goalState = ExampleRollerState.IDLE;
 
-  private final ExampleRollerIOInputsAutoLogged inputs = new ExampleRollerIOInputsAutoLogged();
-
   public ExampleRoller(ExampleRollerIO io) {
-    super("ExampleRoller", io);
-  }
-
-  @Override
-  public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs(name, inputs);
-    disconnected.set(!inputs.motorConnected);
-
-    super.periodic();
-
-    if (!inputs.motorConnected && wasMotorConnected) {
-      Elastic.sendNotification(disconnectedNotification);
-    }
-    wasMotorConnected = inputs.motorConnected;
+    super("ExampleRoller", io, new ExampleRollerIOInputsAutoLogged());
   }
 
   public void setGoalState(ExampleRollerState goalState) {
