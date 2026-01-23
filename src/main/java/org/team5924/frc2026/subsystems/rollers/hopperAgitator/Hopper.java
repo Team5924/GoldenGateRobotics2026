@@ -16,7 +16,6 @@
 
 package org.team5924.frc2026.subsystems.rollers.hopperAgitator;
 
-import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.team5924.frc2026.RobotState;
@@ -43,7 +42,7 @@ public class Hopper extends GenericRollerSystem<Hopper.HopperState> {
     }
 
     @Override
-    public DoubleSupplier getVoltageSupplier() {
+    public LoggedTunableNumber getVoltageSupplier() {
       return hopperVoltage;
     }
   }

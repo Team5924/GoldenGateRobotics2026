@@ -19,20 +19,18 @@ package org.team5924.frc2026.subsystems.rollers.generic;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import java.util.function.DoubleSupplier;
-import lombok.RequiredArgsConstructor;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
+import org.team5924.frc2026.util.LoggedTunableNumber;
 
-@RequiredArgsConstructor
 public abstract class GenericRollerSystem<G extends GenericRollerSystem.VoltageState>
     extends SubsystemBase {
   public interface VoltageState {
-    DoubleSupplier getVoltageSupplier();
+    LoggedTunableNumber getVoltageSupplier();
 
-    default DoubleSupplier getHandoffVoltage() {
+    default LoggedTunableNumber getHandoffVoltage() {
       return getVoltageSupplier();
     }
   }
