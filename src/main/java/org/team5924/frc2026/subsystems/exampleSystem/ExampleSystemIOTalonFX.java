@@ -17,6 +17,7 @@
 package org.team5924.frc2026.subsystems.exampleSystem;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -47,7 +48,7 @@ public class ExampleSystemIOTalonFX implements ExampleSystemIO {
       new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true);
 
   public ExampleSystemIOTalonFX() {
-    exampleTalon = new TalonFX(Constants.Example.CAN_ID, Constants.Example.BUS);
+    exampleTalon = new TalonFX(Constants.Example.CAN_ID, new CANBus(Constants.Example.BUS));
     exampleTalon.getConfigurator().apply(Constants.Example.CONFIG);
 
     // Get select status signals and set update frequency
