@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lombok.Getter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.RobotState;
+import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 import org.team5924.frc2026.util.LoggedTunableNumber;
@@ -39,6 +40,7 @@ public class Climb extends SubsystemBase {
     CLIMB_DOWN(new LoggedTunableNumber("Climb/ClimbDown", 0)),
     DEPLOY(new LoggedTunableNumber("Climb/Deploy", 0)),
     DROP(new LoggedTunableNumber("Climb/Drop", 0)),
+    MOVING(new LoggedTunableNumber("Climb/Moving", 0)),
     // voltage at which the climb subsystem motor moves when controlled by the operator
     OPERATOR_CONTROL(new LoggedTunableNumber("Climb/OperatorVoltage", 4.5));
 
@@ -76,8 +78,9 @@ public class Climb extends SubsystemBase {
     climbMotorDisconnected.set(!inputs.climbMotorConnected);
 
     // prevents error spam
-    if (!inputs.climbMotorConnected && wasClimbMotorConnected)
-      ;
+    if (!inputs.climbMotorConnected && wasClimbMotorConnected) {
+      Elastic.sendNotification(climbMotorDisconnectedNotification);
+    }
 
     wasClimbMotorConnected = inputs.climbMotorConnected;
   }
@@ -92,9 +95,9 @@ public class Climb extends SubsystemBase {
       case OPERATOR_CONTROL:
         RobotState.getInstance().setClimbState(ClimbState.OPERATOR_CONTROL);
         break;
-      case STOW:
+      case MOVING:
         DriverStation.reportError(
-            "climb Subsystem: MOVING is an invalid goal state; it is a transition state!!", null);
+            "Climb: MOVING is an invalid goal state; it is a transition state!!", null);
         break;
       default:
         RobotState.getInstance().setClimbState(ClimbState.STOW);
