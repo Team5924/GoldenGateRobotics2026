@@ -36,7 +36,7 @@ public class Hopper extends GenericRollerSystem<Hopper.HopperState> {
     SPIT(new LoggedTunableNumber("HopperAgitatorSpitVoltage", 0.0)),
     OFF(new LoggedTunableNumber("HopperAgitatorOffVoltage", 0.0));
 
-    private DoubleSupplier hopperVoltage;
+    private LoggedTunableNumber hopperVoltage;
 
     HopperState(LoggedTunableNumber hopperVoltage) {
       this.hopperVoltage = hopperVoltage;

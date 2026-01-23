@@ -16,7 +16,7 @@
 
 package org.team5924.frc2026.subsystems.rollers.hopperAgitator;
 
-import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.Constants.Hopper;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOKrakenFOC;
 
 public class HopperKrakenFOC extends GenericRollerSystemIOKrakenFOC implements HopperIO {
@@ -25,11 +25,7 @@ public class HopperKrakenFOC extends GenericRollerSystemIOKrakenFOC implements H
   // private static final DigitalInput fullBeamBreakSensor;
 
   public HopperKrakenFOC() {
-    super(
-        Constants.HOPPER_CAN_ID,
-        Constants.HOPPER_BUS,
-        Constants.HOPPER_CONFIG,
-        Constants.HOPPER_REDUCTION);
+    super(Hopper.HOPPER_CAN_ID, Hopper.HOPPER_BUS, Hopper.HOPPER_CONFIG, Hopper.HOPPER_REDUCTION);
 
     // fullBeamBreakSensor = Constants.HOPPER_BEAM_BREAK_ID
   }

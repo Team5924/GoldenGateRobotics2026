@@ -16,7 +16,6 @@
 
 package org.team5924.frc2026.subsystems.rollers.exampleRoller;
 
-import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.team5924.frc2026.RobotState;
@@ -33,7 +32,7 @@ public class ExampleRoller extends GenericRollerSystem<ExampleRoller.ExampleRoll
     SHOOTING(new LoggedTunableNumber("ExampleRoller/Shooting", 12.0)),
     INTAKE(new LoggedTunableNumber("ExampleRoller/Intake", -12.0));
 
-    private final DoubleSupplier voltageSupplier;
+    private final LoggedTunableNumber voltageSupplier;
   }
 
   private ExampleRollerState goalState = ExampleRollerState.IDLE;
