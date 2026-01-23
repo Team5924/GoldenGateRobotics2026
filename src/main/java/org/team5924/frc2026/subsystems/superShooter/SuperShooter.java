@@ -33,7 +33,8 @@ public class SuperShooter extends SubsystemBase {
     AUTO_SHOOTING(new LoggedTunableNumber("Shooter/Auto_Shooting", 0)),
     BUMPER_SHOOTING(new LoggedTunableNumber("Shooter/Bumper_Shooting", Math.toRadians(90))),
     NEUTRAL_SHUFFLING(new LoggedTunableNumber("Shooter/Neutral_Shuffling", Math.toRadians(90))),
-    OPPONENT_SHUFFLING(new LoggedTunableNumber("Shooter/Opponent_Shuffling", Math.toRadians(90)));
+    OPPONENT_SHUFFLING(new LoggedTunableNumber("Shooter/Opponent_Shuffling", Math.toRadians(90))),
+    HOOD_MOVING(new LoggedTunableNumber("Shooter/Hood_Moving", -1));
 
     private final LoggedTunableNumber rads;
 
@@ -69,6 +70,9 @@ public class SuperShooter extends SubsystemBase {
     case OPPONENT_SHUFFLING:
         roller.setGoalState(ShooterRollerState.SHOOTING);
         hood.setGoalState(ShooterHoodState.OPPONENT_SHUFFLING);
+    case HOOD_MOVING:
+        roller.setGoalState(ShooterRollerState.OFF);
+        hood.setGoalState(ShooterHoodState.MOVING);
     }
   }
 }

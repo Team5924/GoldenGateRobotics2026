@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lombok.Getter;
 import org.littletonrobotics.junction.Logger;
+import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
@@ -30,6 +31,8 @@ import org.team5924.frc2026.util.LoggedTunableNumber;
 public class ShooterHood extends SubsystemBase {
 
   private final ShooterHoodIO io;
+
+   public LoggedTunableNumber ShooterHoodPivotTolerance = new LoggedTunableNumber("ShooterHoodPivotToleranceRads", .02);
   private final ShooterHoodIOInputsAutoLogged inputs = new ShooterHoodIOInputsAutoLogged();
 
   public enum ShooterHoodState {
@@ -37,8 +40,9 @@ public class ShooterHood extends SubsystemBase {
     AUTO_SHOOTING(new LoggedTunableNumber("ShooterHood/Auto_Shooting", 0)),
     BUMPER_SHOOTING(new LoggedTunableNumber("ShooterHood/Bumper_Shooting", Math.toRadians(90))),
     NEUTRAL_SHUFFLING(new LoggedTunableNumber("ShooterHood/Neutral_Shuffling", Math.toRadians(90))),
-    OPPONENT_SHUFFLING(
-        new LoggedTunableNumber("ShooterHood/Opponent_Shuffling", Math.toRadians(90)));
+    OPPONENT_SHUFFLING(new LoggedTunableNumber("ShooterHood/Opponent_Shuffling", Math.toRadians(90))),
+    MOVING(new LoggedTunableNumber("ShooterHood/Moving", -1)),
+    MANUAL(new LoggedTunableNumber("ShooterHood/Manual",-1));
 
     private final LoggedTunableNumber rads;
 
@@ -80,6 +84,13 @@ public class ShooterHood extends SubsystemBase {
     wasShooterHoodMotorConnected = inputs.shooterHoodMotorConnected;
   }
 
+  private double getShooterHoodPositionRads() {
+    return inputs.shooterHoodPositionRads / Constants.ShooterHood.REDUCTION;
+  }
+
+  public boolean isAtSetpoint() {
+    return Math.abs(getShooterHoodPositionRads() - this.goalState.rads.getAsDouble()) < ShooterHoodPivotTolerance.getAsDouble();
+  }
   public void runVolts(double volts) {
     io.runVolts(volts);
   }
@@ -87,8 +98,11 @@ public class ShooterHood extends SubsystemBase {
   public void setGoalState(ShooterHoodState goalState) {
     this.goalState = goalState;
     switch (goalState) {
-      case OFF:
-        DriverStation.reportError("idk", null);
+      case MANUAL:
+        RobotState.getInstance().setShooterHoodState(ShooterHoodState.MANUAL);
+        break;
+      case MOVING:
+        DriverStation.reportError("Invalid goal ShooterHoodPivotState!", null);
         break;
       default:
         RobotState.getInstance().setShooterHoodState(ShooterHoodState.OFF);
