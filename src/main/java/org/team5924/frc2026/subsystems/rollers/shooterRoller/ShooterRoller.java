@@ -16,23 +16,20 @@
 
 package org.team5924.frc2026.subsystems.rollers.shooterRoller;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-
 @Getter
 public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRollerState> {
-  
-  private static DigitalInput beamBreak;
 
+  private static DigitalInput beamBreak;
 
   @RequiredArgsConstructor
   @Getter
@@ -64,5 +61,5 @@ public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRoll
 
   public static boolean isGamePieceDetected() {
     return beamBreak.get();
-}
+  }
 }
