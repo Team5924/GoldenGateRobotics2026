@@ -22,10 +22,12 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO.GenericRollerSystemIOInputs;
 
-public class GenericRollerSystemIOSim implements GenericRollerSystemIO {
-  private final DCMotorSim sim;
-  private final DCMotor gearbox;
+public class GenericRollerSystemIOSim<Inputs extends GenericRollerSystemIOInputs>
+    implements GenericRollerSystemIO<Inputs> {
+  protected final DCMotorSim sim;
+  protected final DCMotor gearbox;
   private double appliedVoltage = 0.0;
 
   public GenericRollerSystemIOSim(DCMotor motorModel, double reduction, double moi) {
@@ -35,7 +37,7 @@ public class GenericRollerSystemIOSim implements GenericRollerSystemIO {
   }
 
   @Override
-  public void updateInputs(GenericRollerSystemIOInputs inputs) {
+  public void updateInputs(Inputs inputs) {
     if (DriverStation.isDisabled()) runVolts(0.0);
 
     sim.update(Constants.LOOP_PERIODIC_SECONDS);

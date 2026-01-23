@@ -19,41 +19,42 @@ package org.team5924.frc2026.subsystems.rollers.generic;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import java.util.function.DoubleSupplier;
 import lombok.RequiredArgsConstructor;
 import org.littletonrobotics.junction.Logger;
-import org.team5924.frc2026.util.Elastic;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO.GenericRollerSystemIOInputs;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
+import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @RequiredArgsConstructor
-public abstract class GenericRollerSystem<G extends GenericRollerSystem.VoltageState>
+public abstract class GenericRollerSystem<
+        State extends GenericRollerSystem.VoltageState,
+        Inputs extends GenericRollerSystemIOInputs,
+        IO extends GenericRollerSystemIO<Inputs>>
     extends SubsystemBase {
   public interface VoltageState {
-    DoubleSupplier getVoltageSupplier();
+    LoggedTunableNumber getVoltageSupplier();
 
-    default DoubleSupplier getHandoffVoltage() {
+    default LoggedTunableNumber getHandoffVoltage() {
       return getVoltageSupplier();
     }
   }
 
-  public abstract G getGoalState();
+  public abstract State getGoalState();
 
-  private G lastState;
+  private State lastState;
 
-  private final String name;
+  protected final String name;
 
-  protected final GenericRollerSystemIO io;
-  protected final GenericRollerSystemIOInputsAutoLogged genericInputs =
-      new GenericRollerSystemIOInputsAutoLogged();
+  protected final IO io;
 
-  private final Alert disconnected;
-  private final Notification disconnectedNotification;
-  private boolean wasMotorConnected = true;
+  protected final Alert disconnected;
+  protected final Notification disconnectedNotification;
+  protected boolean wasMotorConnected = true;
 
   protected final Timer stateTimer = new Timer();
 
-  public GenericRollerSystem(String name, GenericRollerSystemIO io) {
+  public GenericRollerSystem(String name, IO io) {
     this.name = name;
     this.io = io;
 
@@ -68,10 +69,6 @@ public abstract class GenericRollerSystem<G extends GenericRollerSystem.VoltageS
 
   @Override
   public void periodic() {
-    io.updateInputs(genericInputs);
-    Logger.processInputs(name, genericInputs);
-    disconnected.set(!genericInputs.motorConnected);
-
     if (getGoalState() != lastState) {
       stateTimer.reset();
       lastState = getGoalState();
@@ -79,11 +76,5 @@ public abstract class GenericRollerSystem<G extends GenericRollerSystem.VoltageS
 
     io.runVolts(getGoalState().getVoltageSupplier().getAsDouble());
     Logger.recordOutput("Rollers/" + name + "Goal", getGoalState().toString());
-
-    // prevents error spam
-    if (!genericInputs.motorConnected && wasMotorConnected) {
-      Elastic.sendNotification(disconnectedNotification);
-    }
-    wasMotorConnected = genericInputs.motorConnected;
   }
 }
