@@ -16,6 +16,7 @@
 
 package org.team5924.frc2026;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -28,6 +29,8 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S2CloseStateValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
+
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -118,7 +121,7 @@ public final class Constants {
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(35)
+            .withSupplyCurrentLimit(60)
             .withStatorCurrentLimit(35))
         .withMotorOutput(
           new MotorOutputConfigs()
@@ -131,7 +134,7 @@ public final class ShooterHood {
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
     public static final double SIM_MOI = 0.001;
-
+    
     public static final TalonFXConfiguration CONFIG =
       new TalonFXConfiguration()
         .withCurrentLimits(

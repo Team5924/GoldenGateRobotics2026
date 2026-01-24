@@ -22,24 +22,20 @@ import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
 import org.team5924.frc2026.subsystems.shooterHood.ShooterHood;
 import org.team5924.frc2026.subsystems.shooterHood.ShooterHood.ShooterHoodState;
-import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class SuperShooter extends SubsystemBase {
   private final ShooterRoller roller;
   private final ShooterHood hood;
 
   public enum ShooterState {
-    OFF(new LoggedTunableNumber("Shooter/Off", Math.toRadians(0))),
-    AUTO_SHOOTING(new LoggedTunableNumber("Shooter/Auto_Shooting", 0)),
-    BUMPER_SHOOTING(new LoggedTunableNumber("Shooter/Bumper_Shooting", Math.toRadians(90))),
-    NEUTRAL_SHUFFLING(new LoggedTunableNumber("Shooter/Neutral_Shuffling", Math.toRadians(90))),
-    OPPONENT_SHUFFLING(new LoggedTunableNumber("Shooter/Opponent_Shuffling", Math.toRadians(90))),
-    HOOD_MOVING(new LoggedTunableNumber("Shooter/Hood_Moving", -1));
+    OFF(),
+    AUTO_SHOOTING(),
+    BUMPER_SHOOTING(),
+    NEUTRAL_SHUFFLING(),
+    OPPONENT_SHUFFLING(),
+    HOOD_MOVING();
 
-    private final LoggedTunableNumber rads;
-
-    ShooterState(LoggedTunableNumber rads) {
-      this.rads = rads;
+    ShooterState() {
     }
   }
 

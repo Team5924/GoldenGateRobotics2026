@@ -32,17 +32,17 @@ public class ShooterHood extends SubsystemBase {
 
   private final ShooterHoodIO io;
 
-   public LoggedTunableNumber ShooterHoodPivotTolerance = new LoggedTunableNumber("ShooterHoodPivotToleranceRads", .02);
+  public LoggedTunableNumber ShooterHoodPivotTolerance = new LoggedTunableNumber("ShooterHoodPivotToleranceRads", .02);
   private final ShooterHoodIOInputsAutoLogged inputs = new ShooterHoodIOInputsAutoLogged();
 
   public enum ShooterHoodState {
-    OFF(new LoggedTunableNumber("ShooterHood/Off", Math.toRadians(0))),
+    OFF(new LoggedTunableNumber("ShooterHood/Off", 0)),
     AUTO_SHOOTING(new LoggedTunableNumber("ShooterHood/Auto_Shooting", 0)),
     BUMPER_SHOOTING(new LoggedTunableNumber("ShooterHood/Bumper_Shooting", Math.toRadians(90))),
     NEUTRAL_SHUFFLING(new LoggedTunableNumber("ShooterHood/Neutral_Shuffling", Math.toRadians(90))),
     OPPONENT_SHUFFLING(new LoggedTunableNumber("ShooterHood/Opponent_Shuffling", Math.toRadians(90))),
     MOVING(new LoggedTunableNumber("ShooterHood/Moving", -1)),
-    MANUAL(new LoggedTunableNumber("ShooterHood/Manual",-1));
+    MANUAL((new LoggedTunableNumber("ShooterHood/Manual",-1)));
 
     private final LoggedTunableNumber rads;
 
