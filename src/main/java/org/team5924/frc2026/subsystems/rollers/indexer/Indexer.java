@@ -16,7 +16,6 @@
 
 package org.team5924.frc2026.subsystems.rollers.indexer;
 
-import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.team5924.frc2026.RobotState;
@@ -25,20 +24,22 @@ import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.Volta
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
-public class Indexer extends GenericRollerSystem<Indexer.IndexerState> {
+public class Indexer
+    extends GenericRollerSystem<
+        Indexer.IndexerState, IndexerIOInputs, IndexerIO, IndexerIOInputsAutoLogged> {
   @RequiredArgsConstructor
   @Getter
   public enum IndexerState implements VoltageState {
     OFF(new LoggedTunableNumber("Indexer/OffVoltage", 0.0)),
     INDEXING(new LoggedTunableNumber("Indexer/OffVoltage", 0.0));
 
-    private final DoubleSupplier voltageSupplier;
+    private final LoggedTunableNumber voltageSupplier;
   }
 
   private IndexerState goalState = IndexerState.OFF;
 
   public Indexer(IndexerIO indexerIO) {
-    super("Indexer", indexerIO);
+    super("Indexer", indexerIO, new IndexerIOInputsAutoLogged());
   }
 
   @Override

@@ -18,10 +18,11 @@ package org.team5924.frc2026.subsystems.rollers.indexer;
 
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOKrakenFOC;
-import edu.wpi.first.wpilibj.DigitalInput;
 
-public class IndexerIOTalonFX extends GenericRollerSystemIOKrakenFOC implements IndexerIO {
-  private final DigitalInput beamBreak = new DigitalInput(0);
+public class IndexerIOTalonFX extends GenericRollerSystemIOKrakenFOC<IndexerIOInputs>
+    implements IndexerIO {
+
+  // private final DigitalInput beamBreak = new DigitalInput(Constants.Indexer.BEAM_BREAK_ID);
 
   public IndexerIOTalonFX() {
     super(
@@ -29,5 +30,16 @@ public class IndexerIOTalonFX extends GenericRollerSystemIOKrakenFOC implements 
         Constants.Indexer.BUS,
         Constants.Indexer.CONFIG,
         Constants.Indexer.REDUCTION);
+  }
+
+  @Override
+  public void updateInputs(IndexerIOInputs inputs) {
+    super.updateInputs(inputs);
+    // inputs.hasFuel = !beamBreak.get();
+  }
+
+  @Override
+  public void runVolts(double volts) {
+    super.runVolts(volts);
   }
 }
