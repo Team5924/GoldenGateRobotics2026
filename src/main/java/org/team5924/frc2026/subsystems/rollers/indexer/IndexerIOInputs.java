@@ -1,5 +1,5 @@
 /*
- * IndexerIO.java
+ * IndexerIOInputs.java
  */
 
 /* 
@@ -16,9 +16,10 @@
 
 package org.team5924.frc2026.subsystems.rollers.indexer;
 
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO;
+import org.littletonrobotics.junction.AutoLog;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO.GenericRollerSystemIOInputs;
 
-public interface IndexerIO extends GenericRollerSystemIO<IndexerIOInputs> {
-
-  default void runVolts(double volts) {}
+@AutoLog
+abstract class IndexerIOInputs extends GenericRollerSystemIOInputs {
+  // public boolean hasFuel = false;
 }

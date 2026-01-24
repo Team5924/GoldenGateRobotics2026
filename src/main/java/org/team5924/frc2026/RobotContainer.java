@@ -68,8 +68,6 @@ public class RobotContainer {
                 (pose) -> {});
         // exampleSystem = new ExampleSystem(new ExampleSystemIOTalonFX());
         // exampleRoller = new ExampleRoller(new ExampleRollerIOKrakenFOC());
-
-        indexer = new Indexer(new IndexerIOTalonFX());
         break;
 
       case SIM:
@@ -94,7 +92,6 @@ public class RobotContainer {
         // driveSimulation::getSimulatedDriveTrainPose);
         // exampleSystem = new ExampleSystem(new ExampleSystemIOSim());
         // exampleRoller = new ExampleRoller(new ExampleRollerIOSim());
-        indexer = new Indexer(new IndexerIO() {});
         break;
 
       default:
@@ -169,7 +166,7 @@ public class RobotContainer {
                 () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
                 () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
 
-    // [driver] 0-DEGREE MODE            
+    // [driver] 0-DEGREE MODE
     driveController
         .a()
         .whileTrue(
@@ -178,7 +175,6 @@ public class RobotContainer {
                 () -> -driveController.getLeftY(),
                 () -> -driveController.getLeftX(),
                 () -> Rotation2d.kZero));
-
 
     // [driver] Switch to X pattern when X button is pressed
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
