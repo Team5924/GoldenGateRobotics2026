@@ -22,7 +22,7 @@ import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOKrak
 public class IntakeIOKrakenFOC extends GenericRollerSystemIOKrakenFOC<IntakeIOInputs>
     implements IntakeIO {
   public IntakeIOKrakenFOC() {
-    super(
+    super( //TODO: Configure
         Constants.Intake.CAN_ID,
         Constants.Intake.BUS,
         Constants.Intake.CONFIG,
