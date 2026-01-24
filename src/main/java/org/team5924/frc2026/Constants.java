@@ -16,7 +16,6 @@
 
 package org.team5924.frc2026;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -29,8 +28,6 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S2CloseStateValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
-
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -145,7 +142,7 @@ public final class Constants {
             .withStatorCurrentLimit(60))
         .withMotorOutput(
           new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withInverted(InvertedValue.CounterClockwise_Positive) // TODO: test this direction
             .withNeutralMode(NeutralModeValue.Brake))
         .withSlot0(
           new Slot0Configs() // TODO: TUNE THESE VALUES
