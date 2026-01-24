@@ -16,22 +16,26 @@
 
 package org.team5924.frc2026.subsystems.rollers.hopperAgitator;
 
+// import edu.wpi.first.wpilibj.DigitalInput;
 import org.team5924.frc2026.Constants.Hopper;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOKrakenFOC;
 
-public class HopperKrakenFOC extends GenericRollerSystemIOKrakenFOC implements HopperIO {
+public class HopperKrakenFOC extends GenericRollerSystemIOKrakenFOC<HopperIOInputs>
+    implements HopperIO {
   /* Still undecided whether add a beambreak for if hopper is full*/
 
   // private static final DigitalInput fullBeamBreakSensor;
 
   public HopperKrakenFOC() {
-    super(Hopper.HOPPER_CAN_ID, Hopper.HOPPER_BUS, Hopper.HOPPER_CONFIG, Hopper.HOPPER_REDUCTION);
+    super(Hopper.CAN_ID, Hopper.BUS, Hopper.CONFIG, Hopper.REDUCTION);
 
     // fullBeamBreakSensor = Constants.HOPPER_BEAM_BREAK_ID
   }
 
+  @Override
   public void updateInputs(HopperIOInputs inputs) {
     super.updateInputs(inputs);
+    // inputs.isFull = fullBeamBreakSensor.get();
   }
 
   @Override

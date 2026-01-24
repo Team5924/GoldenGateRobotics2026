@@ -63,20 +63,20 @@ public final class Constants {
 
   /* Hopper Agitator */
   public final class Hopper {
-    public static final int HOPPER_CAN_ID = 0; //TODO: Update value to real ID 
-    public static final String HOPPER_BUS = "rio";
-    public static final double HOPPER_REDUCTION = 1.0; //TODO: If reduction is needed, update
+    public static final int CAN_ID = 0; //TODO: Update value to real ID 
+    public static final String BUS = "rio";
+    public static final double REDUCTION = 1.0; //TODO: If reduction is needed, update
 
-    // public static final int HOPPER_BEAM_BREAK_ID = 0;
-    // public static final boolean HOPPER_BEAM_BREAK = false;
+    // public static final int BEAM_BREAK_ID = 0;
+    // public static final boolean BEAM_BREAK = false;
   
     // Hopper Motor Config
-    public static final TalonFXConfiguration HOPPER_CONFIG = 
+    public static final TalonFXConfiguration CONFIG = 
       new TalonFXConfiguration()
             .withCurrentLimits(
               new CurrentLimitsConfigs()
-                .withSupplyCurrentLimit(35)
-                .withStatorCurrentLimit(35))
+                .withSupplyCurrentLimit(60)
+                .withStatorCurrentLimit(60))
             .withMotorOutput(
               new MotorOutputConfigs()
                 .withInverted(InvertedValue.CounterClockwise_Positive)

@@ -24,39 +24,24 @@ import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.Volta
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
-public class Hopper extends GenericRollerSystem<Hopper.HopperState> {
+public class Hopper
+    extends GenericRollerSystem<
+        Hopper.HopperState, HopperIOInputs, HopperIO, HopperIOInputsAutoLogged> {
 
   @RequiredArgsConstructor
   @Getter
   public enum HopperState implements VoltageState {
-
-    // Hopper States: On is on; spit is for when we spit out from intake; off is off
     ON(new LoggedTunableNumber("HopperAgitatorOnVoltage", 0.0)),
     SPIT(new LoggedTunableNumber("HopperAgitatorSpitVoltage", 0.0)),
     OFF(new LoggedTunableNumber("HopperAgitatorOffVoltage", 0.0));
 
-    private LoggedTunableNumber hopperVoltage;
-
-    HopperState(LoggedTunableNumber hopperVoltage) {
-      this.hopperVoltage = hopperVoltage;
-    }
-
-    @Override
-    public LoggedTunableNumber getVoltageSupplier() {
-      return hopperVoltage;
-    }
+    private final LoggedTunableNumber voltageSupplier;
   }
 
   private HopperState goalState = HopperState.OFF;
 
   public Hopper(HopperIO io) {
-    super("Hopper", io);
-  }
-
-  @Override
-  public void periodic() {
-    ((HopperIO) io).runVolts(goalState.getVoltageSupplier().getAsDouble());
-    super.periodic();
+    super("Hopper", io, new HopperIOInputsAutoLogged());
   }
 
   public void setGoalState(HopperState goalState) {

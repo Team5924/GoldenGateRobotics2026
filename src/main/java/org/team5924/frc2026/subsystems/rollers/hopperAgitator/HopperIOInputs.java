@@ -1,5 +1,5 @@
 /*
- * HopperIO.java
+ * HopperIOInputs.java
  */
 
 /* 
@@ -16,9 +16,10 @@
 
 package org.team5924.frc2026.subsystems.rollers.hopperAgitator;
 
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO;
+import org.littletonrobotics.junction.AutoLog;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO.GenericRollerSystemIOInputs;
 
-public interface HopperIO extends GenericRollerSystemIO<HopperIOInputs> {
-  // Runs Motor at inputted volts
-  default void runVolts(double volts) {}
+@AutoLog
+public class HopperIOInputs extends GenericRollerSystemIOInputs {
+  // public boolean isFull = false;
 }
