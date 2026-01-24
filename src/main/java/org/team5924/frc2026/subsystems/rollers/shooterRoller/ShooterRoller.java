@@ -45,7 +45,9 @@ public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRoll
 
   public ShooterRoller(ShooterRollerIO inputs) {
     super("ShooterRoller", inputs);
-    beamBreak = new DigitalInput(Constants.ShooterRoller.BEAM_BREAK_PORT);
+    if(beamBreak == null) {
+      beamBreak = new DigitalInput(Constants.ShooterRoller.BEAM_BREAK_PORT);
+    }
   }
 
   @Override

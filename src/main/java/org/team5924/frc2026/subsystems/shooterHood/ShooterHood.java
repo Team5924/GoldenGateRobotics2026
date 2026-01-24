@@ -73,7 +73,7 @@ public class ShooterHood extends SubsystemBase {
 
     Logger.recordOutput("ShooterHood/GoalState", goalState.toString());
     Logger.recordOutput("ShooterHood/CurrentState", RobotState.getInstance().getShooterHoodState());
-    Logger.recordOutput("ShooterHood/TargetRads", goalState.rads);
+    Logger.recordOutput("ShooterHood/TargetRads", goalState.rads.getAsDouble());
 
     shooterHoodMotorDisconnected.set(!inputs.shooterHoodMotorConnected);
 
@@ -85,7 +85,7 @@ public class ShooterHood extends SubsystemBase {
   }
 
   private double getShooterHoodPositionRads() {
-    return inputs.shooterHoodPositionRads / Constants.ShooterHood.REDUCTION;
+    return inputs.shooterHoodPositionRads;
   }
 
   public boolean isAtSetpoint() {

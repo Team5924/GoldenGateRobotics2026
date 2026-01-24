@@ -22,6 +22,7 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.DigitalInputsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -140,7 +141,13 @@ public final class ShooterHood {
         .withMotorOutput(
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake));
+            .withNeutralMode(NeutralModeValue.Brake))
+      .withSlot0(
+    new Slot0Configs()
+        .withKP(0)
+        .withKD(0)
+        .withKS(0)
+        .withKV(0)); // TODO: TUNE THESE VALUES 
 
     public static final CANdiConfiguration CANDI_CONFIG =
       new CANdiConfiguration()
