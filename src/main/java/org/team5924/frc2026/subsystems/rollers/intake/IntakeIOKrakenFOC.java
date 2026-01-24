@@ -23,10 +23,10 @@ public class IntakeIOKrakenFOC extends GenericRollerSystemIOKrakenFOC<IntakeIOIn
     implements IntakeIO {
   public IntakeIOKrakenFOC() {
     super(
-        Constants.ExampleRoller.CAN_ID,
-        Constants.ExampleRoller.BUS,
-        Constants.ExampleRoller.CONFIG,
-        Constants.ExampleRoller.REDUCTION);
+        Constants.Intake.CAN_ID,
+        Constants.Intake.BUS,
+        Constants.Intake.CONFIG,
+        Constants.Intake.REDUCTION);
   }
 
   public void updateInputs(IntakeIOInputs inputs) {

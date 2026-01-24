@@ -31,8 +31,8 @@ public class Intake
   @RequiredArgsConstructor
   @Getter
   public enum IntakeState implements VoltageState {
-    OFF(new LoggedTunableNumber("Intake/Idle", 0.0)),
-    SPITOUT(new LoggedTunableNumber("Intake/Shooting", -12.0)),
+    OFF(new LoggedTunableNumber("Intake/Off", 0.0)),
+    SPITOUT(new LoggedTunableNumber("Intake/Spitout", -12.0)),
     INTAKE(new LoggedTunableNumber("Intake/Intake", 12.0));
     private final LoggedTunableNumber voltageSupplier;
   }
