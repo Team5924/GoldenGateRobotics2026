@@ -43,9 +43,11 @@ public class SuperShooter extends SubsystemBase {
     }
   }
 
-  private ShooterState state = ShooterState.OFF;
+  @Getter private ShooterState goalState = ShooterState.OFF;
 
-  @Getter private ShooterState goalState;
+  public void setGoalState(ShooterState goalState) {
+    this.goalState = goalState;
+  }
 
   public SuperShooter(ShooterRoller roller, ShooterHood hood) {
     this.roller = roller;
@@ -54,25 +56,31 @@ public class SuperShooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    switch (state) {
+    switch (goalState) {
       case OFF:
         roller.setGoalState(ShooterRollerState.OFF);
         hood.setGoalState(ShooterHoodState.OFF);
+        break;
       case AUTO_SHOOTING:
         roller.setGoalState(ShooterRollerState.SHOOTING);
         hood.setGoalState(ShooterHoodState.AUTO_SHOOTING);
+        break;
       case BUMPER_SHOOTING:
         roller.setGoalState(ShooterRollerState.SHOOTING);
         hood.setGoalState(ShooterHoodState.BUMPER_SHOOTING);
+        break;
     case NEUTRAL_SHUFFLING:
         roller.setGoalState(ShooterRollerState.SHOOTING);
         hood.setGoalState(ShooterHoodState.NEUTRAL_SHUFFLING);
+        break;
     case OPPONENT_SHUFFLING:
         roller.setGoalState(ShooterRollerState.SHOOTING);
         hood.setGoalState(ShooterHoodState.OPPONENT_SHUFFLING);
+        break;
     case HOOD_MOVING:
         roller.setGoalState(ShooterRollerState.OFF);
         hood.setGoalState(ShooterHoodState.MOVING);
+        break;
     }
   }
 }

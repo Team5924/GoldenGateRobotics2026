@@ -105,7 +105,7 @@ public class ShooterHood extends SubsystemBase {
         DriverStation.reportError("Invalid goal ShooterHoodPivotState!", null);
         break;
       default:
-        RobotState.getInstance().setShooterHoodState(ShooterHoodState.OFF);
+        RobotState.getInstance().setShooterHoodState(goalState);
         io.setPosition(goalState.rads.getAsDouble());
         break;
     }

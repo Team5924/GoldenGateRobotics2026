@@ -24,7 +24,7 @@ public class ShooterRollerIOSim extends GenericRollerSystemIOSim implements Shoo
   public ShooterRollerIOSim() {
     super(
         DCMotor.getKrakenX60Foc(1),
-        Constants.ExampleRoller.REDUCTION,
-        Constants.ExampleRoller.SIM_MOI);
+        Constants.ShooterRoller.REDUCTION,
+        Constants.ShooterRoller.SIM_MOI);
   }
 }

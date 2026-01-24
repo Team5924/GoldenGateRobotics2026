@@ -32,7 +32,7 @@ public class ShooterHoodIOSim implements ShooterHoodIO {
     sim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
-                gearbox, Constants.Example.SIM_MOI, Constants.Example.REDUCTION),
+                gearbox, Constants.ShooterHood.SIM_MOI, Constants.ShooterHood.REDUCTION),
             gearbox);
   }
 

@@ -50,7 +50,6 @@ public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRoll
 
   @Override
   public void periodic() {
-    ((ShooterRollerIO) io).runVolts(goalState.getVoltageSupplier().getAsDouble());
     super.periodic();
   }
 
@@ -60,6 +59,6 @@ public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRoll
   }
 
   public static boolean isGamePieceDetected() {
-    return beamBreak.get();
+    return beamBreak != null && beamBreak.get();
   }
 }

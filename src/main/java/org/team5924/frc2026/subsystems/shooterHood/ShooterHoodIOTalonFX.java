@@ -96,6 +96,13 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   }
 
   @Override
+  public void setPosition(double rads) {
+    shooterHoodTalon.setControl(
+      positionOut.withPosition(Units.radiansToRotations(rads) * Constants.ShooterHood.REDUCTION)); 
+  }
+
+ 
+  @Override
   public void stop() {
     shooterHoodTalon.stopMotor();
   }
