@@ -24,7 +24,12 @@ import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.Volta
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
-public class ExampleRoller extends GenericRollerSystem<ExampleRoller.ExampleRollerState> {
+public class ExampleRoller
+    extends GenericRollerSystem<
+        ExampleRoller.ExampleRollerState,
+        ExampleRollerIOInputs,
+        ExampleRollerIO,
+        ExampleRollerIOInputsAutoLogged> {
   @RequiredArgsConstructor
   @Getter
   public enum ExampleRollerState implements VoltageState {
@@ -37,14 +42,8 @@ public class ExampleRoller extends GenericRollerSystem<ExampleRoller.ExampleRoll
 
   private ExampleRollerState goalState = ExampleRollerState.IDLE;
 
-  public ExampleRoller(ExampleRollerIO inputs) {
-    super("ExampleRoller", inputs);
-  }
-
-  @Override
-  public void periodic() {
-    ((ExampleRollerIO) io).runVolts(goalState.getVoltageSupplier().getAsDouble());
-    super.periodic();
+  public ExampleRoller(ExampleRollerIO io) {
+    super("ExampleRoller", io, new ExampleRollerIOInputsAutoLogged());
   }
 
   public void setGoalState(ExampleRollerState goalState) {
