@@ -131,7 +131,7 @@ public final class Constants {
             .withNeutralMode(NeutralModeValue.Brake));
   }
 
-public final class ShooterHood {
+  public final class ShooterHood {
     public static final int CAN_ID = 0; // TODO: Add CANID Ports
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
@@ -148,34 +148,15 @@ public final class ShooterHood {
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake))
       .withSlot0(
-    new Slot0Configs()
-        .withKP(0)
-        .withKD(0)
-        .withKS(0)
-        .withKV(0)); // TODO: TUNE THESE VALUES 
-
-    public static final CANdiConfiguration CANDI_CONFIG =
-      new CANdiConfiguration()
-        .withDigitalInputs(
-          new DigitalInputsConfigs()
-            .withS1CloseState(S1CloseStateValue.CloseWhenLow)
-            .withS2CloseState(S2CloseStateValue.CloseWhenLow));
-
-    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
-      new OpenLoopRampsConfigs()
-        .withDutyCycleOpenLoopRampPeriod(0.02)
-        .withTorqueOpenLoopRampPeriod(0.02)
-        .withVoltageOpenLoopRampPeriod(0.02);
-
-    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
-      new ClosedLoopRampsConfigs()
-        .withDutyCycleClosedLoopRampPeriod(0.02)
-        .withTorqueClosedLoopRampPeriod(0.02)
-        .withVoltageClosedLoopRampPeriod(0.02);
+          new Slot0Configs()
+              .withKP(0)
+              .withKD(0)
+              .withKS(0)
+              .withKV(0)); // TODO: TUNE THESE VALUES
   }
 
   public final class ShooterRoller {
-    public static final int CAN_ID = 0; // TODO: Add CANID Ports
+    public static final int CAN_ID = 0; // TODO: Add CANID Ports + Config later
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
     public static final double SIM_MOI = 0.001;

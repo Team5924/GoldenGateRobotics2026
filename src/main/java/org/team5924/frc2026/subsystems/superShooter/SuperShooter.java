@@ -32,11 +32,9 @@ public class SuperShooter extends SubsystemBase {
     AUTO_SHOOTING(),
     BUMPER_SHOOTING(),
     NEUTRAL_SHUFFLING(),
-    OPPONENT_SHUFFLING(),
-    HOOD_MOVING();
+    OPPONENT_SHUFFLING();
 
-    ShooterState() {
-    }
+    ShooterState() {}
   }
 
   @Getter private ShooterState goalState = ShooterState.OFF;
@@ -58,24 +56,20 @@ public class SuperShooter extends SubsystemBase {
         hood.setGoalState(ShooterHoodState.OFF);
         break;
       case AUTO_SHOOTING:
-        roller.setGoalState(ShooterRollerState.SHOOTING);
+        roller.setGoalState(ShooterRollerState.AUTO_SHOOTING);
         hood.setGoalState(ShooterHoodState.AUTO_SHOOTING);
         break;
       case BUMPER_SHOOTING:
-        roller.setGoalState(ShooterRollerState.SHOOTING);
+        roller.setGoalState(ShooterRollerState.BUMPER_SHOOTING);
         hood.setGoalState(ShooterHoodState.BUMPER_SHOOTING);
         break;
-    case NEUTRAL_SHUFFLING:
-        roller.setGoalState(ShooterRollerState.SHOOTING);
+      case NEUTRAL_SHUFFLING:
+        roller.setGoalState(ShooterRollerState.NEUTRAL_SHUFFLING);
         hood.setGoalState(ShooterHoodState.NEUTRAL_SHUFFLING);
         break;
-    case OPPONENT_SHUFFLING:
-        roller.setGoalState(ShooterRollerState.SHOOTING);
+      case OPPONENT_SHUFFLING:
+        roller.setGoalState(ShooterRollerState.OPPONENT_SHUFFLING);
         hood.setGoalState(ShooterHoodState.OPPONENT_SHUFFLING);
-        break;
-    case HOOD_MOVING:
-        roller.setGoalState(ShooterRollerState.OFF);
-        hood.setGoalState(ShooterHoodState.MOVING);
         break;
     }
   }

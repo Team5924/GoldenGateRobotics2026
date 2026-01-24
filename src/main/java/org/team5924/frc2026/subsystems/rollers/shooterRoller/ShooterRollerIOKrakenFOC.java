@@ -19,7 +19,7 @@ package org.team5924.frc2026.subsystems.rollers.shooterRoller;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOKrakenFOC;
 
-public class ShooterRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC
+public class ShooterRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC<ShooterRollerIOInputs>
     implements ShooterRollerIO {
 
   public ShooterRollerIOKrakenFOC() {

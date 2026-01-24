@@ -16,20 +16,6 @@
 
 package org.team5924.frc2026;
 
-<<<<<<< HEAD
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import org.team5924.frc2026.commands.drive.DriveCommands;
-import org.team5924.frc2026.generated.TunerConstants;
-import org.team5924.frc2026.subsystems.drive.Drive;
-import org.team5924.frc2026.subsystems.drive.GyroIO;
-import org.team5924.frc2026.subsystems.drive.GyroIOPigeon2;
-import org.team5924.frc2026.subsystems.drive.ModuleIO;
-import org.team5924.frc2026.subsystems.drive.ModuleIOSim;
-import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
-import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
-
-=======
->>>>>>> bff97d3cfd2a07ee7258c9e457f1121e0a4329d5
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -38,7 +24,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -67,9 +52,6 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-
-  // Trigger for Beam Break
-  Trigger gamePieceTrigger = new Trigger(() -> ShooterRoller.isGamePieceDetected());
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -184,7 +166,7 @@ public class RobotContainer {
                 () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
                 () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
 
-    // [driver] 0-DEGREE MODE            
+    // [driver] 0-DEGREE MODE
     driveController
         .a()
         .whileTrue(
@@ -193,7 +175,6 @@ public class RobotContainer {
                 () -> -driveController.getLeftY(),
                 () -> -driveController.getLeftX(),
                 () -> Rotation2d.kZero));
-
 
     // [driver] Switch to X pattern when X button is pressed
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));

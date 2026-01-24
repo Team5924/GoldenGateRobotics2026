@@ -16,43 +16,39 @@
 
 package org.team5924.frc2026.subsystems.rollers.shooterRoller;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
-public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRollerState> {
+public class ShooterRoller
+    extends GenericRollerSystem<
+        ShooterRoller.ShooterRollerState,
+        ShooterRollerIOInputs,
+        ShooterRollerIO,
+        ShooterRollerIOInputsAutoLogged> {
 
-  private static DigitalInput beamBreak;
+  // private static DigitalInput beamBreak;
 
   @RequiredArgsConstructor
   @Getter
-  public enum ShooterRollerState implements VoltageState {
-    SHOOTING(new LoggedTunableNumber("ShooterRoller/Shooting", 12.0)),
-    SHUFFLING(new LoggedTunableNumber("ShooterRoller/Shuffling", 12.0)),
-    OFF(new LoggedTunableNumber("ShooterRoller/Off", 0.0));
+  public enum ShooterRollerState implements VoltageState { // TODO: update voltage values
+    OFF(new LoggedTunableNumber("ShooterRoller/Off", 0)),
+    AUTO_SHOOTING(new LoggedTunableNumber("ShooterRoller/AutoShooting", -1)),
+    BUMPER_SHOOTING(new LoggedTunableNumber("ShooterRoller/BumperShooting", 8)),
+    NEUTRAL_SHUFFLING(new LoggedTunableNumber("ShooterRoller/NeutralShuffling", -1)),
+    OPPONENT_SHUFFLING(new LoggedTunableNumber("ShooterRoller/OpponentShuffling", -1));
 
-    private final DoubleSupplier voltageSupplier;
+    private final LoggedTunableNumber voltageSupplier;
   }
 
   private ShooterRollerState goalState = ShooterRollerState.OFF;
 
-  public ShooterRoller(ShooterRollerIO inputs) {
-    super("ShooterRoller", inputs);
-    if(beamBreak == null) {
-      beamBreak = new DigitalInput(Constants.ShooterRoller.BEAM_BREAK_PORT);
-    }
-  }
-
-  @Override
-  public void periodic() {
-    super.periodic();
+  public ShooterRoller(ShooterRollerIO io) {
+    super("ShooterRoller", io, new ShooterRollerIOInputsAutoLogged());
   }
 
   public void setGoalState(ShooterRollerState goalState) {
@@ -60,7 +56,7 @@ public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRoll
     RobotState.getInstance().setShooterRollerState(goalState);
   }
 
-  public static boolean isGamePieceDetected() {
-    return beamBreak != null && beamBreak.get();
-  }
+  // public static boolean isGamePieceDetected() {
+  //   return beamBreak != null && beamBreak.get();
+  // }
 }
