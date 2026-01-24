@@ -17,8 +17,9 @@
 package org.team5924.frc2026.subsystems.rollers.generic;
 
 import org.littletonrobotics.junction.AutoLog;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO.GenericRollerSystemIOInputs;
 
-public interface GenericRollerSystemIO {
+public interface GenericRollerSystemIO<Inputs extends GenericRollerSystemIOInputs> {
 
   @AutoLog
   abstract class GenericRollerSystemIOInputs {
@@ -44,7 +45,7 @@ public interface GenericRollerSystemIO {
     public double tempCelsius = 0.0;
   }
 
-  default void updateInputs(GenericRollerSystemIOInputs inputs) {}
+  default void updateInputs(Inputs inputs) {}
 
   /** Run roller at volts */
   default void runVolts(double volts) {}

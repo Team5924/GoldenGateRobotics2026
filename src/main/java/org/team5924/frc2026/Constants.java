@@ -35,7 +35,7 @@ import edu.wpi.first.wpilibj.RobotBase;
  * (log replay from a file).
  */
 public final class Constants {
-  public static final Mode simMode = Mode.REPLAY;
+  public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 
   public static enum Mode {
@@ -112,6 +112,8 @@ public final class Constants {
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
     public static final double SIM_MOI = 0.001;
+
+    public static final int BEAM_BREAK_ID = 1;
 
     public static final TalonFXConfiguration CONFIG =
       new TalonFXConfiguration()
