@@ -29,8 +29,10 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO.GenericRollerSystemIOInputs;
 
-public abstract class GenericRollerSystemIOKrakenFOC implements GenericRollerSystemIO {
+public abstract class GenericRollerSystemIOKrakenFOC<Inputs extends GenericRollerSystemIOInputs>
+    implements GenericRollerSystemIO<Inputs> {
   private final TalonFX talon;
 
   private final StatusSignal<Angle> position;
@@ -69,7 +71,7 @@ public abstract class GenericRollerSystemIOKrakenFOC implements GenericRollerSys
   }
 
   @Override
-  public void updateInputs(GenericRollerSystemIOInputs inputs) {
+  public void updateInputs(Inputs inputs) {
     inputs.motorConnected =
         BaseStatusSignal.refreshAll(
                 position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius)

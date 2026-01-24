@@ -28,6 +28,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DigitalInput;
 import org.team5924.frc2026.Constants;
 
 public class ExampleSystemIOTalonFX implements ExampleSystemIO {
@@ -38,6 +39,8 @@ public class ExampleSystemIOTalonFX implements ExampleSystemIO {
   private final StatusSignal<Current> exampleSupplyCurrent;
   private final StatusSignal<Current> exampleTorqueCurrent;
   private final StatusSignal<Temperature> exampleTempCelsius;
+
+  private final DigitalInput beamBreak = new DigitalInput(0);
 
   // Single shot for voltage mode, robot loop will call continuously
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
