@@ -16,13 +16,9 @@
 
 package org.team5924.frc2026.subsystems.rollers.exampleRoller;
 
-import org.littletonrobotics.junction.AutoLog;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO;
 
-public interface ExampleRollerIO extends GenericRollerSystemIO {
-  @AutoLog
-  public class ExampleRollerIOInputs extends GenericRollerSystemIOInputs {}
-
+public interface ExampleRollerIO extends GenericRollerSystemIO<ExampleRollerIOInputs> {
   /* Run roller at volts */
   default void runVolts(double volts) {}
 }

@@ -17,6 +17,7 @@
 package org.team5924.frc2026.subsystems.rollers.generic;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
@@ -28,8 +29,10 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO.GenericRollerSystemIOInputs;
 
-public abstract class GenericRollerSystemIOKrakenFOC implements GenericRollerSystemIO {
+public abstract class GenericRollerSystemIOKrakenFOC<Inputs extends GenericRollerSystemIOInputs>
+    implements GenericRollerSystemIO<Inputs> {
   private final TalonFX talon;
 
   private final StatusSignal<Angle> position;
@@ -48,7 +51,7 @@ public abstract class GenericRollerSystemIOKrakenFOC implements GenericRollerSys
   public GenericRollerSystemIOKrakenFOC(
       int id, String bus, TalonFXConfiguration config, double reduction) {
     this.reduction = reduction;
-    talon = new TalonFX(id, bus);
+    talon = new TalonFX(id, new CANBus(bus));
 
     // Configure TalonFX
     talon.getConfigurator().apply(config);
@@ -68,7 +71,7 @@ public abstract class GenericRollerSystemIOKrakenFOC implements GenericRollerSys
   }
 
   @Override
-  public void updateInputs(GenericRollerSystemIOInputs inputs) {
+  public void updateInputs(Inputs inputs) {
     inputs.motorConnected =
         BaseStatusSignal.refreshAll(
                 position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius)
