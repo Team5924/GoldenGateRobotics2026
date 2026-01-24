@@ -31,7 +31,7 @@ public class Indexer
   @Getter
   public enum IndexerState implements VoltageState {
     OFF(new LoggedTunableNumber("Indexer/OffVoltage", 0.0)),
-    INDEXING(new LoggedTunableNumber("Indexer/OffVoltage", 0.0));
+    INDEXING(new LoggedTunableNumber("Indexer/IndexingVoltage", 0.0));
 
     private final LoggedTunableNumber voltageSupplier;
   }

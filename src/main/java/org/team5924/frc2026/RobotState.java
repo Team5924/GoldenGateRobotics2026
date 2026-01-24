@@ -49,6 +49,6 @@ public class RobotState {
   /* ### Example Roller ### */
   @Getter @Setter private ExampleRollerState exampleRollerState = ExampleRollerState.IDLE;
 
-  /* ### Example Roller ### */
+  /* ### Indexer ### */
   @Getter @Setter private IndexerState indexerState = IndexerState.OFF;
 }
