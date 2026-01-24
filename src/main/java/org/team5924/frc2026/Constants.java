@@ -16,10 +16,13 @@
 
 package org.team5924.frc2026;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.CustomParamsConfigs;
 import com.ctre.phoenix6.configs.DigitalInputsConfigs;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -27,6 +30,8 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S2CloseStateValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
+
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -60,8 +65,32 @@ public final class Constants {
   //   public static final double FIELD_WIDTH = field.getFieldWidth();
   //   public static final double FIELD_LENGTH = field.getFieldLength();
   //   public static final double CORAL_STATION_RADIANS_NORMAL = 0.959931;
+ 
+  /* Shooter Hood */
+  public final class ShooterHood {
+    public static final int SHOOTER_HOOD_CAN_ID = 0; //Update Value
+    public static final int SHOOTER_HOOD_MOTOR_CAN_ID = 0; //Update Value
+    public static final String BUS = "rio";
+    public static final double REDUCTION = 1.0;//Update Value
+    
 
-
+    public static final TalonFXConfiguration CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(35)
+            .withStatorCurrentLimit(35))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake));
+    public static final CANcoderConfiguration CANCODER_CONFIG =
+      new CANcoderConfiguration()
+        .withMagnetSensor(new MagnetSensorConfigs()
+        .withAbsoluteSensorDiscontinuityPoint(0)//TODO:update to actual
+        .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)//TODO:update to actual
+        .withMagnetOffset(0));//TODO:update to actual
+       }
   /* General */
   public static final double LOOP_PERIODIC_SECONDS = 0.02;
 
@@ -71,6 +100,7 @@ public final class Constants {
     public static final double REDUCTION = 1.0;
     public static final double SIM_MOI = 0.001;
 
+  
     public static final TalonFXConfiguration CONFIG =
       new TalonFXConfiguration()
         .withCurrentLimits(
@@ -122,6 +152,6 @@ public final class Constants {
         .withMotorOutput(
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake));
+            .withNeutralMode(NeutralModeValue.Brake)); 
   }
 }
