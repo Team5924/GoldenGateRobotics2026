@@ -17,11 +17,10 @@
 package org.team5924.frc2026.subsystems.rollers.intake;
 
 import org.team5924.frc2026.Constants;
-import org.team5924.frc2026.subsystems.rollers.exampleRoller.ExampleRollerIO;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOKrakenFOC;
-import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO.IntakeIOInputs;
 
-public class IntakeIOKrakenFOC extends GenericRollerSystemIOKrakenFOC implements ExampleRollerIO {
+public class IntakeIOKrakenFOC extends GenericRollerSystemIOKrakenFOC<IntakeIOInputs>
+    implements IntakeIO {
   public IntakeIOKrakenFOC() {
     super(
         Constants.ExampleRoller.CAN_ID,

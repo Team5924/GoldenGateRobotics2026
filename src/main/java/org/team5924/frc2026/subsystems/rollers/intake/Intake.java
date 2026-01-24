@@ -16,33 +16,35 @@
 
 package org.team5924.frc2026.subsystems.rollers.intake;
 
-import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
-public class Intake extends GenericRollerSystem<Intake.IntakeState> {
+public class Intake
+    extends GenericRollerSystem<
+        Intake.IntakeState, IntakeIOInputs, IntakeIO, IntakeIOInputsAutoLogged> {
+
   @RequiredArgsConstructor
   @Getter
   public enum IntakeState implements VoltageState {
     OFF(new LoggedTunableNumber("Intake/Idle", 0.0)),
     SPITOUT(new LoggedTunableNumber("Intake/Shooting", -12.0)),
     INTAKE(new LoggedTunableNumber("Intake/Intake", 12.0));
-    private final DoubleSupplier voltageSupplier;
+    private final LoggedTunableNumber voltageSupplier;
   }
 
   private IntakeState goalState = IntakeState.OFF;
 
-  public Intake(IntakeIO inputs) {
-    super("Intake", inputs);
+  public Intake(IntakeIO io) {
+    super("Intake", io, new IntakeIOInputsAutoLogged());
   }
 
-  @Override
-  public void periodic() {
-    ((IntakeIO) io).runVolts(goalState.getVoltageSupplier().getAsDouble());
-    super.periodic();
+  public void setGoalState(IntakeState goalState) {
+    this.goalState = goalState;
+    RobotState.getInstance().setIntakeState(goalState);
   }
 }

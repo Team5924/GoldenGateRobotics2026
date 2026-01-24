@@ -1,5 +1,5 @@
 /*
- * IntakeIO.java
+ * IntakeIOInputs.java
  */
 
 /* 
@@ -16,9 +16,8 @@
 
 package org.team5924.frc2026.subsystems.rollers.intake;
 
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO;
+import org.littletonrobotics.junction.AutoLog;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO.GenericRollerSystemIOInputs;
 
-public interface IntakeIO extends GenericRollerSystemIO<IntakeIOInputs> {
-  /* Run roller at volts */
-  default void runVolts(double volts) {}
-}
+@AutoLog
+abstract class IntakeIOInputs extends GenericRollerSystemIOInputs {}
