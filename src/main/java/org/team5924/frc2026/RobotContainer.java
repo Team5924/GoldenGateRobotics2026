@@ -25,19 +25,24 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.team5924.frc2026.commands.drive.DriveCommands;
 import org.team5924.frc2026.generated.TunerConstants;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.drive.GyroIO;
 import org.team5924.frc2026.subsystems.drive.GyroIOPigeon2;
+import org.team5924.frc2026.subsystems.drive.GyroIOSim;
 import org.team5924.frc2026.subsystems.drive.ModuleIO;
-import org.team5924.frc2026.subsystems.drive.ModuleIOSim;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
+import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFXSim;
 
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private SwerveDriveSimulation driveSimulation = null;
   // private final ExampleSystem exampleSystem;
   // private final ExampleRoller exampleRoller;
 
@@ -59,20 +64,32 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontLeft),
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
-                new ModuleIOTalonFX(TunerConstants.BackRight));
+                new ModuleIOTalonFX(TunerConstants.BackRight),
+                (pose) -> {});
         // exampleSystem = new ExampleSystem(new ExampleSystemIOTalonFX());
         // exampleRoller = new ExampleRoller(new ExampleRollerIOKrakenFOC());
         break;
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
+        driveSimulation =
+            new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
+        SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
         drive =
             new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(TunerConstants.FrontLeft),
-                new ModuleIOSim(TunerConstants.FrontRight),
-                new ModuleIOSim(TunerConstants.BackLeft),
-                new ModuleIOSim(TunerConstants.BackRight));
+                new GyroIOSim(driveSimulation.getGyroSimulation()),
+                new ModuleIOTalonFXSim(TunerConstants.FrontLeft, driveSimulation.getModules()[0]),
+                new ModuleIOTalonFXSim(TunerConstants.FrontRight, driveSimulation.getModules()[1]),
+                new ModuleIOTalonFXSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
+                new ModuleIOTalonFXSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
+                driveSimulation::setSimulationWorldPose);
+        // vision = new Vision(drive,
+        // new VisionIOPhotonVisionSim(
+        // camera0Name, robotToCamera0,
+        // driveSimulation::getSimulatedDriveTrainPose),
+        // new VisionIOPhotonVisionSim(
+        // camera0Name, robotToCamera0,
+        // driveSimulation::getSimulatedDriveTrainPose);
         // exampleSystem = new ExampleSystem(new ExampleSystemIOSim());
         // exampleRoller = new ExampleRoller(new ExampleRollerIOSim());
         break;
@@ -85,9 +102,11 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
-                new ModuleIO() {});
+                new ModuleIO() {},
+                (pose) -> {});
         // exampleSystem = new ExampleSystem(new ExampleSystemIO() {});
         // exampleRoller = new ExampleRoller(new ExampleRollerIO() {});
+        // vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
         break;
     }
 
@@ -122,22 +141,41 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -driveController.getLeftY(),
-            () -> -driveController.getLeftX(),
-            () -> -driveController.getRightX()));
-
+    if (Constants.currentMode == Constants.Mode.SIM) {
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> -driveController.getLeftY(),
+              () -> -driveController.getRawAxis(0),
+              () -> -driveController.getRawAxis(2)));
+    } else {
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> -driveController.getLeftY(),
+              () -> -driveController.getLeftX(),
+              () -> -driveController.getRightX()));
+    }
     // [driver] SLOW MODE YIPE
     driveController
-        .a()
+        .y()
         .whileTrue(
             DriveCommands.joystickDrive(
                 drive,
                 () -> -driveController.getLeftY() * Constants.SLOW_MODE_MULTI,
                 () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
                 () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
+
+    // [driver] 0-DEGREE MODE            
+    driveController
+        .a()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driveController.getLeftY(),
+                () -> -driveController.getLeftX(),
+                () -> Rotation2d.kZero));
+
 
     // [driver] Switch to X pattern when X button is pressed
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -153,25 +191,41 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
+    final Runnable resetGyro =
+        Constants.currentMode == Constants.Mode.SIM
+            ? () ->
+                drive.setPose(
+                    driveSimulation
+                        .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose during
+            // simulation
+            : () ->
+                drive.setPose(
+                    new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
+    driveController.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+
     // // [operator] press a -> deploy example subystem up
     // operatorController
-    //     .a()
-    //     .onTrue(Commands.runOnce(() -> exampleSystem.setGoalState(ExampleSystemState.UP)));
+    // .a()
+    // .onTrue(Commands.runOnce(() ->
+    // exampleSystem.setGoalState(ExampleSystemState.UP)));
 
     // // [operator] release a -> stow example subystem
     // operatorController
-    //     .a()
-    //     .onFalse(Commands.runOnce(() -> exampleSystem.setGoalState(ExampleSystemState.STOW)));
+    // .a()
+    // .onFalse(Commands.runOnce(() ->
+    // exampleSystem.setGoalState(ExampleSystemState.STOW)));
 
     // // [operator] press b -> run example roller
     // operatorController
-    //     .b()
-    //     .onTrue(Commands.runOnce(() -> exampleRoller.setGoalState(ExampleRollerState.INTAKE)));
+    // .b()
+    // .onTrue(Commands.runOnce(() ->
+    // exampleRoller.setGoalState(ExampleRollerState.INTAKE)));
 
     // // [operator] release b -> run example roller
     // operatorController
-    //     .b()
-    //     .onFalse(Commands.runOnce(() -> exampleRoller.setGoalState(ExampleRollerState.IDLE)));
+    // .b()
+    // .onFalse(Commands.runOnce(() ->
+    // exampleRoller.setGoalState(ExampleRollerState.IDLE)));
   }
 
   /**
@@ -181,5 +235,24 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void resetSimulationField() {
+    if (Constants.currentMode != Constants.Mode.SIM) return;
+
+    driveSimulation.setSimulationWorldPose(new Pose2d(3, 3, new Rotation2d()));
+    SimulatedArena.getInstance().resetFieldForAuto();
+  }
+
+  public void updateSimulation() {
+    if (Constants.currentMode != Constants.Mode.SIM) return;
+
+    SimulatedArena.getInstance().simulationPeriodic();
+    Logger.recordOutput(
+        "FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
+    Logger.recordOutput(
+        "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
+    Logger.recordOutput(
+        "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
   }
 }

@@ -1,5 +1,5 @@
 /*
- * ExampleRollerIOSim.java
+ * ExampleRollerIOInputs.java
  */
 
 /* 
@@ -16,16 +16,10 @@
 
 package org.team5924.frc2026.subsystems.rollers.exampleRoller;
 
-import edu.wpi.first.math.system.plant.DCMotor;
-import org.team5924.frc2026.Constants;
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOSim;
+import org.littletonrobotics.junction.AutoLog;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO.GenericRollerSystemIOInputs;
 
-public class ExampleRollerIOSim extends GenericRollerSystemIOSim<ExampleRollerIOInputs>
-    implements ExampleRollerIO {
-  public ExampleRollerIOSim() {
-    super(
-        DCMotor.getKrakenX60Foc(1),
-        Constants.ExampleRoller.REDUCTION,
-        Constants.ExampleRoller.SIM_MOI);
-  }
+@AutoLog
+abstract class ExampleRollerIOInputs extends GenericRollerSystemIOInputs {
+  public boolean hasFuel;
 }
