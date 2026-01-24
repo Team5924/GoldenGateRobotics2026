@@ -141,18 +141,19 @@ public final class Constants {
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(35)
-            .withStatorCurrentLimit(35))
+            .withSupplyCurrentLimit(60)
+            .withStatorCurrentLimit(60))
         .withMotorOutput(
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake))
-      .withSlot0(
-          new Slot0Configs()
-              .withKP(0)
-              .withKD(0)
-              .withKS(0)
-              .withKV(0)); // TODO: TUNE THESE VALUES
+        .withSlot0(
+          new Slot0Configs() // TODO: TUNE THESE VALUES
+            .withKP(1)
+            .withKI(0)
+            .withKD(0)
+            .withKS(0) // TODO: ask CAD for these values later
+            .withKV(0));
   }
 
   public final class ShooterRoller {
