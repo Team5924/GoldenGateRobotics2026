@@ -22,6 +22,7 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.DigitalInputsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -114,6 +115,50 @@ public final class Constants {
     public static final double SIM_MOI = 0.001;
 
     public static final int BEAM_BREAK_ID = 1;
+
+    public static final TalonFXConfiguration CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(60)
+            .withStatorCurrentLimit(35))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake));
+  }
+
+  public final class ShooterHood {
+    public static final int CAN_ID = 0; // TODO: Add CANID Ports
+    public static final String BUS = "rio";
+    public static final double REDUCTION = 1.0;
+    public static final double SIM_MOI = 0.001;
+    
+    public static final TalonFXConfiguration CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(60)
+            .withStatorCurrentLimit(60))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.CounterClockwise_Positive) // TODO: test this direction
+            .withNeutralMode(NeutralModeValue.Brake))
+        .withSlot0(
+          new Slot0Configs() // TODO: TUNE THESE VALUES
+            .withKP(1)
+            .withKI(0)
+            .withKD(0)
+            .withKS(0) // TODO: ask CAD for these values later
+            .withKV(0));
+  }
+
+  public final class ShooterRoller {
+    public static final int CAN_ID = 0; // TODO: Add CANID Ports + Config later
+    public static final String BUS = "rio";
+    public static final double REDUCTION = 1.0;
+    public static final double SIM_MOI = 0.001;
+    public static final int BEAM_BREAK_PORT = 0;
 
     public static final TalonFXConfiguration CONFIG =
       new TalonFXConfiguration()

@@ -23,6 +23,9 @@ import lombok.Setter;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.team5924.frc2026.subsystems.exampleSystem.ExampleSystem.ExampleSystemState;
 import org.team5924.frc2026.subsystems.rollers.exampleRoller.ExampleRoller.ExampleRollerState;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
+import org.team5924.frc2026.subsystems.shooterHood.ShooterHood.ShooterHoodState;
+import org.team5924.frc2026.subsystems.superShooter.SuperShooter.ShooterState;
 
 @Getter
 public class RobotState {
@@ -45,6 +48,15 @@ public class RobotState {
   /* ### Example Subsystem ### */
   @Getter @Setter private ExampleSystemState exampleSystemState = ExampleSystemState.STOW;
 
+  /*### Shooter ### */
+  @Getter @Setter private ShooterState shooterState = ShooterState.OFF;
+
+  /*### Shooter Hood ### */
+  @Getter @Setter private ShooterHoodState shooterHoodState = ShooterHoodState.OFF;
+
   /* ### Example Roller ### */
   @Getter @Setter private ExampleRollerState exampleRollerState = ExampleRollerState.IDLE;
+
+  /*### Shooter Roller ### */
+  @Getter @Setter private ShooterRollerState shooterRollerState = ShooterRollerState.OFF;
 }
