@@ -1,5 +1,5 @@
 /*
- * ExampleRollerIOKrakenFOC.java
+ * ShooterRollerIOKrakenFOC.java
  */
 
 /* 
@@ -14,29 +14,24 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.exampleRoller;
+package org.team5924.frc2026.subsystems.rollers.shooterRoller;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOKrakenFOC;
 
-public class ExampleRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC<ExampleRollerIOInputs>
-    implements ExampleRollerIO {
+public class ShooterRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC<ShooterRollerIOInputs>
+    implements ShooterRollerIO {
 
-  private final DigitalInput beamBeak = new DigitalInput(Constants.ExampleRoller.BEAM_BREAK_ID);
-
-  public ExampleRollerIOKrakenFOC() {
+  public ShooterRollerIOKrakenFOC() {
     super(
-        Constants.ExampleRoller.CAN_ID,
-        Constants.ExampleRoller.BUS,
-        Constants.ExampleRoller.CONFIG,
-        Constants.ExampleRoller.REDUCTION);
+        Constants.ShooterRoller.CAN_ID,
+        Constants.ShooterRoller.BUS,
+        Constants.ShooterRoller.CONFIG,
+        Constants.ShooterRoller.REDUCTION);
   }
 
-  @Override
-  public void updateInputs(ExampleRollerIOInputs inputs) {
+  public void updateInputs(ShooterRollerIOInputs inputs) {
     super.updateInputs(inputs);
-    inputs.hasFuel = beamBeak.get();
   }
 
   @Override

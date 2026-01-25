@@ -1,5 +1,5 @@
 /*
- * ExampleRollerIO.java
+ * ShooterRollerIOInputs.java
  */
 
 /* 
@@ -14,11 +14,10 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.exampleRoller;
+package org.team5924.frc2026.subsystems.rollers.shooterRoller;
 
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO;
+import org.littletonrobotics.junction.AutoLog;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO.GenericRollerSystemIOInputs;
 
-public interface ExampleRollerIO extends GenericRollerSystemIO<ExampleRollerIOInputs> {
-  /* Run roller at volts */
-  default void runVolts(double volts) {}
-}
+@AutoLog
+abstract class ShooterRollerIOInputs extends GenericRollerSystemIOInputs {}

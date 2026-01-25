@@ -1,5 +1,5 @@
 /*
- * GenericRollerSystemIOSim.java
+ * ShooterHoodIOSim.java
  */
 
 /* 
@@ -14,7 +14,7 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.generic;
+package org.team5924.frc2026.subsystems.shooterHood;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -22,29 +22,29 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import org.team5924.frc2026.Constants;
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO.GenericRollerSystemIOInputs;
 
-public class GenericRollerSystemIOSim<Inputs extends GenericRollerSystemIOInputs>
-    implements GenericRollerSystemIO<Inputs> {
-  protected final DCMotorSim sim;
-  protected final DCMotor gearbox;
+public class ShooterHoodIOSim implements ShooterHoodIO {
+  private final DCMotorSim sim;
+  private final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
   private double appliedVoltage = 0.0;
 
-  public GenericRollerSystemIOSim(DCMotor motorModel, double reduction, double moi) {
-    gearbox = motorModel;
+  public ShooterHoodIOSim() {
     sim =
-        new DCMotorSim(LinearSystemId.createDCMotorSystem(motorModel, moi, reduction), motorModel);
+        new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(
+                gearbox, Constants.ShooterHood.SIM_MOI, Constants.ShooterHood.REDUCTION),
+            gearbox);
   }
 
   @Override
-  public void updateInputs(Inputs inputs) {
+  public void updateInputs(ShooterHoodIOInputs inputs) {
     if (DriverStation.isDisabled()) runVolts(0.0);
 
     sim.update(Constants.LOOP_PERIODIC_SECONDS);
-    inputs.positionRads = sim.getAngularPositionRad();
-    inputs.velocityRadsPerSec = sim.getAngularVelocityRadPerSec();
-    inputs.appliedVoltage = appliedVoltage;
-    inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
+    inputs.shooterHoodPositionRads = sim.getAngularPositionRad();
+    inputs.shooterHoodVelocityRadsPerSec = sim.getAngularVelocityRadPerSec();
+    inputs.shooterHoodAppliedVoltage = appliedVoltage;
+    inputs.shooterHoodSupplyCurrentAmps = sim.getCurrentDrawAmps();
   }
 
   @Override

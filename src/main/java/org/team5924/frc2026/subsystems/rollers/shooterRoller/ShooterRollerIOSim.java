@@ -1,5 +1,5 @@
 /*
- * ExampleRollerIOSim.java
+ * ShooterRollerIOSim.java
  */
 
 /* 
@@ -14,18 +14,18 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.exampleRoller;
+package org.team5924.frc2026.subsystems.rollers.shooterRoller;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOSim;
 
-public class ExampleRollerIOSim extends GenericRollerSystemIOSim<ExampleRollerIOInputs>
-    implements ExampleRollerIO {
-  public ExampleRollerIOSim() {
+public class ShooterRollerIOSim extends GenericRollerSystemIOSim<ShooterRollerIOInputs>
+    implements ShooterRollerIO {
+  public ShooterRollerIOSim() {
     super(
         DCMotor.getKrakenX60Foc(1),
-        Constants.ExampleRoller.REDUCTION,
-        Constants.ExampleRoller.SIM_MOI);
+        Constants.ShooterRoller.REDUCTION,
+        Constants.ShooterRoller.SIM_MOI);
   }
 }
