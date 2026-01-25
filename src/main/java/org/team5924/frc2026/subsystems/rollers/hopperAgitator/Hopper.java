@@ -18,6 +18,9 @@ package org.team5924.frc2026.subsystems.rollers.hopperAgitator;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import java.util.function.DoubleSupplier;
+
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
@@ -35,7 +38,7 @@ public class Hopper
     SPIT(new LoggedTunableNumber("HopperAgitatorSpitVoltage", 0.0)),
     OFF(new LoggedTunableNumber("HopperAgitatorOffVoltage", 0.0));
 
-    private final LoggedTunableNumber voltageSupplier;
+    private final DoubleSupplier voltageSupplier;
   }
 
   private HopperState goalState = HopperState.OFF;
