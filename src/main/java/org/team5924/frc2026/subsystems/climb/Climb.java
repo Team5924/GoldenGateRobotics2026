@@ -20,6 +20,9 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lombok.Getter;
+
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.Elastic;
@@ -40,13 +43,13 @@ public class Climb extends SubsystemBase {
     CLIMB_DOWN(new LoggedTunableNumber("Climb/ClimbDown", 0)),
     DEPLOY(new LoggedTunableNumber("Climb/Deploy", 0)),
     DROP(new LoggedTunableNumber("Climb/Drop", 0)),
-    MOVING(new LoggedTunableNumber("Climb/Moving", 0)),
+    MOVING(() -> 0.0),
     // voltage at which the climb subsystem motor moves when controlled by the operator
     OPERATOR_CONTROL(new LoggedTunableNumber("Climb/OperatorVoltage", 4.5));
 
-    private final LoggedTunableNumber rads;
+    private final DoubleSupplier rads;
 
-    ClimbState(LoggedTunableNumber rads) {
+    ClimbState(DoubleSupplier rads) {
       this.rads = rads;
     }
   }
@@ -73,7 +76,7 @@ public class Climb extends SubsystemBase {
 
     Logger.recordOutput("Climb/GoalState", goalState.toString());
     Logger.recordOutput("Climb/CurrentState", RobotState.getInstance().getClimbState());
-    Logger.recordOutput("Climb/TargetRads", goalState.rads);
+    Logger.recordOutput("Climb/TargetRads", goalState.rads.getAsDouble());
 
     climbMotorDisconnected.set(!inputs.climbMotorConnected);
 
