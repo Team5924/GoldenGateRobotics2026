@@ -127,9 +127,8 @@ public final class Constants {
             .withNeutralMode(NeutralModeValue.Brake));
   }
 
-   public final class Intake {
-    //TODO: Set CAN ID
-    public static final int CAN_ID = 0;
+  public final class Intake {
+    public static final int CAN_ID = 0; // TODO: Set CAN ID
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
     public static final double SIM_MOI = 0.001;
@@ -145,6 +144,4 @@ public final class Constants {
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
   }
-
-
 }
