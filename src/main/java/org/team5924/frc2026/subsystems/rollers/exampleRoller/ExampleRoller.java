@@ -18,6 +18,9 @@ package org.team5924.frc2026.subsystems.rollers.exampleRoller;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import java.util.function.DoubleSupplier;
+
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
@@ -33,11 +36,11 @@ public class ExampleRoller
   @RequiredArgsConstructor
   @Getter
   public enum ExampleRollerState implements VoltageState {
-    IDLE(new LoggedTunableNumber("ExampleRoller/Idle", 0.0)),
+    IDLE(() -> 0.0),
     SHOOTING(new LoggedTunableNumber("ExampleRoller/Shooting", 12.0)),
     INTAKE(new LoggedTunableNumber("ExampleRoller/Intake", -12.0));
 
-    private final LoggedTunableNumber voltageSupplier;
+    private final DoubleSupplier voltageSupplier;
   }
 
   private ExampleRollerState goalState = ExampleRollerState.IDLE;
