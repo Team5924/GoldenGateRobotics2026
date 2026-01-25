@@ -36,7 +36,7 @@ public class Hopper
   public enum HopperState implements VoltageState {
     ON(new LoggedTunableNumber("HopperAgitatorOnVoltage", 0.0)),
     SPIT(new LoggedTunableNumber("HopperAgitatorSpitVoltage", 0.0)),
-    OFF(new LoggedTunableNumber("HopperAgitatorOffVoltage", 0.0));
+    OFF(() -> 0.0);
 
     private final DoubleSupplier voltageSupplier;
   }
