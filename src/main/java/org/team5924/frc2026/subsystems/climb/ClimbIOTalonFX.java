@@ -99,4 +99,9 @@ public class ClimbIOTalonFX implements ClimbIO {
   public void stop() {
     climbTalon.stopMotor();
   }
+
+  @Override
+  public void setPosition(double rads) {
+    climbTalon.setControl(positionOut.withPosition(rads * Constants.Climb.REDUCTION));
+  }
 }
