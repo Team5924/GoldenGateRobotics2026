@@ -31,7 +31,7 @@ public class Indexer
   @Getter
   public enum IndexerState implements VoltageState {
     OFF(new LoggedTunableNumber("Indexer/OffVoltage", 0.0)),
-    INDEXING(new LoggedTunableNumber("Indexer/IndexingVoltage", 0.0));
+    INDEXING(new LoggedTunableNumber("Indexer/IndexingVoltage", 3.0));
 
     private final LoggedTunableNumber voltageSupplier;
   }
@@ -40,12 +40,6 @@ public class Indexer
 
   public Indexer(IndexerIO indexerIO) {
     super("Indexer", indexerIO, new IndexerIOInputsAutoLogged());
-  }
-
-  @Override
-  public void periodic() {
-    ((IndexerIO) io).runVolts(goalState.getVoltageSupplier().getAsDouble());
-    super.periodic();
   }
 
   public void setGoalState(IndexerState goalState) {
