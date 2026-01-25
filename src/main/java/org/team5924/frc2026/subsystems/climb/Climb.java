@@ -100,7 +100,7 @@ public class Climb extends SubsystemBase {
             "Climb: MOVING is an invalid goal state; it is a transition state!!", null);
         break;
       default:
-        RobotState.getInstance().setClimbState(ClimbState.STOW);
+        RobotState.getInstance().setClimbState(goalState);
         io.setPosition(goalState.rads.getAsDouble());
         break;
     }
