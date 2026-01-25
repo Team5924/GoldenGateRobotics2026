@@ -76,7 +76,7 @@ public class Climb extends SubsystemBase {
 
     Logger.recordOutput("Climb/GoalState", goalState.toString());
     Logger.recordOutput("Climb/CurrentState", RobotState.getInstance().getClimbState());
-    Logger.recordOutput("Climb/TargetRads", goalState.rads);
+    Logger.recordOutput("Climb/TargetRads", goalState.rads.getAsDouble());
 
     climbMotorDisconnected.set(!inputs.climbMotorConnected);
 
