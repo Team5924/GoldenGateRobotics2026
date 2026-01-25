@@ -18,6 +18,9 @@ package org.team5924.frc2026.subsystems.rollers.intake;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import java.util.function.DoubleSupplier;
+
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
@@ -31,10 +34,10 @@ public class Intake
   @RequiredArgsConstructor
   @Getter
   public enum IntakeState implements VoltageState {
-    OFF(new LoggedTunableNumber("Intake/Off", 0.0)),
+    OFF(() -> 0.0),
     SPITOUT(new LoggedTunableNumber("Intake/SpitOut", -12.0)),
     INTAKE(new LoggedTunableNumber("Intake/Intake", 12.0));
-    private final LoggedTunableNumber voltageSupplier;
+    private final DoubleSupplier voltageSupplier;
   }
 
   private IntakeState goalState = IntakeState.OFF;
