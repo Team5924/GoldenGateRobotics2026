@@ -18,6 +18,9 @@ package org.team5924.frc2026.subsystems.rollers.indexer;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import java.util.function.DoubleSupplier;
+
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
@@ -30,10 +33,10 @@ public class Indexer
   @RequiredArgsConstructor
   @Getter
   public enum IndexerState implements VoltageState {
-    OFF(new LoggedTunableNumber("Indexer/OffVoltage", 0.0)),
+    OFF(() -> 0.0),
     INDEXING(new LoggedTunableNumber("Indexer/IndexingVoltage", 3.0));
 
-    private final LoggedTunableNumber voltageSupplier;
+    private final DoubleSupplier voltageSupplier;
   }
 
   private IndexerState goalState = IndexerState.OFF;
