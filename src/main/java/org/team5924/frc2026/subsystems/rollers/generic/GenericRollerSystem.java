@@ -20,13 +20,15 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lombok.RequiredArgsConstructor;
+
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.inputs.LoggableInputs;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO.GenericRollerSystemIOInputs;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
-import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @RequiredArgsConstructor
 public abstract class GenericRollerSystem<
@@ -36,9 +38,9 @@ public abstract class GenericRollerSystem<
         InputsAutoLogged extends Inputs>
     extends SubsystemBase {
   public interface VoltageState {
-    LoggedTunableNumber getVoltageSupplier();
+    DoubleSupplier getVoltageSupplier();
 
-    default LoggedTunableNumber getHandoffVoltage() {
+    default DoubleSupplier getHandoffVoltage() {
       return getVoltageSupplier();
     }
   }
