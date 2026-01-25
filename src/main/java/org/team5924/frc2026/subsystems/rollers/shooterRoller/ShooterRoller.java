@@ -18,6 +18,9 @@ package org.team5924.frc2026.subsystems.rollers.shooterRoller;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import java.util.function.DoubleSupplier;
+
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
@@ -36,13 +39,16 @@ public class ShooterRoller
   @RequiredArgsConstructor
   @Getter
   public enum ShooterRollerState implements VoltageState { // TODO: update voltage values
-    OFF(new LoggedTunableNumber("ShooterRoller/Off", 0)),
-    AUTO_SHOOTING(new LoggedTunableNumber("ShooterRoller/AutoShooting", -1)),
-    BUMPER_SHOOTING(new LoggedTunableNumber("ShooterRoller/BumperShooting", 8)),
-    NEUTRAL_SHUFFLING(new LoggedTunableNumber("ShooterRoller/NeutralShuffling", -1)),
-    OPPONENT_SHUFFLING(new LoggedTunableNumber("ShooterRoller/OpponentShuffling", -1));
+    OFF(() -> 0.0),
 
-    private final LoggedTunableNumber voltageSupplier;
+    // using a double supplier of 0.0 because these will be auto-aim calculated values
+    AUTO_SHOOTING(() -> 0.0),
+    NEUTRAL_SHUFFLING(() -> 0.0),
+    OPPONENT_SHUFFLING(() -> 0.0),
+
+    BUMPER_SHOOTING(new LoggedTunableNumber("ShooterRoller/BumperShooting", 8));
+
+    private final DoubleSupplier voltageSupplier;
   }
 
   private ShooterRollerState goalState = ShooterRollerState.OFF;
