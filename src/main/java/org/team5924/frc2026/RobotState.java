@@ -24,6 +24,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.team5924.frc2026.subsystems.exampleSystem.ExampleSystem.ExampleSystemState;
 import org.team5924.frc2026.subsystems.rollers.exampleRoller.ExampleRoller.ExampleRollerState;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
+import org.team5924.frc2026.subsystems.rollers.indexer.Indexer.IndexerState;
 import org.team5924.frc2026.subsystems.rollers.hopperAgitator.Hopper.HopperState;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
 import org.team5924.frc2026.subsystems.shooterHood.ShooterHood.ShooterHoodState;
@@ -64,6 +65,8 @@ public class RobotState {
 
   /* ### Intake ### */
   @Getter @Setter private IntakeState intakeState = IntakeState.OFF;
+  /* ### Indexer ### */
+  @Getter @Setter private IndexerState indexerState = IndexerState.OFF;
   /*### Shooter Roller ### */
   @Getter @Setter private ShooterRollerState shooterRollerState = ShooterRollerState.OFF;
 }
