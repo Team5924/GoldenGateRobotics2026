@@ -191,6 +191,8 @@ public final class Constants {
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
   }
+  public final class Climb {
+    public static final int CAN_ID = 0;
 
 
 
@@ -211,6 +213,27 @@ public final class Constants {
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
+
+    public static final CANdiConfiguration CANDI_CONFIG =
+      new CANdiConfiguration()
+        .withDigitalInputs(
+          new DigitalInputsConfigs()
+            .withS1CloseState(S1CloseStateValue.CloseWhenLow)
+            .withS2CloseState(S2CloseStateValue.CloseWhenLow));
+
+    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
+      new OpenLoopRampsConfigs()
+        .withDutyCycleOpenLoopRampPeriod(0.02)
+        .withTorqueOpenLoopRampPeriod(0.02)
+        .withVoltageOpenLoopRampPeriod(0.02);
+
+    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
+      new ClosedLoopRampsConfigs()
+        .withDutyCycleClosedLoopRampPeriod(0.02)
+        .withTorqueClosedLoopRampPeriod(0.02)
+        .withVoltageClosedLoopRampPeriod(0.02);
+  }
+
   }
 }
 
