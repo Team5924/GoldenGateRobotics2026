@@ -20,5 +20,5 @@ import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO;
 
 public interface IntakeIO extends GenericRollerSystemIO<IntakeIOInputs> {
   /* Run roller at volts */
-  void runVolts(double volts);
+  default public void runVolts(double volts) {}
 }
