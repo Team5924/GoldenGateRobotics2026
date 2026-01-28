@@ -212,9 +212,11 @@ public final class Constants {
 
   public final class Indexer { //TODO: update these later
     public final static int CAN_ID = 0;
+    public final static int CAN_ID_INVERSE = 0;
     public final static int BEAM_BREAK_ID = 0;
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
+    public static final double REDUCTION_INVERSE = 1.0;
     public static final double SIM_MOI = 0.001;
 
     public static final TalonFXConfiguration CONFIG =
