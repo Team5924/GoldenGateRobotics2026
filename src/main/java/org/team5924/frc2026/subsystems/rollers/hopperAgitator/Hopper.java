@@ -16,11 +16,9 @@
 
 package org.team5924.frc2026.subsystems.rollers.hopperAgitator;
 
+import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.function.DoubleSupplier;
-
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
