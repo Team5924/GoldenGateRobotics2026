@@ -24,14 +24,14 @@ public class IndexerIOTalonFX extends GenericRollerSystemIOKrakenFOC<IndexerIOIn
 
   // private final DigitalInput beamBreak = new DigitalInput(Constants.Indexer.BEAM_BREAK_ID);
   private class IndexerInverseTalonFX extends GenericRollerSystemIOKrakenFOC<IndexerIOInputs> {
-    public IndexerInverseTalonFX () {
+    public IndexerInverseTalonFX() {
       super(
-        Constants.Indexer.CAN_ID_INVERSE,
-        Constants.Indexer.BUS,
-        Constants.Indexer.CONFIG,
-        Constants.Indexer.REDUCTION_INVERSE);
+          Constants.Indexer.CAN_ID_INVERSE,
+          Constants.Indexer.BUS,
+          Constants.Indexer.CONFIG,
+          Constants.Indexer.REDUCTION_INVERSE);
     }
-  } 
+  }
 
   // This is the other motor on indexer, the one that pushes up balls to shooter
   private final IndexerInverseTalonFX indexerInverse;
@@ -54,7 +54,6 @@ public class IndexerIOTalonFX extends GenericRollerSystemIOKrakenFOC<IndexerIOIn
   @Override
   public void runVolts(double volts) {
     super.runVolts(volts);
-    indexerInverse.runVolts(-1*volts);
+    indexerInverse.runVolts(-1 * volts);
   }
-
 }
