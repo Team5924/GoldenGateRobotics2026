@@ -91,4 +91,8 @@ public abstract class GenericRollerSystem<
     }
     wasMotorConnected = inputs.motorConnected;
   }
+
+  public void runVolts(double volts) {
+    io.runVolts(volts);
+  }
 }

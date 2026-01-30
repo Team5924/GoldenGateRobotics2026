@@ -20,6 +20,9 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lombok.Getter;
+
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.Elastic;
@@ -35,19 +38,19 @@ public class ShooterHood extends SubsystemBase {
       new LoggedTunableNumber("ShooterHoodPivotToleranceRads", .02);
   private final ShooterHoodIOInputsAutoLogged inputs = new ShooterHoodIOInputsAutoLogged();
 
-  public enum ShooterHoodState { // TODO: update angle rad values
-    OFF(new LoggedTunableNumber("ShooterHood/Off", 0)),
-    AUTO_SHOOTING(new LoggedTunableNumber("ShooterHood/AutoShooting", Math.toRadians(-1))),
-    BUMPER_SHOOTING(new LoggedTunableNumber("ShooterHood/BumperShooting", Math.toRadians(-1))),
-    NEUTRAL_SHUFFLING(new LoggedTunableNumber("ShooterHood/NeutralShuffling", Math.toRadians(-1))),
-    OPPONENT_SHUFFLING(
-        new LoggedTunableNumber("ShooterHood/OpponentShuffling", Math.toRadians(-1))),
-    MOVING(new LoggedTunableNumber("ShooterHood/Moving", -1)),
+  public enum ShooterHoodState {
+    OFF(() -> 0),
+    AUTO_SHOOTING(() -> -1),
+    BUMPER_SHOOTING(new LoggedTunableNumber("ShooterHood/BumperShooting", Math.toRadians(82))),
+    NEUTRAL_SHUFFLING(() -> 0),
+    OPPONENT_SHUFFLING(() -> 0),
+    MOVING(() -> 0),
+    // voltage speed at which to rotate the hood
     MANUAL((new LoggedTunableNumber("ShooterHood/Manual", -1)));
 
-    private final LoggedTunableNumber rads;
+    private final DoubleSupplier rads;
 
-    ShooterHoodState(LoggedTunableNumber rads) {
+    ShooterHoodState(DoubleSupplier rads) {
       this.rads = rads;
     }
   }
@@ -96,6 +99,10 @@ public class ShooterHood extends SubsystemBase {
 
   public void runVolts(double volts) {
     io.runVolts(volts);
+  }
+
+  public void setPosition(double rads) {
+    io.setPosition(rads);
   }
 
   public void setGoalState(ShooterHoodState goalState) {

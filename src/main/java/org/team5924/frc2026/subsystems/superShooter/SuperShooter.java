@@ -39,6 +39,18 @@ public class SuperShooter extends SubsystemBase {
 
   @Getter private ShooterState goalState = ShooterState.OFF;
 
+  public void runRollerVolts(double volts) {
+    roller.runVolts(volts);
+  }
+
+  public void runHoodVolts(double volts) {
+    hood.runVolts(volts);
+  }
+
+  public void setHoodPosition(double rads) {
+    hood.setPosition(rads);
+  }
+
   public void setGoalState(ShooterState goalState) {
     this.goalState = goalState;
   }

@@ -28,6 +28,9 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S2CloseStateValue;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -54,13 +57,21 @@ public final class Constants {
   public static final boolean ALLOW_ASSERTS = false;
   public static final double SLOW_MODE_MULTI = 0.5;
 
-  //   /* Field */
-  //   public static final double FIELD_BORDER_MARGIN = 0.5;
-  //   public static final AprilTagFieldLayout field =
-  //     AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
-  //   public static final double FIELD_WIDTH = field.getFieldWidth();
-  //   public static final double FIELD_LENGTH = field.getFieldLength();
-  //   public static final double CORAL_STATION_RADIANS_NORMAL = 0.959931;
+  
+  public final class Field {
+    // origin = rightmost corner of blue alliance wall
+    // +x -> towards red alliance wall
+
+    public static final double BORDER_MARGIN = 0.5;
+    public static final AprilTagFieldLayout field =
+        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+    public static final double WIDTH = field.getFieldWidth();
+    public static final double LENGTH = field.getFieldLength();
+
+    public static final double CENTER_X = WIDTH / 2;
+    public static final double CENTER_Y = LENGTH / 2;
+    public static final double HUB_X = CENTER_X - 143.50;
+  }
 
   /* Hopper Agitator */
   public final class Hopper {
