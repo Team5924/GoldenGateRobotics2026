@@ -18,6 +18,8 @@ package org.team5924.frc2026.commands.shooter;
 
 import java.util.function.DoubleSupplier;
 
+import org.team5924.frc2026.subsystems.shooterHood.ShooterHood;
+import org.team5924.frc2026.subsystems.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.subsystems.superShooter.SuperShooter;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -39,4 +41,18 @@ public class ShooterCommands {
       shooter
     );
   }
+
+  public static Command manualShooterHood(
+      ShooterHood hood,
+      DoubleSupplier hoodSupplier) {
+    return Commands.run(
+      () -> {
+        hood.setGoalState(ShooterHoodState.MANUAL);
+        hood.setInput(hoodSupplier.getAsDouble());
+      },
+      hood
+    );
+  }
+
+  // public 
 }

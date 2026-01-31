@@ -19,9 +19,10 @@ package org.team5924.frc2026.subsystems.shooterHood;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import lombok.Getter;
-
 import java.util.function.DoubleSupplier;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.RobotState;
@@ -38,24 +39,31 @@ public class ShooterHood extends SubsystemBase {
       new LoggedTunableNumber("ShooterHoodPivotToleranceRads", .02);
   private final ShooterHoodIOInputsAutoLogged inputs = new ShooterHoodIOInputsAutoLogged();
 
+  @RequiredArgsConstructor
+  @Getter
   public enum ShooterHoodState {
-    OFF(() -> 0),
-    AUTO_SHOOTING(() -> -1),
-    BUMPER_SHOOTING(new LoggedTunableNumber("ShooterHood/BumperShooting", Math.toRadians(82))),
-    NEUTRAL_SHUFFLING(() -> 0),
-    OPPONENT_SHUFFLING(() -> 0),
-    MOVING(() -> 0),
+    OFF(() -> 0.0),
+
     // voltage speed at which to rotate the hood
-    MANUAL((new LoggedTunableNumber("ShooterHood/Manual", -1)));
+    MANUAL((new LoggedTunableNumber("ShooterHood/Manual", .7))),
+
+    // using a double supplier of 0.0 because these will be auto-aim-calculated values
+    AUTO_SHOOTING(() -> 0.0),
+    NEUTRAL_SHUFFLING(() -> 0.0),
+    OPPONENT_SHUFFLING(() -> 0.0),
+
+    // TODO: test and update angle (rads)
+    BUMPER_SHOOTING(new LoggedTunableNumber("ShooterHood/BumperShooting", Math.toRadians(82))),
+
+    // in-between state
+    MOVING(() -> 0.0);
 
     private final DoubleSupplier rads;
-
-    ShooterHoodState(DoubleSupplier rads) {
-      this.rads = rads;
-    }
   }
 
   @Getter private ShooterHoodState goalState;
+
+  @Setter private double input;
 
   private final Alert shooterHoodMotorDisconnected;
   private final Notification shooterHoodMotorDisconnectedNotification;
@@ -80,6 +88,10 @@ public class ShooterHood extends SubsystemBase {
     Logger.recordOutput("ShooterHood/TargetRads", goalState.rads.getAsDouble());
 
     shooterHoodMotorDisconnected.set(!inputs.shooterHoodMotorConnected);
+
+    if (goalState.equals(ShooterHoodState.MANUAL) && Math.abs(input) > 0.01) {
+      io.runVolts(ShooterHoodState.MANUAL.getRads().getAsDouble() * input);
+    }
 
     // prevents error spam
     if (!inputs.shooterHoodMotorConnected && wasShooterHoodMotorConnected) {
@@ -106,10 +118,12 @@ public class ShooterHood extends SubsystemBase {
   }
 
   public void setGoalState(ShooterHoodState goalState) {
+    if (this.goalState.equals(goalState)) return;
+
     this.goalState = goalState;
     switch (goalState) {
-      case MANUAL: // TODO: handle manual state
-        RobotState.getInstance().setShooterHoodState(ShooterHoodState.MANUAL);
+      case MANUAL, AUTO_SHOOTING, NEUTRAL_SHUFFLING, OPPONENT_SHUFFLING: // TODO: handle manual state
+        RobotState.getInstance().setShooterHoodState(goalState);
         break;
       case MOVING:
         DriverStation.reportError(

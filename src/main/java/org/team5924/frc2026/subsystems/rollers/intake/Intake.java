@@ -34,7 +34,7 @@ public class Intake
   public enum IntakeState implements VoltageState {
     OFF(() -> 0.0),
     SPITOUT(new LoggedTunableNumber("Intake/SpitOut", -12.0)),
-    INTAKE(new LoggedTunableNumber("Intake/Intake", 12.0));
+    INTAKE(new LoggedTunableNumber("Intake/Intake", -12.0));
     private final DoubleSupplier voltageSupplier;
   }
 

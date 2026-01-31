@@ -17,6 +17,8 @@
 package org.team5924.frc2026;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -27,9 +29,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.team5924.frc2026.commands.drive.DriveCommands;
+import org.team5924.frc2026.commands.shooter.ShooterCommands;
 import org.team5924.frc2026.generated.TunerConstants;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.drive.GyroIO;
@@ -38,11 +42,44 @@ import org.team5924.frc2026.subsystems.drive.GyroIOSim;
 import org.team5924.frc2026.subsystems.drive.ModuleIO;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFXSim;
+import org.team5924.frc2026.subsystems.rollers.hopperAgitator.Hopper;
+import org.team5924.frc2026.subsystems.rollers.hopperAgitator.HopperIO;
+import org.team5924.frc2026.subsystems.rollers.hopperAgitator.HopperKrakenFOC;
+import org.team5924.frc2026.subsystems.rollers.hopperAgitator.Hopper.HopperState;
+import org.team5924.frc2026.subsystems.rollers.hopperAgitator.Hopper;
+import org.team5924.frc2026.subsystems.rollers.indexer.Indexer;
+import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIO;
+import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIOTalonFX;
+import org.team5924.frc2026.subsystems.rollers.indexer.Indexer.IndexerState;
+import org.team5924.frc2026.subsystems.rollers.intake.Intake;
+import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
+import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
+import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOKrakenFOC;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIO;
+import org.team5924.frc2026.subsystems.rollers.intake.Intake;
+import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOKrakenFOC;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIO;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOKrakenFOC;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
+import org.team5924.frc2026.subsystems.shooterHood.ShooterHood;
+import org.team5924.frc2026.subsystems.shooterHood.ShooterHoodIO;
+import org.team5924.frc2026.subsystems.shooterHood.ShooterHoodIOTalonFX;
+import org.team5924.frc2026.subsystems.shooterHood.ShooterHood.ShooterHoodState;
+import org.team5924.frc2026.subsystems.superShooter.SuperShooter;
+import org.team5924.frc2026.subsystems.superShooter.SuperShooter.ShooterState;
 
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private SwerveDriveSimulation driveSimulation = null;
+  private final SuperShooter shooterSystem;
+  private final Hopper hopperSystem;
+  private final Intake intakeSystem;
+  private final Indexer indexerSystem;
+
+  private final ShooterHood shooterHood;
+  private final ShooterRoller shooterRoller;
   // private final ExampleSystem exampleSystem;
   // private final ExampleRoller exampleRoller;
 
@@ -68,6 +105,13 @@ public class RobotContainer {
                 (pose) -> {});
         // exampleSystem = new ExampleSystem(new ExampleSystemIOTalonFX());
         // exampleRoller = new ExampleRoller(new ExampleRollerIOKrakenFOC());
+        shooterSystem =
+            new SuperShooter(
+                new ShooterRoller(new ShooterRollerIOKrakenFOC()),
+                new ShooterHood(new ShooterHoodIOTalonFX()));
+        hopperSystem = new Hopper(new HopperKrakenFOC());
+        intakeSystem = new Intake(new IntakeIOKrakenFOC());
+        indexerSystem = new Indexer(new IndexerIOTalonFX());
         break;
 
       case SIM:
@@ -92,6 +136,13 @@ public class RobotContainer {
         // driveSimulation::getSimulatedDriveTrainPose);
         // exampleSystem = new ExampleSystem(new ExampleSystemIOSim());
         // exampleRoller = new ExampleRoller(new ExampleRollerIOSim());
+        shooterSystem =
+            new SuperShooter(
+                new ShooterRoller(new ShooterRollerIOKrakenFOC()),
+                new ShooterHood(new ShooterHoodIOTalonFX()));
+        hopperSystem = new Hopper(new HopperKrakenFOC());
+        intakeSystem = new Intake(new IntakeIOKrakenFOC());
+        indexerSystem = new Indexer(new IndexerIOTalonFX());
         break;
 
       default:
@@ -107,8 +158,18 @@ public class RobotContainer {
         // exampleSystem = new ExampleSystem(new ExampleSystemIO() {});
         // exampleRoller = new ExampleRoller(new ExampleRollerIO() {});
         // vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
+        shooterSystem =
+            new SuperShooter(
+                new ShooterRoller(new ShooterRollerIO() {}),
+                new ShooterHood(new ShooterHoodIO() {}));
+        hopperSystem = new Hopper(new HopperIO() {});
+        intakeSystem = new Intake(new IntakeIO() {});
+        indexerSystem = new Indexer(new IndexerIO() {});
         break;
     }
+
+    shooterHood = shooterSystem.getHood();
+    shooterRoller = shooterSystem.getRoller();
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -225,6 +286,42 @@ public class RobotContainer {
     // .b()
     // .onFalse(Commands.runOnce(() ->
     // exampleRoller.setGoalState(ExampleRollerState.IDLE)));
+    
+    operatorController
+        .leftTrigger()
+        .onTrue(Commands.runOnce(() -> intakeSystem.setGoalState(IntakeState.INTAKE)));
+    operatorController
+        .leftTrigger()
+        .onFalse(Commands.runOnce(() -> intakeSystem.setGoalState(IntakeState.OFF)));
+
+    operatorController.rightBumper().onTrue(Commands.runOnce(() ->
+    {
+        shooterRoller.setGoalState(ShooterRollerState.BUMPER_SHOOTING);
+    }));
+
+    operatorController.rightBumper().onFalse(Commands.runOnce(() ->
+    {
+        shooterRoller.setGoalState(ShooterRollerState.OFF);
+    }));
+
+    operatorController.leftBumper().onTrue(Commands.runOnce(() ->
+    {
+        hopperSystem.setGoalState(HopperState.ON);
+        indexerSystem.setGoalState(IndexerState.INDEXING);
+    }));
+
+    operatorController.leftBumper().onFalse(Commands.runOnce(() ->
+    {
+        hopperSystem.setGoalState(HopperState.OFF);
+        indexerSystem.setGoalState(IndexerState.OFF);
+    }));
+
+    // operatorController.leftStick().onChange(Commands.runOnce(() -> {
+    //     shooterHood.setGoalState(ShooterHoodState.MANUAL);
+    //     shooterHood.setInput(driveController.getLeftY());
+    // }));
+
+    shooterHood.setDefaultCommand(ShooterCommands.manualShooterHood(shooterHood, () -> operatorController.getLeftY()));
   }
 
   /**

@@ -75,7 +75,7 @@ public final class Constants {
 
   /* Hopper Agitator */
   public final class Hopper {
-    public static final int CAN_ID = 0; //TODO: Update value to real ID 
+    public static final int CAN_ID = 21; 
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0; //TODO: If reduction is needed, update
 
@@ -160,7 +160,7 @@ public final class Constants {
   }
 
   public final class ShooterHood {
-    public static final int CAN_ID = 0; // TODO: Add CANID Ports
+    public static final int CAN_ID = 22; // TODO: Add CANID Ports
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
     public static final double SIM_MOI = 0.001;
@@ -185,7 +185,7 @@ public final class Constants {
   }
 
   public final class ShooterRoller {
-    public static final int CAN_ID = 0; // TODO: Add CANID Ports + Config later
+    public static final int CAN_ID = 23; // TODO: Add CANID Ports + Config later
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
     public static final double SIM_MOI = 0.001;
@@ -204,7 +204,7 @@ public final class Constants {
   }
 
   public final class Intake {
-    public static final int CAN_ID = 0; // TODO: Set CAN ID
+    public static final int CAN_ID = 20; // TODO: Set CAN ID
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
     public static final double SIM_MOI = 0.001;
@@ -222,8 +222,8 @@ public final class Constants {
   }
 
   public final class Indexer { //TODO: update these later
-    public final static int CAN_ID = 0;
-    public final static int CAN_ID_INVERSE = 0;
+    public final static int CAN_ID = 24;
+    public final static int CAN_ID_INVERSE = 25;
     public final static int BEAM_BREAK_ID = 0;
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
@@ -242,5 +242,4 @@ public final class Constants {
             .withNeutralMode(NeutralModeValue.Brake));
   }
 }
-
 
