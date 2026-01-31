@@ -26,6 +26,7 @@ import org.team5924.frc2026.subsystems.exampleSystem.ExampleSystem.ExampleSystem
 import org.team5924.frc2026.subsystems.rollers.exampleRoller.ExampleRoller.ExampleRollerState;
 import org.team5924.frc2026.subsystems.rollers.hopperAgitator.Hopper.HopperState;
 import org.team5924.frc2026.subsystems.rollers.indexer.Indexer.IndexerState;
+import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
 import org.team5924.frc2026.subsystems.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.subsystems.superShooter.SuperShooter.ShooterState;
@@ -63,6 +64,8 @@ public class RobotState {
   /* ### Example Roller ### */
   @Getter @Setter private ExampleRollerState exampleRollerState = ExampleRollerState.IDLE;
 
+  /* ### Intake ### */
+  @Getter @Setter private IntakeState intakeState = IntakeState.OFF;
   /* ### Climb ### */
   @Getter @Setter private ClimbState climbState = ClimbState.STOW;
   /* ### Indexer ### */
