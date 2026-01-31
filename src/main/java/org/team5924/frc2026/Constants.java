@@ -193,9 +193,21 @@ public final class Constants {
   }
   public final class Climb {
     public static final int CAN_ID = 0;
+    public static final String BUS = "rio";
+    public static final double REDUCTION = 1.0;
+    public static final TalonFXConfiguration CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(35)
+            .withStatorCurrentLimit(35))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake));
 
 
-
+  }
   public final class Indexer { //TODO: update these later
     public final static int CAN_ID = 0;
     public final static int BEAM_BREAK_ID = 0;
@@ -234,7 +246,8 @@ public final class Constants {
         .withVoltageClosedLoopRampPeriod(0.02);
   }
 
-  }
+
+
 }
 
 
