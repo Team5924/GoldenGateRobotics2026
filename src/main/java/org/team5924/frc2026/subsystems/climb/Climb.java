@@ -19,11 +19,10 @@ package org.team5924.frc2026.subsystems.climb;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import lombok.Getter;
-
 import java.util.function.DoubleSupplier;
-
+import lombok.Getter;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.inputs.LoggableInputs;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
@@ -72,7 +71,7 @@ public class Climb extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Climb", inputs);
+    Logger.processInputs("Climb", (LoggableInputs) inputs);
 
     Logger.recordOutput("Climb/GoalState", goalState.toString());
     Logger.recordOutput("Climb/CurrentState", RobotState.getInstance().getClimbState());
