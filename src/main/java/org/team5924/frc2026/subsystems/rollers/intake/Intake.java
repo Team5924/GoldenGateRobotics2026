@@ -1,5 +1,5 @@
 /*
- * ExampleRoller.java
+ * Intake.java
  */
 
 /* 
@@ -14,7 +14,7 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.exampleRoller;
+package org.team5924.frc2026.subsystems.rollers.intake;
 
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
@@ -25,30 +25,27 @@ import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.Volta
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
-public class ExampleRoller
+public class Intake
     extends GenericRollerSystem<
-        ExampleRoller.ExampleRollerState,
-        ExampleRollerIOInputs,
-        ExampleRollerIO,
-        ExampleRollerIOInputsAutoLogged> {
+        Intake.IntakeState, IntakeIOInputs, IntakeIO, IntakeIOInputsAutoLogged> {
+
   @RequiredArgsConstructor
   @Getter
-  public enum ExampleRollerState implements VoltageState {
-    IDLE(() -> 0.0),
-    SHOOTING(new LoggedTunableNumber("ExampleRoller/Shooting", 12.0)),
-    INTAKE(new LoggedTunableNumber("ExampleRoller/Intake", -12.0));
-
+  public enum IntakeState implements VoltageState {
+    OFF(() -> 0.0),
+    SPITOUT(new LoggedTunableNumber("Intake/SpitOut", -12.0)),
+    INTAKE(new LoggedTunableNumber("Intake/Intake", 12.0));
     private final DoubleSupplier voltageSupplier;
   }
 
-  private ExampleRollerState goalState = ExampleRollerState.IDLE;
+  private IntakeState goalState = IntakeState.OFF;
 
-  public ExampleRoller(ExampleRollerIO io) {
-    super("ExampleRoller", io, new ExampleRollerIOInputsAutoLogged());
+  public Intake(IntakeIO io) {
+    super("Intake", io, new IntakeIOInputsAutoLogged());
   }
 
-  public void setGoalState(ExampleRollerState goalState) {
+  public void setGoalState(IntakeState goalState) {
     this.goalState = goalState;
-    RobotState.getInstance().setExampleRollerState(goalState);
+    RobotState.getInstance().setIntakeState(goalState);
   }
 }

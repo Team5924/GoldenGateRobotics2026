@@ -1,5 +1,5 @@
 /*
- * ExampleRollerIO.java
+ * IntakeIO.java
  */
 
 /* 
@@ -14,11 +14,8 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.exampleRoller;
+package org.team5924.frc2026.subsystems.rollers.intake;
 
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO;
 
-public interface ExampleRollerIO extends GenericRollerSystemIO<ExampleRollerIOInputs> {
-  /* Run roller at volts */
-  default void runVolts(double volts) {}
-}
+public interface IntakeIO extends GenericRollerSystemIO<IntakeIOInputs> {}

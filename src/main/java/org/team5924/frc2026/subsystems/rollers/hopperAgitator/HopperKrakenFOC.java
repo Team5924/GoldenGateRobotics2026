@@ -1,5 +1,5 @@
 /*
- * ExampleRollerIOKrakenFOC.java
+ * HopperKrakenFOC.java
  */
 
 /* 
@@ -14,29 +14,28 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.exampleRoller;
+package org.team5924.frc2026.subsystems.rollers.hopperAgitator;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import org.team5924.frc2026.Constants;
+// import edu.wpi.first.wpilibj.DigitalInput;
+import org.team5924.frc2026.Constants.Hopper;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOKrakenFOC;
 
-public class ExampleRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC<ExampleRollerIOInputs>
-    implements ExampleRollerIO {
+public class HopperKrakenFOC extends GenericRollerSystemIOKrakenFOC<HopperIOInputs>
+    implements HopperIO {
+  /* Still undecided whether add a beambreak for if hopper is full*/
 
-  private final DigitalInput beamBeak = new DigitalInput(Constants.ExampleRoller.BEAM_BREAK_ID);
+  // private static final DigitalInput fullBeamBreakSensor;
 
-  public ExampleRollerIOKrakenFOC() {
-    super(
-        Constants.ExampleRoller.CAN_ID,
-        Constants.ExampleRoller.BUS,
-        Constants.ExampleRoller.CONFIG,
-        Constants.ExampleRoller.REDUCTION);
+  public HopperKrakenFOC() {
+    super(Hopper.CAN_ID, Hopper.BUS, Hopper.CONFIG, Hopper.REDUCTION);
+
+    // fullBeamBreakSensor = Constants.HOPPER_BEAM_BREAK_ID
   }
 
   @Override
-  public void updateInputs(ExampleRollerIOInputs inputs) {
+  public void updateInputs(HopperIOInputs inputs) {
     super.updateInputs(inputs);
-    inputs.hasFuel = beamBeak.get();
+    // inputs.isFull = fullBeamBreakSensor.get();
   }
 
   @Override

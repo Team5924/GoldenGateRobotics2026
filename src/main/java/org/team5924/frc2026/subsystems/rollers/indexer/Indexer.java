@@ -1,5 +1,5 @@
 /*
- * ExampleRoller.java
+ * Indexer.java
  */
 
 /* 
@@ -14,7 +14,7 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.exampleRoller;
+package org.team5924.frc2026.subsystems.rollers.indexer;
 
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
@@ -25,30 +25,26 @@ import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.Volta
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
-public class ExampleRoller
+public class Indexer
     extends GenericRollerSystem<
-        ExampleRoller.ExampleRollerState,
-        ExampleRollerIOInputs,
-        ExampleRollerIO,
-        ExampleRollerIOInputsAutoLogged> {
+        Indexer.IndexerState, IndexerIOInputs, IndexerIO, IndexerIOInputsAutoLogged> {
   @RequiredArgsConstructor
   @Getter
-  public enum ExampleRollerState implements VoltageState {
-    IDLE(() -> 0.0),
-    SHOOTING(new LoggedTunableNumber("ExampleRoller/Shooting", 12.0)),
-    INTAKE(new LoggedTunableNumber("ExampleRoller/Intake", -12.0));
+  public enum IndexerState implements VoltageState {
+    OFF(() -> 0.0),
+    INDEXING(new LoggedTunableNumber("Indexer/IndexingVoltage", 3.0));
 
     private final DoubleSupplier voltageSupplier;
   }
 
-  private ExampleRollerState goalState = ExampleRollerState.IDLE;
+  private IndexerState goalState = IndexerState.OFF;
 
-  public ExampleRoller(ExampleRollerIO io) {
-    super("ExampleRoller", io, new ExampleRollerIOInputsAutoLogged());
+  public Indexer(IndexerIO indexerIO) {
+    super("Indexer", indexerIO, new IndexerIOInputsAutoLogged());
   }
 
-  public void setGoalState(ExampleRollerState goalState) {
+  public void setGoalState(IndexerState goalState) {
     this.goalState = goalState;
-    RobotState.getInstance().setExampleRollerState(goalState);
+    RobotState.getInstance().setIndexerState(goalState);
   }
 }

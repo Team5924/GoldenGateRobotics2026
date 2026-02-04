@@ -1,5 +1,5 @@
 /*
- * ExampleRollerIO.java
+ * IndexerIO.java
  */
 
 /* 
@@ -14,11 +14,11 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.exampleRoller;
+package org.team5924.frc2026.subsystems.rollers.indexer;
 
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO;
 
-public interface ExampleRollerIO extends GenericRollerSystemIO<ExampleRollerIOInputs> {
-  /* Run roller at volts */
+public interface IndexerIO extends GenericRollerSystemIO<IndexerIOInputs> {
+
   default void runVolts(double volts) {}
 }

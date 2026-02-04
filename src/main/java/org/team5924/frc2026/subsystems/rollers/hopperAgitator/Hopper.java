@@ -1,5 +1,5 @@
 /*
- * ExampleRoller.java
+ * Hopper.java
  */
 
 /* 
@@ -14,7 +14,7 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.exampleRoller;
+package org.team5924.frc2026.subsystems.rollers.hopperAgitator;
 
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
@@ -25,30 +25,28 @@ import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.Volta
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
-public class ExampleRoller
+public class Hopper
     extends GenericRollerSystem<
-        ExampleRoller.ExampleRollerState,
-        ExampleRollerIOInputs,
-        ExampleRollerIO,
-        ExampleRollerIOInputsAutoLogged> {
+        Hopper.HopperState, HopperIOInputs, HopperIO, HopperIOInputsAutoLogged> {
+
   @RequiredArgsConstructor
   @Getter
-  public enum ExampleRollerState implements VoltageState {
-    IDLE(() -> 0.0),
-    SHOOTING(new LoggedTunableNumber("ExampleRoller/Shooting", 12.0)),
-    INTAKE(new LoggedTunableNumber("ExampleRoller/Intake", -12.0));
+  public enum HopperState implements VoltageState {
+    ON(new LoggedTunableNumber("HopperAgitatorOnVoltage", 0.0)),
+    SPIT(new LoggedTunableNumber("HopperAgitatorSpitVoltage", 0.0)),
+    OFF(() -> 0.0);
 
     private final DoubleSupplier voltageSupplier;
   }
 
-  private ExampleRollerState goalState = ExampleRollerState.IDLE;
+  private HopperState goalState = HopperState.OFF;
 
-  public ExampleRoller(ExampleRollerIO io) {
-    super("ExampleRoller", io, new ExampleRollerIOInputsAutoLogged());
+  public Hopper(HopperIO io) {
+    super("Hopper", io, new HopperIOInputsAutoLogged());
   }
 
-  public void setGoalState(ExampleRollerState goalState) {
+  public void setGoalState(HopperState goalState) {
     this.goalState = goalState;
-    RobotState.getInstance().setExampleRollerState(goalState);
+    RobotState.getInstance().setHopperState(goalState);
   }
 }
