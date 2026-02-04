@@ -22,10 +22,10 @@ import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOSim;
 
 public class ShooterRollerIOSim extends GenericRollerSystemIOSim<ShooterRollerIOInputs>
     implements ShooterRollerIO {
-  public ShooterRollerIOSim() {
+  public ShooterRollerIOSim(int number) {
     super(
         DCMotor.getKrakenX60Foc(1),
-        Constants.ShooterRoller.REDUCTION,
-        Constants.ShooterRoller.SIM_MOI);
+        number == 0 ? Constants.ShooterRollerLeft.REDUCTION : Constants.ShooterHoodRight.REDUCTION,
+        number == 0 ? Constants.ShooterRollerLeft.SIM_MOI : Constants.ShooterRollerRight.SIM_MOI);
   }
 }

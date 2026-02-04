@@ -38,11 +38,21 @@ import org.team5924.frc2026.subsystems.drive.GyroIOSim;
 import org.team5924.frc2026.subsystems.drive.ModuleIO;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFXSim;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIO;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOKrakenFOC;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOSim;
+import org.team5924.frc2026.subsystems.shooterHood.ShooterHood;
+import org.team5924.frc2026.subsystems.shooterHood.ShooterHoodIO;
+import org.team5924.frc2026.subsystems.shooterHood.ShooterHoodIOSim;
+import org.team5924.frc2026.subsystems.shooterHood.ShooterHoodIOTalonFX;
+import org.team5924.frc2026.subsystems.superShooter.SuperShooter;
 
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private SwerveDriveSimulation driveSimulation = null;
+  private final SuperShooter shooterSystem;
   // private final ExampleSystem exampleSystem;
   // private final ExampleRoller exampleRoller;
 
@@ -66,6 +76,10 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight),
                 (pose) -> {});
+        shooterSystem =
+            new SuperShooter(
+                new ShooterRoller(new ShooterRollerIOKrakenFOC(0)),
+                new ShooterHood(new ShooterHoodIOTalonFX(0)));
         // exampleSystem = new ExampleSystem(new ExampleSystemIOTalonFX());
         // exampleRoller = new ExampleRoller(new ExampleRollerIOKrakenFOC());
         break;
@@ -83,6 +97,10 @@ public class RobotContainer {
                 new ModuleIOTalonFXSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
                 new ModuleIOTalonFXSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
                 driveSimulation::setSimulationWorldPose);
+        shooterSystem =
+            new SuperShooter(
+                new ShooterRoller(new ShooterRollerIOSim(0)),
+                new ShooterHood(new ShooterHoodIOSim(0)));
         // vision = new Vision(drive,
         // new VisionIOPhotonVisionSim(
         // camera0Name, robotToCamera0,
@@ -104,6 +122,10 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 (pose) -> {});
+        shooterSystem =
+            new SuperShooter(
+                new ShooterRoller(new ShooterRollerIO() {}),
+                new ShooterHood(new ShooterHoodIO() {}));
         // exampleSystem = new ExampleSystem(new ExampleSystemIO() {});
         // exampleRoller = new ExampleRoller(new ExampleRollerIO() {});
         // vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});

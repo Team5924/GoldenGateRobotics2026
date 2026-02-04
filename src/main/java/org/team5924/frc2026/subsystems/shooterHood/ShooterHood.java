@@ -23,7 +23,6 @@ import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.Elastic;
@@ -122,7 +121,10 @@ public class ShooterHood extends SubsystemBase {
 
     this.goalState = goalState;
     switch (goalState) {
-      case MANUAL, AUTO_SHOOTING, NEUTRAL_SHUFFLING, OPPONENT_SHUFFLING: // TODO: handle manual state
+      case MANUAL,
+      AUTO_SHOOTING,
+      NEUTRAL_SHUFFLING,
+      OPPONENT_SHUFFLING: // TODO: handle manual state
         RobotState.getInstance().setShooterHoodState(goalState);
         break;
       case MOVING:

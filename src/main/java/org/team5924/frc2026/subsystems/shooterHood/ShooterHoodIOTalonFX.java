@@ -37,15 +37,17 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   private final StatusSignal<Current> shooterHoodSupplyCurrent;
   private final StatusSignal<Current> shooterHoodTorqueCurrent;
   private final StatusSignal<Temperature> shooterHoodTempCelsius;
+  private final double reduction;
 
   // Single shot for voltage mode, robot loop will call continuously
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
   private final PositionVoltage positionOut =
       new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true);
 
-  public ShooterHoodIOTalonFX() {
-    shooterHoodTalon = new TalonFX(Constants.ShooterHood.CAN_ID, Constants.ShooterHood.BUS);
-    shooterHoodTalon.getConfigurator().apply(Constants.ShooterHood.CONFIG);
+  public ShooterHoodIOTalonFX(int number) {
+    shooterHoodTalon = new TalonFX(Constants.ShooterHoodLeft.CAN_ID, Constants.ShooterHoodLeft.BUS);
+    shooterHoodTalon.getConfigurator().apply(Constants.ShooterHoodLeft.CONFIG);
+    reduction = number == 0 ? Constants.ShooterHoodLeft.REDUCTION : Constants.ShooterHoodRight.REDUCTION;
 
     // Get select status signals and set update frequency
     shooterHoodPosition = shooterHoodTalon.getPosition();
@@ -80,10 +82,10 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
             .isOK();
     inputs.shooterHoodPositionRads =
         Units.rotationsToRadians(shooterHoodPosition.getValueAsDouble())
-            / Constants.ShooterHood.REDUCTION;
+            / reduction;
     inputs.shooterHoodVelocityRadsPerSec =
         Units.rotationsToRadians(shooterHoodVelocity.getValueAsDouble())
-            / Constants.ShooterHood.REDUCTION;
+            / reduction;
     inputs.shooterHoodAppliedVoltage = shooterHoodAppliedVoltage.getValueAsDouble();
     inputs.shooterHoodSupplyCurrentAmps = shooterHoodSupplyCurrent.getValueAsDouble();
     inputs.shooterHoodTorqueCurrentAmps = shooterHoodTorqueCurrent.getValueAsDouble();
@@ -98,7 +100,8 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   @Override
   public void setPosition(double rads) {
     shooterHoodTalon.setControl(
-        positionOut.withPosition(Units.radiansToRotations(rads) * Constants.ShooterHood.REDUCTION));
+        positionOut.withPosition(
+            Units.radiansToRotations(rads) * reduction));
   }
 
   @Override

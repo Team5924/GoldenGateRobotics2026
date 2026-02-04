@@ -22,12 +22,14 @@ import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOKrak
 public class ShooterRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC<ShooterRollerIOInputs>
     implements ShooterRollerIO {
 
-  public ShooterRollerIOKrakenFOC() {
+  public ShooterRollerIOKrakenFOC(int number) {
     super(
-        Constants.ShooterRoller.CAN_ID,
-        Constants.ShooterRoller.BUS,
-        Constants.ShooterRoller.CONFIG,
-        Constants.ShooterRoller.REDUCTION);
+        number == 0 ? Constants.ShooterRollerLeft.CAN_ID : Constants.ShooterRollerRight.CAN_ID,
+        number == 0 ? Constants.ShooterRollerLeft.BUS : Constants.ShooterRollerRight.BUS,
+        number == 0 ? Constants.ShooterRollerLeft.CONFIG : Constants.ShooterRollerRight.CONFIG,
+        number == 0
+            ? Constants.ShooterRollerLeft.REDUCTION
+            : Constants.ShooterRollerRight.REDUCTION);
   }
 
   public void updateInputs(ShooterRollerIOInputs inputs) {

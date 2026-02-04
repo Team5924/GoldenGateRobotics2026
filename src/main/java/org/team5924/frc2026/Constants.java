@@ -70,7 +70,7 @@ public final class Constants {
     public static final double CENTER_X = WIDTH / 2;
     public static final double CENTER_Y = LENGTH / 2;
     public static final double BLUE_HUB_X = CENTER_X - 143.50;
-    public static final double RED_HUB_X = CENTER_X + 143.50;
+  public static final double RED_HUB_X = CENTER_X + 143.50;
   }
 
   /* Hopper Agitator */
@@ -159,7 +159,7 @@ public final class Constants {
             .withNeutralMode(NeutralModeValue.Brake));
   }
 
-  public final class ShooterHood {
+  public final class ShooterHoodLeft {
     public static final int CAN_ID = 0; // TODO: Add CANID Ports
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
@@ -184,7 +184,51 @@ public final class Constants {
             .withKV(0));
   }
 
-  public final class ShooterRoller {
+  public final class ShooterHoodRight {
+    public static final int CAN_ID = 0; // TODO: Add CANID Ports
+    public static final String BUS = "rio";
+    public static final double REDUCTION = 1.0;
+    public static final double SIM_MOI = 0.001;
+    
+    public static final TalonFXConfiguration CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(60)
+            .withStatorCurrentLimit(60))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.CounterClockwise_Positive) // TODO: test this direction
+            .withNeutralMode(NeutralModeValue.Brake))
+        .withSlot0(
+          new Slot0Configs() // TODO: TUNE THESE VALUES
+            .withKP(1)
+            .withKI(0)
+            .withKD(0)
+            .withKS(0) // TODO: ask CAD for these values later
+            .withKV(0));
+  }
+
+  public final class ShooterRollerLeft {
+    public static final int CAN_ID = 0; // TODO: Add CANID Ports + Config later
+    public static final String BUS = "rio";
+    public static final double REDUCTION = 1.0;
+    public static final double SIM_MOI = 0.001;
+    public static final int BEAM_BREAK_PORT = 0;
+
+    public static final TalonFXConfiguration CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(60)
+            .withStatorCurrentLimit(60))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake));
+  }
+
+  public final class ShooterRollerRight {
     public static final int CAN_ID = 0; // TODO: Add CANID Ports + Config later
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
