@@ -83,12 +83,20 @@ public abstract class GenericRollerSystem<
       lastState = getGoalState();
     }
 
-    io.runVolts(getGoalState().getVoltageSupplier().getAsDouble());
+    handleCurrentVoltageState();
     Logger.recordOutput("Rollers/" + name + "Goal", getGoalState().toString());
 
     if (!inputs.motorConnected && wasMotorConnected) {
       Elastic.sendNotification(disconnectedNotification);
     }
     wasMotorConnected = inputs.motorConnected;
+  }
+
+  protected void handleCurrentVoltageState() {
+    io.runVolts(getGoalState().getVoltageSupplier().getAsDouble());
+  }
+
+  public void runVolts(double volts) {
+    io.runVolts(volts);
   }
 }
