@@ -192,13 +192,15 @@ public final class Constants {
             .withNeutralMode(NeutralModeValue.Brake));
   }
 
-  public final class Intake {
-    public static final int CAN_ID = 0; // TODO: Set CAN ID
-    public static final String BUS = "rio";
+  public final class Climb {
+     public static final int CLIMB_R_CAN_ID = 0; // TODO: Add CANID Ports + Config later
+     public static final int CLIMB_L_CAN_ID = 0;
+    public static final String BUS = "canivore";
     public static final double REDUCTION = 1.0;
     public static final double SIM_MOI = 0.001;
+   
 
-    public static final TalonFXConfiguration CONFIG =
+    public static final TalonFXConfiguration CLIMB_CONFIG =
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
@@ -209,14 +211,15 @@ public final class Constants {
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
   }
+  
+
+
 
   public final class Indexer { //TODO: update these later
     public final static int CAN_ID = 0;
-    public final static int CAN_ID_INVERSE = 0;
     public final static int BEAM_BREAK_ID = 0;
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
-    public static final double REDUCTION_INVERSE = 1.0;
     public static final double SIM_MOI = 0.001;
 
     public static final TalonFXConfiguration CONFIG =
@@ -229,6 +232,45 @@ public final class Constants {
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
+
+    public static final CANdiConfiguration CANDI_CONFIG =
+      new CANdiConfiguration()
+        .withDigitalInputs(
+          new DigitalInputsConfigs()
+            .withS1CloseState(S1CloseStateValue.CloseWhenLow)
+            .withS2CloseState(S2CloseStateValue.CloseWhenLow));
+
+    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
+      new OpenLoopRampsConfigs()
+        .withDutyCycleOpenLoopRampPeriod(0.02)
+        .withTorqueOpenLoopRampPeriod(0.02)
+        .withVoltageOpenLoopRampPeriod(0.02);
+
+    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
+      new ClosedLoopRampsConfigs()
+        .withDutyCycleClosedLoopRampPeriod(0.02)
+        .withTorqueClosedLoopRampPeriod(0.02)
+        .withVoltageClosedLoopRampPeriod(0.02);
+  }
+
+  public final class Turret { //TODO: update these later
+    public final static int TURRET_CAN_ID = 0;
+    public static final String BUS = "rio";
+    public static final double TURRET_REDUCTION = 1.0;
+    public static final double SIM_MOI = 0.001;
+   
+
+    public static final TalonFXConfiguration TURRET_CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(60)
+            .withStatorCurrentLimit(60))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake));
+
   }
 }
 
