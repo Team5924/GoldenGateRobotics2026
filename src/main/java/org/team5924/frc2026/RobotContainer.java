@@ -215,7 +215,7 @@ public class RobotContainer {
               drive,
               () -> -driveController.getLeftY(),
               () -> -driveController.getLeftX(),
-              () -> -driveController.getRightX()));
+              () -> driveController.getRightX()));
     }
     // [driver] SLOW MODE YIPE
     driveController
@@ -225,7 +225,7 @@ public class RobotContainer {
                 drive,
                 () -> -driveController.getLeftY() * Constants.SLOW_MODE_MULTI,
                 () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
-                () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
+                () -> driveController.getRightX() * Constants.SLOW_MODE_MULTI));
 
     // [driver] 0-DEGREE MODE
     driveController
