@@ -46,8 +46,8 @@ public class ClimbIOTalonFX implements ClimbIO {
       new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true);
 
   public ClimbIOTalonFX() {
-    climbTalon = new TalonFX(Constants.Climber.CAN_ID, new CANBus(Constants.Climber.BUS));
-    climbTalon.getConfigurator().apply(Constants.Climber.CONFIG);
+    climbTalon = new TalonFX(Constants.Climb.CAN_ID, new CANBus(Constants.Climb.BUS));
+    climbTalon.getConfigurator().apply(Constants.Climb.CONFIG);
 
     // Get select status signals and set update frequency
     climbPosition = climbTalon.getPosition();
@@ -81,9 +81,9 @@ public class ClimbIOTalonFX implements ClimbIO {
                 climbTempCelsius)
             .isOK();
     inputs.climbPositionRads =
-        Units.rotationsToRadians(climbPosition.getValueAsDouble()) / Constants.Climber.REDUCTION;
+        Units.rotationsToRadians(climbPosition.getValueAsDouble()) / Constants.Climb.REDUCTION;
     inputs.climbVelocityRadsPerSec =
-        Units.rotationsToRadians(climbVelocity.getValueAsDouble()) / Constants.Climber.REDUCTION;
+        Units.rotationsToRadians(climbVelocity.getValueAsDouble()) / Constants.Climb.REDUCTION;
     inputs.climbAppliedVoltage = climbAppliedVoltage.getValueAsDouble();
     inputs.climbSupplyCurrentAmps = climbSupplyCurrent.getValueAsDouble();
     inputs.climbTorqueCurrentAmps = climbTorqueCurrent.getValueAsDouble();
@@ -103,7 +103,6 @@ public class ClimbIOTalonFX implements ClimbIO {
   @Override
   public void setPosition(double rads) {
     climbTalon.setControl(
-        positionOut.withPosition(
-            rads * Constants.Climber.REDUCTION * Units.radiansToRotations(1.0)));
+        positionOut.withPosition(rads * Constants.Climb.REDUCTION * Units.radiansToRotations(1.0)));
   }
 }

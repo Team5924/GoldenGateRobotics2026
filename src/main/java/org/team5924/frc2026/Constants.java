@@ -1,6 +1,6 @@
-/*
- * Constants.java
- */
+
+//  * Constants.java
+//  */
 
 /* 
  * Copyright (C) 2025-2026 Team 5924 - Golden Gate Robotics and/or its affiliates.
@@ -103,24 +103,7 @@ public final class Constants {
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
 
-    public static final CANdiConfiguration CANDI_CONFIG =
-      new CANdiConfiguration()
-        .withDigitalInputs(
-          new DigitalInputsConfigs()
-            .withS1CloseState(S1CloseStateValue.CloseWhenLow)
-            .withS2CloseState(S2CloseStateValue.CloseWhenLow));
 
-    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
-      new OpenLoopRampsConfigs()
-        .withDutyCycleOpenLoopRampPeriod(0.02)
-        .withTorqueOpenLoopRampPeriod(0.02)
-        .withVoltageOpenLoopRampPeriod(0.02);
-
-    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
-      new ClosedLoopRampsConfigs()
-        .withDutyCycleClosedLoopRampPeriod(0.02)
-        .withTorqueClosedLoopRampPeriod(0.02)
-        .withVoltageClosedLoopRampPeriod(0.02);
   }
 
   public final class GenericRollerSystem {
@@ -210,23 +193,6 @@ public final class Constants {
             .withNeutralMode(NeutralModeValue.Brake));
   }
 
-  public final class Climb {
-    public static final int CAN_ID = 0;
-    public static final String BUS = "rio";
-    public static final double REDUCTION = 1.0;
-    public static final TalonFXConfiguration CONFIG =
-      new TalonFXConfiguration()
-        .withCurrentLimits(
-          new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(35)
-            .withStatorCurrentLimit(35))
-        .withMotorOutput(
-          new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake));
-
-
-  }
   public final class Indexer { //TODO: update these later
     public final static int CAN_ID = 0;
     public final static int CAN_ID_INVERSE = 0;
@@ -246,43 +212,23 @@ public final class Constants {
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
-
-    public static final CANdiConfiguration CANDI_CONFIG =
-      new CANdiConfiguration()
-        .withDigitalInputs(
-          new DigitalInputsConfigs()
-            .withS1CloseState(S1CloseStateValue.CloseWhenLow)
-            .withS2CloseState(S2CloseStateValue.CloseWhenLow));
-
-    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
-      new OpenLoopRampsConfigs()
-        .withDutyCycleOpenLoopRampPeriod(0.02)
-        .withTorqueOpenLoopRampPeriod(0.02)
-        .withVoltageOpenLoopRampPeriod(0.02);
-
-    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
-      new ClosedLoopRampsConfigs()
-        .withDutyCycleClosedLoopRampPeriod(0.02)
-        .withTorqueClosedLoopRampPeriod(0.02)
-        .withVoltageClosedLoopRampPeriod(0.02);
   }
-  public final class Climber{ //TODO: Update Values
+
+  public final class Climb {
     public static final int CAN_ID = 0;
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
-    public static final double SIM_MOI = 0.001;
-
-     public static final TalonFXConfiguration CONFIG =
+    public static final TalonFXConfiguration CONFIG =
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(60)
-            .withStatorCurrentLimit(60))
+            .withSupplyCurrentLimit(35)
+            .withStatorCurrentLimit(35))
         .withMotorOutput(
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
+
+
   }
 }
-
-
