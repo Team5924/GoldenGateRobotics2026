@@ -51,6 +51,9 @@ public class RobotState {
   /* ### Example Subsystem ### */
   @Getter @Setter private ExampleSystemState exampleSystemState = ExampleSystemState.STOW;
 
+  //Turret
+  @Getter @Setter private TurretSystemState turretSystemState = TurretSystemState.OFF;
+
   /* ### HopperState ### */
   @Getter @Setter private HopperState hopperState = HopperState.OFF;
 

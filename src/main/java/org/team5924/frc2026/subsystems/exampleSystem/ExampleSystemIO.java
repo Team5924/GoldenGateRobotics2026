@@ -14,7 +14,7 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.exampleSystem;
+package org.team5924.frc2026.subsystems.examplesystem;
 
 import org.littletonrobotics.junction.AutoLog;
 
