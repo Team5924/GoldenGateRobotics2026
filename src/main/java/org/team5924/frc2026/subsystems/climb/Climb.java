@@ -73,7 +73,7 @@ public class Climb extends SubsystemBase {
     Logger.processInputs("Climb", inputs);
 
     Logger.recordOutput("Climb/GoalState", goalState.toString());
-    Logger.recordOutput("Climb/CurrentState", RobotState.getInstance().getClimbState());
+    Logger.recordOutput("Climb/CurrentState", RobotState.getInstance().getClimbState().toString());
     Logger.recordOutput("Climb/TargetRads", goalState.rads.getAsDouble());
 
     climbMotorDisconnected.set(!inputs.climbMotorConnected);
@@ -121,6 +121,7 @@ public class Climb extends SubsystemBase {
 
       default:
         // Closed-loop position handdled by io.setPosition(...)
+        io.setPosition(goalState.rads.getAsDouble());
         break;
     }
   }
