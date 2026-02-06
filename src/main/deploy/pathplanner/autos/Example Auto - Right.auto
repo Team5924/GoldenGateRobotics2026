@@ -13,13 +13,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Outpost to Hub"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Hub to Depot"
+            "pathName": "Outpost to Depot"
           }
         },
         {
