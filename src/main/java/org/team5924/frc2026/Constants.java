@@ -1,6 +1,6 @@
-/*
- * Constants.java
- */
+
+//  * Constants.java
+//  */
 
 /* 
  * Copyright (C) 2025-2026 Team 5924 - Golden Gate Robotics and/or its affiliates.
@@ -16,18 +16,12 @@
 
 package org.team5924.frc2026;
 
-import com.ctre.phoenix6.configs.CANdiConfiguration;
-import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.DigitalInputsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.S1CloseStateValue;
-import com.ctre.phoenix6.signals.S2CloseStateValue;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -103,24 +97,7 @@ public final class Constants {
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
 
-    public static final CANdiConfiguration CANDI_CONFIG =
-      new CANdiConfiguration()
-        .withDigitalInputs(
-          new DigitalInputsConfigs()
-            .withS1CloseState(S1CloseStateValue.CloseWhenLow)
-            .withS2CloseState(S2CloseStateValue.CloseWhenLow));
 
-    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
-      new OpenLoopRampsConfigs()
-        .withDutyCycleOpenLoopRampPeriod(0.02)
-        .withTorqueOpenLoopRampPeriod(0.02)
-        .withVoltageOpenLoopRampPeriod(0.02);
-
-    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
-      new ClosedLoopRampsConfigs()
-        .withDutyCycleClosedLoopRampPeriod(0.02)
-        .withTorqueClosedLoopRampPeriod(0.02)
-        .withVoltageClosedLoopRampPeriod(0.02);
   }
 
   public final class GenericRollerSystem {
@@ -230,6 +207,22 @@ public final class Constants {
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
   }
+
+  public final class Climb {
+    public static final int CAN_ID = 0;
+    public static final String BUS = "rio";
+    public static final double REDUCTION = 1.0;
+    public static final TalonFXConfiguration CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(35)
+            .withStatorCurrentLimit(35))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake));
+
+
+  }
 }
-
-
