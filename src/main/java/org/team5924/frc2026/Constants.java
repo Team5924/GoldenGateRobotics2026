@@ -65,6 +65,15 @@ public final class Constants {
   /* General */
   public static final double LOOP_PERIODIC_SECONDS = 0.02;
 
+  public final class ObjectDetection {
+    public static final String CAMERA_NAME = "objectDetection";
+    public static final int FUEL_GROUP_MIN = 4;
+    public static final double X_DISTANCE_THRESHHOLD_INCHES = 4.0;
+    public static final double Y_DISTANCE_THRESHHOLD_INCHES = 4.0;
+    
+  }
+
+
   public final class Example {
     public static final int CAN_ID = 0;
     public static final String BUS = "rio";
