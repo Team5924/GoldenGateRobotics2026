@@ -78,6 +78,8 @@ public class Climb extends SubsystemBase {
 
     climbMotorDisconnected.set(!inputs.climbMotorConnected);
 
+    handleCurrentState();
+
     // prevents error spam
     if (!inputs.climbMotorConnected && wasClimbMotorConnected) {
       Elastic.sendNotification(climbMotorDisconnectedNotification);
@@ -103,6 +105,22 @@ public class Climb extends SubsystemBase {
       default:
         RobotState.getInstance().setClimbState(goalState);
         io.setPosition(goalState.rads.getAsDouble());
+        break;
+    }
+  }
+
+  public void handleCurrentState() {
+    switch (goalState) {
+      case OPERATOR_CONTROL:
+        io.runVolts(goalState.rads.getAsDouble());
+        break;
+
+      case MOVING:
+        // Transition state - no direct motor command
+        break;
+
+      default:
+        // Closed-loop position handdled by io.setPosition(...)
         break;
     }
   }
