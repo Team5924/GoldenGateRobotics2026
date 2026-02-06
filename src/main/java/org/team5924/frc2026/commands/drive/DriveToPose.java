@@ -85,19 +85,21 @@ public class DriveToPose extends Command {
 
     double distanceError = errorTranslation.getNorm();
 
-    double angleError = targetPose.getRotation().minus(current.getRotation()).getRadians();
+    double driveSpeed = -drivePID.calculate(distanceError, 0);
 
-    double driveSpeed = drivePID.calculate(distanceError, 0);
-
-    double turnSpeed = thetaPID.calculate(angleError, 0);
+    double turnSpeed = thetaPID.calculate(current.getRotation().getRadians(), targetPose.getRotation().getRadians());
 
     Rotation2d driveDirection = errorTranslation.getAngle();
 
     Translation2d linearVelocity = new Translation2d(driveSpeed, driveDirection);
+    linearVelocity = linearVelocity.plus(linearFF.get());
 
     ChassisSpeeds speeds =
         ChassisSpeeds.fromFieldRelativeSpeeds(
-            linearVelocity.getX(), linearVelocity.getY(), turnSpeed, current.getRotation());
+            linearVelocity.getX(), 
+            linearVelocity.getY(), 
+            turnSpeed + omegaFF.getAsDouble(), 
+            current.getRotation());
     drive.runVelocity(speeds);
   }
 

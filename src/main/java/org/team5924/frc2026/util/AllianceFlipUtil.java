@@ -19,16 +19,17 @@ package org.team5924.frc2026.util;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import org.team5924.frc2026.Constants;
 
 public class AllianceFlipUtil {
   public static double applyX(double x) {
-    return shouldFlip() ? 651.2 - x : x;
+    return shouldFlip() ? Units.inchesToMeters(651.2) - x : x;
   }
 
   public static double applyY(double y) {
-    return shouldFlip() ? 317.7 - y : y;
+    return shouldFlip() ? Units.inchesToMeters(317.7) - y : y;
   }
 
   public static Translation2d apply(Translation2d translation) {

@@ -47,13 +47,14 @@ public class RobotState {
   @Setter
   private Pose2d odometryPose = new Pose2d();
 
-  @Getter @AutoLogOutput private Pose2d estimatedPose = Pose2d.kZero;
+  @Getter @Setter @AutoLogOutput private Pose2d estimatedPose = Pose2d.kZero;
 
   public void resetPose(Pose2d pose) {
     // Gyro offset is the rotation that maps the old gyro rotation (estimated - offset) to the new
     // frame of rotation
     gyroOffset = pose.getRotation().minus(odometryPose.getRotation().minus(gyroOffset));
     odometryPose = pose;
+    estimatedPose = pose;
   }
 
   @Getter @Setter private Rotation2d yawPosition = new Rotation2d();
