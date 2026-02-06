@@ -137,41 +137,6 @@ public final class Constants {
         .withVoltageClosedLoopRampPeriod(0.02);
   }
 
-  public final class Vision { // TODO: update this too!!!
-    public static final String FRONT_RIGHT_NAME = "Front Right";
-    public static final String FRONT_LEFT_NAME = "Front Left";
-    public static final String BACK_RIGHT_NAME = "Back Right";
-    public static final String BACK_LEFT_NAME = "Back Left";
-
-    public static final Transform3d FRONT_RIGHT_TRANSFORM =
-        new Transform3d(
-            new Translation3d(-0.012552, -0.319809, 0.191168),
-            new Rotation3d(0.0, Math.toRadians(-20.0), Math.toRadians(-70.0)));
-    public static final Transform3d BACK_RIGHT_TRANSFORM =
-        new Transform3d(
-            new Translation3d(-0.081165, -0.322330, 0.191168),
-            new Rotation3d(0.0, Math.toRadians(-20.0), Math.toRadians(-(180.0 - 55.0))));
-    public static final Transform3d FRONT_LEFT_TRANSFORM =
-        new Transform3d(
-            new Translation3d(-0.012552, 0.319809, 0.191168),
-            new Rotation3d(0.0, Math.toRadians(-20.0), Math.toRadians(70.0)));
-    public static final Transform3d BACK_LEFT_TRANSFORM =
-        new Transform3d(
-            new Translation3d(-0.081165, 0.322330, 0.191168),
-            new Rotation3d(0.0, Math.toRadians(-20.0), Math.toRadians(180.0 - 55.0)));
-    public static final ArrayList<Integer> BARGE_TAG_IDS =
-        new ArrayList<Integer>(List.of(4, 5, 14, 15));
-    
-    // https://www.arducam.com/100fps-global-shutter-color-usb-camera-board-1mp-ov9782-uvc-webcam-module-with-low-distortion-m12-lens-without-microphones-for-computer-laptop-android-device-and-raspberry-pi-arducam.html
-    public static final SimCameraProperties SIM_ARDUCAM_PROPERIES =
-        new SimCameraProperties()
-            .setCalibration(1280, 800, VisionUtil.getDiagFov(1280, 800, 70))
-            .setFPS(20)
-            .setCalibError(0, 0) // TODO: update values below here
-            .setAvgLatencyMs(0)
-            .setLatencyStdDevMs(0);
-  }
-
   public final class GenericRollerSystem {
     public static final double REDUCTION = 1.0;
     public static final double SIM_MOI = 0.001;

@@ -16,19 +16,31 @@
 
 package org.team5924.frc2026.subsystems.vision;
 
-import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Pose3d;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface VisionIO {
   @AutoLog
-  public static class VisionIOCameraInputs {
-    public boolean isConnected;
-    public Transform3d robotToCamera;
-    public int targetCount;
-    public double bestTargetPoseAmbiguity;
-    public double bestTargetArea;
+  public static class VisionIOInputs {
+    public boolean connected = false;
+    public PoseObservation[] poseObservations = new PoseObservation[0];
+    public int[] tagIds = new int[0];
   }
 
-  /** Updates the set of loggable inputs. */
-  public default void updateInputs(VisionIOCameraInputs[] inputs) {}
+  /** Represents a robot pose sample used for pose estimation. */
+  public static record PoseObservation(
+      double timestamp,
+      Pose3d pose,
+      double ambiguity,
+      int tagCount,
+      double averageTagDistance,
+      PoseObservationType type) {}
+
+  public static enum PoseObservationType {
+    MEGATAG_1,
+    MEGATAG_2,
+    PHOTONVISION
+  }
+
+  public default void updateInputs(VisionIOInputs inputs) {}
 }

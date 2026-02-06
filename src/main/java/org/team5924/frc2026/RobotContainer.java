@@ -25,6 +25,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
+import static org.team5924.frc2026.subsystems.vision.VisionConstants.FRONT_LEFT_TRANSFORM;
+
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -38,11 +41,19 @@ import org.team5924.frc2026.subsystems.drive.GyroIOSim;
 import org.team5924.frc2026.subsystems.drive.ModuleIO;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFXSim;
+import org.team5924.frc2026.subsystems.vision.Vision;
+import org.team5924.frc2026.subsystems.vision.VisionConstants;
+import org.team5924.frc2026.subsystems.vision.VisionIO;
+import org.team5924.frc2026.subsystems.vision.VisionIOPhotonVision;
+import org.team5924.frc2026.subsystems.vision.VisionIOPhotonVisionSim;
+import org.team5924.frc2026.subsystems.vision.Vision.VisionConsumer;
 
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private SwerveDriveSimulation driveSimulation = null;
+
+  private Vision vision;
   // private final ExampleSystem exampleSystem;
   // private final ExampleRoller exampleRoller;
 
@@ -66,6 +77,21 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight),
                 (pose) -> {});
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVision(
+                    VisionConstants.FRONT_LEFT_NAME,
+                    VisionConstants.FRONT_LEFT_TRANSFORM),
+                new VisionIOPhotonVision(
+                    VisionConstants.FRONT_RIGHT_NAME,
+                    VisionConstants.FRONT_RIGHT_TRANSFORM),
+                new VisionIOPhotonVision(
+                    VisionConstants.BACK_LEFT_NAME,
+                    VisionConstants.BACK_LEFT_TRANSFORM),
+                new VisionIOPhotonVision(
+                    VisionConstants.BACK_RIGHT_NAME,
+                    VisionConstants.BACK_RIGHT_TRANSFORM));
         // exampleSystem = new ExampleSystem(new ExampleSystemIOTalonFX());
         // exampleRoller = new ExampleRoller(new ExampleRollerIOKrakenFOC());
         break;
@@ -83,13 +109,29 @@ public class RobotContainer {
                 new ModuleIOTalonFXSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
                 new ModuleIOTalonFXSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
                 driveSimulation::setSimulationWorldPose);
-        // vision = new Vision(drive,
-        // new VisionIOPhotonVisionSim(
-        // camera0Name, robotToCamera0,
-        // driveSimulation::getSimulatedDriveTrainPose),
-        // new VisionIOPhotonVisionSim(
-        // camera0Name, robotToCamera0,
-        // driveSimulation::getSimulatedDriveTrainPose);
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.FRONT_LEFT_NAME,
+                    VisionConstants.FRONT_LEFT_TRANSFORM,
+                    VisionConstants.SIM_ARDUCAM_PROPERIES,
+                    drive::getPose),
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.FRONT_RIGHT_NAME,
+                    VisionConstants.FRONT_RIGHT_TRANSFORM,
+                    VisionConstants.SIM_ARDUCAM_PROPERIES,
+                    drive::getPose),
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.BACK_LEFT_NAME,
+                    VisionConstants.BACK_LEFT_TRANSFORM,
+                    VisionConstants.SIM_ARDUCAM_PROPERIES,
+                    drive::getPose),
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.BACK_RIGHT_NAME,
+                    VisionConstants.BACK_RIGHT_TRANSFORM,
+                    VisionConstants.SIM_ARDUCAM_PROPERIES,
+                    drive::getPose));
         // exampleSystem = new ExampleSystem(new ExampleSystemIOSim());
         // exampleRoller = new ExampleRoller(new ExampleRollerIOSim());
         break;
@@ -104,6 +146,13 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 (pose) -> {});
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIO() {},
+                new VisionIO() {},
+                new VisionIO() {},
+                new VisionIO() {});
         // exampleSystem = new ExampleSystem(new ExampleSystemIO() {});
         // exampleRoller = new ExampleRoller(new ExampleRollerIO() {});
         // vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
