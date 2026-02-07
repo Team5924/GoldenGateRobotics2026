@@ -35,6 +35,7 @@ public class Turret extends SubsystemBase {
   public enum TurretState {
     OFF(new LoggedTunableNumber("Turret/Off", Math.toRadians(0))),
     MOVING(new LoggedTunableNumber("Turret/Moving", 0)),
+    MANUAL(new LoggedTunableNumber("Turret/Maual", 0)),
 
     // voltage at which the example subsystem motor moves when controlled by the operator
     OPERATOR_CONTROL(new LoggedTunableNumber("Turret/OperatorVoltage", 4.5));
@@ -87,7 +88,7 @@ public class Turret extends SubsystemBase {
     this.goalState = goalState;
     switch (goalState) {
       case OPERATOR_CONTROL:
-        RobotState.getInstance().setTurretState(TurretState.OPERATOR_CONTROL);
+        RobotState.getInstance().setTurretState(TurretState.MANUAL);
         break;
       case MOVING:
         DriverStation.reportError(
