@@ -44,6 +44,7 @@ import org.team5924.frc2026.subsystems.rollers.intake.Intake;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOKrakenFOC;
+import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOSim;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIO;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOKrakenFOC;
@@ -137,7 +138,7 @@ public class RobotContainer {
 
         shooterHood = new ShooterHood(new ShooterHoodIO() {});
         shooterRoller = new ShooterRoller(new ShooterRollerIO() {});
-        intake = new Intake(new IntakeIO() {});
+        intake = new Intake(new IntakeIOSim());
         shooter = new SuperShooter(shooterRoller, shooterHood);
         // exampleSystem = new ExampleSystem(new ExampleSystemIO() {});
         // exampleRoller = new ExampleRoller(new ExampleRollerIO() {});
