@@ -145,16 +145,13 @@ public class RobotContainer {
         break;
     }
 
-    // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
     // Auto commands
     NamedCommands.registerCommand(
         "Run Shooter",
         Commands.runOnce(
             () -> {
               shooter.setGoalState(ShooterState.AUTO_SHOOTING);
-              AutoScoreCommands.autoScore(drive, shooter);
+              //AutoScoreCommands.autoScore(drive, shooter);
             }));
 
     NamedCommands.registerCommand(
@@ -170,6 +167,9 @@ public class RobotContainer {
             () -> {
               intake.setGoalState(IntakeState.INTAKE);
             }));
+
+    // Set up auto routines
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
     autoChooser.addOption(

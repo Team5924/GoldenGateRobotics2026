@@ -35,6 +35,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Run Shooter"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Hub to Climb"
