@@ -304,7 +304,7 @@ public class Drive extends SubsystemBase {
 
     // Update RobotState
     RobotState.getInstance().setOdometryPose(getPose());
-    RobotState.getInstance().setEstimatedPose(getPose()); 
+    RobotState.getInstance().setEstimatedPose(getPose());
 
     // prevents error spam
     if (!gyroInputs.connected && wasGyroConnected) {

@@ -16,13 +16,10 @@
 
 package org.team5924.frc2026.commands.shooter;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
-
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.superShooter.SuperShooter;
-
-import edu.wpi.first.wpilibj2.command.Command;
 
 public class AutoScoreCommands {
   // TODO Make and auto score program
@@ -40,8 +37,8 @@ public class AutoScoreCommands {
   //   }
   private AutoScoreCommands() {}
 
-public static Command autoScore(Drive drive, SuperShooter shooter, BooleanSupplier s) {
+  public static Command autoScore(Drive drive, SuperShooter shooter, BooleanSupplier s) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'autoScore'");
-}
+  }
 }
