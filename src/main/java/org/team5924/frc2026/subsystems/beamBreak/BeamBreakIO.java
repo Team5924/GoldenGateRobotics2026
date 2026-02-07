@@ -2,13 +2,13 @@ package org.team5924.frc2026.subsystems.beamBreak;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public class BeamBreakIO {
-//   @AutoLog
-//   class CoralSensorIOInputs {
-//     public CoralSensorIOData data = new CoralSensorIOData(0.0, false);
-//   }
+public interface BeamBreakIO {
+  @AutoLog
+  class BeamBreakIOInputs {
+    public BeamBreakIOData data = new BeamBreakIOData(false);
+  }
 
-//   record CoralSensorIOData(boolean broken) {}
+  record BeamBreakIOData(boolean broken) {}
 
-//   default void updateInputs(CoralSensorIOInputs inputs) {}    
+  default void updateInputs(BeamBreakIOInputs inputs) {}    
 }
