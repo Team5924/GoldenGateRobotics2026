@@ -16,15 +16,12 @@
 
 package org.team5924.frc2026.subsystems.objectDetection;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.team5924.frc2026.util.Elastic;
@@ -38,11 +35,11 @@ public class ObjectDetection extends SubsystemBase {
   private final Notification cameraDisconnectedNotification;
   private ObjectDetectionIOInputsAutoLogged inputs = new ObjectDetectionIOInputsAutoLogged();
 
-
   public ObjectDetection(ObjectDetectionIO io) {
     this.io = io;
     cameraDisconnected = new Alert("Object Detection Camera Disconnected!", AlertType.kWarning);
-    cameraDisconnectedNotification = new Notification(NotificationLevel.WARNING, "Object Detection Camera Disconnected!", "");
+    cameraDisconnectedNotification =
+        new Notification(NotificationLevel.WARNING, "Object Detection Camera Disconnected!", "");
   }
 
   @Override
@@ -50,17 +47,18 @@ public class ObjectDetection extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Object Detection Inputs", inputs);
     if (!inputs.isCameraConnected) {
-        Elastic.sendNotification(cameraDisconnectedNotification);
+      Elastic.sendNotification(cameraDisconnectedNotification);
     }
 
+    cameraDisconnected.set(!inputs.isCameraConnected);
   }
 
   public Transform3d getVectorLargestGroup() {
     List<PhotonTrackedTarget> largestGroup = new ArrayList<>();
     for (var group : inputs.latestGroupedTargets.groups()) {
-        if (largestGroup.size() < group.size()) {
-            largestGroup = group;
-        }
+      if (largestGroup.size() < group.size()) {
+        largestGroup = group;
+      }
     }
     return largestGroup.get(0).bestCameraToTarget;
   }
