@@ -63,4 +63,7 @@ public interface TurretIO {
 
   /** stops the motor */
   default void stop() {}
+
+  /** sdfsdf */
+  default void setPositionSetpoint(double radiansFromCenter, double radsPerSecond) {}
 }
