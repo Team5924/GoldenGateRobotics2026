@@ -28,6 +28,16 @@ public interface TurretIO {
     public double turretSupplyCurrentAmps = 0.0;
     public double turretTorqueCurrentAmps = 0.0;
     public double turretTempCelsius = 0.0;
+
+    public double motionMagicVelocityTarget = 0.0;
+    public double motionMagicPositionTarget = 0.0;
+
+    public double setpointMeters = 0.0;
+    public double acceleration = 0.0;
+
+    public boolean cancoderConnected = true;
+    public double cancoderPosition = 0.0;
+    public double cancoderSupplyVoltage = 0.0;
   }
 
   /**
@@ -44,6 +54,11 @@ public interface TurretIO {
    */
   public default void runVolts(double volts) {}
 
+  /**
+   * Sets the subsystem motor to a specified angle
+   *
+   * @param rads target angle
+   */
   public default void setPosition(double rads) {}
 
   /** stops the motor */

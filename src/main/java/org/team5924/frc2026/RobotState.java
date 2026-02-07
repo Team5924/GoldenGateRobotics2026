@@ -29,6 +29,7 @@ import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
 import org.team5924.frc2026.subsystems.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.subsystems.superShooter.SuperShooter.ShooterState;
+import org.team5924.frc2026.subsystems.turret.Turret.TurretState;
 
 @Getter
 public class RobotState {
@@ -51,8 +52,8 @@ public class RobotState {
   /* ### Example Subsystem ### */
   @Getter @Setter private ExampleSystemState exampleSystemState = ExampleSystemState.STOW;
 
-  //Turret
-  @Getter @Setter private TurretSystemState turretSystemState = TurretSystemState.OFF;
+  // Turret
+  @Getter @Setter private TurretState turretState = TurretState.OFF;
 
   /* ### HopperState ### */
   @Getter @Setter private HopperState hopperState = HopperState.OFF;

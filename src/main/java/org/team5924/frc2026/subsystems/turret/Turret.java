@@ -18,16 +18,16 @@ package org.team5924.frc2026.subsystems.turret;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotState;
-import java.lang.System.Logger;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lombok.Getter;
-
+import org.littletonrobotics.junction.Logger;
+import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
-public class Turret {
+public class Turret extends SubsystemBase {
 
   private final TurretIO io;
   private final TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
@@ -83,7 +83,7 @@ public class Turret {
     io.runVolts(volts);
   }
 
-  public void setGoalState(TurretSystemState goalState) {
+  public void setGoalState(TurretState goalState) {
     this.goalState = goalState;
     switch (goalState) {
       case OPERATOR_CONTROL:
@@ -99,5 +99,4 @@ public class Turret {
         break;
     }
   }
-  
 }
