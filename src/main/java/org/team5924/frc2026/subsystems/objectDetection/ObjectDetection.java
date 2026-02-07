@@ -27,23 +27,31 @@ import java.util.List;
 
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.targeting.PhotonTrackedTarget;
+import org.team5924.frc2026.util.Elastic;
+import org.team5924.frc2026.util.Elastic.Notification;
+import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 
 public class ObjectDetection extends SubsystemBase {
 
   private final ObjectDetectionIO io;
   private final Alert cameraDisconnected;
+  private final Notification cameraDisconnectedNotification;
   private ObjectDetectionIOInputsAutoLogged inputs = new ObjectDetectionIOInputsAutoLogged();
 
 
   public ObjectDetection(ObjectDetectionIO io) {
     this.io = io;
-    cameraDisconnected = new Alert("Object Detection Camera Disconnected!", AlertType.kError);
+    cameraDisconnected = new Alert("Object Detection Camera Disconnected!", AlertType.kWarning);
+    cameraDisconnectedNotification = new Notification(NotificationLevel.WARNING, "Object Detection Camera Disconnected!", "");
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Object Detection Inputs", inputs);
+    if (!inputs.isCameraConnected) {
+        Elastic.sendNotification(cameraDisconnectedNotification);
+    }
 
   }
 

@@ -22,73 +22,75 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.team5924.frc2026.Constants;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
+
 public class ObjectDetectionIOArducam implements ObjectDetectionIO {
   private final PhotonCamera camera;
+  private final Transform3d cameraToTarget;
 
   public ObjectDetectionIOArducam() {
     camera = new PhotonCamera(Constants.ObjectDetection.CAMERA_NAME);
+    cameraToTarget = new Transform3d();
   }
 
   public void updateInputs(ObjectDetectionIOInputsAutoLogged inputs) {
     var instance = camera.getAllUnreadResults().get(camera.getAllUnreadResults().size() - 1);
 
     inputs.latestTargetsObservation = new TargetObservation(instance.getTargets());
-    inputs.latestGroupedTargets = new TargetGroups(getGroups(inputs));
+    inputs.latestGroupedTargets = getGroups(inputs);
     inputs.isCameraConnected = camera.isConnected();
     inputs.seesFuel = instance.hasTargets();
     inputs.fuelCount = instance.getTargets().size();
   }
 
   /* Get Pipeline Targets & Group Them */
-  private List<List<PhotonTrackedTarget>> getGroups(ObjectDetectionIOInputsAutoLogged inputs) {
-    //Initialize List of List of Targets (Groups) and the List of Targets that go in the List of List of Targets
-
-//     List<List<PhotonTrackedTarget>> results = new ArrayList<>();
-//     List<PhotonTrackedTarget> result = new ArrayList<>();
-//     result.add(inputs.latestTargetsObservation.targets().get(0));
-
-//     for (int i = 1; i < inputs.latestTargetsObservation.targets().size(); i++) {
-//       PhotonTrackedTarget target = inputs.latestTargetsObservation.targets().get(i);
-//       PhotonTrackedTarget comparison = inputs.latestTargetsObservation.targets().get(i - 1);
-//       if (Math.abs(target.bestCameraToTarget.getX() - comparison.bestCameraToTarget.getX())
-//               < Constants.ObjectDetection.X_DISTANCE_THRESHHOLD_INCHES
-//           && Math.abs(target.bestCameraToTarget.getY() - comparison.bestCameraToTarget.getY())
-//               < Constants.ObjectDetection.Y_DISTANCE_THRESHHOLD_INCHES) {
-//         result.add(target);
-//       } else {
-//         results.add(result);
-//         result = new ArrayList<>();
-//         result.add(inputs.latestTargetsObservation.targets().get(i));
-//       }
-//     }
-//     return results;
-//   }
-
-    //Initialize List of Targets(fuelGroups) and ungrouped List
-    List<List<PhotonTrackedTarget>> fuelGroups = new ArrayList<>();
-    List<PhotonTrackedTarget> targets = inputs.latestTargetsObservation.targets();
-    for (var target : targets) {
+  private TargetGroups getGroups(ObjectDetectionIOInputsAutoLogged inputs) {
+    List<List<PhotonTrackedTarget>> fuelGroups = new ArrayList<>(); // new group of groups
+    List<PhotonTrackedTarget> targets = inputs.latestTargetsObservation.targets(); // new list of targets
+    for (PhotonTrackedTarget target : targets) {
+      if (fuelGroups.isEmpty()) {
         List<PhotonTrackedTarget> group = new ArrayList<>();
-        if (fuelGroups.isEmpty()) {
-                group.add(targets.get(0));
-        } else {
-            double lowestDistance ;
-            int groupIndex;
-            for (int i = 0; i < fuelGroups.size(); i++) {
-                for (var comparison : fuelGroups.get(i)) {
-                    double xDistance = Math.abs(comparison.bestCameraToTarget.getX() - target.bestCameraToTarget.getX());
-                    double yDistance = Math.abs(comparison.bestCameraToTarget.getY() - target.bestCameraToTarget.getY());
-
-                    if ((xDistance <= Constants.ObjectDetection.X_DISTANCE_THRESHHOLD_INCHES 
-                            && yDistance <= Constants.ObjectDetection.Y_DISTANCE_THRESHHOLD_INCHES)
-                        && lowestDistance < Math.sqrt(xDistance*xDistance + yDistance*yDistance)) {
-                        lowestDistance = Math.sqrt(xDistance*xDistance + yDistance*yDistance);
-                        groupIndex = i;
-                    }
-                }
-            }
-            fuelGroups.get(groupIndex).add(target);
+        group.add(targets.get(0)); // If list of groups is empty, make a group of the first target and add it
+      } else { // else, iterate through all groups and compare target to all other targets in groups and find the smallest distance
+        // checks for case -1, which results in needing the creation of a new group (fuel isn't close to any previously compared fuel)
+        switch (getClosestGroupIndex(target, fuelGroups)) {
+          case -1:
+            List<PhotonTrackedTarget> group = new ArrayList<>();
+            group.add(target);
+            fuelGroups.add(group);
+            break;
+          default:
+            fuelGroups.get(getClosestGroupIndex(target, fuelGroups)).add(target);
+            break;
         }
+      }
     }
-
+    return new TargetGroups(fuelGroups);
+  }
+  // Finds the Index of the closest group compared to a fuel
+  private int getClosestGroupIndex(PhotonTrackedTarget target, List<List<PhotonTrackedTarget>> groups) {
+    double lowestDistance = Double.POSITIVE_INFINITY; // arbitrary large number so no matter what the first lowestDistance comparison is always true
+    int closestGroupIndex = -1;  // in case if statement doesn't trigger (aka not within distance threshold or a lower target distance), returns a known number
+    for (int i = 0; i < groups.size(); i++) {
+      for (PhotonTrackedTarget comparisonFuel : groups.get(i)) {
+        double targetDistance = targetToTargetDistance(target.bestCameraToTarget, comparisonFuel.bestCameraToTarget);
+        if (targetDistance <= Constants.ObjectDetection.DISTANCE_THRESHHOLD_INCHES
+            && lowestDistance > targetDistance) {
+          lowestDistance = targetDistance;
+          closestGroupIndex = i;
+        }
+      }
+    }
+    return closestGroupIndex;
+  }
+  // Finds distance between 2 targets
+  private double targetToTargetDistance(Transform3d target, Transform3d comparison){
+    // gets forward x and right y to get & puts them in distance formula
+    return Math.sqrt(
+      (target.getX()-comparison.getX())*(target.getX()-comparison.getX()) 
+        + (target.getY()-comparison.getY())*(target.getY()-comparison.getY()));
+  }
 }
