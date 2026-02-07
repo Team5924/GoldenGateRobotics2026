@@ -16,6 +16,7 @@
 
 package org.team5924.frc2026.commands.drive;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -37,8 +38,11 @@ public class DriveToPose extends Command {
 
   // PID Controllers
   private final PIDController drivePID = new PIDController(2.0, 0.0, 0.0);
+  // Clamp translational speed to a safe maximum (adjust to your robot's max m/s)
+  private static final double MAX_DRIVE_SPEED = 4.0; // m/s
 
   private final PIDController thetaPID = new PIDController(4.0, 0.0, 0.2);
+  private static final double MAX_TURN_SPEED = 6.0; // rad/s
 
   // Tolerances
   private static final double DIST_TOL = 0.05; // meters
@@ -85,10 +89,10 @@ public class DriveToPose extends Command {
 
     double distanceError = errorTranslation.getNorm();
 
-    double driveSpeed = -drivePID.calculate(distanceError, 0);
+    double driveSpeed = MathUtil.clamp(-drivePID.calculate(distanceError, 0), -MAX_DRIVE_SPEED, MAX_DRIVE_SPEED);
 
-    double turnSpeed = thetaPID.calculate(current.getRotation().getRadians(), targetPose.getRotation().getRadians());
-
+    double turnSpeed = MathUtil.clamp(thetaPID.calculate(current.getRotation().getRadians(), targetPose.getRotation().getRadians()), -MAX_TURN_SPEED, MAX_TURN_SPEED);
+    
     Rotation2d driveDirection = errorTranslation.getAngle();
 
     Translation2d linearVelocity = new Translation2d(driveSpeed, driveDirection);

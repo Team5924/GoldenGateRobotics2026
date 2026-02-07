@@ -54,7 +54,7 @@ public class RobotState {
     // frame of rotation
     gyroOffset = pose.getRotation().minus(odometryPose.getRotation().minus(gyroOffset));
     odometryPose = pose;
-    estimatedPose = pose;
+    estimatedPose = pose; 
   }
 
   @Getter @Setter private Rotation2d yawPosition = new Rotation2d();
