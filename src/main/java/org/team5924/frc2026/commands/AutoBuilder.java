@@ -40,7 +40,7 @@ public class AutoBuilder {
   // private final Climb climb;
   private final Intake intake;
 
-  public Command veryBasicAuto() {
+  public Command basicDriveAuto() {
     return Commands.runOnce(
             () ->
                 RobotState.getInstance()

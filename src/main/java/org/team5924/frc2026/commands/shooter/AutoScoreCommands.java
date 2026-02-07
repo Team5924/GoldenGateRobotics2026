@@ -14,7 +14,7 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.commands;
+package org.team5924.frc2026.commands.shooter;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
