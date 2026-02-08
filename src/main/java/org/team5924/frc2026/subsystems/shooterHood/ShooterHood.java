@@ -43,7 +43,7 @@ public class ShooterHood extends SubsystemBase {
     OPPONENT_SHUFFLING(
         new LoggedTunableNumber("ShooterHood/OpponentShuffling", Math.toRadians(-1))),
     MOVING(new LoggedTunableNumber("ShooterHood/Moving", -1)),
-    MANUAL((new LoggedTunableNumber("ShooterHood/Manual", -1)));
+    MANUAL(new LoggedTunableNumber("ShooterHood/Manual", -1));
 
     private final LoggedTunableNumber rads;
 
