@@ -29,9 +29,9 @@ import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -39,13 +39,11 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class TurretIOTalonFX implements TurretIO {
-
   private final TalonFX turretTalon;
   private final StatusSignal<Angle> turretPosition;
   private final StatusSignal<AngularVelocity> turretVelocity;
@@ -56,6 +54,10 @@ public class TurretIOTalonFX implements TurretIO {
 
   private TalonFXConfigurator turretTalonConfig;
 
+  private final CANcoder cancoder;
+  private final StatusSignal<Angle> cancoderPosition;
+
+
   private final Slot0Configs slot0Configs;
   private final MotionMagicConfigs motionMagicConfigs;
   private double setpoint;
@@ -63,7 +65,7 @@ public class TurretIOTalonFX implements TurretIO {
   private StatusSignal<Double> closedLoopReferenceSlope;
   double prevClosedLoopReferenceSlope = 0.0;
   double prevReferenceSlopeTimestamp = 0.0;
-  
+
   private final LoggedTunableNumber kA = new LoggedTunableNumber("Turret/kA", 0.00);
   private final LoggedTunableNumber kS = new LoggedTunableNumber("Turret/kS", 0.13);
   private final LoggedTunableNumber kV = new LoggedTunableNumber("Turret/kV", 0.4);
@@ -83,7 +85,7 @@ public class TurretIOTalonFX implements TurretIO {
   private final PositionVoltage positionOut =
       new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true);
   private final MotionMagicVoltage magicMotionVoltage;
-  
+
   public TurretIOTalonFX() {
     turretTalon = new TalonFX(Constants.Turret.CAN_ID, new CANBus(Constants.Turret.BUS));
 
@@ -118,9 +120,10 @@ public class TurretIOTalonFX implements TurretIO {
 
     turretTalonConfig = turretTalon.getConfigurator();
 
-    
+    cancoder = new CANcoder(Constants.Turret.CANCODER_ID); 
+
     // Apply Configs
-    StatusCode[] statusArray = new StatusCode[6];
+    StatusCode[] statusArray = new StatusCode[7];
 
     statusArray[0] = turretTalonConfig.apply(Constants.Turret.CONFIG);
     statusArray[2] = turretTalonConfig.apply(slot0Configs);
@@ -128,6 +131,7 @@ public class TurretIOTalonFX implements TurretIO {
     statusArray[4] = turretTalonConfig.apply(openLoopRampsConfigs);
     statusArray[5] = turretTalonConfig.apply(closedLoopRampsConfigs);
     statusArray[6] = turretTalonConfig.apply(feedbackConfigs);
+    statusArray[7] = cancoder.getConfigurator().apply(Constants.Turret.CANCODER_CONFIG);
 
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
@@ -141,6 +145,8 @@ public class TurretIOTalonFX implements TurretIO {
     turretTorqueCurrent = turretTalon.getTorqueCurrent();
     turretTempCelsius = turretTalon.getDeviceTemp();
 
+    cancoderPosition = cancoder.getAbsolutePosition();
+
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0,
         turretPosition,
@@ -151,9 +157,7 @@ public class TurretIOTalonFX implements TurretIO {
         turretTempCelsius,
         closedLoopReferenceSlope);
 
-    magicMotionVoltage =
-        new MotionMagicVoltage(0)
-            .withEnableFOC(true);
+    magicMotionVoltage = new MotionMagicVoltage(0).withEnableFOC(true);
 
     turretTalon.setPosition(0);
   }
@@ -177,7 +181,7 @@ public class TurretIOTalonFX implements TurretIO {
     inputs.turretSupplyCurrentAmps = turretSupplyCurrent.getValueAsDouble();
     inputs.turretTorqueCurrentAmps = turretTorqueCurrent.getValueAsDouble();
     inputs.turretTempCelsius = turretTempCelsius.getValueAsDouble();
-  
+
     inputs.setpointMeters = setpoint;
 
     double currentTime = closedLoopReferenceSlope.getTimestamp().getTime();
@@ -188,6 +192,9 @@ public class TurretIOTalonFX implements TurretIO {
     }
     prevClosedLoopReferenceSlope = inputs.motionMagicVelocityTarget;
     prevReferenceSlopeTimestamp = currentTime;
+
+    inputs.cancoderConnected = cancoder.isConnected();
+    inputs.cancoderPosition = cancoder.getAbsolutePosition().getValueAsDouble();
 
     // inputs.minSoftStop = turretCANdi.getS1Closed().getValue();
     // inputs.maxSoftStop = turretCANdi.getS2Closed().getValue();
@@ -208,21 +215,23 @@ public class TurretIOTalonFX implements TurretIO {
     turretTalon.stopMotor();
   }
 
-  
   @Override
   public void setPositionSetpoint(double radiansFromCenter, double radsPerSecond) {
-      double setpointRadians = MathUtil.clamp(
-              radiansFromCenter, Constants.Turret.MIN_POSITION_RADS,
-              Constants.Turret.MAX_POSITION_RADS);
-      double setpointRotations = Units.radiansToRotations(setpointRadians);
-      double setpointRotor = setpointRotations / Constants.Turret.REDUCTION;
-      double ffVel = Units.radiansToRotations(radsPerSecond) / Constants.Turret.REDUCTION;
-      turretTalon.setControl(positionOut.withPosition(setpointRotor).withVelocity(ffVel));
-      Logger.recordOutput("Turret/IO/setPositionSetpoint/radiansFromCenter", radiansFromCenter);
-      Logger.recordOutput("Turret/IO/setPositionSetpoint/radsPerSecond", radsPerSecond);
-      Logger.recordOutput("Turret/IO/setPositionSetpoint/ffVel", ffVel);
-      Logger.recordOutput("Turret/IO/setPositionSetpoint/setpointRotor", setpointRotor);
-      Logger.recordOutput("Turret/IO/setPositionSetpoint/radsPerSecondRotor",
-              radsPerSecond / Constants.Turret.REDUCTION);
-    }
+    double setpointRadians =
+        MathUtil.clamp(
+            radiansFromCenter,
+            Constants.Turret.MIN_POSITION_RADS,
+            Constants.Turret.MAX_POSITION_RADS);
+    double setpointRotations = Units.radiansToRotations(setpointRadians);
+    double setpointRotor = setpointRotations / Constants.Turret.REDUCTION;
+    double ffVel = Units.radiansToRotations(radsPerSecond) / Constants.Turret.REDUCTION;
+    turretTalon.setControl(positionOut.withPosition(setpointRotor).withVelocity(ffVel));
+    Logger.recordOutput("Turret/IO/setPositionSetpoint/radiansFromCenter", radiansFromCenter);
+    Logger.recordOutput("Turret/IO/setPositionSetpoint/radsPerSecond", radsPerSecond);
+    Logger.recordOutput("Turret/IO/setPositionSetpoint/ffVel", ffVel);
+    Logger.recordOutput("Turret/IO/setPositionSetpoint/setpointRotor", setpointRotor);
+    Logger.recordOutput(
+        "Turret/IO/setPositionSetpoint/radsPerSecondRotor",
+        radsPerSecond / Constants.Turret.REDUCTION);
+  }
 }

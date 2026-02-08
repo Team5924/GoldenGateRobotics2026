@@ -254,7 +254,7 @@ public final class Constants {
     public static final double MIN_POSITION_RADS = -Math.PI; // TODO: update!!!
     public static final double MAX_POSITION_RADS = Math.PI; // TODO: update!!!
 
-    public static final double CANCODER_OFFSET = 0.0; // TOOD: update!!
+    public static final double CANCODER_OFFSET = 0.0; // TODO: update!!
 
     public static final double EPSILON = Units.degreesToRadians(5.0);
     
