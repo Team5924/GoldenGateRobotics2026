@@ -37,12 +37,12 @@ public class DriveToPose extends Command {
   private LoggedTunableNumber omegaFF = new LoggedTunableNumber("DriveToPose/omegaFF", 0.0);
 
   // PID Controllers
-  private final LoggedTunableNumber driveKp = new LoggedTunableNumber("Drive/PID/Kp", 2.0);
-  private final LoggedTunableNumber driveKi = new LoggedTunableNumber("Drive/PID/Ki", 0.0);
-  private final LoggedTunableNumber driveKd = new LoggedTunableNumber("Drive/PID/Kd", 0.0);
-  private final LoggedTunableNumber thetaKp = new LoggedTunableNumber("Drive/PID/Kp", 4.0);
-  private final LoggedTunableNumber thetaKi = new LoggedTunableNumber("Drive/PID/Ki", 0.0);
-  private final LoggedTunableNumber thetaKd = new LoggedTunableNumber("Drive/PID/Kd", 0.2);
+  private final LoggedTunableNumber driveKp = new LoggedTunableNumber("DriveToPose/driveKp", 2.0);
+  private final LoggedTunableNumber driveKi = new LoggedTunableNumber("DriveToPose/driveKi", 0.0);
+  private final LoggedTunableNumber driveKd = new LoggedTunableNumber("DriveToPose/driveKd", 0.0);
+  private final LoggedTunableNumber thetaKp = new LoggedTunableNumber("DriveToPose/thetaKp", 4.0);
+  private final LoggedTunableNumber thetaKi = new LoggedTunableNumber("DriveToPose/thetaKi", 0.0);
+  private final LoggedTunableNumber thetaKd = new LoggedTunableNumber("DriveToPose/thetaKd", 0.2);
 
   private final PIDController drivePID = new PIDController(driveKp.get(), driveKi.get(), driveKd.get());
   private final PIDController thetaPID = new PIDController(thetaKp.get(), thetaKi.get(), thetaKd.get());
