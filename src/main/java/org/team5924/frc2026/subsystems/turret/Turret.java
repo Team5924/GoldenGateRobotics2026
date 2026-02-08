@@ -1,0 +1,184 @@
+/*
+ * Turret.java
+ */
+
+/* 
+ * Copyright (C) 2025-2026 Team 5924 - Golden Gate Robotics and/or its affiliates.
+ *
+ * This file, and the associated project, are offered under the GNU General
+ * Public License v3.0. A copy of this license can be found in LICENSE.md
+ * at the root of this project.
+ *
+ * If this file has been separated from the original project, you should have
+ * received a copy of the GNU General Public License along with it.
+ * If you did not, see <https://www.gnu.org/licenses>.
+ */
+
+package org.team5924.frc2026.subsystems.turret;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import lombok.Getter;
+
+import java.util.function.DoubleSupplier;
+
+import org.littletonrobotics.junction.Logger;
+import org.team5924.frc2026.RobotState;
+import org.team5924.frc2026.util.Elastic;
+import org.team5924.frc2026.util.Elastic.Notification;
+import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
+import org.team5924.frc2026.util.EqualsUtil;
+import org.team5924.frc2026.util.LoggedTunableNumber;
+
+public class Turret extends SubsystemBase {
+
+  private final TurretIO io;
+  private final TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
+  private double turretPositionSetpointRadiansFromCenter = 0.0;
+
+  public enum TurretState {
+    OFF(new LoggedTunableNumber("Turret/Off", Math.toRadians(0))),
+    MOVING(new LoggedTunableNumber("Turret/Moving", 0)),
+    MANUAL(new LoggedTunableNumber("Turret/Maual", 0)),
+
+    // voltage at which the example subsystem motor moves when controlled by the operator
+    OPERATOR_CONTROL(new LoggedTunableNumber("Turret/OperatorVoltage", 4.5));
+
+    private final LoggedTunableNumber rads;
+
+    TurretState(LoggedTunableNumber rads) {
+      this.rads = rads;
+    }
+  }
+
+  @Getter private TurretState goalState;
+
+  private final Alert turretMotorDisconnected;
+  private final Notification turretMotorDisconnectedNotification;
+  private boolean wasTurretMotorConnected = true;
+
+  private Timer stateTimer;
+  private double lastStateChangeTime;
+
+  public Turret(TurretIO io) {
+    this.io = io;
+    this.goalState = TurretState.MOVING;
+    this.turretMotorDisconnected =
+        new Alert("Turret Motor Disconnected!", Alert.AlertType.kWarning);
+    this.turretMotorDisconnectedNotification =
+        new Notification(NotificationLevel.WARNING, "Turret Motor Disconnected", "");
+
+    stateTimer.start();
+  }
+
+  @Override
+  public void periodic() {
+    io.updateInputs(inputs);
+    Logger.processInputs("TurretSystem", inputs);
+
+    Logger.recordOutput("Turret/GoalState", goalState.toString());
+    Logger.recordOutput("Turret/CurrentState", RobotState.getInstance().getTurretState());
+    Logger.recordOutput("Turret/TargetRads", goalState.rads);
+
+    turretMotorDisconnected.set(!inputs.turretMotorConnected);
+
+    // prevents error spam
+    if (!inputs.turretMotorConnected && wasTurretMotorConnected) {
+      Elastic.sendNotification(turretMotorDisconnectedNotification);
+    }
+    wasTurretMotorConnected = inputs.turretMotorConnected;
+  }
+
+  public void runVolts(double volts) {
+    io.runVolts(volts);
+  }
+
+  public void setGoalState(TurretState goalState) {
+    this.goalState = goalState;
+    switch (goalState) {
+      case OPERATOR_CONTROL:
+        RobotState.getInstance().setTurretState(TurretState.MANUAL);
+        break;
+      case MOVING:
+        DriverStation.reportError(
+            "Turret: MOVING is an invalid goal state; it is a transition state!!", null);
+        break;
+      default:
+        RobotState.getInstance().setTurretState(TurretState.MOVING);
+        io.setPosition(goalState.rads.getAsDouble());
+        break;
+    }
+
+    lastStateChangeTime = stateTimer.get();
+  }
+
+  public void setPositionSetpointImpl(double radiansFromCenter, double radPerS) {
+        Logger.recordOutput("Turret/API/setPositionSetpoint/radiansFromCenter", radiansFromCenter);
+        io.setPositionSetpoint(radiansFromCenter, radPerS);
+    }
+    private double adjustSetpointForWrap(double radiansFromCenter) {
+        // We have two options the raw radiansFromCenter or +/- 2 * PI.
+        double alternative = radiansFromCenter - 2.0 * Math.PI;
+        if (radiansFromCenter < 0.0) {
+            alternative = radiansFromCenter + 2.0 * Math.PI;
+        }
+        if (Math.abs(getCurrentPosition() - alternative) < Math.abs(getCurrentPosition() - radiansFromCenter)) {
+            return alternative;
+        }
+        return radiansFromCenter;
+    }
+
+    private boolean unwrapped(double setpoint) {
+        // Radians comparison intentional because this is the raw value going into
+        // rotor.
+        return (stateTimer.get() - lastStateChangeTime > 0.5) ||
+                EqualsUtil.epsilonEquals(setpoint,
+                        getCurrentPosition(), Math.toRadians(10.0));
+    }
+
+    private Command positionSetpointUntilUnwrapped(DoubleSupplier radiansFromCenter, DoubleSupplier ffVel) {
+        return run(() -> {
+            // Intentional do not wrap turret
+            double setpoint = radiansFromCenter.getAsDouble();
+            setPositionSetpointImpl(setpoint, unwrapped(setpoint) ? ffVel.getAsDouble() : 0.0);
+            turretPositionSetpointRadiansFromCenter = setpoint;
+        }).until(() -> unwrapped(radiansFromCenter.getAsDouble()));
+    }
+
+    // FF is in rad/s.
+    public Command positionSetpointCommand(DoubleSupplier radiansFromCenter,
+            DoubleSupplier ffVel) {
+        return positionSetpointUntilUnwrapped(radiansFromCenter, ffVel).andThen(
+                run(() -> {
+                    double setpoint = adjustSetpointForWrap(radiansFromCenter.getAsDouble());
+                    setPositionSetpointImpl(setpoint, ffVel.getAsDouble());
+                    turretPositionSetpointRadiansFromCenter = setpoint;
+                })).withName("Turret positionSetpointCommand");
+    }
+
+    public Command waitForPosition(DoubleSupplier radiansFromCenter, double toleranceRadians) {
+        return new WaitUntilCommand(() -> {
+            return Math.abs(new Rotation2d(getCurrentPosition()).rotateBy(
+                    new Rotation2d(radiansFromCenter.getAsDouble()).unaryMinus()).getRadians()) < toleranceRadians;
+        }).withName("Turret wait for position");
+    }
+
+    public double getSetpoint() {
+        return this.turretPositionSetpointRadiansFromCenter;
+    }
+
+    public double getCurrentPosition() {
+        return goalState.rads.getAsDouble();
+    }
+
+    public void setTeleopDefaultCommand() {
+        this.setDefaultCommand(run(() -> {
+            setPositionSetpointImpl(turretPositionSetpointRadiansFromCenter, 0.0);
+        }).withName("Turret Maintain Setpoint (default)"));
+    }
+}
