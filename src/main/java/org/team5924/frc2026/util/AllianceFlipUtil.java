@@ -21,13 +21,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import org.team5924.frc2026.Constants;
 
 public class AllianceFlipUtil {
-  public static boolean disableHAL = false;
+  public static boolean HALdisabled = false;
 
   public static void disableHAL() {
-    disableHAL = true;
+    HALdisabled = true;
   }
 
   public static double applyX(double x) {
@@ -53,7 +52,7 @@ public class AllianceFlipUtil {
   }
 
   public static boolean shouldFlip() {
-    return !disableHAL
+    return !HALdisabled
         && DriverStation.getAlliance().isPresent()
         && DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
   }
