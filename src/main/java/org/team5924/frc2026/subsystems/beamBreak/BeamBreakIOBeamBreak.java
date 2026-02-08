@@ -1,5 +1,5 @@
 /*
- * ShooterRollerIOInputs.java
+ * BeamBreakIOBeamBreak.java
  */
 
 /* 
@@ -14,12 +14,19 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.shooterRoller;
+package org.team5924.frc2026.subsystems.beamBreak;
 
-import org.littletonrobotics.junction.AutoLog;
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO.GenericRollerSystemIOInputs;
+import edu.wpi.first.wpilibj.DigitalInput;
 
-@AutoLog
-abstract class ShooterRollerIOInputs extends GenericRollerSystemIOInputs {
-    public boolean hasShotFuel = false;
+public class BeamBreakIOBeamBreak implements BeamBreakIO {
+  private final DigitalInput beamBreak;
+
+  public BeamBreakIOBeamBreak(int id) {
+    beamBreak = new DigitalInput(id);
+  }
+
+  @Override
+  public void updateInputs(BeamBreakIOInputs inputs) {
+    inputs.data = new BeamBreakIOData(beamBreak.get());
+  }
 }

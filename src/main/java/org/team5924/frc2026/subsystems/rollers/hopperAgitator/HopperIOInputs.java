@@ -21,5 +21,5 @@ import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO.Gen
 
 @AutoLog
 public class HopperIOInputs extends GenericRollerSystemIOInputs {
-  // public boolean isFull = false;
+  public boolean isFull = false;
 }
