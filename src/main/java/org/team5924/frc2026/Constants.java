@@ -230,6 +230,32 @@ public final class Constants {
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
   }
+
+   public final class ArmPractice {
+    public static final int CAN_ID = 0;
+    public static final String BUS = "rio";
+    public static final double REDUCTION = 1.0;
+    public static final double SIM_MOI = 0.001;
+
+    public static final TalonFXConfiguration CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(60)
+            .withStatorCurrentLimit(60))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake));
+
+    public static final CANdiConfiguration CANDI_CONFIG =
+      new CANdiConfiguration()
+        .withDigitalInputs(
+          new DigitalInputsConfigs()
+            .withS1CloseState(S1CloseStateValue.CloseWhenLow)
+            .withS2CloseState(S2CloseStateValue.CloseWhenLow));
+  }
+
 }
 
 

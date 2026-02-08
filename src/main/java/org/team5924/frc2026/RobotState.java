@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import lombok.Getter;
 import lombok.Setter;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.team5924.frc2026.subsystems.arm.ArmPractice.ArmPracticeState;
 import org.team5924.frc2026.subsystems.exampleSystem.ExampleSystem.ExampleSystemState;
 import org.team5924.frc2026.subsystems.rollers.exampleRoller.ExampleRoller.ExampleRollerState;
 import org.team5924.frc2026.subsystems.rollers.hopperAgitator.Hopper.HopperState;
@@ -69,4 +70,6 @@ public class RobotState {
   @Getter @Setter private IndexerState indexerState = IndexerState.OFF;
   /*### Shooter Roller ### */
   @Getter @Setter private ShooterRollerState shooterRollerState = ShooterRollerState.OFF;
+  /* ### Arm Practice ### */
+  @Getter @Setter private ArmPracticeState armPracticeState = ArmPracticeState.STOW;
 }
