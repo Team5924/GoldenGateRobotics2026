@@ -23,10 +23,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.drive.Drive;
+import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class DriveToPose extends Command {
   private final Drive drive;
@@ -34,19 +34,26 @@ public class DriveToPose extends Command {
   private Supplier<Pose2d> robot = RobotState.getInstance()::getEstimatedPose;
 
   private Supplier<Translation2d> linearFF = () -> Translation2d.kZero;
-  private DoubleSupplier omegaFF = () -> 0.0;
+  private LoggedTunableNumber omegaFF = new LoggedTunableNumber("DriveToPose/omegaFF", 0.0);
 
   // PID Controllers
-  private final PIDController drivePID = new PIDController(2.0, 0.0, 0.0);
-  // Clamp translational speed to a safe maximum (adjust to your robot's max m/s)
-  private static final double MAX_DRIVE_SPEED = 4.0; // m/s
+  private final LoggedTunableNumber driveKp = new LoggedTunableNumber("Drive/PID/Kp", 2.0);
+  private final LoggedTunableNumber driveKi = new LoggedTunableNumber("Drive/PID/Ki", 0.0);
+  private final LoggedTunableNumber driveKd = new LoggedTunableNumber("Drive/PID/Kd", 0.0);
+  private final LoggedTunableNumber thetaKp = new LoggedTunableNumber("Drive/PID/Kp", 4.0);
+  private final LoggedTunableNumber thetaKi = new LoggedTunableNumber("Drive/PID/Ki", 0.0);
+  private final LoggedTunableNumber thetaKd = new LoggedTunableNumber("Drive/PID/Kd", 0.2);
 
-  private final PIDController thetaPID = new PIDController(4.0, 0.0, 0.2);
-  private static final double MAX_TURN_SPEED = 6.0; // rad/s
+  private final PIDController drivePID = new PIDController(driveKp.get(), driveKi.get(), driveKd.get());
+  private final PIDController thetaPID = new PIDController(thetaKp.get(), thetaKi.get(), thetaKd.get());
+
+  // Clamp translational speed to a safe maximum (adjust to your robot's max m/s)
+  private static final LoggedTunableNumber MAX_DRIVE_SPEED = new LoggedTunableNumber("DriveToPose/MAX_DRIVE_SPEED", 4.0); // m/s
+  private static final LoggedTunableNumber MAX_TURN_SPEED = new LoggedTunableNumber("DriveToPose/MAX_TURN_SPEED", 6.0); // rad/s
 
   // Tolerances
-  private static final double DIST_TOL = 0.05; // meters
-  private static final double ANGLE_TOL = Math.toRadians(2);
+  private static final LoggedTunableNumber DIST_TOL = new LoggedTunableNumber("DriveToPose/DIST_TOL", 0.05); // meters
+  private static final LoggedTunableNumber ANGLE_TOL = new LoggedTunableNumber("DriveToPose/ANGLE_TOL", Math.toRadians(2));
 
   public DriveToPose(Drive drive, Supplier<Pose2d> target) {
     this.drive = drive;
@@ -66,11 +73,9 @@ public class DriveToPose extends Command {
       Drive drive,
       Supplier<Pose2d> target,
       Supplier<Pose2d> robot,
-      Supplier<Translation2d> linearFF,
-      DoubleSupplier omegaFF) {
+      Supplier<Translation2d> linearFF) {
     this(drive, target, robot);
     this.linearFF = linearFF;
-    this.omegaFF = omegaFF;
   }
 
   @Override
@@ -90,14 +95,10 @@ public class DriveToPose extends Command {
     double distanceError = errorTranslation.getNorm();
 
     double driveSpeed =
-        MathUtil.clamp(-drivePID.calculate(distanceError, 0), -MAX_DRIVE_SPEED, MAX_DRIVE_SPEED);
+        MathUtil.clamp(-drivePID.calculate(distanceError, 0), -MAX_DRIVE_SPEED.get(), MAX_DRIVE_SPEED.get());
 
     double turnSpeed =
-        MathUtil.clamp(
-            thetaPID.calculate(
-                current.getRotation().getRadians(), targetPose.getRotation().getRadians()),
-            -MAX_TURN_SPEED,
-            MAX_TURN_SPEED);
+        MathUtil.clamp(thetaPID.calculate(current.getRotation().getRadians(), targetPose.getRotation().getRadians()), -MAX_TURN_SPEED.get(), MAX_TURN_SPEED.get());
 
     Rotation2d driveDirection = errorTranslation.getAngle();
 
@@ -127,6 +128,6 @@ public class DriveToPose extends Command {
 
     double angle = Math.abs(currentPose.getRotation().minus(targetPose.getRotation()).getRadians());
 
-    return dist < DIST_TOL && angle < ANGLE_TOL;
+    return dist < DIST_TOL.get() && angle < ANGLE_TOL.get();
   }
 }

@@ -52,8 +52,7 @@ public class AutoBuilder {
                     () -> RobotState.getInstance().getEstimatedPose(),
                     () -> RobotState.getInstance().getEstimatedPose(),
                     () ->
-                        new Translation2d((AllianceFlipUtil.shouldFlip() ? -1.0 : 1.0) * -1.0, 0.0),
-                    () -> 0.0)
+                        new Translation2d((AllianceFlipUtil.shouldFlip() ? -1.0 : 1.0) * -1.0, 0.0))
                 .withTimeout(0.6));
   }
 }

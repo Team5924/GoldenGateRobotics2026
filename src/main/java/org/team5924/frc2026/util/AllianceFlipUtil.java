@@ -24,6 +24,12 @@ import edu.wpi.first.wpilibj.DriverStation;
 import org.team5924.frc2026.Constants;
 
 public class AllianceFlipUtil {
+  public static boolean disableHAL = false;
+
+  public static void disableHAL() {
+    disableHAL = true;
+  }
+
   public static double applyX(double x) {
     return shouldFlip() ? Units.inchesToMeters(651.2) - x : x;
   }
@@ -47,7 +53,7 @@ public class AllianceFlipUtil {
   }
 
   public static boolean shouldFlip() {
-    return !Constants.disableHAL
+    return !disableHAL
         && DriverStation.getAlliance().isPresent()
         && DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
   }
