@@ -16,16 +16,12 @@
 
 package org.team5924.frc2026.subsystems.vision;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.photonvision.simulation.SimCameraProperties;
-import org.team5924.frc2026.util.VisionUtil;
-
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import org.photonvision.simulation.SimCameraProperties;
+import org.team5924.frc2026.util.VisionUtil;
 
 public class VisionConstants {
   public static final String FRONT_RIGHT_NAME = "Front Right";
@@ -54,7 +50,7 @@ public class VisionConstants {
           new Rotation3d(0.0, Math.toRadians(-20.0), Math.toRadians(-(180.0 - 55.0))));
   // public static final ArrayList<Integer> IGNORE_IDS =
   //     new ArrayList<Integer>(List.of());
-  
+
   // https://www.arducam.com/100fps-global-shutter-color-usb-camera-board-1mp-ov9782-uvc-webcam-module-with-low-distortion-m12-lens-without-microphones-for-computer-laptop-android-device-and-raspberry-pi-arducam.html
   public static final SimCameraProperties SIM_ARDUCAM_PROPERIES =
       new SimCameraProperties()

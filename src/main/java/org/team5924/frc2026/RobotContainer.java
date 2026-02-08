@@ -25,9 +25,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
-import static org.team5924.frc2026.subsystems.vision.VisionConstants.FRONT_LEFT_TRANSFORM;
-
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -46,7 +43,6 @@ import org.team5924.frc2026.subsystems.vision.VisionConstants;
 import org.team5924.frc2026.subsystems.vision.VisionIO;
 import org.team5924.frc2026.subsystems.vision.VisionIOPhotonVision;
 import org.team5924.frc2026.subsystems.vision.VisionIOPhotonVisionSim;
-import org.team5924.frc2026.subsystems.vision.Vision.VisionConsumer;
 
 public class RobotContainer {
   // Subsystems
@@ -81,17 +77,13 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(
-                    VisionConstants.FRONT_LEFT_NAME,
-                    VisionConstants.FRONT_LEFT_TRANSFORM),
+                    VisionConstants.FRONT_LEFT_NAME, VisionConstants.FRONT_LEFT_TRANSFORM),
                 new VisionIOPhotonVision(
-                    VisionConstants.FRONT_RIGHT_NAME,
-                    VisionConstants.FRONT_RIGHT_TRANSFORM),
+                    VisionConstants.FRONT_RIGHT_NAME, VisionConstants.FRONT_RIGHT_TRANSFORM),
                 new VisionIOPhotonVision(
-                    VisionConstants.BACK_LEFT_NAME,
-                    VisionConstants.BACK_LEFT_TRANSFORM),
+                    VisionConstants.BACK_LEFT_NAME, VisionConstants.BACK_LEFT_TRANSFORM),
                 new VisionIOPhotonVision(
-                    VisionConstants.BACK_RIGHT_NAME,
-                    VisionConstants.BACK_RIGHT_TRANSFORM));
+                    VisionConstants.BACK_RIGHT_NAME, VisionConstants.BACK_RIGHT_TRANSFORM));
         // exampleSystem = new ExampleSystem(new ExampleSystemIOTalonFX());
         // exampleRoller = new ExampleRoller(new ExampleRollerIOKrakenFOC());
         break;
@@ -190,7 +182,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    if (Constants.currentMode == Constants.Mode.SIM) {
+    if (false) { // Constants.currentMode == Constants.Mode.SIM) {
       drive.setDefaultCommand(
           DriveCommands.joystickDrive(
               drive,

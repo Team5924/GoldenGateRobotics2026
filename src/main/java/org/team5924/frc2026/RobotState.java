@@ -20,7 +20,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import lombok.Getter;
 import lombok.Setter;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.team5924.frc2026.subsystems.exampleSystem.ExampleSystem.ExampleSystemState;
 import org.team5924.frc2026.subsystems.rollers.exampleRoller.ExampleRoller.ExampleRollerState;
 import org.team5924.frc2026.subsystems.rollers.hopperAgitator.Hopper.HopperState;
@@ -40,10 +39,8 @@ public class RobotState {
   }
 
   // Pose Estimation Members
-  @AutoLogOutput(key = "RobotState/OdometryPose")
-  @Getter
-  @Setter
-  private Pose2d odometryPose = new Pose2d();
+  // @AutoLogOutput(key = "RobotState/OdometryPose")
+  @Getter @Setter private Pose2d odometryPose = new Pose2d();
 
   @Getter @Setter private Rotation2d yawPosition = new Rotation2d();
   @Getter @Setter private double yawVelocityRadPerSec = 0.0;
