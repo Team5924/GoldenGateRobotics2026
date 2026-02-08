@@ -20,6 +20,8 @@ import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.team5924.frc2026.RobotState;
+import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIO;
+import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIOInputsAutoLogged;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
 import org.team5924.frc2026.util.LoggedTunableNumber;
@@ -39,12 +41,24 @@ public class Indexer
 
   private IndexerState goalState = IndexerState.OFF;
 
-  public Indexer(IndexerIO indexerIO) {
+  //Indexer Beam Break
+  private final BeamBreakIO beamBreakIO;
+  private final BeamBreakIOInputsAutoLogged beamBreakInputs = new BeamBreakIOInputsAutoLogged();
+
+  public Indexer(IndexerIO indexerIO, BeamBreakIO beamBreakIO) {
     super("Indexer", indexerIO, new IndexerIOInputsAutoLogged());
+    this.beamBreakIO = beamBreakIO;
   }
 
   public void setGoalState(IndexerState goalState) {
     this.goalState = goalState;
     RobotState.getInstance().setIndexerState(goalState);
+  }
+
+  @Override
+  public void periodic() {
+    beamBreakIO.updateInputs(beamBreakInputs);
+    inputs.hasFuel = beamBreakInputs.data.broken();
+    super.periodic();
   }
 }
