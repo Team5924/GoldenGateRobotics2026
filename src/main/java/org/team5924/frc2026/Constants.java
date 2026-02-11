@@ -148,6 +148,26 @@ public final class Constants {
             .withNeutralMode(NeutralModeValue.Brake));
   }
 
+  public final class PracticeRoller {
+    public static final int CAN_ID = 0;
+    public static final String BUS = "rio";
+    public static final double REDUCTION = 1.0;
+    public static final double SIM_MOI = 0.001;
+
+    public static final int BEAM_BREAK_ID = 1;
+
+    public static final TalonFXConfiguration CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(60)
+            .withStatorCurrentLimit(60))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake));
+  }
+
   public final class ShooterHood {
     public static final int CAN_ID = 0; // TODO: Add CANID Ports
     public static final String BUS = "rio";

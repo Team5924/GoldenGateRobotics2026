@@ -48,7 +48,7 @@ public class ArmPracticeIOTalonFX implements ArmPracticeIO {
       new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true);
 
   public ArmPracticeIOTalonFX() {
-    armPracticeTalon = new TalonFX(Constants.Example.CAN_ID, new CANBus(Constants.ArmPractice.BUS));
+    armPracticeTalon = new TalonFX(Constants.ArmPractice.CAN_ID, new CANBus(Constants.ArmPractice.BUS));
     armPracticeTalon.getConfigurator().apply(Constants.ArmPractice.CONFIG);
 
     // Get select status signals and set update frequency

@@ -36,7 +36,7 @@ public class ArmPractice extends SubsystemBase {
   public enum ArmPracticeState {
     STOW(new LoggedTunableNumber("ArmPractice/Stow", Math.toRadians(0))),
     MOVING(new LoggedTunableNumber("ArmPractice/Moving", 0)),
-    UP(new LoggedTunableNumber("ArmPractice/Stow", Math.toRadians(90))),
+    UP(new LoggedTunableNumber("ArmPractice//Up", Math.toRadians(90))),
 
     // voltage at which the example subsystem motor moves when controlled by the operator
     OPERATOR_CONTROL(new LoggedTunableNumber("ArmPractice/OperatorVoltage", 4.5));
