@@ -23,7 +23,7 @@ import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOKrak
 public class ExampleRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC<ExampleRollerIOInputs>
     implements ExampleRollerIO {
 
-  private final DigitalInput beamBeak = new DigitalInput(Constants.ExampleRoller.BEAM_BREAK_ID);
+  private final DigitalInput beamBreak = new DigitalInput(Constants.ExampleRoller.BEAM_BREAK_ID);
 
   public ExampleRollerIOKrakenFOC() {
     super(
@@ -36,7 +36,7 @@ public class ExampleRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC<Exa
   @Override
   public void updateInputs(ExampleRollerIOInputs inputs) {
     super.updateInputs(inputs);
-    inputs.hasFuel = beamBeak.get();
+    inputs.hasFuel = beamBreak.get();
   }
 
   @Override
