@@ -21,10 +21,8 @@ import org.littletonrobotics.junction.AutoLog;
 public interface BeamBreakIO {
   @AutoLog
   class BeamBreakIOInputs {
-    public BeamBreakIOData data = new BeamBreakIOData(false);
+    public boolean broken = false;
   }
-
-  record BeamBreakIOData(boolean broken) {}
 
   default void updateInputs(BeamBreakIOInputs inputs) {}
 }

@@ -34,7 +34,6 @@ public class ShooterRoller
         ShooterRollerIO,
         ShooterRollerIOInputsAutoLogged> {
 
-
   @RequiredArgsConstructor
   @Getter
   public enum ShooterRollerState implements VoltageState { // TODO: update voltage values
@@ -52,7 +51,7 @@ public class ShooterRoller
 
   private ShooterRollerState goalState = ShooterRollerState.OFF;
 
-  //Shooter Beam Break
+  // Shooter Beam Break
   private final BeamBreakIO beamBreakIO;
   private final BeamBreakIOInputsAutoLogged beamBreakInputs = new BeamBreakIOInputsAutoLogged();
 
@@ -69,8 +68,7 @@ public class ShooterRoller
   @Override
   public void periodic() {
     beamBreakIO.updateInputs(beamBreakInputs);
-    inputs.hasShotFuel = beamBreakInputs.data.broken();
+    inputs.hasShotFuel = beamBreakInputs.broken;
     super.periodic();
   }
-
 }

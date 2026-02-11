@@ -43,19 +43,18 @@ public class Hopper
 
   private HopperState goalState = HopperState.OFF;
 
-  //Hopper Beam Breaks
-  private final BeamBreakIO beamBreakIO_1;
-  private final BeamBreakIO beamBreakIO_2;
-  private final BeamBreakIO beamBreakIO_3;
-  private final BeamBreakIOInputsAutoLogged beamBreakInputs_1 = new BeamBreakIOInputsAutoLogged();
-  private final BeamBreakIOInputsAutoLogged beamBreakInputs_2 = new BeamBreakIOInputsAutoLogged();
-  private final BeamBreakIOInputsAutoLogged beamBreakInputs_3 = new BeamBreakIOInputsAutoLogged();
-
-  public Hopper(HopperIO io, BeamBreakIO beamBreakIO_1, BeamBreakIO beamBreakIO_2, BeamBreakIO beamBreakIO_3) {
+  // Hopper Beam Breaks
+  private final BeamBreakIO[] beamBreakIOs;
+  private final BeamBreakIOInputsAutoLogged[] beamBreakInputs;
+  public Hopper(
+      HopperIO io,
+      BeamBreakIO[] beamBreakIOs) {
     super("Hopper", io, new HopperIOInputsAutoLogged());
-    this.beamBreakIO_1 = beamBreakIO_1;
-    this.beamBreakIO_2 = beamBreakIO_2;
-    this.beamBreakIO_3 = beamBreakIO_3;
+    this.beamBreakIOs = beamBreakIOs;
+    this.beamBreakInputs = new BeamBreakIOInputsAutoLogged[beamBreakIOs.length];
+    for (int i = 0; i < beamBreakIOs.length; i++) {
+      beamBreakInputs[i] = new BeamBreakIOInputsAutoLogged();
+    }
   }
 
   public void setGoalState(HopperState goalState) {
@@ -65,10 +64,12 @@ public class Hopper
 
   @Override
   public void periodic() {
-    beamBreakIO_1.updateInputs(beamBreakInputs_1);
-    beamBreakIO_2.updateInputs(beamBreakInputs_2);
-    beamBreakIO_3.updateInputs(beamBreakInputs_3);
-    inputs.isFull = beamBreakInputs_1.data.broken() && beamBreakInputs_2.data.broken() && beamBreakInputs_3.data.broken();
+    boolean allBroken = true;
+    for (int i = 0; i < beamBreakIOs.length; i++) {
+      beamBreakIOs[i].updateInputs(beamBreakInputs[i]);
+      allBroken &= beamBreakInputs[i].broken;
+    }
+    inputs.isFull = allBroken;
     super.periodic();
   }
 }

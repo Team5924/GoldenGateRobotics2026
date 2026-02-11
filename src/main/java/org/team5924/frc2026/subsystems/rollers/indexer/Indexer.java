@@ -41,7 +41,7 @@ public class Indexer
 
   private IndexerState goalState = IndexerState.OFF;
 
-  //Indexer Beam Break
+  // Indexer Beam Break
   private final BeamBreakIO beamBreakIO;
   private final BeamBreakIOInputsAutoLogged beamBreakInputs = new BeamBreakIOInputsAutoLogged();
 
@@ -58,7 +58,7 @@ public class Indexer
   @Override
   public void periodic() {
     beamBreakIO.updateInputs(beamBreakInputs);
-    inputs.hasFuel = beamBreakInputs.data.broken();
+    inputs.hasFuel = beamBreakInputs.broken;
     super.periodic();
   }
 }

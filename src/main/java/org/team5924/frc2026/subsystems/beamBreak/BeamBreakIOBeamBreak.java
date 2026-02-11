@@ -27,6 +27,6 @@ public class BeamBreakIOBeamBreak implements BeamBreakIO {
 
   @Override
   public void updateInputs(BeamBreakIOInputs inputs) {
-    inputs.data = new BeamBreakIOData(beamBreak.get());
+    inputs.broken = beamBreak.get();
   }
 }

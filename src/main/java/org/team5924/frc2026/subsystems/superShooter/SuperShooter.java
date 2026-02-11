@@ -18,9 +18,6 @@ package org.team5924.frc2026.subsystems.superShooter;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lombok.Getter;
-
-import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIO;
-import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIOInputsAutoLogged;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
 import org.team5924.frc2026.subsystems.shooterHood.ShooterHood;

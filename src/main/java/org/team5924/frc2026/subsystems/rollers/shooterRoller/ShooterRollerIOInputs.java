@@ -21,5 +21,5 @@ import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO.Gen
 
 @AutoLog
 abstract class ShooterRollerIOInputs extends GenericRollerSystemIOInputs {
-    public boolean hasShotFuel = false;
+  public boolean hasShotFuel = false;
 }
