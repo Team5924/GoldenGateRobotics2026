@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import lombok.Getter;
 import lombok.Setter;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.team5924.frc2026.subsystems.arm.Arm.ArmState;
 import org.team5924.frc2026.subsystems.exampleSystem.ExampleSystem.ExampleSystemState;
 import org.team5924.frc2026.subsystems.rollers.exampleRoller.ExampleRoller.ExampleRollerState;
 import org.team5924.frc2026.subsystems.rollers.hopperAgitator.Hopper.HopperState;
@@ -71,6 +72,9 @@ public class RobotState {
 
   /*### Shooter Hood ### */
   @Getter @Setter private ShooterHoodState shooterHoodState = ShooterHoodState.OFF;
+
+  /*### Arm ### */
+  @Getter @Setter private ArmState armState = ArmState.OFF;
 
   /* ### Example Roller ### */
   @Getter @Setter private ExampleRollerState exampleRollerState = ExampleRollerState.IDLE;

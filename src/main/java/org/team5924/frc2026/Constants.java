@@ -20,6 +20,7 @@ import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.DigitalInputsConfigs;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -28,6 +29,9 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S2CloseStateValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
+
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -50,7 +54,6 @@ public final class Constants {
     REPLAY
   }
 
-  
   public static final boolean TUNING_MODE = false;
   public static final boolean ALLOW_ASSERTS = false;
   public static final double SLOW_MODE_MULTI = 0.5;
@@ -230,6 +233,62 @@ public final class Constants {
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
+  }
+  public final class Turret {
+    public static final int CAN_ID = 0; // TODO: update to real can id
+    public static final String BUS = "rio";
+    public static final double REDUCTION = 1.0;
+    public static final double SIM_MOI = 0.001;
+
+    public static final TalonFXConfiguration CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(60)
+            .withStatorCurrentLimit(60))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake));
+
+    public static final double MIN_POSITION_RADS = -Math.PI; // TODO: update!!!
+    public static final double MAX_POSITION_RADS = Math.PI; // TODO: update!!!
+
+    public static final double CANCODER_OFFSET = 0.0; // TODO: update!!
+
+    public static final double EPSILON = Units.degreesToRadians(5.0);
+    
+    public static final int CANCODER_ID = 0; // TODO: update id
+    public static final MagnetSensorConfigs CANCODER_CONFIG =
+        new MagnetSensorConfigs()
+          .withMagnetOffset(-1 * CANCODER_OFFSET) // TODO: update offset -> when the turret is facing forward (units: rotations)
+          .withAbsoluteSensorDiscontinuityPoint( 0.5) // TODO: update???
+          .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
+  }
+
+   public final class Arm {
+    public static final int ARM_CAN_ID = 0; // TODO: Add CANID Ports
+    public static final String BUS = "rio";
+    public static final double ARM_REDUCTION = 1.0;
+    public static final double SIM_MOI = 0.001;
+    
+    public static final TalonFXConfiguration CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(60)
+            .withStatorCurrentLimit(60))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.CounterClockwise_Positive) // TODO: test this direction
+            .withNeutralMode(NeutralModeValue.Brake))
+        .withSlot0(
+          new Slot0Configs() // TODO: TUNE THESE VALUES
+            .withKP(1)
+            .withKI(0)
+            .withKD(0)
+            .withKS(0) // TODO: ask CAD for these values later
+            .withKV(0));
   }
 }
 
