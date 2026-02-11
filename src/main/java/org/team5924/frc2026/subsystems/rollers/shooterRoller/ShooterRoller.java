@@ -20,6 +20,8 @@ import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.team5924.frc2026.RobotState;
+import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIO;
+import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIOInputsAutoLogged;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
 import org.team5924.frc2026.util.LoggedTunableNumber;
@@ -31,8 +33,6 @@ public class ShooterRoller
         ShooterRollerIOInputs,
         ShooterRollerIO,
         ShooterRollerIOInputsAutoLogged> {
-
-  // private static DigitalInput beamBreak;
 
   @RequiredArgsConstructor
   @Getter
@@ -51,8 +51,13 @@ public class ShooterRoller
 
   private ShooterRollerState goalState = ShooterRollerState.OFF;
 
-  public ShooterRoller(ShooterRollerIO io) {
+  // Shooter Beam Break
+  private final BeamBreakIO beamBreakIO;
+  private final BeamBreakIOInputsAutoLogged beamBreakInputs = new BeamBreakIOInputsAutoLogged();
+
+  public ShooterRoller(ShooterRollerIO io, BeamBreakIO beamBreakIO) {
     super("ShooterRoller", io, new ShooterRollerIOInputsAutoLogged());
+    this.beamBreakIO = beamBreakIO;
   }
 
   public void setGoalState(ShooterRollerState goalState) {
@@ -60,7 +65,10 @@ public class ShooterRoller
     RobotState.getInstance().setShooterRollerState(goalState);
   }
 
-  // public static boolean isGamePieceDetected() {
-  //   return beamBreak != null && beamBreak.get();
-  // }
+  @Override
+  public void periodic() {
+    beamBreakIO.updateInputs(beamBreakInputs);
+    inputs.hasShotFuel = beamBreakInputs.broken;
+    super.periodic();
+  }
 }

@@ -33,6 +33,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.team5924.frc2026.commands.drive.DriveCommands;
 import org.team5924.frc2026.commands.shooter.AutoScoreCommands;
 import org.team5924.frc2026.generated.TunerConstants;
+import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIO;
+import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIOBeamBreak;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.drive.GyroIO;
 import org.team5924.frc2026.subsystems.drive.GyroIOPigeon2;
@@ -90,7 +92,7 @@ public class RobotContainer {
                 (pose) -> {});
 
         shooterHood = new ShooterHood(new ShooterHoodIOTalonFX());
-        shooterRoller = new ShooterRoller(new ShooterRollerIOKrakenFOC());
+        shooterRoller = new ShooterRoller(new ShooterRollerIOKrakenFOC(), new BeamBreakIOBeamBreak(Constants.ShooterRoller.BEAM_BREAK_PORT));
         intake = new Intake(new IntakeIOKrakenFOC());
         shooter = new SuperShooter(shooterRoller, shooterHood);
         // exampleRoller = new ExampleRoller(new ExampleRollerIOKrakenFOC());
@@ -118,7 +120,7 @@ public class RobotContainer {
         // driveSimulation::getSimulatedDriveTrainPose);
 
         shooterHood = new ShooterHood(new ShooterHoodIOSim());
-        shooterRoller = new ShooterRoller(new ShooterRollerIOSim());
+        shooterRoller = new ShooterRoller(new ShooterRollerIOSim(), new BeamBreakIO() {});
         intake = new Intake(new IntakeIO() {});
         shooter = new SuperShooter(shooterRoller, shooterHood);
         // exampleSystem = new ExampleSystem(new ExampleSystemIOSim());
@@ -137,7 +139,7 @@ public class RobotContainer {
                 (pose) -> {});
 
         shooterHood = new ShooterHood(new ShooterHoodIO() {});
-        shooterRoller = new ShooterRoller(new ShooterRollerIO() {});
+        shooterRoller = new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {});
         intake = new Intake(new IntakeIOSim());
         shooter = new SuperShooter(shooterRoller, shooterHood);
         // exampleSystem = new ExampleSystem(new ExampleSystemIO() {});
