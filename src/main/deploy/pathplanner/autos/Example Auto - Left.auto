@@ -1,0 +1,55 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left to Outpost"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Outpost to Hub"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Hub to Depot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot to Hub"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Hub to Neutral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Neutral to Hub"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Hub to Climb"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
