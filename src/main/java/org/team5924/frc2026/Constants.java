@@ -24,6 +24,7 @@ import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -234,6 +235,7 @@ public final class Constants {
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
   }
+
   public final class Turret {
     public static final int CAN_ID = 0; // TODO: update to real can id
     public static final String BUS = "rio";
@@ -244,12 +246,31 @@ public final class Constants {
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(60)
-            .withStatorCurrentLimit(60))
+            .withSupplyCurrentLimit(60) // TODO: double check
+            .withStatorCurrentLimit(60) // TODO: double check
+            .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake));
+            .withNeutralMode(NeutralModeValue.Brake))
+        .withSoftwareLimitSwitch(
+          new SoftwareLimitSwitchConfigs()
+            .withForwardSoftLimitThreshold(1 / REDUCTION)
+            .withReverseSoftLimitThreshold(-1 / REDUCTION)
+            .withForwardSoftLimitEnable(true)
+            .withReverseSoftLimitEnable(true));
+
+    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
+      new OpenLoopRampsConfigs()
+        .withDutyCycleOpenLoopRampPeriod(0.02)
+        .withTorqueOpenLoopRampPeriod(0.02)
+        .withVoltageOpenLoopRampPeriod(0.02);
+
+    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
+      new ClosedLoopRampsConfigs()
+        .withDutyCycleClosedLoopRampPeriod(0.02)
+        .withTorqueClosedLoopRampPeriod(0.02)
+        .withVoltageClosedLoopRampPeriod(0.02);
 
     public static final double MIN_POSITION_RADS = -Math.PI; // TODO: update!!!
     public static final double MAX_POSITION_RADS = Math.PI; // TODO: update!!!
@@ -262,7 +283,7 @@ public final class Constants {
     public static final MagnetSensorConfigs CANCODER_CONFIG =
         new MagnetSensorConfigs()
           .withMagnetOffset(-1 * CANCODER_OFFSET) // TODO: update offset -> when the turret is facing forward (units: rotations)
-          .withAbsoluteSensorDiscontinuityPoint( 0.5) // TODO: update???
+          // .withAbsoluteSensorDiscontinuityPoint(0.5) // TODO: update???
           .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
   }
 }

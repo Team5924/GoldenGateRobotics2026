@@ -37,6 +37,7 @@ public interface TurretIO {
 
     public boolean cancoderConnected = true;
     public double cancoderPosition = 0.0;
+    public double cancoderVelocity = 0.0;
     public double cancoderSupplyVoltage = 0.0;
   }
 

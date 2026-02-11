@@ -41,6 +41,9 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.util.Elastic;
+import org.team5924.frc2026.util.Elastic.Notification;
+import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class TurretIOTalonFX implements TurretIO {
@@ -56,34 +59,35 @@ public class TurretIOTalonFX implements TurretIO {
 
   private final CANcoder cancoder;
   private final StatusSignal<Angle> cancoderPosition;
-
+  private final StatusSignal<AngularVelocity> cancoderVelocity;
+  private final StatusSignal<Voltage> cancoderSupplyVoltage;
 
   private final Slot0Configs slot0Configs;
   private final MotionMagicConfigs motionMagicConfigs;
   private double setpoint;
 
   private StatusSignal<Double> closedLoopReferenceSlope;
-  double prevClosedLoopReferenceSlope = 0.0;
-  double prevReferenceSlopeTimestamp = 0.0;
+  private double prevClosedLoopReferenceSlope = 0.0;
+  private double prevReferenceSlopeTimestamp = 0.0;
 
   private final LoggedTunableNumber kA = new LoggedTunableNumber("Turret/kA", 0.00);
   private final LoggedTunableNumber kS = new LoggedTunableNumber("Turret/kS", 0.13);
   private final LoggedTunableNumber kV = new LoggedTunableNumber("Turret/kV", 0.4);
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("Turret/kP", 7);
-  private final LoggedTunableNumber kI = new LoggedTunableNumber("Turret/kI", 0);
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("Turret/kP", 6.0);
+  private final LoggedTunableNumber kI = new LoggedTunableNumber("Turret/kI", 0.0);
   private final LoggedTunableNumber kD = new LoggedTunableNumber("Turret/kD", 0.07);
   private final LoggedTunableNumber kG = new LoggedTunableNumber("Turret/kG", 0.33);
 
+  private final LoggedTunableNumber motionJerk = new LoggedTunableNumber("Turret/MotionJerk", 0.0);
   private final LoggedTunableNumber motionAcceleration =
-      new LoggedTunableNumber("Turret/MotionAcceleration", 400);
+      new LoggedTunableNumber("Turret/MotionAcceleration", 900.0);
   private final LoggedTunableNumber motionCruiseVelocity =
-      new LoggedTunableNumber("Turret/MotionCruiseVelocity", 400);
-  private final LoggedTunableNumber motionJerk = new LoggedTunableNumber("Turret/MotionJerk", 1000);
+      new LoggedTunableNumber("Turret/MotionCruiseVelocity", 90.0);
 
   // Single shot for voltage mode, robot loop will call continuously
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
   private final PositionVoltage positionOut =
-      new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true);
+      new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true).withSlot(0);
   private final MotionMagicVoltage magicMotionVoltage;
 
   public TurretIOTalonFX() {
@@ -103,16 +107,6 @@ public class TurretIOTalonFX implements TurretIO {
     motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
     motionMagicConfigs.MotionMagicJerk = motionJerk.get();
 
-    OpenLoopRampsConfigs openLoopRampsConfigs = new OpenLoopRampsConfigs();
-    openLoopRampsConfigs.DutyCycleOpenLoopRampPeriod = 0.02;
-    openLoopRampsConfigs.TorqueOpenLoopRampPeriod = 0.02;
-    openLoopRampsConfigs.VoltageOpenLoopRampPeriod = 0.02;
-
-    ClosedLoopRampsConfigs closedLoopRampsConfigs = new ClosedLoopRampsConfigs();
-    closedLoopRampsConfigs.DutyCycleClosedLoopRampPeriod = 0.02;
-    closedLoopRampsConfigs.TorqueClosedLoopRampPeriod = 0.02;
-    closedLoopRampsConfigs.VoltageClosedLoopRampPeriod = 0.02;
-
     FeedbackConfigs feedbackConfigs = new FeedbackConfigs();
     feedbackConfigs.SensorToMechanismRatio = Constants.Turret.REDUCTION;
     feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
@@ -120,7 +114,7 @@ public class TurretIOTalonFX implements TurretIO {
 
     turretTalonConfig = turretTalon.getConfigurator();
 
-    cancoder = new CANcoder(Constants.Turret.CANCODER_ID); 
+    cancoder = new CANcoder(Constants.Turret.CANCODER_ID);
 
     // Apply Configs
     StatusCode[] statusArray = new StatusCode[7];
@@ -128,13 +122,16 @@ public class TurretIOTalonFX implements TurretIO {
     statusArray[0] = turretTalonConfig.apply(Constants.Turret.CONFIG);
     statusArray[2] = turretTalonConfig.apply(slot0Configs);
     statusArray[3] = turretTalonConfig.apply(motionMagicConfigs);
-    statusArray[4] = turretTalonConfig.apply(openLoopRampsConfigs);
-    statusArray[5] = turretTalonConfig.apply(closedLoopRampsConfigs);
+    statusArray[4] = turretTalonConfig.apply(Constants.Turret.OPEN_LOOP_RAMPS_CONFIGS);
+    statusArray[5] = turretTalonConfig.apply(Constants.Turret.CLOSED_LOOP_RAMPS_CONFIGS);
     statusArray[6] = turretTalonConfig.apply(feedbackConfigs);
     statusArray[7] = cancoder.getConfigurator().apply(Constants.Turret.CANCODER_CONFIG);
 
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
+
+    if (isErrorPresent) Elastic.sendNotification(new Notification(NotificationLevel.WARNING, "Turret: Error in configs", ""));
+
     Logger.recordOutput("Turret/InitConfReport", statusArray);
 
     // Get select status signals and set update frequency
@@ -146,6 +143,8 @@ public class TurretIOTalonFX implements TurretIO {
     turretTempCelsius = turretTalon.getDeviceTemp();
 
     cancoderPosition = cancoder.getAbsolutePosition();
+    cancoderVelocity = cancoder.getVelocity();
+    cancoderSupplyVoltage = cancoder.getSupplyVoltage();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0,
@@ -156,6 +155,12 @@ public class TurretIOTalonFX implements TurretIO {
         turretTorqueCurrent,
         turretTempCelsius,
         closedLoopReferenceSlope);
+    
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        250.0,
+        cancoderPosition,
+        cancoderVelocity,
+        cancoderSupplyVoltage);
 
     magicMotionVoltage = new MotionMagicVoltage(0).withEnableFOC(true);
 
@@ -173,6 +178,16 @@ public class TurretIOTalonFX implements TurretIO {
                 turretTorqueCurrent,
                 turretTempCelsius)
             .isOK();
+
+    inputs.cancoderConnected =
+        BaseStatusSignal.refreshAll(
+                cancoderPosition,
+                cancoderVelocity,
+                cancoderSupplyVoltage)
+            .isOK();
+    
+    turretTalon.setPosition(getTurretAngleOffset());
+
     inputs.turretPositionRads =
         Units.rotationsToRadians(turretPosition.getValueAsDouble()) / Constants.Turret.REDUCTION;
     inputs.turretVelocityRadsPerSec =
@@ -193,11 +208,28 @@ public class TurretIOTalonFX implements TurretIO {
     prevClosedLoopReferenceSlope = inputs.motionMagicVelocityTarget;
     prevReferenceSlopeTimestamp = currentTime;
 
-    inputs.cancoderConnected = cancoder.isConnected();
-    inputs.cancoderPosition = cancoder.getAbsolutePosition().getValueAsDouble();
+    inputs.cancoderPosition = cancoderPosition.getValueAsDouble();
+    inputs.cancoderVelocity = cancoderVelocity.getValueAsDouble();
+    inputs.cancoderSupplyVoltage = cancoderSupplyVoltage.getValueAsDouble();
 
     // inputs.minSoftStop = turretCANdi.getS1Closed().getValue();
     // inputs.maxSoftStop = turretCANdi.getS2Closed().getValue();
+
+    updateLoggedTunableNumbers();
+  }
+
+  private void updateLoggedTunableNumbers() {
+    motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
+    motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
+    motionMagicConfigs.MotionMagicJerk = motionJerk.get();
+    
+    slot0Configs.kP = kP.get();
+    slot0Configs.kI = kI.get();
+    slot0Configs.kD = kD.get();
+    slot0Configs.kS = kS.get();
+    slot0Configs.kV = kV.get();
+    slot0Configs.kA = kA.get();
+    slot0Configs.kG = kG.get();
   }
 
   @Override
@@ -213,6 +245,11 @@ public class TurretIOTalonFX implements TurretIO {
   @Override
   public void stop() {
     turretTalon.stopMotor();
+  }
+
+  private double getTurretAngleOffset() {
+      BaseStatusSignal.waitForAll(10.0, cancoderPosition);
+      return cancoderPosition.getValueAsDouble() / Constants.Turret.REDUCTION;
   }
 
   @Override

@@ -120,7 +120,7 @@ public class Turret extends SubsystemBase {
   }
 
   public void setPositionSetpointImpl(double radiansFromCenter, double radPerS) {
-    Logger.recordOutput("Turret/API/setPositionSetpoint/radiansFromCenter", radiansFromCenter);
+    Logger.recordOutput("Turret/radiansFromCenter", radiansFromCenter);
     io.setPositionSetpoint(radiansFromCenter, radPerS);
   }
 
