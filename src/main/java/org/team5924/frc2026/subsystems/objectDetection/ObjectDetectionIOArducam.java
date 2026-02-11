@@ -25,21 +25,26 @@ import org.team5924.frc2026.Constants;
 
 public class ObjectDetectionIOArducam implements ObjectDetectionIO {
   private final PhotonCamera camera;
-  private final Transform3d cameraToTarget;
+  private final Transform3d robotToCamera; // the position of the Camera relative to the robot
 
   public ObjectDetectionIOArducam() {
     camera = new PhotonCamera(Constants.ObjectDetection.CAMERA_NAME);
-    cameraToTarget = new Transform3d();
+    robotToCamera = new Transform3d();
   }
 
   public void updateInputs(ObjectDetectionIOInputsAutoLogged inputs) {
-    var instance = camera.getAllUnreadResults().get(camera.getAllUnreadResults().size() - 1);
-
-    inputs.latestTargetsObservation = new TargetObservation(instance.getTargets());
-    inputs.latestGroupedTargets = getGroups(inputs);
-    inputs.isCameraConnected = camera.isConnected();
-    inputs.seesFuel = instance.hasTargets();
-    inputs.fuelCount = instance.getTargets().size();
+    var results = camera.getAllUnreadResults();
+    if (results.size() > 0) {
+      var instance = results.get(results.size() - 1);
+      inputs.latestTargetsObservation = new TargetObservation(instance.getTargets());
+      inputs.latestGroupedTargets = getGroups(inputs);
+      inputs.isCameraConnected = camera.isConnected();
+      inputs.seesFuel = instance.hasTargets();
+      inputs.fuelCount = instance.getTargets().size();
+      inputs.groupCount = inputs.latestGroupedTargets.groups().size();
+    } else {
+      return;
+    }
   }
 
   /* Get Pipeline Targets & Group Them */
@@ -53,6 +58,7 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
         group.add(
             targets.get(
                 0)); // If list of groups is empty, make a group of the first target and add it
+        fuelGroups.add(group);
       } else { // else, iterate through all groups and compare target to all other targets in groups
         // and find the smallest distance
         // checks for case -1, which results in needing the creation of a new group (fuel isn't
@@ -99,8 +105,6 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
   // Finds distance between 2 targets
   private double targetToTargetDistance(Transform3d target, Transform3d comparison) {
     // gets forward x and right y to get & puts them in distance formula
-    return Math.sqrt(
-        (target.getX() - comparison.getX()) * (target.getX() - comparison.getX())
-            + (target.getY() - comparison.getY()) * (target.getY() - comparison.getY()));
+    return target.getTranslation().getDistance(comparison.getTranslation());
   }
 }

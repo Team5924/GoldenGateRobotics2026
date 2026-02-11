@@ -38,10 +38,14 @@ import org.team5924.frc2026.subsystems.drive.GyroIOSim;
 import org.team5924.frc2026.subsystems.drive.ModuleIO;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFXSim;
+import org.team5924.frc2026.subsystems.objectDetection.ObjectDetection;
+import org.team5924.frc2026.subsystems.objectDetection.ObjectDetectionIO;
+import org.team5924.frc2026.subsystems.objectDetection.ObjectDetectionIOArducam;
 
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final ObjectDetection objectDetection;
   private SwerveDriveSimulation driveSimulation = null;
   // private final ExampleSystem exampleSystem;
   // private final ExampleRoller exampleRoller;
@@ -68,6 +72,7 @@ public class RobotContainer {
                 (pose) -> {});
         // exampleSystem = new ExampleSystem(new ExampleSystemIOTalonFX());
         // exampleRoller = new ExampleRoller(new ExampleRollerIOKrakenFOC());
+        objectDetection = new ObjectDetection(new ObjectDetectionIOArducam());
         break;
 
       case SIM:
@@ -83,6 +88,7 @@ public class RobotContainer {
                 new ModuleIOTalonFXSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
                 new ModuleIOTalonFXSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
                 driveSimulation::setSimulationWorldPose);
+        objectDetection = new ObjectDetection(new ObjectDetectionIOArducam());
         // vision = new Vision(drive,
         // new VisionIOPhotonVisionSim(
         // camera0Name, robotToCamera0,
@@ -104,6 +110,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 (pose) -> {});
+        objectDetection = new ObjectDetection(new ObjectDetectionIO() {});
         // exampleSystem = new ExampleSystem(new ExampleSystemIO() {});
         // exampleRoller = new ExampleRoller(new ExampleRollerIO() {});
         // vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});

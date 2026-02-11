@@ -27,9 +27,10 @@ public interface ObjectDetectionIO {
 
     public TargetObservation latestTargetsObservation = new TargetObservation(new ArrayList<>());
     public TargetGroups latestGroupedTargets = new TargetGroups(new ArrayList<>());
-    public boolean isCameraConnected = true;
+    public boolean isCameraConnected = false;
     public boolean seesFuel = false;
     public int fuelCount = 0;
+    public int groupCount = 0;
   }
 
   public static record TargetObservation(List<PhotonTrackedTarget> targets) {}
