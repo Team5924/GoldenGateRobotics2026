@@ -85,4 +85,20 @@ public class ArmIOTalonFX implements ArmIO {
     inputs.armTorqueCurrentAmps = armTorqueCurrent.getValueAsDouble();
     inputs.armTempCelsius = armTempCelsius.getValueAsDouble();
   }
+
+  @Override
+  public void runVolts(double volts) {
+    armTalon.setControl(voltageOut.withOutput(volts));
+  }
+
+  @Override
+  public void setPosition(double rads) {
+    armTalon.setControl(
+        positionOut.withPosition(Units.radiansToRotations(rads) * Constants.ShooterHood.REDUCTION));
+  }
+
+  @Override
+  public void stop() {
+    armTalon.stopMotor();
+  }
 }

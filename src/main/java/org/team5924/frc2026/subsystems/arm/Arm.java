@@ -66,9 +66,9 @@ public class Arm extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Arm", inputs);
 
-    Logger.recordOutput("Arm", goalState.toString());
-    Logger.recordOutput("Arm", RobotState.getInstance().getArmState());
-    Logger.recordOutput("Arm", goalState.rads.getAsDouble());
+    Logger.recordOutput("Arm/GoalState", goalState.toString());
+    Logger.recordOutput("Arm/CurrentState", RobotState.getInstance().getArmState());
+    Logger.recordOutput("Arm/TargetRads", goalState.rads.getAsDouble());
 
     armMotorDisconnected.set(!inputs.armMotorConnected);
 
