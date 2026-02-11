@@ -24,7 +24,9 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 public interface ObjectDetectionIO {
   @AutoLog
   public static class ObjectDetectionIOInputs {
-
+    public double testRandom = 0.0;
+    public int resultsSize = 0;
+    public String cameraName = "not updated yet";
     public TargetObservation latestTargetsObservation = new TargetObservation(new ArrayList<>());
     public TargetGroups latestGroupedTargets = new TargetGroups(new ArrayList<>());
     public boolean isCameraConnected = false;

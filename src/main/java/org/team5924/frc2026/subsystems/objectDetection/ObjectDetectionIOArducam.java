@@ -33,12 +33,18 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
   }
 
   public void updateInputs(ObjectDetectionIOInputsAutoLogged inputs) {
+    inputs.testRandom = Math.random();
+    inputs.cameraName = camera.getName();
+    inputs.isCameraConnected = camera.isConnected();
+
     var results = camera.getAllUnreadResults();
+
+    inputs.resultsSize = results.size();
+
     if (results.size() > 0) {
       var instance = results.get(results.size() - 1);
       inputs.latestTargetsObservation = new TargetObservation(instance.getTargets());
       inputs.latestGroupedTargets = getGroups(inputs);
-      inputs.isCameraConnected = camera.isConnected();
       inputs.seesFuel = instance.hasTargets();
       inputs.fuelCount = instance.getTargets().size();
       inputs.groupCount = inputs.latestGroupedTargets.groups().size();
