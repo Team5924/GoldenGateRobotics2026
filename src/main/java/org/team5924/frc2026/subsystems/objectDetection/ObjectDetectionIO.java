@@ -37,7 +37,7 @@ public interface ObjectDetectionIO {
 
   public static record TargetObservation(List<PhotonTrackedTarget> targets) {}
 
-  public static record TargetGroups(List<List<PhotonTrackedTarget>> groups) {}
+  public static record TargetGroups(List<TargetGroup> groups) {}
 
   public default void updateInputs(ObjectDetectionIOInputsAutoLogged inputs) {}
 }

@@ -16,4 +16,48 @@
 
 package org.team5924.frc2026.subsystems.objectDetection;
 
-public class TargetGroup {}
+import java.util.ArrayList;
+import java.util.List;
+
+import org.littletonrobotics.junction.AutoLog;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.util.Units;
+
+@AutoLog
+public class TargetGroup {
+  public int fuelAmount;
+  public List<PhotonTrackedTarget> targets;
+  public PhotonTrackedTarget firstFiducialTarget;
+  public double distanceFromRobotFeet;
+
+  public TargetGroup() {
+        this.fuelAmount = 0;
+        this.targets = new ArrayList<>();
+        this.firstFiducialTarget = new PhotonTrackedTarget();
+        this.distanceFromRobotFeet = 0;
+    }
+
+  public void addTarget(PhotonTrackedTarget target) {
+    if (targets.isEmpty()) {
+      firstFiducialTarget = target;
+      distanceFromRobotFeet = Units.metersToFeet(target.getBestCameraToTarget().getTranslation().getNorm());
+    }
+    targets.add(target);
+    fuelAmount++;
+
+  }
+
+  /* Gets Poses of Fuel Within Group */
+  public Pose2d[] getFuelPoses() {
+    Pose2d[] targetPoses = new Pose2d[fuelAmount];
+    for (int i = 0; i < fuelAmount; i++) {
+      var target = targets.get(i).getBestCameraToTarget();
+      targetPoses[i] = new Pose2d(
+        target.getTranslation().toTranslation2d() , 
+        target.getRotation().toRotation2d());
+    }
+    return targetPoses;
+  }
+}

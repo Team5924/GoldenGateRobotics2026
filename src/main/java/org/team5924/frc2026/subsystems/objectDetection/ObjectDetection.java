@@ -53,13 +53,13 @@ public class ObjectDetection extends SubsystemBase {
     cameraDisconnected.set(!inputs.isCameraConnected);
   }
 
-  public Transform3d getVectorLargestGroup() {
-    List<PhotonTrackedTarget> largestGroup = new ArrayList<>();
+  public PhotonTrackedTarget getFirstTargetOfLargestGroup() {
+    TargetGroup largestGroup = new TargetGroup();
     for (var group : inputs.latestGroupedTargets.groups()) {
-      if (largestGroup.size() < group.size()) {
+      if (largestGroup.fuelAmount < group.fuelAmount) {
         largestGroup = group;
       }
     }
-    return largestGroup.get(0).bestCameraToTarget;
+    return largestGroup.firstFiducialTarget;
   }
 }

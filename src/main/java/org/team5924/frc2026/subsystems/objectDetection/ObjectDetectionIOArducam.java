@@ -17,6 +17,8 @@
 package org.team5924.frc2026.subsystems.objectDetection;
 
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.photonvision.PhotonCamera;
@@ -33,7 +35,6 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
   }
 
   public void updateInputs(ObjectDetectionIOInputsAutoLogged inputs) {
-    inputs.testRandom = Math.random();
     inputs.cameraName = camera.getName();
     inputs.isCameraConnected = camera.isConnected();
 
@@ -41,27 +42,27 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
 
     inputs.resultsSize = results.size();
 
-    if (results.size() > 0) {
-      var instance = results.get(results.size() - 1);
-      inputs.latestTargetsObservation = new TargetObservation(instance.getTargets());
-      inputs.latestGroupedTargets = getGroups(inputs);
-      inputs.seesFuel = instance.hasTargets();
-      inputs.fuelCount = instance.getTargets().size();
-      inputs.groupCount = inputs.latestGroupedTargets.groups().size();
-    } else {
+    if (results.size() == 0) {
       return;
-    }
+    } 
+
+    var instance = results.get(results.size() - 1);
+    inputs.latestTargetsObservation = new TargetObservation(instance.getTargets());
+    inputs.latestGroupedTargets = getGroups(inputs);
+    inputs.seesFuel = instance.hasTargets();
+    inputs.fuelCount = instance.getTargets().size();
+    inputs.groupCount = inputs.latestGroupedTargets.groups().size();
   }
 
   /* Get Pipeline Targets & Group Them */
   private TargetGroups getGroups(ObjectDetectionIOInputsAutoLogged inputs) {
-    List<List<PhotonTrackedTarget>> fuelGroups = new ArrayList<>(); // new group of groups
+    List<TargetGroup> fuelGroups = new ArrayList<>(); // new group of groups
     List<PhotonTrackedTarget> targets =
         inputs.latestTargetsObservation.targets(); // new list of targets
     for (PhotonTrackedTarget target : targets) {
       if (fuelGroups.isEmpty()) {
-        List<PhotonTrackedTarget> group = new ArrayList<>();
-        group.add(
+        TargetGroup group = new TargetGroup();
+        group.addTarget(
             targets.get(
                 0)); // If list of groups is empty, make a group of the first target and add it
         fuelGroups.add(group);
@@ -69,14 +70,15 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
         // and find the smallest distance
         // checks for case -1, which results in needing the creation of a new group (fuel isn't
         // close to any previously compared fuel)
-        switch (getClosestGroupIndex(target, fuelGroups)) {
+        int closestGroupIndex = getClosestGroupIndex(target, fuelGroups);
+        switch (closestGroupIndex) {
           case -1:
-            List<PhotonTrackedTarget> group = new ArrayList<>();
-            group.add(target);
+            TargetGroup group = new TargetGroup();
+            group.addTarget(target);
             fuelGroups.add(group);
             break;
           default:
-            fuelGroups.get(getClosestGroupIndex(target, fuelGroups)).add(target);
+            fuelGroups.get(closestGroupIndex).addTarget(target);
             break;
         }
       }
@@ -86,7 +88,7 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
 
   // Finds the Index of the closest group compared to a fuel
   private int getClosestGroupIndex(
-      PhotonTrackedTarget target, List<List<PhotonTrackedTarget>> groups) {
+      PhotonTrackedTarget target, List<TargetGroup> groups) {
     double lowestDistance =
         Double
             .POSITIVE_INFINITY; // arbitrary large number so no matter what the first lowestDistance
@@ -95,9 +97,9 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
         -1; // in case if statement doesn't trigger (aka not within distance threshold or a lower
     // target distance), returns a known number
     for (int i = 0; i < groups.size(); i++) {
-      for (PhotonTrackedTarget comparisonFuel : groups.get(i)) {
+      for (PhotonTrackedTarget comparisonFuel : groups.get(i).targets) {
         double targetDistance =
-            targetToTargetDistance(target.bestCameraToTarget, comparisonFuel.bestCameraToTarget);
+            Units.metersToInches(targetToTargetDistance(target.bestCameraToTarget, comparisonFuel.bestCameraToTarget));
         if (targetDistance <= Constants.ObjectDetection.DISTANCE_THRESHHOLD_INCHES
             && lowestDistance > targetDistance) {
           lowestDistance = targetDistance;

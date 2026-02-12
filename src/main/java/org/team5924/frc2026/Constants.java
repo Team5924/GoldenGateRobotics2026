@@ -69,6 +69,7 @@ public final class Constants {
     public static final String CAMERA_NAME = "objectDetection";
     public static final int FUEL_GROUP_MIN = 4;
     public static final double DISTANCE_THRESHHOLD_INCHES = 4.0;
+    public static final double PATHFINDING_ANGLE_DEGREES = 45;
     
   }
 
