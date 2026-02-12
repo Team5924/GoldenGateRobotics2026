@@ -32,7 +32,7 @@ public interface TurretIO {
     public double motionMagicVelocityTarget = 0.0;
     public double motionMagicPositionTarget = 0.0;
 
-    public double setpointMeters = 0.0;
+    public double setpointRads = 0.0;
     public double acceleration = 0.0;
 
     public boolean cancoderConnected = true;
@@ -65,6 +65,6 @@ public interface TurretIO {
   /** stops the motor */
   default void stop() {}
 
-  /** sdfsdf */
+  /** Sets the turret position to specified rads from center */
   default void setPositionSetpoint(double radiansFromCenter, double radsPerSecond) {}
 }

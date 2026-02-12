@@ -20,10 +20,8 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
-import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -110,7 +108,7 @@ public class TurretIOTalonFX implements TurretIO {
     FeedbackConfigs feedbackConfigs = new FeedbackConfigs();
     feedbackConfigs.SensorToMechanismRatio = Constants.Turret.REDUCTION;
     feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    feedbackConfigs.RotorToSensorRatio = Constants.Turret.REDUCTION;
+    feedbackConfigs.RotorToSensorRatio = 1.0;
 
     turretTalonConfig = turretTalon.getConfigurator();
 
@@ -130,7 +128,9 @@ public class TurretIOTalonFX implements TurretIO {
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
 
-    if (isErrorPresent) Elastic.sendNotification(new Notification(NotificationLevel.WARNING, "Turret: Error in configs", ""));
+    if (isErrorPresent)
+      Elastic.sendNotification(
+          new Notification(NotificationLevel.WARNING, "Turret: Error in configs", ""));
 
     Logger.recordOutput("Turret/InitConfReport", statusArray);
 
@@ -155,12 +155,9 @@ public class TurretIOTalonFX implements TurretIO {
         turretTorqueCurrent,
         turretTempCelsius,
         closedLoopReferenceSlope);
-    
+
     BaseStatusSignal.setUpdateFrequencyForAll(
-        250.0,
-        cancoderPosition,
-        cancoderVelocity,
-        cancoderSupplyVoltage);
+        250.0, cancoderPosition, cancoderVelocity, cancoderSupplyVoltage);
 
     magicMotionVoltage = new MotionMagicVoltage(0).withEnableFOC(true);
 
@@ -180,24 +177,19 @@ public class TurretIOTalonFX implements TurretIO {
             .isOK();
 
     inputs.cancoderConnected =
-        BaseStatusSignal.refreshAll(
-                cancoderPosition,
-                cancoderVelocity,
-                cancoderSupplyVoltage)
+        BaseStatusSignal.refreshAll(cancoderPosition, cancoderVelocity, cancoderSupplyVoltage)
             .isOK();
-    
-    turretTalon.setPosition(getTurretAngleOffset());
 
     inputs.turretPositionRads =
-        Units.rotationsToRadians(turretPosition.getValueAsDouble()) / Constants.Turret.REDUCTION;
+        Units.rotationsToRadians(turretPosition.getValueAsDouble());
     inputs.turretVelocityRadsPerSec =
-        Units.rotationsToRadians(turretVelocity.getValueAsDouble()) / Constants.Turret.REDUCTION;
+        Units.rotationsToRadians(turretVelocity.getValueAsDouble());
     inputs.turretAppliedVoltage = turretAppliedVoltage.getValueAsDouble();
     inputs.turretSupplyCurrentAmps = turretSupplyCurrent.getValueAsDouble();
     inputs.turretTorqueCurrentAmps = turretTorqueCurrent.getValueAsDouble();
     inputs.turretTempCelsius = turretTempCelsius.getValueAsDouble();
 
-    inputs.setpointMeters = setpoint;
+    inputs.setpointRads = setpoint;
 
     double currentTime = closedLoopReferenceSlope.getTimestamp().getTime();
     double timeDiff = currentTime - prevReferenceSlopeTimestamp;
@@ -218,11 +210,13 @@ public class TurretIOTalonFX implements TurretIO {
     updateLoggedTunableNumbers();
   }
 
-  private void updateLoggedTunableNumbers() {
+  private void updateLoggedTunableNumbers() { // TODO: check if updated
+    // LoggedTunableNumber.ifChanged(0, null, null);
+
     motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
     motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
     motionMagicConfigs.MotionMagicJerk = motionJerk.get();
-    
+
     slot0Configs.kP = kP.get();
     slot0Configs.kI = kI.get();
     slot0Configs.kD = kD.get();
@@ -230,6 +224,8 @@ public class TurretIOTalonFX implements TurretIO {
     slot0Configs.kV = kV.get();
     slot0Configs.kA = kA.get();
     slot0Configs.kG = kG.get();
+
+    // turretTalon.getConfigurator().apply(null)
   }
 
   @Override
@@ -248,8 +244,8 @@ public class TurretIOTalonFX implements TurretIO {
   }
 
   private double getTurretAngleOffset() {
-      BaseStatusSignal.waitForAll(10.0, cancoderPosition);
-      return cancoderPosition.getValueAsDouble() / Constants.Turret.REDUCTION;
+    BaseStatusSignal.waitForAll(10.0, cancoderPosition);
+    return cancoderPosition.getValueAsDouble() / Constants.Turret.REDUCTION; // ????
   }
 
   @Override

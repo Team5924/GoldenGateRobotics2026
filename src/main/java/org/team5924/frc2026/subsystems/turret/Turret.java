@@ -17,6 +17,7 @@
 package org.team5924.frc2026.subsystems.turret;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -185,7 +186,7 @@ public class Turret extends SubsystemBase {
   }
 
   public double getCurrentPosition() {
-    return inputs.cancoderPosition;
+    return Units.rotationsToRadians(inputs.cancoderPosition);
   }
 
   public void setTeleopDefaultCommand() {
