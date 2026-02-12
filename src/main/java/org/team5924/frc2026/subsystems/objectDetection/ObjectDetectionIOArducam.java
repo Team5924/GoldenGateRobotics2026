@@ -18,7 +18,6 @@ package org.team5924.frc2026.subsystems.objectDetection;
 
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
-
 import java.util.ArrayList;
 import java.util.List;
 import org.photonvision.PhotonCamera;
@@ -44,7 +43,7 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
 
     if (results.size() == 0) {
       return;
-    } 
+    }
 
     var instance = results.get(results.size() - 1);
     inputs.latestTargetsObservation = new TargetObservation(instance.getTargets());
@@ -87,8 +86,7 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
   }
 
   // Finds the Index of the closest group compared to a fuel
-  private int getClosestGroupIndex(
-      PhotonTrackedTarget target, List<TargetGroup> groups) {
+  private int getClosestGroupIndex(PhotonTrackedTarget target, List<TargetGroup> groups) {
     double lowestDistance =
         Double
             .POSITIVE_INFINITY; // arbitrary large number so no matter what the first lowestDistance
@@ -99,7 +97,9 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
     for (int i = 0; i < groups.size(); i++) {
       for (PhotonTrackedTarget comparisonFuel : groups.get(i).targets) {
         double targetDistance =
-            Units.metersToInches(targetToTargetDistance(target.bestCameraToTarget, comparisonFuel.bestCameraToTarget));
+            Units.metersToInches(
+                targetToTargetDistance(
+                    target.bestCameraToTarget, comparisonFuel.bestCameraToTarget));
         if (targetDistance <= Constants.ObjectDetection.DISTANCE_THRESHHOLD_INCHES
             && lowestDistance > targetDistance) {
           lowestDistance = targetDistance;
