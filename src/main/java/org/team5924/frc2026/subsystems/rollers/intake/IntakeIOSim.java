@@ -1,5 +1,5 @@
 /*
- * IndexerIOInputs.java
+ * IntakeIOSim.java
  */
 
 /* 
@@ -14,12 +14,14 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.indexer;
+package org.team5924.frc2026.subsystems.rollers.intake;
 
-import org.littletonrobotics.junction.AutoLog;
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO.GenericRollerSystemIOInputs;
+import edu.wpi.first.math.system.plant.DCMotor;
+import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOSim;
 
-@AutoLog
-abstract class IndexerIOInputs extends GenericRollerSystemIOInputs {
-  public boolean hasFuel = false;
+public class IntakeIOSim extends GenericRollerSystemIOSim<IntakeIOInputs> implements IntakeIO {
+  public IntakeIOSim() {
+    super(DCMotor.getKrakenX60Foc(1), Constants.Intake.REDUCTION, Constants.Intake.SIM_MOI);
+  }
 }

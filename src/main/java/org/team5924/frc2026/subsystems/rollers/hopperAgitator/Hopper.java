@@ -20,6 +20,8 @@ import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.team5924.frc2026.RobotState;
+import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIO;
+import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIOInputsAutoLogged;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
 import org.team5924.frc2026.util.LoggedTunableNumber;
@@ -41,12 +43,33 @@ public class Hopper
 
   private HopperState goalState = HopperState.OFF;
 
-  public Hopper(HopperIO io) {
+  // Hopper Beam Breaks
+  private final BeamBreakIO[] beamBreakIOs;
+  private final BeamBreakIOInputsAutoLogged[] beamBreakInputs;
+  public Hopper(
+      HopperIO io,
+      BeamBreakIO[] beamBreakIOs) {
     super("Hopper", io, new HopperIOInputsAutoLogged());
+    this.beamBreakIOs = beamBreakIOs;
+    this.beamBreakInputs = new BeamBreakIOInputsAutoLogged[beamBreakIOs.length];
+    for (int i = 0; i < beamBreakIOs.length; i++) {
+      beamBreakInputs[i] = new BeamBreakIOInputsAutoLogged();
+    }
   }
 
   public void setGoalState(HopperState goalState) {
     this.goalState = goalState;
     RobotState.getInstance().setHopperState(goalState);
+  }
+
+  @Override
+  public void periodic() {
+    boolean allBroken = true;
+    for (int i = 0; i < beamBreakIOs.length; i++) {
+      beamBreakIOs[i].updateInputs(beamBreakInputs[i]);
+      allBroken &= beamBreakInputs[i].broken;
+    }
+    inputs.isFull = allBroken;
+    super.periodic();
   }
 }

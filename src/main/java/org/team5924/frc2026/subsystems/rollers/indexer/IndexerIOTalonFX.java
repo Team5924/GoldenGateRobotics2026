@@ -22,7 +22,6 @@ import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOKrak
 public class IndexerIOTalonFX extends GenericRollerSystemIOKrakenFOC<IndexerIOInputs>
     implements IndexerIO {
 
-  // private final DigitalInput beamBreak = new DigitalInput(Constants.Indexer.BEAM_BREAK_ID);
   private class IndexerInverseTalonFX extends GenericRollerSystemIOKrakenFOC<IndexerIOInputs> {
     public IndexerInverseTalonFX() {
       super(
@@ -48,7 +47,6 @@ public class IndexerIOTalonFX extends GenericRollerSystemIOKrakenFOC<IndexerIOIn
   @Override
   public void updateInputs(IndexerIOInputs inputs) {
     super.updateInputs(inputs);
-    // inputs.hasFuel = !beamBreak.get();
   }
 
   @Override
