@@ -156,12 +156,12 @@ public class RobotContainer {
               () -> -driveController.getRawAxis(0),
               () -> -driveController.getRawAxis(2)));
     } else {
-      drive.setDefaultCommand(
+      drive.setDefaultCommand( // permanent slow mode for more control
           DriveCommands.joystickDrive(
               drive,
-              () -> -driveController.getLeftY(),
-              () -> -driveController.getLeftX(),
-              () -> -driveController.getRightX()));
+              () -> -driveController.getLeftY() * Constants.SLOW_MODE_MULTI,
+              () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
+              () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
     }
     // [driver] SLOW MODE YIPE
     driveController

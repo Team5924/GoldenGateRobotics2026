@@ -16,9 +16,11 @@
 
 package org.team5924.frc2026.subsystems.objectDetection;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.List;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.team5924.frc2026.util.Elastic;
@@ -43,6 +45,29 @@ public class ObjectDetection extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Object Detection Inputs", inputs);
+
+    List<TargetGroup> groups = inputs.latestGroupedTargets.groups();
+    for (int groupIndex = 0; groupIndex < groups.size(); ++groupIndex) {
+      TargetGroup group = groups.get(groupIndex);
+
+      List<PhotonTrackedTarget> targets = group.targets;
+      for (int targetIndex = 0; targetIndex < targets.size(); ++targetIndex) {
+        PhotonTrackedTarget target = targets.get(targetIndex);
+
+        String logPath =
+            "Object Detection Inputs/Target Group "
+                + groupIndex
+                + "/Target "
+                + target.objDetectId
+                + "/";
+        Logger.recordOutput(
+            logPath + "distanceToRobot",
+            Units.metersToInches(target.getBestCameraToTarget().getTranslation().getNorm()));
+        Logger.recordOutput(
+            logPath + "cameraToTarget", target.getBestCameraToTarget().getTranslation());
+      }
+    }
+
     if (!inputs.isCameraConnected) {
       Elastic.sendNotification(cameraDisconnectedNotification);
     }

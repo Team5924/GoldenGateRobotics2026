@@ -32,7 +32,7 @@ public class TargetGroup {
     this.fuelAmount = 0;
     this.targets = new ArrayList<>();
     this.firstFiducialTarget = new PhotonTrackedTarget();
-    this.distanceFromRobotFeet = 0;
+    this.distanceFromRobotFeet = 0.0;
   }
 
   public void addTarget(PhotonTrackedTarget target) {
