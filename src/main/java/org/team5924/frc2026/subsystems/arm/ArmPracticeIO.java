@@ -27,7 +27,7 @@ public interface ArmPracticeIO {
     public double armPracticeAppliedVoltage = 0.0;
     public double armPracticeSupplyCurrentAmps = 0.0;
     public double armPracticeTorqueCurrentAmps = 0.0;
-    public double armPracticeTempCelcius = 0.0;
+    public double armPracticeTempCelsius = 0.0;
   }
 
   /**

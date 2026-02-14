@@ -40,7 +40,6 @@ public class ArmPracticeIOTalonFX implements ArmPracticeIO {
   private final StatusSignal<Current> armPracticeTorqueCurrent;
   private final StatusSignal<Temperature> armPracticeTempCelsius;
 
-  private final DigitalInput beamBreak = new DigitalInput(0);
 
   // Single shot for voltage mode, robot loop will call continuously
   private final VoltageOut voltageout = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
@@ -67,7 +66,7 @@ public class ArmPracticeIOTalonFX implements ArmPracticeIO {
         armPracticeSupplyCurrent,
         armPracticeTorqueCurrent,
         armPracticeTempCelsius);
-
+    //This is a practice arm so the position doesn't matter
     armPracticeTalon.setPosition(0);
   }
 
@@ -91,7 +90,7 @@ public class ArmPracticeIOTalonFX implements ArmPracticeIO {
     inputs.armPracticeAppliedVoltage = armPracticeAppliedVoltage.getValueAsDouble();
     inputs.armPracticeSupplyCurrentAmps = armPracticeSupplyCurrent.getValueAsDouble();
     inputs.armPracticeTorqueCurrentAmps = armPracticeTorqueCurrent.getValueAsDouble();
-    inputs.armPracticeTempCelcius = armPracticeTempCelsius.getValueAsDouble();
+    inputs.armPracticeTempCelsius = armPracticeTempCelsius.getValueAsDouble();
   }
 
   @Override

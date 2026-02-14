@@ -251,7 +251,7 @@ public final class Constants {
             .withNeutralMode(NeutralModeValue.Brake));
   }
 
-   public final class ArmPractice {
+   public final class ArmPractice { //TODO: Update these later
     public static final int CAN_ID = 0;
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
@@ -268,12 +268,7 @@ public final class Constants {
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
 
-    public static final CANdiConfiguration CANDI_CONFIG =
-      new CANdiConfiguration()
-        .withDigitalInputs(
-          new DigitalInputsConfigs()
-            .withS1CloseState(S1CloseStateValue.CloseWhenLow)
-            .withS2CloseState(S2CloseStateValue.CloseWhenLow));
+    
   }
 
 }

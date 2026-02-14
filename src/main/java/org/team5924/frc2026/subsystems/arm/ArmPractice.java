@@ -56,7 +56,7 @@ public class ArmPractice extends SubsystemBase {
 
   public ArmPractice(ArmPracticeIO io) {
     this.io = io;
-    this.goalState = ArmPracticeState.MOVING;
+    this.goalState = ArmPracticeState.STOW;
     this.armPracticeMotorDisconnected =
         new Alert("Arm Practice Motor Disconnected!", Alert.AlertType.kWarning);
     this.armPracticeMotorDisconnectedNotification =
@@ -69,8 +69,8 @@ public class ArmPractice extends SubsystemBase {
     Logger.processInputs("ArmPractice", inputs);
 
     Logger.recordOutput("ArmPractice/GoalState", goalState.toString());
-    Logger.recordOutput("ArmPractice/CurrentState", RobotState.getInstance().getArmPracticeState());
-    Logger.recordOutput("ArmPractice/TargetRads", goalState.rads);
+    Logger.recordOutput("ArmPractice/CurrentState", RobotState.getInstance().getArmPracticeState().toString());
+    Logger.recordOutput("ArmPractice/TargetRads", goalState.rads.getAsDouble());
 
     armPracticeMotorDisconnected.set(!inputs.armPracticeMotorConnected);
 
