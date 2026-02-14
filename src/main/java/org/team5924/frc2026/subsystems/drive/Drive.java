@@ -22,6 +22,7 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
+import choreo.trajectory.SwerveSample;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
@@ -34,6 +35,7 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -72,6 +74,7 @@ import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 import org.team5924.frc2026.util.LocalADStarAK;
+import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
@@ -102,6 +105,33 @@ public class Drive extends SubsystemBase {
               TunerConstants.FrontLeft.SlipCurrent,
               1),
           getModuleTranslations());
+
+  private final LoggedTunableNumber xControllerKp =
+      new LoggedTunableNumber("Drive/xControllerKp", 10.0);
+  private final LoggedTunableNumber xControllerKi =
+      new LoggedTunableNumber("Drive/xControllerKi", 0.0);
+  private final LoggedTunableNumber xControllerKd =
+      new LoggedTunableNumber("Drive/xControllerKd", 0.0);
+  private final LoggedTunableNumber yControllerKp =
+      new LoggedTunableNumber("Drive/yControllerKp", 10.0);
+  private final LoggedTunableNumber yControllerKi =
+      new LoggedTunableNumber("Drive/yControllerKi", 0.0);
+  private final LoggedTunableNumber yControllerKd =
+      new LoggedTunableNumber("Drive/yControllerKd", 0.0);
+  private final LoggedTunableNumber headingControllerKp =
+      new LoggedTunableNumber("Drive/headingControllerKp", 7.5);
+  private final LoggedTunableNumber headingControllerKi =
+      new LoggedTunableNumber("Drive/headingControllerKi", 0.0);
+  private final LoggedTunableNumber headingControllerKd =
+      new LoggedTunableNumber("Drive/headingControllerKd", 0.0);
+
+  private final PIDController xController =
+      new PIDController(xControllerKp.get(), xControllerKi.get(), xControllerKd.get());
+  private final PIDController yController =
+      new PIDController(yControllerKp.get(), yControllerKi.get(), yControllerKd.get());
+  private final PIDController headingController =
+      new PIDController(
+          headingControllerKp.get(), headingControllerKi.get(), headingControllerKd.get());
 
   public static final DriveTrainSimulationConfig mapleSimConfig =
       DriveTrainSimulationConfig.Default()
@@ -239,6 +269,7 @@ public class Drive extends SubsystemBase {
             builder.addDoubleProperty("Robot Angle", () -> getRotation().getRadians(), null);
           }
         });
+    headingController.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   @Override
@@ -311,6 +342,22 @@ public class Drive extends SubsystemBase {
       Elastic.sendNotification(gyroDisconnectedNotification);
     }
     wasGyroConnected = gyroInputs.connected;
+  }
+
+  public void followChoreoTrajectory(SwerveSample sample) {
+    // Get the current pose of the robot
+    Pose2d pose = getPose();
+
+    // Generate the next speeds for the robot
+    ChassisSpeeds speeds =
+        new ChassisSpeeds(
+            sample.vx + xController.calculate(pose.getX(), sample.x),
+            sample.vy + yController.calculate(pose.getY(), sample.y),
+            sample.omega
+                + headingController.calculate(pose.getRotation().getRadians(), sample.heading));
+
+    // Apply the generated speeds
+    runVelocity(speeds);
   }
 
   /**

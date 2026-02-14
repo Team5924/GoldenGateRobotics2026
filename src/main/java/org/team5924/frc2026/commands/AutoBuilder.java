@@ -22,12 +22,17 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import lombok.RequiredArgsConstructor;
+
+import org.team5924.frc2026.Robot;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.commands.drive.DriveToPose;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
 import org.team5924.frc2026.subsystems.superShooter.SuperShooter;
 import org.team5924.frc2026.util.AllianceFlipUtil;
+
+import choreo.auto.AutoRoutine;
+import choreo.auto.AutoTrajectory;
 
 @RequiredArgsConstructor
 public class AutoBuilder {
@@ -55,4 +60,19 @@ public class AutoBuilder {
                         new Translation2d((AllianceFlipUtil.shouldFlip() ? -1.0 : 1.0) * -1.0, 0.0))
                 .withTimeout(0.6));
   }
+
+public Command pickupAndScoreAuto() {
+    return Commands.sequence(
+        Robot.mAutoFactory.resetOdometry("pickupGamepiece"), 
+        Commands.deadline(
+            Robot.mAutoFactory.trajectoryCmd("pickupGamepiece"),
+            AutoCommands.intake(intake) 
+        ),
+        Commands.parallel(
+            Robot.mAutoFactory.trajectoryCmd("scoreGamepiece")//,
+            //AutoCommands.getShooterReady(shooter)
+        ),
+        AutoCommands.score(shooter)
+    );
+}
 }
