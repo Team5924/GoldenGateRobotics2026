@@ -149,13 +149,17 @@ public class Robot extends LoggedRobot {
      // Low battery alert
     if (DriverStation.isEnabled()) {
       disabledTimer.reset();
+      lowBatteryAlert.set(false);
     }
-    if (RobotController.getBatteryVoltage() > 0.0
-        && RobotController.getBatteryVoltage() <= lowBatteryVoltage
-        && disabledTimer.hasElapsed(lowBatteryDisabledTime)) {
+    double batteryVoltage = RobotController.getBatteryVoltage();
+    if (batteryVoltage > 0.0
+      && batteryVoltage <= lowBatteryVoltage
+      && disabledTimer.hasElapsed(lowBatteryDisabledTime)) {
       lowBatteryAlert.set(true);
       //Leds.getGlobal().lowBatteryAlert = true;
-    }
+    } else {
+      lowBatteryAlert.set(false);
+     }
   }
 
   
