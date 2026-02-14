@@ -45,7 +45,7 @@ public class Turret extends SubsystemBase {
     MOVING(new LoggedTunableNumber("Turret/Moving", 0)),
 
     // voltage at which the example subsystem motor moves when controlled by the operator
-    OPERATOR_CONTROL(new LoggedTunableNumber("Turret/OperatorVoltage", 4.5));
+    OPERATOR_CONTROL(new LoggedTunableNumber("Turret/OperatorVoltage", 2));
 
     private final LoggedTunableNumber rads;
 
@@ -186,7 +186,7 @@ public class Turret extends SubsystemBase {
   }
 
   public double getCurrentPosition() {
-    return Units.rotationsToRadians(inputs.cancoderPosition);
+    return Units.rotationsToRadians(inputs.cancoderAbsolutePosition);
   }
 
   public void setTeleopDefaultCommand() {
