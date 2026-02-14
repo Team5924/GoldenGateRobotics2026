@@ -22,4 +22,10 @@ public class AutoCommands {
     public static Command score(SuperShooter shooter) {
         return Commands.run(() -> shooter.setGoalState(ShooterState.AUTO_SHOOTING), shooter);
     }
+
+    // no climb subsystem yet
+
+    // public static Command climb(Climb climb) {
+    //     return Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb);
+    // }
 }

@@ -42,37 +42,63 @@ public class AutoBuilder {
   // private final Climb climb;
   private final Intake intake;
 
-  public Command basicDriveAuto() {
-    return Commands.runOnce(
-            () ->
-                RobotState.getInstance()
-                    .resetPose(
-                        AllianceFlipUtil.apply(
-                            new Pose2d(
-                                RobotState.getInstance().getEstimatedPose().getTranslation(),
-                                Rotation2d.kPi))))
-        .andThen(
-            new DriveToPose(
-                    drive,
-                    () -> RobotState.getInstance().getEstimatedPose(),
-                    () -> RobotState.getInstance().getEstimatedPose(),
-                    () ->
-                        new Translation2d((AllianceFlipUtil.shouldFlip() ? -1.0 : 1.0) * -1.0, 0.0))
-                .withTimeout(0.6));
-  }
+//   public Command basicDriveAuto() {
+//     return Commands.runOnce(
+//             () ->
+//                 RobotState.getInstance()
+//                     .resetPose(
+//                         AllianceFlipUtil.apply(
+//                             new Pose2d(
+//                                 RobotState.getInstance().getEstimatedPose().getTranslation(),
+//                                 Rotation2d.kPi))))
+//         .andThen(
+//             new DriveToPose(
+//                     drive,
+//                     () -> RobotState.getInstance().getEstimatedPose(),
+//                     () -> RobotState.getInstance().getEstimatedPose(),
+//                     () ->
+//                         new Translation2d((AllianceFlipUtil.shouldFlip() ? -1.0 : 1.0) * -1.0, 0.0))
+//                 .withTimeout(0.6));
+//   }
 
-public Command pickupAndScoreAuto() {
-    return Commands.sequence(
-        Robot.mAutoFactory.resetOdometry("pickupGamepiece"), 
-        Commands.deadline(
-            Robot.mAutoFactory.trajectoryCmd("pickupGamepiece"),
-            AutoCommands.intake(intake) 
-        ),
-        Commands.parallel(
-            Robot.mAutoFactory.trajectoryCmd("scoreGamepiece")//,
-            //AutoCommands.getShooterReady(shooter)
-        ),
-        AutoCommands.score(shooter)
-    );
-}
+    public Command scoreAndClimbAuto() {
+        return Commands.sequence(
+            Robot.mAutoFactory.resetOdometry("startingPositionToHub"), 
+            Commands.parallel(
+                Robot.mAutoFactory.trajectoryCmd("startingPositionToHub")//,
+                //AutoCommands.getShooterReady(shooter)
+            ),
+            AutoCommands.score(shooter),
+            Commands.parallel(
+                Robot.mAutoFactory.trajectoryCmd("HubToClimb")//,
+                //AutoCommands.getClimbReady(climb)
+            )//,
+            //AutoCommands.climb(climb)
+        );
+    }
+
+    public Command scorePickupAndClimbAuto() {
+        return Commands.sequence(
+            Robot.mAutoFactory.resetOdometry("startingPositionToHub"), 
+            Commands.parallel(
+                Robot.mAutoFactory.trajectoryCmd("startingPositionToHub")//,
+                //AutoCommands.getShooterReady(shooter)
+            ),
+            AutoCommands.score(shooter),
+            Commands.deadline(
+                Robot.mAutoFactory.trajectoryCmd("HubtoDepot"),
+                AutoCommands.intake(intake)
+            ),
+            Commands.parallel(
+                Robot.mAutoFactory.trajectoryCmd("startingPositionToHub")//,
+                //AutoCommands.getShooterReady(shooter)
+            ),
+            AutoCommands.score(shooter),
+            Commands.parallel(
+                Robot.mAutoFactory.trajectoryCmd("HubToClimb")//,
+                //AutoCommands.getClimbReady(climb)
+            )//,
+            //AutoCommands.climb(climb)
+        );
+    }
 }
