@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import lombok.Getter;
 import lombok.Setter;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.team5924.frc2026.subsystems.arm.Arm.ArmState;
 import org.team5924.frc2026.subsystems.climb.Climb.ClimbState;
 import org.team5924.frc2026.subsystems.exampleSystem.ExampleSystem.ExampleSystemState;
 import org.team5924.frc2026.subsystems.rollers.exampleRoller.ExampleRoller.ExampleRollerState;
@@ -72,4 +73,14 @@ public class RobotState {
   @Getter @Setter private IndexerState indexerState = IndexerState.OFF;
   /*### Shooter Roller ### */
   @Getter @Setter private ShooterRollerState shooterRollerState = ShooterRollerState.OFF;
+
+public byte[] getArmState() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getArmState'");
+}
+
+public void setArmState(ArmState operatorControl) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setArmState'");
+}
 }

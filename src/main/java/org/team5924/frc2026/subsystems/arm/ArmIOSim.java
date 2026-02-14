@@ -37,7 +37,7 @@ public class ArmIOSim implements ArmIO {
   }
 
   @Override
-  public void updateInputs(ArmIoInputs inputs) {
+  public void updateInputs(ArmIOInputs inputs) {
     if (DriverStation.isDisabled()) runVolts(0.0);
 
     sim.update(Constants.LOOP_PERIODIC_SECONDS);
