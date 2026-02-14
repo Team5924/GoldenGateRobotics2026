@@ -16,6 +16,7 @@
 
 package org.team5924.frc2026;
 
+import choreo.auto.AutoFactory;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
@@ -37,6 +38,7 @@ import org.team5924.frc2026.util.Elastic;
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
+  public static AutoFactory mAutoFactory;
 
   public Robot() {
     // Record metadata
@@ -52,7 +54,6 @@ public class Robot extends LoggedRobot {
           case 1 -> "Uncommitted changes";
           default -> "Unknown";
         });
-
     // Set up data receivers & replay source
     switch (Constants.currentMode) {
       case REAL:
