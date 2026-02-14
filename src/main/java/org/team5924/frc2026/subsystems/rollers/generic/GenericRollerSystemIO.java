@@ -17,12 +17,11 @@
 package org.team5924.frc2026.subsystems.rollers.generic;
 
 import org.littletonrobotics.junction.AutoLog;
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO.GenericRollerSystemIOInputs;
 
-public interface GenericRollerSystemIO<Inputs extends GenericRollerSystemIOInputs> {
+public interface GenericRollerSystemIO {
 
   @AutoLog
-  abstract class GenericRollerSystemIOInputs {
+  public static class GenericRollerSystemIOInputs {
     /** Whether the motor is detected and sending status signals. */
     public boolean motorConnected = true;
 
@@ -45,7 +44,7 @@ public interface GenericRollerSystemIO<Inputs extends GenericRollerSystemIOInput
     public double tempCelsius = 0.0;
   }
 
-  default void updateInputs(Inputs inputs) {}
+  default void updateInputs(GenericRollerSystemIOInputs inputs) {}
 
   /** Run roller at volts */
   default void runVolts(double volts) {}

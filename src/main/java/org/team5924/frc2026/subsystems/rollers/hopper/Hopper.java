@@ -14,47 +14,37 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.hopperAgitator;
+package org.team5924.frc2026.subsystems.rollers.hopper;
 
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.RobotState;
-import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIO;
-import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIOInputsAutoLogged;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
+import org.team5924.frc2026.subsystems.sensors.BeamBreakIOInputsAutoLogged;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
-public class Hopper
-    extends GenericRollerSystem<
-        Hopper.HopperState, HopperIOInputs, HopperIO, HopperIOInputsAutoLogged> {
+public class Hopper extends GenericRollerSystem<Hopper.HopperState> {
 
   @RequiredArgsConstructor
   @Getter
   public enum HopperState implements VoltageState {
-    ON(new LoggedTunableNumber("HopperAgitatorOnVoltage", 0.0)),
-    SPIT(new LoggedTunableNumber("HopperAgitatorSpitVoltage", 0.0)),
+    ON(new LoggedTunableNumber("HopperAgitator/OnVoltage", 0.0)),
+    SPIT(new LoggedTunableNumber("HopperAgitator/SpitVoltage", 0.0)),
     OFF(() -> 0.0);
 
     private final DoubleSupplier voltageSupplier;
   }
 
+  private final BeamBreakIOInputsAutoLogged beamBreakInputs = new BeamBreakIOInputsAutoLogged();
+
   private HopperState goalState = HopperState.OFF;
 
-  // Hopper Beam Breaks
-  private final BeamBreakIO[] beamBreakIOs;
-  private final BeamBreakIOInputsAutoLogged[] beamBreakInputs;
-  public Hopper(
-      HopperIO io,
-      BeamBreakIO[] beamBreakIOs) {
-    super("Hopper", io, new HopperIOInputsAutoLogged());
-    this.beamBreakIOs = beamBreakIOs;
-    this.beamBreakInputs = new BeamBreakIOInputsAutoLogged[beamBreakIOs.length];
-    for (int i = 0; i < beamBreakIOs.length; i++) {
-      beamBreakInputs[i] = new BeamBreakIOInputsAutoLogged();
-    }
+  public Hopper(HopperIO io) {
+    super("Hopper", io);
   }
 
   public void setGoalState(HopperState goalState) {
@@ -64,12 +54,7 @@ public class Hopper
 
   @Override
   public void periodic() {
-    boolean allBroken = true;
-    for (int i = 0; i < beamBreakIOs.length; i++) {
-      beamBreakIOs[i].updateInputs(beamBreakInputs[i]);
-      allBroken &= beamBreakInputs[i].broken;
-    }
-    inputs.isFull = allBroken;
     super.periodic();
+    Logger.processInputs("Hopper/BeamBreak", beamBreakInputs);
   }
 }

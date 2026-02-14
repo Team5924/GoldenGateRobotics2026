@@ -1,5 +1,5 @@
 /*
- * BeamBreakIOBeamBreak.java
+ * HopperIO.java
  */
 
 /* 
@@ -14,19 +14,8 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.beamBreak;
+package org.team5924.frc2026.subsystems.rollers.hopper;
 
-import edu.wpi.first.wpilibj.DigitalInput;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO;
 
-public class BeamBreakIOBeamBreak implements BeamBreakIO {
-  private final DigitalInput beamBreak;
-
-  public BeamBreakIOBeamBreak(int id) {
-    beamBreak = new DigitalInput(id);
-  }
-
-  @Override
-  public void updateInputs(BeamBreakIOInputs inputs) {
-    inputs.broken = beamBreak.get();
-  }
-}
+public interface HopperIO extends GenericRollerSystemIO {}

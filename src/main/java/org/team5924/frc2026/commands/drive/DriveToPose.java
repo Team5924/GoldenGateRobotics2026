@@ -44,16 +44,22 @@ public class DriveToPose extends Command {
   private final LoggedTunableNumber thetaKi = new LoggedTunableNumber("DriveToPose/thetaKi", 0.0);
   private final LoggedTunableNumber thetaKd = new LoggedTunableNumber("DriveToPose/thetaKd", 0.2);
 
-  private final PIDController drivePID = new PIDController(driveKp.get(), driveKi.get(), driveKd.get());
-  private final PIDController thetaPID = new PIDController(thetaKp.get(), thetaKi.get(), thetaKd.get());
+  private final PIDController drivePID =
+      new PIDController(driveKp.get(), driveKi.get(), driveKd.get());
+  private final PIDController thetaPID =
+      new PIDController(thetaKp.get(), thetaKi.get(), thetaKd.get());
 
   // Clamp translational speed to a safe maximum (adjust to your robot's max m/s)
-  private static final LoggedTunableNumber MAX_DRIVE_SPEED = new LoggedTunableNumber("DriveToPose/MAX_DRIVE_SPEED", 4.0); // m/s
-  private static final LoggedTunableNumber MAX_TURN_SPEED = new LoggedTunableNumber("DriveToPose/MAX_TURN_SPEED", 6.0); // rad/s
+  private static final LoggedTunableNumber MAX_DRIVE_SPEED =
+      new LoggedTunableNumber("DriveToPose/MAX_DRIVE_SPEED", 4.0); // m/s
+  private static final LoggedTunableNumber MAX_TURN_SPEED =
+      new LoggedTunableNumber("DriveToPose/MAX_TURN_SPEED", 6.0); // rad/s
 
   // Tolerances
-  private static final LoggedTunableNumber DIST_TOL = new LoggedTunableNumber("DriveToPose/DIST_TOL", 0.05); // meters
-  private static final LoggedTunableNumber ANGLE_TOL = new LoggedTunableNumber("DriveToPose/ANGLE_TOL", Math.toRadians(2));
+  private static final LoggedTunableNumber DIST_TOL =
+      new LoggedTunableNumber("DriveToPose/DIST_TOL", 0.05); // meters
+  private static final LoggedTunableNumber ANGLE_TOL =
+      new LoggedTunableNumber("DriveToPose/ANGLE_TOL", Math.toRadians(2));
 
   public DriveToPose(Drive drive, Supplier<Pose2d> target) {
     this.drive = drive;
@@ -95,10 +101,15 @@ public class DriveToPose extends Command {
     double distanceError = errorTranslation.getNorm();
 
     double driveSpeed =
-        MathUtil.clamp(-drivePID.calculate(distanceError, 0), -MAX_DRIVE_SPEED.get(), MAX_DRIVE_SPEED.get());
+        MathUtil.clamp(
+            -drivePID.calculate(distanceError, 0), -MAX_DRIVE_SPEED.get(), MAX_DRIVE_SPEED.get());
 
     double turnSpeed =
-        MathUtil.clamp(thetaPID.calculate(current.getRotation().getRadians(), targetPose.getRotation().getRadians()), -MAX_TURN_SPEED.get(), MAX_TURN_SPEED.get());
+        MathUtil.clamp(
+            thetaPID.calculate(
+                current.getRotation().getRadians(), targetPose.getRotation().getRadians()),
+            -MAX_TURN_SPEED.get(),
+            MAX_TURN_SPEED.get());
 
     Rotation2d driveDirection = errorTranslation.getAngle();
 

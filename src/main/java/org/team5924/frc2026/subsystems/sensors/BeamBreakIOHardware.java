@@ -1,5 +1,5 @@
 /*
- * IntakeIOInputs.java
+ * BeamBreakIOHardware.java
  */
 
 /* 
@@ -14,10 +14,19 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.intake;
+package org.team5924.frc2026.subsystems.sensors;
 
-import org.littletonrobotics.junction.AutoLog;
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO.GenericRollerSystemIOInputs;
+import edu.wpi.first.wpilibj.DigitalInput;
 
-@AutoLog
-abstract class IntakeIOInputs extends GenericRollerSystemIOInputs {}
+public class BeamBreakIOHardware implements BeamBreakIO {
+  private final DigitalInput beamBreak;
+
+  public BeamBreakIOHardware(int id) {
+    beamBreak = new DigitalInput(id);
+  }
+
+  @Override
+  public void updateInputs(BeamBreakIOInputs inputs) {
+    inputs.broken = beamBreak.get();
+  }
+}
