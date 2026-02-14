@@ -14,7 +14,7 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.shooterHood;
+package org.team5924.frc2026.subsystems.pivots.shooterHood;
 
 import org.littletonrobotics.junction.AutoLog;
 
