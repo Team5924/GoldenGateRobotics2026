@@ -28,8 +28,7 @@ public class AutoCommands {
     return Commands.run(() -> intake.setGoalState(IntakeState.INTAKE), intake);
   }
 
-  // this command will put shooter into place for shooting, so it needs turret and rotation data
-  // idk????
+  //TODO: this command will put shooter into place for shooting, so it needs turret and rotation data
 
   // public static Command getShooterReady(SuperShooter shooter) {
   //     return Commands.run(() -> shooter.setGoalState(ShooterState.AUTO_SHOOTING), shooter);

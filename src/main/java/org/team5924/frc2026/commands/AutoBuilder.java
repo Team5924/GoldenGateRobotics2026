@@ -59,7 +59,7 @@ public class AutoBuilder {
             Robot.mAutoFactory.trajectoryCmd("startingPositionToHub") // ,
             // AutoCommands.getShooterReady(shooter)
             ),
-        AutoCommands.score(shooter),
+        AutoCommands.score(shooter).withTimeout(1.0),
         Commands.parallel(
             Robot.mAutoFactory.trajectoryCmd("HubToClimb") // ,
             // AutoCommands.getClimbReady(climb)
@@ -75,14 +75,14 @@ public class AutoBuilder {
             Robot.mAutoFactory.trajectoryCmd("startingPositionToHub") // ,
             // AutoCommands.getShooterReady(shooter)
             ),
-        AutoCommands.score(shooter),
+        AutoCommands.score(shooter).withTimeout(1.0),
         Commands.deadline(
-            Robot.mAutoFactory.trajectoryCmd("HubtoDepot"), AutoCommands.intake(intake)),
+            Robot.mAutoFactory.trajectoryCmd("HubToDepot"), AutoCommands.intake(intake)),
         Commands.parallel(
-            Robot.mAutoFactory.trajectoryCmd("startingPositionToHub") // ,
+            Robot.mAutoFactory.trajectoryCmd("DepotToHub") // ,
             // AutoCommands.getShooterReady(shooter)
             ),
-        AutoCommands.score(shooter),
+        AutoCommands.score(shooter).withTimeout(1.0),
         Commands.parallel(
             Robot.mAutoFactory.trajectoryCmd("HubToClimb") // ,
             // AutoCommands.getClimbReady(climb)

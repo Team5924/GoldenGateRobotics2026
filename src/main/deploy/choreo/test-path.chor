@@ -76,7 +76,7 @@
  },
  "generationFeatures":[],
  "codegen":{
-  "root":"..\\C:\\Users\\wills\\Development",
+  "root": "...\GoldenGateRobotics2026\src\main\deploy\choreo",
   "genVars":true,
   "genTrajData":true,
   "useChoreoLib":true
