@@ -1,5 +1,5 @@
 {
- "name":"test-path",
+ "name":"AlphaAutos",
  "version":2,
  "type":"Swerve",
  "variables":{
@@ -76,7 +76,7 @@
  },
  "generationFeatures":[],
  "codegen":{
-  "root": "...\GoldenGateRobotics2026\src\main\deploy\choreo",
+  "root":null,
   "genVars":true,
   "genTrajData":true,
   "useChoreoLib":true

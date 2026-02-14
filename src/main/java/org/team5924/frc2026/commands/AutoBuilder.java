@@ -18,7 +18,10 @@ package org.team5924.frc2026.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
 import org.team5924.frc2026.Robot;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
@@ -31,6 +34,10 @@ public class AutoBuilder {
   private final SuperShooter shooter;
   // private final Climb climb;
   private final Intake intake;
+  
+  // Left, Right, Mid
+  @Setter @Getter
+  private String startingPosition; 
 
   //   public Command basicDriveAuto() {
   //     return Commands.runOnce(
@@ -54,9 +61,9 @@ public class AutoBuilder {
 
   public Command scoreAndClimbAuto() {
     return Commands.sequence(
-        Robot.mAutoFactory.resetOdometry("startingPositionToHub"),
+        Robot.mAutoFactory.resetOdometry(startingPosition + "ToHub"),
         Commands.parallel(
-            Robot.mAutoFactory.trajectoryCmd("startingPositionToHub") // ,
+            Robot.mAutoFactory.trajectoryCmd(startingPosition + "ToHub") // ,
             // AutoCommands.getShooterReady(shooter)
             ),
         AutoCommands.score(shooter).withTimeout(1.0),
@@ -70,14 +77,15 @@ public class AutoBuilder {
 
   public Command scorePickupAndClimbAuto() {
     return Commands.sequence(
-        Robot.mAutoFactory.resetOdometry("startingPositionToHub"),
+        Robot.mAutoFactory.resetOdometry(startingPosition + "ToHub"),
         Commands.parallel(
-            Robot.mAutoFactory.trajectoryCmd("startingPositionToHub") // ,
+            Robot.mAutoFactory.trajectoryCmd(startingPosition + "ToHub") // ,
             // AutoCommands.getShooterReady(shooter)
             ),
         AutoCommands.score(shooter).withTimeout(1.0),
         Commands.deadline(
-            Robot.mAutoFactory.trajectoryCmd("HubToDepot"), AutoCommands.intake(intake)),
+            Robot.mAutoFactory.trajectoryCmd("HubToDepot"), 
+            AutoCommands.intake(intake)),
         Commands.parallel(
             Robot.mAutoFactory.trajectoryCmd("DepotToHub") // ,
             // AutoCommands.getShooterReady(shooter)
