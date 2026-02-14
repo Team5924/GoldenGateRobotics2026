@@ -17,8 +17,8 @@
 package org.team5924.frc2026.commands.shooter;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import org.team5924.frc2026.subsystems.SuperShooter;
 import org.team5924.frc2026.subsystems.drive.Drive;
-import org.team5924.frc2026.subsystems.superShooter.SuperShooter;
 
 public class AutoScoreCommands {
   // TODO Make and auto score program
