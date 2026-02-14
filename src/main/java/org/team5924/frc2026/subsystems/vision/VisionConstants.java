@@ -30,24 +30,28 @@ public class VisionConstants {
   public static final String BACK_LEFT_NAME = "Back Left";
 
   // TODO: update these transforms!!
-  public static final double CAMERA_DISTANCE = Units.inchesToMeters(11.8645);
-  public static final double CAMERA_HEIGHT = Units.inchesToMeters(7.0);
+  public static final double CAMERA_CENTER_DISTANCE = Units.inchesToMeters(11.8645);
+  public static final double CAMERA_Z = Units.inchesToMeters(7.0);
+  public static final double CAMERA_PITCH = -Math.toRadians(45.0);
+
+// +x = forward, +y = left, +z = up
   public static final Transform3d FRONT_LEFT_TRANSFORM =
       new Transform3d(
-          new Translation3d(-CAMERA_DISTANCE, CAMERA_DISTANCE, CAMERA_HEIGHT),
-          new Rotation3d(0.0, Math.toRadians(-20.0), Math.toRadians(70.0)));
+          new Translation3d(CAMERA_CENTER_DISTANCE, CAMERA_CENTER_DISTANCE, CAMERA_Z),
+          new Rotation3d(0.0, CAMERA_PITCH, Math.PI / 4));
   public static final Transform3d FRONT_RIGHT_TRANSFORM =
       new Transform3d(
-          new Translation3d(CAMERA_DISTANCE, CAMERA_DISTANCE, CAMERA_HEIGHT),
-          new Rotation3d(0.0, Math.toRadians(-20.0), Math.toRadians(-70.0)));
+          new Translation3d(CAMERA_CENTER_DISTANCE, -CAMERA_CENTER_DISTANCE, CAMERA_Z),
+          new Rotation3d(0.0, CAMERA_PITCH, -Math.PI / 4));
   public static final Transform3d BACK_LEFT_TRANSFORM =
       new Transform3d(
-          new Translation3d(-CAMERA_DISTANCE, -CAMERA_DISTANCE, CAMERA_HEIGHT),
-          new Rotation3d(0.0, Math.toRadians(-20.0), Math.toRadians(180.0 - 55.0)));
+          new Translation3d(-CAMERA_CENTER_DISTANCE, CAMERA_CENTER_DISTANCE, CAMERA_Z),
+          new Rotation3d(0.0, CAMERA_PITCH, 3 * Math.PI / 4));
   public static final Transform3d BACK_RIGHT_TRANSFORM =
       new Transform3d(
-          new Translation3d(-CAMERA_DISTANCE, CAMERA_DISTANCE, CAMERA_HEIGHT),
-          new Rotation3d(0.0, Math.toRadians(-20.0), Math.toRadians(-(180.0 - 55.0))));
+          new Translation3d(-CAMERA_CENTER_DISTANCE, -CAMERA_CENTER_DISTANCE, CAMERA_Z),
+          new Rotation3d(0.0, CAMERA_PITCH, -3 * Math.PI / 4));
+
   // public static final ArrayList<Integer> IGNORE_IDS =
   //     new ArrayList<Integer>(List.of());
 
@@ -73,8 +77,10 @@ public class VisionConstants {
   // (Adjust to trust some cameras more than others)
   public static double[] cameraStdDevFactors =
       new double[] {
-        1.0, // Camera 0
-        1.0 // Camera 1
+        1.0, // FL
+        1.0, // FR
+        1.0, // BL
+        1.0 // BR
       };
 
   // Multipliers to apply for MegaTag 2 observations

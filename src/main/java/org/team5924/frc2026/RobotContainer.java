@@ -182,21 +182,24 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    if (false) { // Constants.currentMode == Constants.Mode.SIM) {
-      drive.setDefaultCommand(
-          DriveCommands.joystickDrive(
-              drive,
-              () -> -driveController.getLeftY(),
-              () -> -driveController.getRawAxis(0),
-              () -> -driveController.getRawAxis(2)));
-    } else {
+
+    // TODO: uncomment this out!
+    // if (Constants.currentMode == Constants.Mode.SIM) {
+    //   drive.setDefaultCommand(
+    //       DriveCommands.joystickDrive(
+    //           drive,
+    //           () -> -driveController.getLeftY(),
+    //           () -> -driveController.getRawAxis(0),
+    //           () -> -driveController.getRawAxis(2)));
+    // } else {
       drive.setDefaultCommand(
           DriveCommands.joystickDrive(
               drive,
               () -> -driveController.getLeftY(),
               () -> -driveController.getLeftX(),
               () -> -driveController.getRightX()));
-    }
+    // }
+
     // [driver] SLOW MODE YIPE
     driveController
         .y()
