@@ -107,23 +107,23 @@ public class Drive extends SubsystemBase {
           getModuleTranslations());
 
   private final LoggedTunableNumber xControllerKp =
-      new LoggedTunableNumber("DriveToPose/driveKp", 10.0);
+      new LoggedTunableNumber("Drive/xControllerKp", 10.0);
   private final LoggedTunableNumber xControllerKi =
-      new LoggedTunableNumber("DriveToPose/driveKi", 0.0);
+      new LoggedTunableNumber("Drive/xControllerKi", 0.0);
   private final LoggedTunableNumber xControllerKd =
-      new LoggedTunableNumber("DriveToPose/driveKd", 0.0);
+      new LoggedTunableNumber("Drive/xControllerKd", 0.0);
   private final LoggedTunableNumber yControllerKp =
-      new LoggedTunableNumber("DriveToPose/thetaKp", 10.0);
+      new LoggedTunableNumber("Drive/yControllerKp", 10.0);
   private final LoggedTunableNumber yControllerKi =
-      new LoggedTunableNumber("DriveToPose/thetaKi", 0.0);
+      new LoggedTunableNumber("Drive/yControllerKi", 0.0);
   private final LoggedTunableNumber yControllerKd =
-      new LoggedTunableNumber("DriveToPose/thetaKd", 0.0);
+      new LoggedTunableNumber("Drive/yControllerKd", 0.0);
   private final LoggedTunableNumber headingControllerKp =
-      new LoggedTunableNumber("DriveToPose/thetaKp", 7.5);
+      new LoggedTunableNumber("Drive/headingControllerKp", 7.5);
   private final LoggedTunableNumber headingControllerKi =
-      new LoggedTunableNumber("DriveToPose/thetaKi", 0.0);
+      new LoggedTunableNumber("Drive/headingControllerKi", 0.0);
   private final LoggedTunableNumber headingControllerKd =
-      new LoggedTunableNumber("DriveToPose/thetaKd", 0.0);
+      new LoggedTunableNumber("Drive/headingControllerKd", 0.0);
 
   private final PIDController xController =
       new PIDController(xControllerKp.get(), xControllerKi.get(), xControllerKd.get());

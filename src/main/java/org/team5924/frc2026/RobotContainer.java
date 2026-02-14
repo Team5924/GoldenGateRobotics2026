@@ -79,7 +79,6 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    configureAutos();
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -151,6 +150,7 @@ public class RobotContainer {
         // vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
         break;
     }
+    configureAutoFactory();
 
     // Auto commands
     NamedCommands.registerCommand(
@@ -320,7 +320,7 @@ public class RobotContainer {
         "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
   }
 
-  private void configureAutos() {
+  private void configureAutoFactory() {
     Robot.mAutoFactory =
         new AutoFactory(drive::getPose, drive::setPose, drive::followChoreoTrajectory, true, drive);
   }
