@@ -19,6 +19,8 @@ package org.team5924.frc2026.subsystems.rollers.indexer;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
@@ -55,8 +57,8 @@ public class Indexer extends GenericRollerSystem<Indexer.IndexerState> {
 
   @Override
   public void periodic() {
-    beamBreakIO.updateInputs(beamBreakInputs);
-    // Note: Beam break status is logged separately via beamBreakInputs
     super.periodic();
+    beamBreakIO.updateInputs(beamBreakInputs);
+    Logger.processInputs("Indexer/BeamBreak", beamBreakInputs);
   }
 }
