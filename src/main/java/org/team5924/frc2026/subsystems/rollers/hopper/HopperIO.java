@@ -14,7 +14,7 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.hopperAgitator;
+package org.team5924.frc2026.subsystems.rollers.hopper;
 
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO;
 

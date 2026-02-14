@@ -17,7 +17,6 @@
 package org.team5924.frc2026.subsystems.rollers.generic;
 
 import org.littletonrobotics.junction.AutoLog;
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO.GenericRollerSystemIOInputs;
 
 public interface GenericRollerSystemIO {
 

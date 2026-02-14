@@ -20,13 +20,11 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
-import lombok.RequiredArgsConstructor;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 
-@RequiredArgsConstructor
 public abstract class GenericRollerSystem<State extends GenericRollerSystem.VoltageState>
     extends SubsystemBase {
   public interface VoltageState {

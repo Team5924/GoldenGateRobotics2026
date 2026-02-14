@@ -32,6 +32,7 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.team5924.frc2026.commands.drive.DriveCommands;
 import org.team5924.frc2026.generated.TunerConstants;
+import org.team5924.frc2026.subsystems.SuperShooter;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.drive.GyroIO;
 import org.team5924.frc2026.subsystems.drive.GyroIOPigeon2;
@@ -39,9 +40,13 @@ import org.team5924.frc2026.subsystems.drive.GyroIOSim;
 import org.team5924.frc2026.subsystems.drive.ModuleIO;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFXSim;
-import org.team5924.frc2026.subsystems.rollers.hopperAgitator.Hopper;
-import org.team5924.frc2026.subsystems.rollers.hopperAgitator.HopperIO;
-import org.team5924.frc2026.subsystems.rollers.hopperAgitator.HopperKrakenFOC;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIO;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOTalonFX;
+import org.team5924.frc2026.subsystems.rollers.hopper.Hopper;
+import org.team5924.frc2026.subsystems.rollers.hopper.HopperIO;
+import org.team5924.frc2026.subsystems.rollers.hopper.HopperKrakenFOC;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOKrakenFOC;
@@ -52,11 +57,6 @@ import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOKrak
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOSim;
 import org.team5924.frc2026.subsystems.sensors.BeamBreakIO;
 import org.team5924.frc2026.subsystems.sensors.BeamBreakIOHardware;
-import org.team5924.frc2026.subsystems.shooterHood.ShooterHood;
-import org.team5924.frc2026.subsystems.shooterHood.ShooterHoodIO;
-import org.team5924.frc2026.subsystems.shooterHood.ShooterHoodIOSim;
-import org.team5924.frc2026.subsystems.shooterHood.ShooterHoodIOTalonFX;
-import org.team5924.frc2026.subsystems.superShooter.SuperShooter;
 
 public class RobotContainer {
   // Subsystems
@@ -99,7 +99,9 @@ public class RobotContainer {
                 new BeamBreakIOHardware(Constants.ShooterRoller.BEAM_BREAK_PORT));
         intake = new Intake(new IntakeIOKrakenFOC());
         shooter = new SuperShooter(shooterRoller, shooterHood);
-        hopper = new Hopper(new HopperKrakenFOC(), new BeamBreakIOHardware(0));
+        hopper =
+            new Hopper(
+                new HopperKrakenFOC(), new BeamBreakIOHardware(Constants.Hopper.BEAM_BREAK_ID));
         break;
 
       case SIM:
@@ -127,7 +129,8 @@ public class RobotContainer {
         shooterRoller = new ShooterRoller(new ShooterRollerIOSim(), new BeamBreakIO() {});
         intake = new Intake(new IntakeIOSim());
         shooter = new SuperShooter(shooterRoller, shooterHood);
-        hopper = new Hopper(null, new BeamBreakIO() {}); // TODO: Hopper sim implementation
+        hopper =
+            new Hopper(new HopperIO() {}, new BeamBreakIO() {}); // TODO: Hopper sim implementation
         break;
 
       default:
