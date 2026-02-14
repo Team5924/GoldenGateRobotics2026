@@ -23,7 +23,6 @@ import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
-import org.team5924.frc2026.subsystems.sensors.BeamBreakIO;
 import org.team5924.frc2026.subsystems.sensors.BeamBreakIOInputsAutoLogged;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
@@ -33,21 +32,19 @@ public class Hopper extends GenericRollerSystem<Hopper.HopperState> {
   @RequiredArgsConstructor
   @Getter
   public enum HopperState implements VoltageState {
-    ON(new LoggedTunableNumber("HopperAgitatorOnVoltage", 0.0)),
-    SPIT(new LoggedTunableNumber("HopperAgitatorSpitVoltage", 0.0)),
+    ON(new LoggedTunableNumber("HopperAgitator/OnVoltage", 0.0)),
+    SPIT(new LoggedTunableNumber("HopperAgitator/SpitVoltage", 0.0)),
     OFF(() -> 0.0);
 
     private final DoubleSupplier voltageSupplier;
   }
 
-  private final BeamBreakIO beamBreakIO;
   private final BeamBreakIOInputsAutoLogged beamBreakInputs = new BeamBreakIOInputsAutoLogged();
 
   private HopperState goalState = HopperState.OFF;
 
-  public Hopper(HopperIO io, BeamBreakIO beamBreakIO) {
+  public Hopper(HopperIO io) {
     super("Hopper", io);
-    this.beamBreakIO = beamBreakIO;
   }
 
   public void setGoalState(HopperState goalState) {
@@ -58,7 +55,6 @@ public class Hopper extends GenericRollerSystem<Hopper.HopperState> {
   @Override
   public void periodic() {
     super.periodic();
-    beamBreakIO.updateInputs(beamBreakInputs);
     Logger.processInputs("Hopper/BeamBreak", beamBreakInputs);
   }
 }
