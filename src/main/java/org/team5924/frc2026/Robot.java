@@ -20,7 +20,6 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.math.MathSharedStore;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -40,8 +39,8 @@ import org.team5924.frc2026.generated.TunerConstants;
 import org.team5924.frc2026.util.Elastic;
 
 public class Robot extends LoggedRobot {
-  private static final double lowBatteryVoltage = 11.0;
-  private static final double lowBatteryDisabledTime = 2.0;
+  private static final double LOW_BATTERY_VOLTAGE = 11.0;
+  private static final double LOW_BATTERY_DISABLED_TIME = 2.0;
   private Command autonomousCommand;
   private RobotContainer robotContainer;
 
@@ -153,8 +152,8 @@ public class Robot extends LoggedRobot {
     }
     double batteryVoltage = RobotController.getBatteryVoltage();
     if (batteryVoltage > 0.0
-      && batteryVoltage <= lowBatteryVoltage
-      && disabledTimer.hasElapsed(lowBatteryDisabledTime)) {
+      && batteryVoltage <= LOW_BATTERY_VOLTAGE
+      && disabledTimer.hasElapsed(LOW_BATTERY_DISABLED_TIME)) {
       lowBatteryAlert.set(true);
       //Leds.getGlobal().lowBatteryAlert = true;
     } else {
