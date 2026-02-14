@@ -16,6 +16,7 @@
 
 package org.team5924.frc2026.subsystems.vision;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -30,26 +31,29 @@ public class VisionConstants {
   public static final String BACK_LEFT_NAME = "Back Left";
 
   // TODO: update these transforms!!
-  public static final double CAMERA_CENTER_DISTANCE = Units.inchesToMeters(11.8645);
-  public static final double CAMERA_Z = Units.inchesToMeters(7.0);
-  public static final double CAMERA_PITCH = -Math.toRadians(45.0);
+  public static final double CAMERA_X = Units.inchesToMeters(12.5);
+  public static final double CAMERA_Y = Units.inchesToMeters(13.75);
+  public static final double CAMERA_Z_RIGHT = Units.inchesToMeters(9.5);
+  public static final double CAMERA_Z_LEFT = Units.inchesToMeters(9 + 9 / 16);
+  public static final double CAMERA_PITCH = Math.toRadians(45.0);
 
-// +x = forward, +y = left, +z = up
+  // +x = forward, +y = left, +z = up
+  // transforms are relative to the robot's center
   public static final Transform3d FRONT_LEFT_TRANSFORM =
       new Transform3d(
-          new Translation3d(CAMERA_CENTER_DISTANCE, CAMERA_CENTER_DISTANCE, CAMERA_Z),
+          new Translation3d(CAMERA_X, CAMERA_Y, CAMERA_Z_LEFT),
           new Rotation3d(0.0, CAMERA_PITCH, Math.PI / 4));
   public static final Transform3d FRONT_RIGHT_TRANSFORM =
       new Transform3d(
-          new Translation3d(CAMERA_CENTER_DISTANCE, -CAMERA_CENTER_DISTANCE, CAMERA_Z),
+          new Translation3d(CAMERA_X, -CAMERA_Y, CAMERA_Z_RIGHT),
           new Rotation3d(0.0, CAMERA_PITCH, -Math.PI / 4));
   public static final Transform3d BACK_LEFT_TRANSFORM =
       new Transform3d(
-          new Translation3d(-CAMERA_CENTER_DISTANCE, CAMERA_CENTER_DISTANCE, CAMERA_Z),
+          new Translation3d(-14.25, 13, CAMERA_Z_LEFT),
           new Rotation3d(0.0, CAMERA_PITCH, 3 * Math.PI / 4));
   public static final Transform3d BACK_RIGHT_TRANSFORM =
       new Transform3d(
-          new Translation3d(-CAMERA_CENTER_DISTANCE, -CAMERA_CENTER_DISTANCE, CAMERA_Z),
+          new Translation3d(-CAMERA_X, -CAMERA_Y, CAMERA_Z_RIGHT),
           new Rotation3d(0.0, CAMERA_PITCH, -3 * Math.PI / 4));
 
   // public static final ArrayList<Integer> IGNORE_IDS =
@@ -63,6 +67,15 @@ public class VisionConstants {
           .setCalibError(0, 0) // TODO: update values below here
           .setAvgLatencyMs(0)
           .setLatencyStdDevMs(0);
+
+  // https://docs.thethriftybot.com/thriftycam/
+  public static final SimCameraProperties SIM_THRIFTYCAM_PROPERTIES =
+      new SimCameraProperties()
+          .setCalibration(1600, 1304, new Rotation2d(Units.degreesToRadians(60.0)))
+          .setFPS(50)
+          .setCalibError(0.6, 0.2) // TODO: update values below here
+          .setAvgLatencyMs(22)
+          .setLatencyStdDevMs(2.5);
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
