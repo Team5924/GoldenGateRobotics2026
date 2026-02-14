@@ -20,19 +20,14 @@ import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.team5924.frc2026.RobotState;
-import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIO;
-import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIOInputsAutoLogged;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
+import org.team5924.frc2026.subsystems.sensors.BeamBreakIO;
+import org.team5924.frc2026.subsystems.sensors.BeamBreakIOInputsAutoLogged;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
-public class ShooterRoller
-    extends GenericRollerSystem<
-        ShooterRoller.ShooterRollerState,
-        ShooterRollerIOInputs,
-        ShooterRollerIO,
-        ShooterRollerIOInputsAutoLogged> {
+public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRollerState> {
 
   @RequiredArgsConstructor
   @Getter
@@ -56,7 +51,7 @@ public class ShooterRoller
   private final BeamBreakIOInputsAutoLogged beamBreakInputs = new BeamBreakIOInputsAutoLogged();
 
   public ShooterRoller(ShooterRollerIO io, BeamBreakIO beamBreakIO) {
-    super("ShooterRoller", io, new ShooterRollerIOInputsAutoLogged());
+    super("ShooterRoller", io);
     this.beamBreakIO = beamBreakIO;
   }
 
@@ -68,7 +63,7 @@ public class ShooterRoller
   @Override
   public void periodic() {
     beamBreakIO.updateInputs(beamBreakInputs);
-    inputs.hasShotFuel = beamBreakInputs.broken;
+    // Note: Beam break status is logged separately via beamBreakInputs
     super.periodic();
   }
 }

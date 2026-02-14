@@ -18,7 +18,4 @@ package org.team5924.frc2026.subsystems.rollers.hopperAgitator;
 
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO;
 
-public interface HopperIO extends GenericRollerSystemIO<HopperIOInputs> {
-  // Runs Motor at inputted volts
-  default void runVolts(double volts) {}
-}
+public interface HopperIO extends GenericRollerSystemIO {}

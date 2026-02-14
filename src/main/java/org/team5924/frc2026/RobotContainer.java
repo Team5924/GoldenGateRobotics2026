@@ -31,10 +31,7 @@ import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.team5924.frc2026.commands.drive.DriveCommands;
-import org.team5924.frc2026.commands.shooter.AutoScoreCommands;
 import org.team5924.frc2026.generated.TunerConstants;
-import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIO;
-import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIOBeamBreak;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.drive.GyroIO;
 import org.team5924.frc2026.subsystems.drive.GyroIOPigeon2;
@@ -42,8 +39,10 @@ import org.team5924.frc2026.subsystems.drive.GyroIOSim;
 import org.team5924.frc2026.subsystems.drive.ModuleIO;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFXSim;
+import org.team5924.frc2026.subsystems.rollers.hopperAgitator.Hopper;
+import org.team5924.frc2026.subsystems.rollers.hopperAgitator.HopperIO;
+import org.team5924.frc2026.subsystems.rollers.hopperAgitator.HopperKrakenFOC;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
-import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOKrakenFOC;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOSim;
@@ -51,12 +50,13 @@ import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIO;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOKrakenFOC;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOSim;
+import org.team5924.frc2026.subsystems.sensors.BeamBreakIO;
+import org.team5924.frc2026.subsystems.sensors.BeamBreakIOHardware;
 import org.team5924.frc2026.subsystems.shooterHood.ShooterHood;
 import org.team5924.frc2026.subsystems.shooterHood.ShooterHoodIO;
 import org.team5924.frc2026.subsystems.shooterHood.ShooterHoodIOSim;
 import org.team5924.frc2026.subsystems.shooterHood.ShooterHoodIOTalonFX;
 import org.team5924.frc2026.subsystems.superShooter.SuperShooter;
-import org.team5924.frc2026.subsystems.superShooter.SuperShooter.ShooterState;
 
 public class RobotContainer {
   // Subsystems
@@ -66,6 +66,7 @@ public class RobotContainer {
   private final ShooterHood shooterHood;
   private final ShooterRoller shooterRoller;
   private final Intake intake;
+  private final Hopper hopper;
 
   // private final ExampleSystem exampleSystem;
   // private final ExampleRoller exampleRoller;
@@ -92,10 +93,13 @@ public class RobotContainer {
                 (pose) -> {});
 
         shooterHood = new ShooterHood(new ShooterHoodIOTalonFX());
-        shooterRoller = new ShooterRoller(new ShooterRollerIOKrakenFOC(), new BeamBreakIOBeamBreak(Constants.ShooterRoller.BEAM_BREAK_PORT));
+        shooterRoller =
+            new ShooterRoller(
+                new ShooterRollerIOKrakenFOC(),
+                new BeamBreakIOHardware(Constants.ShooterRoller.BEAM_BREAK_PORT));
         intake = new Intake(new IntakeIOKrakenFOC());
         shooter = new SuperShooter(shooterRoller, shooterHood);
-        // exampleRoller = new ExampleRoller(new ExampleRollerIOKrakenFOC());
+        hopper = new Hopper(new HopperKrakenFOC(), new BeamBreakIOHardware(0));
         break;
 
       case SIM:
@@ -121,10 +125,9 @@ public class RobotContainer {
 
         shooterHood = new ShooterHood(new ShooterHoodIOSim());
         shooterRoller = new ShooterRoller(new ShooterRollerIOSim(), new BeamBreakIO() {});
-        intake = new Intake(new IntakeIO() {});
+        intake = new Intake(new IntakeIOSim());
         shooter = new SuperShooter(shooterRoller, shooterHood);
-        // exampleSystem = new ExampleSystem(new ExampleSystemIOSim());
-        // exampleRoller = new ExampleRoller(new ExampleRollerIOSim());
+        hopper = new Hopper(null, new BeamBreakIO() {}); // TODO: Hopper sim implementation
         break;
 
       default:
@@ -140,22 +143,23 @@ public class RobotContainer {
 
         shooterHood = new ShooterHood(new ShooterHoodIO() {});
         shooterRoller = new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {});
-        intake = new Intake(new IntakeIOSim());
+        intake = new Intake(new IntakeIO() {});
         shooter = new SuperShooter(shooterRoller, shooterHood);
-        // exampleSystem = new ExampleSystem(new ExampleSystemIO() {});
-        // exampleRoller = new ExampleRoller(new ExampleRollerIO() {});
+        hopper =
+            new Hopper(
+                new HopperIO() {}, new BeamBreakIO() {}); // TODO: Add replay IO implementation
         // vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
         break;
     }
 
     // Auto commands
-    NamedCommands.registerCommand(
-        "Run Shooter",
-        Commands.runOnce(
-            () -> {
-              shooter.setGoalState(ShooterState.AUTO_SHOOTING);
-              //AutoScoreCommands.autoScore(drive, shooter);
-            }));
+    // NamedCommands.registerCommand(
+    //     "Run Shooter",
+    //     Commands.runOnce(
+    //         () -> {
+    //           shooter.setGoalState(ShooterState.AUTO_SHOOTING);
+    //           // AutoScoreCommands.autoScore(drive, shooter);
+    //         }));
 
     NamedCommands.registerCommand(
         "Run L1 Climb",
@@ -164,12 +168,13 @@ public class RobotContainer {
               // add once climb is figured out
             }));
 
-    NamedCommands.registerCommand(
-        "Run Intake",
-        Commands.runOnce(
-            () -> {
-              intake.setGoalState(IntakeState.INTAKE);
-            }));
+    // TODO: Uncomment when intake subsystem is enabled
+    // NamedCommands.registerCommand(
+    //     "Run Intake",
+    //     Commands.runOnce(
+    //         () -> {
+    //           intake.setGoalState(IntakeState.INTAKE);
+    //         }));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());

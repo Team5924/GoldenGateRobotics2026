@@ -64,7 +64,7 @@ public final class Constants {
   //   public static final double CORAL_STATION_RADIANS_NORMAL = 0.959931;
 
   /* Hopper Agitator */
-  public final class Hopper {
+  public static final class Hopper {
     public static final int CAN_ID = 0; //TODO: Update value to real ID 
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0; //TODO: If reduction is needed, update
