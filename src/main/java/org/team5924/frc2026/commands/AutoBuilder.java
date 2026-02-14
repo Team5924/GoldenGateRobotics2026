@@ -35,9 +35,9 @@ public class AutoBuilder {
   // private final Climb climb;
   private final Intake intake;
   
-  // Left, Right, Mid
+  // Left, Mid, Right 1-5
   @Setter @Getter
-  private String startingPosition; 
+  private static Integer startingPosition;
 
   //   public Command basicDriveAuto() {
   //     return Commands.runOnce(
@@ -83,8 +83,11 @@ public class AutoBuilder {
             // AutoCommands.getShooterReady(shooter)
             ),
         AutoCommands.score(shooter).withTimeout(1.0),
+        Robot.mAutoFactory.trajectoryCmd("HubToDepot"), 
         Commands.deadline(
-            Robot.mAutoFactory.trajectoryCmd("HubToDepot"), 
+            Commands.sequence(
+                Robot.mAutoFactory.trajectoryCmd("DepotIntake"), 
+                Robot.mAutoFactory.trajectoryCmd("DepotIntake")),
             AutoCommands.intake(intake)),
         Commands.parallel(
             Robot.mAutoFactory.trajectoryCmd("DepotToHub") // ,

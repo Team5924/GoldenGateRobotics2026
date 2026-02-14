@@ -17,7 +17,7 @@
 package org.team5924.frc2026;
 
 import choreo.auto.AutoFactory;
-import com.pathplanner.lib.auto.AutoBuilder;
+import org.team5924.frc2026.commands.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -176,9 +176,18 @@ public class RobotContainer {
             }));
 
     // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices");
+    LoggedDashboardChooser<Integer> startingPosition = new LoggedDashboardChooser<>("Starting Position?");
+    startingPosition.addDefaultOption("Middle", 3);
+    startingPosition.addOption("Right", 5);
+    startingPosition.addOption("Left", 1);
+    AutoBuilder.setStartingPosition(startingPosition.get());
+    var autoBuilder = new AutoBuilder(drive, shooter, intake);
 
-    // Set up SysId routines
+    autoChooser.addDefaultOption("Score and Climb Auto", autoBuilder.scoreAndClimbAuto()); 
+    autoChooser.addOption("Score, Depot, and Climb Auto", autoBuilder.scorePickupAndClimbAuto());
+    
+     // Set up SysId routines
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
     autoChooser.addOption(
