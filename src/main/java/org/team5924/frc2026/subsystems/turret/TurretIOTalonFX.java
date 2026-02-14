@@ -180,10 +180,8 @@ public class TurretIOTalonFX implements TurretIO {
         BaseStatusSignal.refreshAll(cancoderPosition, cancoderVelocity, cancoderSupplyVoltage)
             .isOK();
 
-    inputs.turretPositionRads =
-        Units.rotationsToRadians(turretPosition.getValueAsDouble());
-    inputs.turretVelocityRadsPerSec =
-        Units.rotationsToRadians(turretVelocity.getValueAsDouble());
+    inputs.turretPositionRads = Units.rotationsToRadians(turretPosition.getValueAsDouble());
+    inputs.turretVelocityRadsPerSec = Units.rotationsToRadians(turretVelocity.getValueAsDouble());
     inputs.turretAppliedVoltage = turretAppliedVoltage.getValueAsDouble();
     inputs.turretSupplyCurrentAmps = turretSupplyCurrent.getValueAsDouble();
     inputs.turretTorqueCurrentAmps = turretTorqueCurrent.getValueAsDouble();

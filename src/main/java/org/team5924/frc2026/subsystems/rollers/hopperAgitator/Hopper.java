@@ -46,9 +46,8 @@ public class Hopper
   // Hopper Beam Breaks
   private final BeamBreakIO[] beamBreakIOs;
   private final BeamBreakIOInputsAutoLogged[] beamBreakInputs;
-  public Hopper(
-      HopperIO io,
-      BeamBreakIO[] beamBreakIOs) {
+
+  public Hopper(HopperIO io, BeamBreakIO[] beamBreakIOs) {
     super("Hopper", io, new HopperIOInputsAutoLogged());
     this.beamBreakIOs = beamBreakIOs;
     this.beamBreakInputs = new BeamBreakIOInputsAutoLogged[beamBreakIOs.length];
