@@ -20,11 +20,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+
+import java.util.function.Supplier;
+
 import org.team5924.frc2026.Robot;
 import org.team5924.frc2026.subsystems.SuperShooter;
+import org.team5924.frc2026.subsystems.SuperShooter.ShooterState;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
+import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 
 @RequiredArgsConstructor
 public class AutoBuilder {
@@ -35,7 +39,13 @@ public class AutoBuilder {
   private final Intake intake;
 
   // Left, Mid, Right 1-5
-  @Setter @Getter private static Integer startingPosition;
+  private static Supplier<String> startingPositionSupplier;
+
+  public static void setStartingPosition(Supplier<String> supplier) {
+    startingPositionSupplier = supplier;
+  }
+
+  
 
   //   public Command basicDriveAuto() {
   //     return Commands.runOnce(
@@ -59,44 +69,28 @@ public class AutoBuilder {
 
   public Command scoreAndClimbAuto() {
     return Commands.sequence(
-        Robot.mAutoFactory.resetOdometry(startingPosition + "ToHub"),
-        Commands.parallel(
-            Robot.mAutoFactory.trajectoryCmd(startingPosition + "ToHub") // ,
-            // AutoCommands.getShooterReady(shooter)
-            ),
-        AutoCommands.score(shooter).withTimeout(1.0),
-        Commands.parallel(
-            Robot.mAutoFactory.trajectoryCmd("HubToClimb") // ,
-            // AutoCommands.getClimbReady(climb)
-            ) // ,
-        // AutoCommands.climb(climb)
+        Robot.mAutoFactory.resetOdometry(startingPositionSupplier.get() + "ToHub"),
+        Robot.mAutoFactory.trajectoryCmd(startingPositionSupplier.get() + "ToHub"),
+        Commands.run(() -> shooter.setGoalState(ShooterState.AUTO_SHOOTING), shooter).withTimeout(1.0),
+        Robot.mAutoFactory.trajectoryCmd("HubToClimb")
+        // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
         );
   }
 
   public Command scorePickupAndClimbAuto() {
     return Commands.sequence(
-        Robot.mAutoFactory.resetOdometry(startingPosition + "ToHub"),
-        Commands.parallel(
-            Robot.mAutoFactory.trajectoryCmd(startingPosition + "ToHub") // ,
-            // AutoCommands.getShooterReady(shooter)
-            ),
-        AutoCommands.score(shooter).withTimeout(1.0),
+        Robot.mAutoFactory.resetOdometry(startingPositionSupplier.get() + "ToHub"),
+        Robot.mAutoFactory.trajectoryCmd(startingPositionSupplier.get() + "ToHub"),
+        Commands.run(() -> shooter.setGoalState(ShooterState.AUTO_SHOOTING), shooter).withTimeout(1.0),
         Robot.mAutoFactory.trajectoryCmd("HubToDepot"),
         Commands.deadline(
-            Commands.sequence(
-                Robot.mAutoFactory.trajectoryCmd("DepotIntake"),
-                Robot.mAutoFactory.trajectoryCmd("DepotIntake")),
-            AutoCommands.intake(intake)),
-        Commands.parallel(
-            Robot.mAutoFactory.trajectoryCmd("DepotToHub") // ,
-            // AutoCommands.getShooterReady(shooter)
-            ),
-        AutoCommands.score(shooter).withTimeout(1.0),
-        Commands.parallel(
-            Robot.mAutoFactory.trajectoryCmd("HubToClimb") // ,
-            // AutoCommands.getClimbReady(climb)
-            ) // ,
-        // AutoCommands.climb(climb)
+            Robot.mAutoFactory.trajectoryCmd("DepotIntake"),
+            Commands.run(() -> intake.setGoalState(IntakeState.INTAKE), intake)
+        ),
+        Robot.mAutoFactory.trajectoryCmd("DepotToHub"),
+        Commands.run(() -> shooter.setGoalState(ShooterState.AUTO_SHOOTING), shooter).withTimeout(1.0),
+        Robot.mAutoFactory.trajectoryCmd("HubToClimb")
+        // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
         );
   }
 }

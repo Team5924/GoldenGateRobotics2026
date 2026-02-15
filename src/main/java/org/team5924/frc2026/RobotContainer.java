@@ -143,7 +143,7 @@ public class RobotContainer {
 
         shooterHood = new ShooterHood(new ShooterHoodIO() {});
         shooterRoller = new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {});
-        intake = new Intake(new IntakeIOSim());
+        intake = new Intake(new IntakeIO() {});
         shooter = new SuperShooter(shooterRoller, shooterHood);
         // exampleSystem = new ExampleSystem(new ExampleSystemIO() {});
         // exampleRoller = new ExampleRoller(new ExampleRollerIO() {});
@@ -177,12 +177,12 @@ public class RobotContainer {
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices");
-    LoggedDashboardChooser<Integer> startingPosition =
+    LoggedDashboardChooser<String> startingPosition =
         new LoggedDashboardChooser<>("Starting Position?");
-    startingPosition.addDefaultOption("Middle", 3);
-    startingPosition.addOption("Right", 5);
-    startingPosition.addOption("Left", 1);
-    AutoBuilder.setStartingPosition(startingPosition.get());
+    startingPosition.addDefaultOption("Middle", "Mid");
+    startingPosition.addOption("Right", "Right");
+    startingPosition.addOption("Left", "Left");
+    AutoBuilder.setStartingPosition(startingPosition::get);
     var autoBuilder = new AutoBuilder(drive, shooter, intake);
 
     autoChooser.addDefaultOption("Score and Climb Auto", autoBuilder.scoreAndClimbAuto());
