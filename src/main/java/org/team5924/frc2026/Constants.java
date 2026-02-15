@@ -83,7 +83,7 @@ public final class Constants {
   public final class Hopper {
     public static final int CAN_ID = 21; 
     public static final String BUS = "rio";
-    public static final double REDUCTION = 1.0; //TODO: If reduction is needed, update
+    public static final double REDUCTION = (24.0 / 12.0) * (24.0 / 12.0); //TODO: If reduction is needed, update
 
     // public static final int BEAM_BREAK_ID = 0;
     // public static final boolean BEAM_BREAK = false;
@@ -168,7 +168,7 @@ public final class Constants {
   public final class ShooterHood {
     public static final int CAN_ID = 22; // TODO: Add CANID Ports
     public static final String BUS = "rio";
-    public static final double REDUCTION = 1.0;
+    public static final double REDUCTION = (40.0 / 12.0) * (24.0 / 15.0);
     public static final double SIM_MOI = 0.001;
     
     public static final TalonFXConfiguration CONFIG =
@@ -193,7 +193,7 @@ public final class Constants {
   public final class ShooterRoller {
     public static final int CAN_ID = 23; // TODO: Add CANID Ports + Config later
     public static final String BUS = "rio";
-    public static final double REDUCTION = 1.0;
+    public static final double REDUCTION = 16.0 / 30.0;
     public static final double SIM_MOI = 0.001;
     public static final int BEAM_BREAK_PORT = 0;
 
@@ -212,7 +212,7 @@ public final class Constants {
   public final class Intake {
     public static final int CAN_ID = 20; // TODO: Set CAN ID
     public static final String BUS = "rio";
-    public static final double REDUCTION = 1.0;
+    public static final double REDUCTION = 32.0 / 16.0;
     public static final double SIM_MOI = 0.001;
 
     public static final TalonFXConfiguration CONFIG =
@@ -251,7 +251,7 @@ public final class Constants {
   public final class Turret {
     public static final int CAN_ID = 0; // TODO: update to real can id
     public static final String BUS = "rio";
-    public static final double REDUCTION = 1.0;
+    public static final double REDUCTION = (40.0 / 16.0) * (135.0 / 22.0);
     public static final double SIM_MOI = 0.001;
 
     public static final TalonFXConfiguration CONFIG =
