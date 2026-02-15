@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-
 import org.team5924.frc2026.Robot;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
@@ -34,10 +33,9 @@ public class AutoBuilder {
   private final SuperShooter shooter;
   // private final Climb climb;
   private final Intake intake;
-  
+
   // Left, Mid, Right 1-5
-  @Setter @Getter
-  private static Integer startingPosition;
+  @Setter @Getter private static Integer startingPosition;
 
   //   public Command basicDriveAuto() {
   //     return Commands.runOnce(
@@ -83,10 +81,10 @@ public class AutoBuilder {
             // AutoCommands.getShooterReady(shooter)
             ),
         AutoCommands.score(shooter).withTimeout(1.0),
-        Robot.mAutoFactory.trajectoryCmd("HubToDepot"), 
+        Robot.mAutoFactory.trajectoryCmd("HubToDepot"),
         Commands.deadline(
             Commands.sequence(
-                Robot.mAutoFactory.trajectoryCmd("DepotIntake"), 
+                Robot.mAutoFactory.trajectoryCmd("DepotIntake"),
                 Robot.mAutoFactory.trajectoryCmd("DepotIntake")),
             AutoCommands.intake(intake)),
         Commands.parallel(

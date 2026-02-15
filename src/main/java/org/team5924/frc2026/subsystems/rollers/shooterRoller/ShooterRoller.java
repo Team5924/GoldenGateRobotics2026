@@ -20,10 +20,10 @@ import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.team5924.frc2026.RobotState;
-import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIO;
 import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIOInputsAutoLogged;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
+import org.team5924.frc2026.subsystems.sensors.BeamBreakIO;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter

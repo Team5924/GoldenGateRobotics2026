@@ -89,7 +89,8 @@ public class Drive extends SubsystemBase {
               Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
 
   // PathPlanner config constants
-  private static final double ROBOT_MASS_KG = 52.16; // TODO: update, when updating also update choreo
+  private static final double ROBOT_MASS_KG =
+      52.16; // TODO: update, when updating also update choreo
   private static final double ROBOT_MOI = 4.39;
   private static final double WHEEL_COF = 1.2;
   private static final RobotConfig PP_CONFIG =
@@ -344,15 +345,21 @@ public class Drive extends SubsystemBase {
     wasGyroConnected = gyroInputs.connected;
 
     LoggedTunableNumber.ifChanged(
-    hashCode(),
-    gains -> {
-      xController.setPID(gains[0], gains[1], gains[2]);
-      yController.setPID(gains[3], gains[4], gains[5]);
-      headingController.setPID(gains[6], gains[7], gains[8]);
-    },
-    xControllerKp, xControllerKi, xControllerKd,
-    yControllerKp, yControllerKi, yControllerKd,
-    headingControllerKp, headingControllerKi, headingControllerKd);
+        hashCode(),
+        gains -> {
+          xController.setPID(gains[0], gains[1], gains[2]);
+          yController.setPID(gains[3], gains[4], gains[5]);
+          headingController.setPID(gains[6], gains[7], gains[8]);
+        },
+        xControllerKp,
+        xControllerKi,
+        xControllerKd,
+        yControllerKp,
+        yControllerKi,
+        yControllerKd,
+        headingControllerKp,
+        headingControllerKi,
+        headingControllerKd);
   }
 
   public void followChoreoTrajectory(SwerveSample sample) {

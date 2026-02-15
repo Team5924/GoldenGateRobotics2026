@@ -17,7 +17,6 @@
 package org.team5924.frc2026;
 
 import choreo.auto.AutoFactory;
-import org.team5924.frc2026.commands.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -31,10 +30,9 @@ import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.team5924.frc2026.commands.AutoBuilder;
 import org.team5924.frc2026.commands.drive.DriveCommands;
 import org.team5924.frc2026.generated.TunerConstants;
-import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIO;
-import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIOBeamBreak;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.drive.GyroIO;
 import org.team5924.frc2026.subsystems.drive.GyroIOPigeon2;
@@ -51,6 +49,8 @@ import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIO;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOKrakenFOC;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOSim;
+import org.team5924.frc2026.subsystems.sensors.BeamBreakIO;
+import org.team5924.frc2026.subsystems.sensors.BeamBreakIOBeamBreak;
 import org.team5924.frc2026.subsystems.shooterHood.ShooterHood;
 import org.team5924.frc2026.subsystems.shooterHood.ShooterHoodIO;
 import org.team5924.frc2026.subsystems.shooterHood.ShooterHoodIOSim;
@@ -177,17 +177,18 @@ public class RobotContainer {
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices");
-    LoggedDashboardChooser<Integer> startingPosition = new LoggedDashboardChooser<>("Starting Position?");
+    LoggedDashboardChooser<Integer> startingPosition =
+        new LoggedDashboardChooser<>("Starting Position?");
     startingPosition.addDefaultOption("Middle", 3);
     startingPosition.addOption("Right", 5);
     startingPosition.addOption("Left", 1);
     AutoBuilder.setStartingPosition(startingPosition.get());
     var autoBuilder = new AutoBuilder(drive, shooter, intake);
 
-    autoChooser.addDefaultOption("Score and Climb Auto", autoBuilder.scoreAndClimbAuto()); 
+    autoChooser.addDefaultOption("Score and Climb Auto", autoBuilder.scoreAndClimbAuto());
     autoChooser.addOption("Score, Depot, and Climb Auto", autoBuilder.scorePickupAndClimbAuto());
-    
-     // Set up SysId routines
+
+    // Set up SysId routines
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
     autoChooser.addOption(

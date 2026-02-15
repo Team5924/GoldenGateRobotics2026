@@ -14,7 +14,7 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.beamBreak;
+package org.team5924.frc2026.subsystems.sensors;
 
 import org.littletonrobotics.junction.AutoLog;
 
