@@ -16,14 +16,11 @@
 
 package org.team5924.frc2026.subsystems.rollers.exampleRoller;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOKrakenFOC;
 
-public class ExampleRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC<ExampleRollerIOInputs>
+public class ExampleRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC
     implements ExampleRollerIO {
-
-  private final DigitalInput beamBreak = new DigitalInput(Constants.ExampleRoller.BEAM_BREAK_ID);
 
   public ExampleRollerIOKrakenFOC() {
     super(
@@ -31,16 +28,5 @@ public class ExampleRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC<Exa
         Constants.ExampleRoller.BUS,
         Constants.ExampleRoller.CONFIG,
         Constants.ExampleRoller.REDUCTION);
-  }
-
-  @Override
-  public void updateInputs(ExampleRollerIOInputs inputs) {
-    super.updateInputs(inputs);
-    inputs.hasFuel = beamBreak.get();
-  }
-
-  @Override
-  public void runVolts(double volts) {
-    super.runVolts(volts);
   }
 }

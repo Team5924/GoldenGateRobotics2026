@@ -20,7 +20,7 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface BeamBreakIO {
   @AutoLog
-  class BeamBreakIOInputs {
+  public static class BeamBreakIOInputs {
     public boolean broken = false;
   }
 

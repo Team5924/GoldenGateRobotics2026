@@ -18,10 +18,10 @@ package org.team5924.frc2026.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import org.team5924.frc2026.subsystems.SuperShooter;
+import org.team5924.frc2026.subsystems.SuperShooter.ShooterState;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
-import org.team5924.frc2026.subsystems.superShooter.SuperShooter;
-import org.team5924.frc2026.subsystems.superShooter.SuperShooter.ShooterState;
 
 public class AutoCommands {
   public static Command intake(Intake intake) {

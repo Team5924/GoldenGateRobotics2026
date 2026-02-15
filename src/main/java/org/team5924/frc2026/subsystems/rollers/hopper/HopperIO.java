@@ -1,5 +1,5 @@
 /*
- * ExampleRollerIOInputs.java
+ * HopperIO.java
  */
 
 /* 
@@ -14,12 +14,8 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.exampleRoller;
+package org.team5924.frc2026.subsystems.rollers.hopper;
 
-import org.littletonrobotics.junction.AutoLog;
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO.GenericRollerSystemIOInputs;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO;
 
-@AutoLog
-abstract class ExampleRollerIOInputs extends GenericRollerSystemIOInputs {
-  public boolean hasFuel;
-}
+public interface HopperIO extends GenericRollerSystemIO {}

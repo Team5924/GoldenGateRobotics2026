@@ -33,6 +33,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.team5924.frc2026.commands.AutoBuilder;
 import org.team5924.frc2026.commands.drive.DriveCommands;
 import org.team5924.frc2026.generated.TunerConstants;
+import org.team5924.frc2026.subsystems.SuperShooter;
+import org.team5924.frc2026.subsystems.SuperShooter.ShooterState;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.drive.GyroIO;
 import org.team5924.frc2026.subsystems.drive.GyroIOPigeon2;
@@ -40,6 +42,10 @@ import org.team5924.frc2026.subsystems.drive.GyroIOSim;
 import org.team5924.frc2026.subsystems.drive.ModuleIO;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFXSim;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIO;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOTalonFX;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
@@ -50,13 +56,7 @@ import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIO;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOKrakenFOC;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOSim;
 import org.team5924.frc2026.subsystems.sensors.BeamBreakIO;
-import org.team5924.frc2026.subsystems.sensors.BeamBreakIOBeamBreak;
-import org.team5924.frc2026.subsystems.shooterHood.ShooterHood;
-import org.team5924.frc2026.subsystems.shooterHood.ShooterHoodIO;
-import org.team5924.frc2026.subsystems.shooterHood.ShooterHoodIOSim;
-import org.team5924.frc2026.subsystems.shooterHood.ShooterHoodIOTalonFX;
-import org.team5924.frc2026.subsystems.superShooter.SuperShooter;
-import org.team5924.frc2026.subsystems.superShooter.SuperShooter.ShooterState;
+import org.team5924.frc2026.subsystems.sensors.BeamBreakIOHardware;
 
 public class RobotContainer {
   // Subsystems
@@ -95,7 +95,7 @@ public class RobotContainer {
         shooterRoller =
             new ShooterRoller(
                 new ShooterRollerIOKrakenFOC(),
-                new BeamBreakIOBeamBreak(Constants.ShooterRoller.BEAM_BREAK_PORT));
+                new BeamBreakIOHardware(Constants.ShooterRoller.BEAM_BREAK_PORT));
         intake = new Intake(new IntakeIOKrakenFOC());
         shooter = new SuperShooter(shooterRoller, shooterHood);
         // exampleRoller = new ExampleRoller(new ExampleRollerIOKrakenFOC());

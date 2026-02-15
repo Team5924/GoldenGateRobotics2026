@@ -22,9 +22,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.team5924.frc2026.Robot;
+import org.team5924.frc2026.subsystems.SuperShooter;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
-import org.team5924.frc2026.subsystems.superShooter.SuperShooter;
 
 @RequiredArgsConstructor
 public class AutoBuilder {
