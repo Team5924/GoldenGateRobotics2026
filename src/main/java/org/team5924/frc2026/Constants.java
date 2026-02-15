@@ -17,17 +17,24 @@
 package org.team5924.frc2026;
 
 import com.ctre.phoenix6.configs.CANdiConfiguration;
+import com.ctre.phoenix6.configs.CANdleConfiguration;
+import com.ctre.phoenix6.configs.CANdleFeaturesConfigs;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.DigitalInputsConfigs;
+import com.ctre.phoenix6.configs.LEDConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.LarsonAnimation;
+import com.ctre.phoenix6.hardware.CANdle;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S2CloseStateValue;
+import com.ctre.phoenix6.signals.StripTypeValue;
+
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -230,6 +237,28 @@ public final class Constants {
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
   }
+
+  public final class LEDs {//TODO: Update
+  public static final int length = 40;
+  public static final int port = 0;
+  public static final boolean prideLeds = false;
+  public static final double startupBreathDuration = 1.0;
+  public static final double strobeSlowDuration = 0.2;
+  public static final double breathFastDuration = 0.5;
+  public static final double breathSlowDuration = 1.0;
+  public static final double rainbowCycleLength = 25.0;
+  public static final double rainbowDuration = 0.25;
+  public static final double rainbowStrobeDuration = 0.2;
+  public static final double waveExponent = 0.4;
+  public static final double waveFastCycleLength = 25.0;
+  public static final double waveFastDuration = 0.25;
+  public static final double waveDisabledCycleLength = 15.0;
+  public static final double waveDisabledDuration = 2.0;
+  public static final double strobeDuration = 0.1;
+
+  private LEDs() {}
+}
+
 }
 
 
