@@ -53,16 +53,16 @@ public class Arm extends SubsystemBase {
 
   @Getter private ArmState goalState;
 
-  private final Alert ArmMotorDisconnected;
-  private final Notification ArmMotorDisconnectedNotification;
+  private final Alert armMotorDisconnected;
+  private final Notification armMotorDisconnectedNotification;
   private boolean wasArmMotorConnected = true;
 
   public Arm(ArmIO io) {
     this.io = io;
     this.goalState = ArmState.MOVING;
-    this.ArmMotorDisconnected =
+    this.armMotorDisconnected =
         new Alert("Arm Motor Disconnected!", Alert.AlertType.kWarning);
-    this.ArmMotorDisconnectedNotification =
+    this.armMotorDisconnectedNotification =
         new Notification(NotificationLevel.WARNING, "Arm Motor Disconnected", "");
   }
 
@@ -80,7 +80,7 @@ public class Arm extends SubsystemBase {
 
     // prevents error spam
     // if (!inputs.ArmMotorConnected && wasArmMotorConnected) {
-    Elastic.sendNotification(ArmMotorDisconnectedNotification);
+    Elastic.sendNotification(armMotorDisconnectedNotification);
   }
 
   // wasArmMotorConnected = inputs.ArmMotorConnected;
@@ -101,7 +101,7 @@ public class Arm extends SubsystemBase {
             "Arm: MOVING is an invalid goal state; it is a transition state!!", null);
         break;
       default:
-        RobotState.getInstance().setArmState(ArmState.MOVING);
+        RobotState.getInstance().setArmState(goalState);
         io.setPosition(goalState.rads.getAsDouble());
         break;
     }
