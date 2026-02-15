@@ -222,7 +222,12 @@ public final class Constants {
         .withMotorOutput(
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake));
+            .withNeutralMode(NeutralModeValue.Brake))
+        .withSlot0(
+          new Slot0Configs()
+            .withKP(1)
+            .withKI(0)
+            .withKD(0));
 
 
   }
@@ -241,9 +246,14 @@ public final class Constants {
         .withMotorOutput(
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake));
+            .withNeutralMode(NeutralModeValue.Brake))
+        .withSlot0(
+          new Slot0Configs()
+            .withKP(1)
+            .withKI(0)
+            .withKD(0));
 
-
-  }
-
+   }
 }
+
+

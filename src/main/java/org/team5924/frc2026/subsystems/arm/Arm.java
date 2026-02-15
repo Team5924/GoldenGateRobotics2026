@@ -20,6 +20,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import lombok.Getter;
+
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.Elastic;
@@ -31,19 +34,19 @@ public class Arm extends SubsystemBase {
 
   private final ArmIO io;
 
-  // private final ArmIOInputsAutoLogged inputs = new ExampleSystemIOInputsAutoLogged();
+  // private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
 
   public enum ArmState {
     STOW(new LoggedTunableNumber("Arm/Stow", Math.toRadians(0))),
     MOVING(new LoggedTunableNumber("Arm/Moving", 0)),
-    UP(new LoggedTunableNumber("Arm/Stow", Math.toRadians(90))),
+    UP(new LoggedTunableNumber("Arm/UpRads", Math.toRadians(90))),
 
-    // voltage at which the example subsystem motor moves when controlled by the operator
+    // voltage at which the arm subsystem motor moves when controlled by the operator
     OPERATOR_CONTROL(new LoggedTunableNumber("Arm/OperatorVoltage", 4.5));
 
-    private final LoggedTunableNumber rads;
+    private final DoubleSupplier rads;
 
-    ArmState(LoggedTunableNumber rads) {
+    ArmState(DoubleSupplier rads) {
       this.rads = rads;
     }
   }
@@ -66,21 +69,21 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     // io.updateInputs(inputs);
-    // Logger.processInputs("ExampleSystem", inputs);
+    // Logger.processInputs("Arm", inputs);
 
     Logger.recordOutput("Arm/GoalState", goalState.toString());
     Logger.recordOutput(
         "Arm/CurrentState", RobotState.getInstance().getArmState());
     Logger.recordOutput("Arm/TargetRads", goalState.rads);
 
-    // exampleMotorDisconnected.set(!inputs.exampleMotorConnected);
+    // ArmMotorDisconnected.set(!inputs.ArmMotorConnected);
 
     // prevents error spam
-    // if (!inputs.exampleMotorConnected && wasExampleMotorConnected) {
+    // if (!inputs.ArmMotorConnected && wasArmMotorConnected) {
     Elastic.sendNotification(ArmMotorDisconnectedNotification);
   }
 
-  // wasExampleMotorConnected = inputs.exampleMotorConnected;
+  // wasArmMotorConnected = inputs.ArmMotorConnected;
   // }
 
   public void runVolts(double volts) {

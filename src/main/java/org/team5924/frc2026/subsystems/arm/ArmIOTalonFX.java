@@ -83,9 +83,9 @@ public class ArmIOTalonFX implements ArmIO {
                 ArmTempCelsius)
             .isOK();
     inputs.ArmPositionRads =
-        Units.rotationsToRadians(ArmPosition.getValueAsDouble()) / Constants.Example.REDUCTION;
+        Units.rotationsToRadians(ArmPosition.getValueAsDouble()) / Constants.Arm.REDUCTION;
     inputs.ArmVelocityRadsPerSec =
-        Units.rotationsToRadians(ArmVelocity.getValueAsDouble()) / Constants.Example.REDUCTION;
+        Units.rotationsToRadians(ArmVelocity.getValueAsDouble()) / Constants.Arm.REDUCTION;
     inputs.ArmAppliedVoltage = ArmAppliedVoltage.getValueAsDouble();
     inputs.ArmSupplyCurrentAmps = ArmSupplyCurrent.getValueAsDouble();
     inputs.ArmTorqueCurrentAmps = ArmTorqueCurrent.getValueAsDouble();
