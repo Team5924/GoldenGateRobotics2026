@@ -29,9 +29,4 @@ public class ShooterRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC
         Constants.ShooterRoller.CONFIG,
         Constants.ShooterRoller.REDUCTION);
   }
-
-  @Override
-  public void runVolts(double volts) {
-    super.runVolts(volts);
-  }
 }

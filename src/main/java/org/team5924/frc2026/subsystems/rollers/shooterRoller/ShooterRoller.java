@@ -63,8 +63,8 @@ public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRoll
 
   @Override
   public void periodic() {
+    super.periodic();
     beamBreakIO.updateInputs(beamBreakInputs);
     Logger.processInputs("ShooterRoller/BeamBreak", beamBreakInputs);
-    super.periodic();
   }
 }

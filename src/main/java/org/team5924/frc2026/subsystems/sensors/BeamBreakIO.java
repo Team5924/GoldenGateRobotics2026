@@ -19,6 +19,7 @@ package org.team5924.frc2026.subsystems.sensors;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface BeamBreakIO {
+  
   @AutoLog
   public static class BeamBreakIOInputs {
     public boolean broken = false;

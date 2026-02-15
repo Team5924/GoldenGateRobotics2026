@@ -56,8 +56,8 @@ public class Indexer extends GenericRollerSystem<Indexer.IndexerState> {
 
   @Override
   public void periodic() {
+    super.periodic();
     beamBreakIO.updateInputs(beamBreakInputs);
     Logger.processInputs("Indexer/BeamBreak", beamBreakInputs);
-    super.periodic();
   }
 }
