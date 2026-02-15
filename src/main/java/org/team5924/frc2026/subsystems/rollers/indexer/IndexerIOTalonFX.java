@@ -19,11 +19,9 @@ package org.team5924.frc2026.subsystems.rollers.indexer;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOKrakenFOC;
 
-public class IndexerIOTalonFX extends GenericRollerSystemIOKrakenFOC<IndexerIOInputs>
-    implements IndexerIO {
+public class IndexerIOTalonFX extends GenericRollerSystemIOKrakenFOC implements IndexerIO {
 
-  // private final DigitalInput beamBreak = new DigitalInput(Constants.Indexer.BEAM_BREAK_ID);
-  private class IndexerInverseTalonFX extends GenericRollerSystemIOKrakenFOC<IndexerIOInputs> {
+  private class IndexerInverseTalonFX extends GenericRollerSystemIOKrakenFOC {
     public IndexerInverseTalonFX() {
       super(
           Constants.Indexer.CAN_ID_INVERSE,
@@ -43,12 +41,6 @@ public class IndexerIOTalonFX extends GenericRollerSystemIOKrakenFOC<IndexerIOIn
         Constants.Indexer.CONFIG,
         Constants.Indexer.REDUCTION);
     indexerInverse = new IndexerInverseTalonFX();
-  }
-
-  @Override
-  public void updateInputs(IndexerIOInputs inputs) {
-    super.updateInputs(inputs);
-    // inputs.hasFuel = !beamBreak.get();
   }
 
   @Override

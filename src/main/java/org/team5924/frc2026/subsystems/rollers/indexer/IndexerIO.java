@@ -18,7 +18,4 @@ package org.team5924.frc2026.subsystems.rollers.indexer;
 
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO;
 
-public interface IndexerIO extends GenericRollerSystemIO<IndexerIOInputs> {
-
-  default void runVolts(double volts) {}
-}
+public interface IndexerIO extends GenericRollerSystemIO {}

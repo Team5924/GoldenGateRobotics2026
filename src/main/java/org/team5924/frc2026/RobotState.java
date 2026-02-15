@@ -22,15 +22,15 @@ import lombok.Getter;
 import lombok.Setter;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.team5924.frc2026.subsystems.arm.ArmPractice.ArmPracticeState;
+import org.team5924.frc2026.subsystems.SuperShooter.ShooterState;
 import org.team5924.frc2026.subsystems.exampleSystem.ExampleSystem.ExampleSystemState;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.subsystems.rollers.exampleRoller.ExampleRoller.ExampleRollerState;
-import org.team5924.frc2026.subsystems.rollers.hopperAgitator.Hopper.HopperState;
+import org.team5924.frc2026.subsystems.rollers.hopper.Hopper.HopperState;
 import org.team5924.frc2026.subsystems.rollers.indexer.Indexer.IndexerState;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 import org.team5924.frc2026.subsystems.rollers.practiceRoller.PracticeRoller.PracticeRollerState;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
-import org.team5924.frc2026.subsystems.shooterHood.ShooterHood.ShooterHoodState;
-import org.team5924.frc2026.subsystems.superShooter.SuperShooter.ShooterState;
 
 @Getter
 public class RobotState {
@@ -41,11 +41,23 @@ public class RobotState {
     return instance;
   }
 
+  Rotation2d gyroOffset = Rotation2d.kZero;
+
   // Pose Estimation Members
   @AutoLogOutput(key = "RobotState/OdometryPose")
   @Getter
   @Setter
   private Pose2d odometryPose = new Pose2d();
+
+  @Getter @Setter @AutoLogOutput private Pose2d estimatedPose = Pose2d.kZero;
+
+  public void resetPose(Pose2d pose) {
+    // Gyro offset is the rotation that maps the old gyro rotation (estimated - offset) to the new
+    // frame of rotation
+    gyroOffset = pose.getRotation().minus(odometryPose.getRotation().minus(gyroOffset));
+    odometryPose = pose;
+    estimatedPose = pose;
+  }
 
   @Getter @Setter private Rotation2d yawPosition = new Rotation2d();
   @Getter @Setter private double yawVelocityRadPerSec = 0.0;

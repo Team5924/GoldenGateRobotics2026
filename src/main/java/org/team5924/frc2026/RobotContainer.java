@@ -17,6 +17,7 @@
 package org.team5924.frc2026;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -31,6 +32,7 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.team5924.frc2026.commands.drive.DriveCommands;
 import org.team5924.frc2026.generated.TunerConstants;
+import org.team5924.frc2026.subsystems.SuperShooter;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.drive.GyroIO;
 import org.team5924.frc2026.subsystems.drive.GyroIOPigeon2;
@@ -38,11 +40,34 @@ import org.team5924.frc2026.subsystems.drive.GyroIOSim;
 import org.team5924.frc2026.subsystems.drive.ModuleIO;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFXSim;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIO;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOTalonFX;
+import org.team5924.frc2026.subsystems.rollers.hopper.Hopper;
+import org.team5924.frc2026.subsystems.rollers.hopper.HopperIO;
+import org.team5924.frc2026.subsystems.rollers.hopper.HopperKrakenFOC;
+import org.team5924.frc2026.subsystems.rollers.intake.Intake;
+import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
+import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOKrakenFOC;
+import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOSim;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIO;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOKrakenFOC;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOSim;
+import org.team5924.frc2026.subsystems.sensors.BeamBreakIO;
+import org.team5924.frc2026.subsystems.sensors.BeamBreakIOHardware;
 
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private SwerveDriveSimulation driveSimulation = null;
+  private final SuperShooter shooter;
+  private final ShooterHood shooterHood;
+  private final ShooterRoller shooterRoller;
+  private final Intake intake;
+  private final Hopper hopper;
+
   // private final ExampleSystem exampleSystem;
   // private final ExampleRoller exampleRoller;
 
@@ -66,8 +91,16 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight),
                 (pose) -> {});
-        // exampleSystem = new ExampleSystem(new ExampleSystemIOTalonFX());
-        // exampleRoller = new ExampleRoller(new ExampleRollerIOKrakenFOC());
+
+        shooterHood = new ShooterHood(new ShooterHoodIOTalonFX());
+        shooterRoller =
+            new ShooterRoller(
+                new ShooterRollerIOKrakenFOC(),
+                new BeamBreakIOHardware(Constants.ShooterRoller.BEAM_BREAK_PORT));
+        intake = new Intake(new IntakeIOKrakenFOC());
+        shooter = new SuperShooter(shooterRoller, shooterHood);
+        hopper =
+            new Hopper(new HopperKrakenFOC());
         break;
 
       case SIM:
@@ -90,8 +123,13 @@ public class RobotContainer {
         // new VisionIOPhotonVisionSim(
         // camera0Name, robotToCamera0,
         // driveSimulation::getSimulatedDriveTrainPose);
-        // exampleSystem = new ExampleSystem(new ExampleSystemIOSim());
-        // exampleRoller = new ExampleRoller(new ExampleRollerIOSim());
+
+        shooterHood = new ShooterHood(new ShooterHoodIOSim());
+        shooterRoller = new ShooterRoller(new ShooterRollerIOSim(), new BeamBreakIO() {});
+        intake = new Intake(new IntakeIOSim());
+        shooter = new SuperShooter(shooterRoller, shooterHood);
+        hopper =
+            new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
         break;
 
       default:
@@ -104,11 +142,41 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 (pose) -> {});
-        // exampleSystem = new ExampleSystem(new ExampleSystemIO() {});
-        // exampleRoller = new ExampleRoller(new ExampleRollerIO() {});
+
+        shooterHood = new ShooterHood(new ShooterHoodIO() {});
+        shooterRoller = new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {});
+        intake = new Intake(new IntakeIO() {});
+        shooter = new SuperShooter(shooterRoller, shooterHood);
+        hopper =
+            new Hopper(
+                new HopperIO() {}); // TODO: Add replay IO implementation
         // vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
         break;
     }
+
+    // Auto commands
+    // NamedCommands.registerCommand(
+    //     "Run Shooter",
+    //     Commands.runOnce(
+    //         () -> {
+    //           shooter.setGoalState(ShooterState.AUTO_SHOOTING);
+    //           // AutoScoreCommands.autoScore(drive, shooter);
+    //         }));
+
+    NamedCommands.registerCommand(
+        "Run L1 Climb",
+        Commands.runOnce(
+            () -> {
+              // add once climb is figured out
+            }));
+
+    // TODO: Uncomment when intake subsystem is enabled
+    // NamedCommands.registerCommand(
+    //     "Run Intake",
+    //     Commands.runOnce(
+    //         () -> {
+    //           intake.setGoalState(IntakeState.INTAKE);
+    //         }));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());

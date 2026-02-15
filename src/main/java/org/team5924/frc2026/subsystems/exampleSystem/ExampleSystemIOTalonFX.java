@@ -40,6 +40,10 @@ public class ExampleSystemIOTalonFX implements ExampleSystemIO {
   private final StatusSignal<Current> exampleTorqueCurrent;
   private final StatusSignal<Temperature> exampleTempCelsius;
 
+  /**
+   * TODO: Don't use DigitalInput directly in IO implementation, use BeamBreakIO interface and
+   * utilize CTRE's CANdi.
+   */
   private final DigitalInput beamBreak = new DigitalInput(0);
 
   // Single shot for voltage mode, robot loop will call continuously
