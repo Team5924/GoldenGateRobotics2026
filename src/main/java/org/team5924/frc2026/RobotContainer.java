@@ -54,6 +54,9 @@ import org.team5924.frc2026.subsystems.shooterHood.ShooterHoodIOTalonFX;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
 import org.team5924.frc2026.subsystems.superShooter.SuperShooter;
 import org.team5924.frc2026.subsystems.superShooter.SuperShooter.ShooterState;
+import org.team5924.frc2026.subsystems.turret.Turret;
+import org.team5924.frc2026.subsystems.turret.TurretIO;
+import org.team5924.frc2026.subsystems.turret.TurretIOTalonFX;
 
 public class RobotContainer {
   // Subsystems
@@ -66,6 +69,7 @@ public class RobotContainer {
 
   private final ShooterHood shooterHood;
   private final ShooterRoller shooterRoller;
+  private final Turret turret;
   // private final ExampleSystem exampleSystem;
   // private final ExampleRoller exampleRoller;
 
@@ -95,6 +99,7 @@ public class RobotContainer {
             new ShooterRoller(
                 new ShooterRollerIOKrakenFOC(),
                 new BeamBreakIOBeamBreak(Constants.ShooterRoller.BEAM_BREAK_PORT));
+        turret = new Turret(new TurretIOTalonFX());
         // intake = new Intake(new IntakeIOKrakenFOC());
         // hopper = new Hopper(new HopperKrakenFOC());
         // indexer = new Indexer(new IndexerIOTalonFX());
@@ -116,6 +121,7 @@ public class RobotContainer {
 
         shooterHood = new ShooterHood(new ShooterHoodIOSim());
         shooterRoller = new ShooterRoller(new ShooterRollerIOSim(), new BeamBreakIO() {});
+        turret = new Turret(new TurretIO() {}); // TODO: add turret simmm!!
         // intake = new Intake(new IntakeIO() {});
         break;
 
@@ -132,13 +138,14 @@ public class RobotContainer {
 
         shooterHood = new ShooterHood(new ShooterHoodIO() {});
         shooterRoller = new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {});
+        turret = new Turret(new TurretIO() {});
         // hopper = new Hopper(new HopperIO() {});
         // intake = new Intake(new IntakeIO() {});
         // indexer = new Indexer(new IndexerIO() {});
         break;
     }
 
-    superShooter = new SuperShooter(shooterRoller, shooterHood);
+    superShooter = new SuperShooter(shooterRoller, shooterHood, turret);
 
     // Auto commands
     NamedCommands.registerCommand(
@@ -313,6 +320,7 @@ public class RobotContainer {
     // }));
 
     shooterHood.setDefaultCommand(ShooterCommands.manualShooterHood(shooterHood, () -> operatorController.getRightY()));
+    turret.setDefaultCommand(ShooterCommands.manualTurret(turret, () -> operatorController.getLeftX()));
   }
 
   /**

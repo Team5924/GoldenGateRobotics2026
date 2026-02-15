@@ -21,6 +21,8 @@ import java.util.function.DoubleSupplier;
 import org.team5924.frc2026.subsystems.shooterHood.ShooterHood;
 import org.team5924.frc2026.subsystems.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.subsystems.superShooter.SuperShooter;
+import org.team5924.frc2026.subsystems.turret.Turret;
+import org.team5924.frc2026.subsystems.turret.Turret.TurretState;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -51,6 +53,18 @@ public class ShooterCommands {
         hood.setInput(hoodSupplier.getAsDouble());
       },
       hood
+    );
+  }
+
+  public static Command manualTurret(
+      Turret turret,
+      DoubleSupplier hoodSupplier) {
+    return Commands.run(
+      () -> {
+        turret.setGoalState(TurretState.MANUAL);
+        turret.setInput(hoodSupplier.getAsDouble());
+      },
+      turret
     );
   }
 

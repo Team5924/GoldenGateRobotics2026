@@ -38,7 +38,7 @@ public class ExampleSystem extends SubsystemBase {
     UP(new LoggedTunableNumber("ExampleSystem/Stow", Math.toRadians(90))),
 
     // voltage at which the example subsystem motor moves when controlled by the operator
-    OPERATOR_CONTROL(new LoggedTunableNumber("ExampleSystem/OperatorVoltage", 4.5));
+    MANUAL(new LoggedTunableNumber("ExampleSystem/OperatorVoltage", 4.5));
 
     private final LoggedTunableNumber rads;
 
@@ -88,8 +88,8 @@ public class ExampleSystem extends SubsystemBase {
   public void setGoalState(ExampleSystemState goalState) {
     this.goalState = goalState;
     switch (goalState) {
-      case OPERATOR_CONTROL:
-        RobotState.getInstance().setExampleSystemState(ExampleSystemState.OPERATOR_CONTROL);
+      case MANUAL:
+        RobotState.getInstance().setExampleSystemState(ExampleSystemState.MANUAL);
         break;
       case MOVING:
         DriverStation.reportError(

@@ -24,10 +24,12 @@ import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
 import org.team5924.frc2026.subsystems.shooterHood.ShooterHood;
 import org.team5924.frc2026.subsystems.shooterHood.ShooterHood.ShooterHoodState;
+import org.team5924.frc2026.subsystems.turret.Turret;
 
 public class SuperShooter extends SubsystemBase {
   @Getter private final ShooterRoller roller;
   @Getter private final ShooterHood hood;
+  @Getter private final Turret turret;
 
   public enum ShooterState {
     OFF(),
@@ -50,6 +52,10 @@ public class SuperShooter extends SubsystemBase {
     hood.runVolts(volts);
   }
 
+  public void runTurretVolts(double volts) {
+    turret.runVolts(volts);
+  }
+
   public void setHoodPosition(double rads) {
     hood.setPosition(rads);
   }
@@ -62,13 +68,18 @@ public class SuperShooter extends SubsystemBase {
     hood.setInput(input);
   }
 
+  public void setTurretInputs(double input) {
+    turret.setInput(input);
+  }
+
   public void setGoalState(ShooterState goalState) {
     this.goalState = goalState;
   }
 
-  public SuperShooter(ShooterRoller roller, ShooterHood hood) {
+  public SuperShooter(ShooterRoller roller, ShooterHood hood, Turret turret) {
     this.roller = roller;
     this.hood = hood;
+    this.turret = turret;
   }
 
   @Override

@@ -26,8 +26,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
+import lombok.Setter;
+
 import org.littletonrobotics.junction.Logger;
+import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.RobotState;
+import org.team5924.frc2026.subsystems.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
@@ -40,12 +44,14 @@ public class Turret extends SubsystemBase {
   private final TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
   private double turretPositionSetpointRadiansFromCenter = 0.0;
 
+  @Setter private double input;
+
   public enum TurretState {
     OFF(new LoggedTunableNumber("Turret/Off", Math.toRadians(0))),
     MOVING(new LoggedTunableNumber("Turret/Moving", 0)),
 
     // voltage at which the example subsystem motor moves when controlled by the operator
-    OPERATOR_CONTROL(new LoggedTunableNumber("Turret/OperatorVoltage", 2));
+    MANUAL(new LoggedTunableNumber("Turret/OperatorVoltage", 2));
 
     private final LoggedTunableNumber rads;
 
@@ -85,11 +91,19 @@ public class Turret extends SubsystemBase {
 
     turretMotorDisconnected.set(!inputs.turretMotorConnected);
 
+    handleManualState();                                       
+
     // prevents error spam
     if (!inputs.turretMotorConnected && wasTurretMotorConnected) {
       Elastic.sendNotification(turretMotorDisconnectedNotification);
     }
     wasTurretMotorConnected = inputs.turretMotorConnected;
+  }
+
+  private void handleManualState() {
+    if (!(goalState.equals(TurretState.MANUAL) && Math.abs(input) > 0.01)) return;
+
+    io.runVolts(ShooterHoodState.MANUAL.getRads().getAsDouble() * input);
   }
 
   public void runVolts(double volts) {
@@ -99,16 +113,25 @@ public class Turret extends SubsystemBase {
   }
 
   public boolean continueInDirection(double rads, double volts) {
-    double currentRads = getCurrentPositionRads();
-    // if (currentRads )
-    return false;
+    return (Math.signum(volts) != withinBounds(rads));
+  }
+
+  /**
+   * 
+   * @param rads rads
+   * @return -1 for min bound, 0 for within, 1 for upper bound
+   */
+  public int withinBounds(double rads) {
+    if (rads <= Constants.Turret.MIN_POSITION_RADS) return -1;
+    if (rads >= Constants.Turret.MAX_POSITION_RADS) return 1;
+    return 0;
   }
 
   public void setGoalState(TurretState goalState) {
     this.goalState = goalState;
     switch (goalState) {
-      case OPERATOR_CONTROL:
-        RobotState.getInstance().setTurretState(TurretState.OPERATOR_CONTROL);
+      case MANUAL:
+        RobotState.getInstance().setTurretState(TurretState.MANUAL);
         // turretPositionSetpointRadiansFromCenter =
         break;
       case MOVING:
