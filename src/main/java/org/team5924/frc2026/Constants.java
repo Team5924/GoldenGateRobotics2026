@@ -33,6 +33,9 @@ import com.ctre.phoenix6.signals.S2CloseStateValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.util.Units;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -60,17 +63,25 @@ public final class Constants {
   public static final boolean ALLOW_ASSERTS = false;
   public static final double SLOW_MODE_MULTI = 0.5;
 
-  //   /* Field */
-  //   public static final double FIELD_BORDER_MARGIN = 0.5;
-  //   public static final AprilTagFieldLayout field =
-  //     AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
-  //   public static final double FIELD_WIDTH = field.getFieldWidth();
-  //   public static final double FIELD_LENGTH = field.getFieldLength();
-  //   public static final double CORAL_STATION_RADIANS_NORMAL = 0.959931;
+  
+  public final class Field {
+    // origin = rightmost corner of blue alliance wall
+    // +x -> towards red alliance wall
+
+    public static final double BORDER_MARGIN = 0.5;
+    public static final AprilTagFieldLayout field =
+        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+    public static final double WIDTH = field.getFieldWidth();
+    public static final double LENGTH = field.getFieldLength();
+
+    public static final double CENTER_X = WIDTH / 2;
+    public static final double CENTER_Y = LENGTH / 2;
+    public static final double HUB_X = CENTER_X - 143.50;
+  }
 
   /* Hopper Agitator */
   public final class Hopper {
-    public static final int CAN_ID = 0; //TODO: Update value to real ID 
+    public static final int CAN_ID = 21; 
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0; //TODO: If reduction is needed, update
 
@@ -155,7 +166,7 @@ public final class Constants {
   }
 
   public final class ShooterHood {
-    public static final int CAN_ID = 0; // TODO: Add CANID Ports
+    public static final int CAN_ID = 22; // TODO: Add CANID Ports
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
     public static final double SIM_MOI = 0.001;
@@ -180,7 +191,7 @@ public final class Constants {
   }
 
   public final class ShooterRoller {
-    public static final int CAN_ID = 0; // TODO: Add CANID Ports + Config later
+    public static final int CAN_ID = 23; // TODO: Add CANID Ports + Config later
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
     public static final double SIM_MOI = 0.001;
@@ -199,7 +210,7 @@ public final class Constants {
   }
 
   public final class Intake {
-    public static final int CAN_ID = 0; // TODO: Set CAN ID
+    public static final int CAN_ID = 20; // TODO: Set CAN ID
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
     public static final double SIM_MOI = 0.001;
@@ -217,8 +228,8 @@ public final class Constants {
   }
 
   public final class Indexer { //TODO: update these later
-    public final static int CAN_ID = 0;
-    public final static int CAN_ID_INVERSE = 0;
+    public final static int CAN_ID = 24;
+    public final static int CAN_ID_INVERSE = 25;
     public final static int BEAM_BREAK_ID = 0;
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
@@ -288,5 +299,4 @@ public final class Constants {
           .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
   }
 }
-
 

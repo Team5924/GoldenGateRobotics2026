@@ -16,9 +16,11 @@
 
 package org.team5924.frc2026.subsystems.rollers.shooterRoller;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIO;
 import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIOInputsAutoLogged;
@@ -36,15 +38,19 @@ public class ShooterRoller
 
   @RequiredArgsConstructor
   @Getter
-  public enum ShooterRollerState implements VoltageState { // TODO: update voltage values
+  public enum ShooterRollerState implements VoltageState {
     OFF(() -> 0.0),
 
-    // using a double supplier of 0.0 because these will be auto-aim calculated values
+    // voltage speed at which to rotate the rollers
+    MANUAL(new LoggedTunableNumber("ShooterRoller/Manual", 12.0)),
+
+    // using a double supplier of 0.0 because these will be auto-aim-calculated values
     AUTO_SHOOTING(() -> 0.0),
     NEUTRAL_SHUFFLING(() -> 0.0),
     OPPONENT_SHUFFLING(() -> 0.0),
 
-    BUMPER_SHOOTING(new LoggedTunableNumber("ShooterRoller/BumperShooting", 8));
+    // TODO: test and update volts
+    BUMPER_SHOOTING(new LoggedTunableNumber("ShooterRoller/BumperShooting", 12.0));
 
     private final DoubleSupplier voltageSupplier;
   }
@@ -55,9 +61,45 @@ public class ShooterRoller
   private final BeamBreakIO beamBreakIO;
   private final BeamBreakIOInputsAutoLogged beamBreakInputs = new BeamBreakIOInputsAutoLogged();
 
+  @Setter private double input;
+
   public ShooterRoller(ShooterRollerIO io, BeamBreakIO beamBreakIO) {
     super("ShooterRoller", io, new ShooterRollerIOInputsAutoLogged());
     this.beamBreakIO = beamBreakIO;
+  }
+
+  @Override
+  protected void handleCurrentVoltageState() {
+    switch (goalState) {
+      case OFF:
+        io.runVolts(0);
+        break;
+
+      case MANUAL:
+        io.runVolts(getGoalState().getVoltageSupplier().getAsDouble() * input);
+        break;
+
+      case AUTO_SHOOTING:
+        // TODO: implement
+        break;
+
+      case NEUTRAL_SHUFFLING:
+        // TODO: implement
+        break;
+
+      case OPPONENT_SHUFFLING:
+        // TODO: implement
+        break;
+
+      case BUMPER_SHOOTING:
+        super.handleCurrentVoltageState();
+        break;
+
+      default:
+        DriverStation.reportWarning(
+            "Shooter Roller: " + goalState.name() + " is not a state", null);
+        break;
+    }
   }
 
   public void setGoalState(ShooterRollerState goalState) {
@@ -67,8 +109,8 @@ public class ShooterRoller
 
   @Override
   public void periodic() {
-    beamBreakIO.updateInputs(beamBreakInputs);
-    inputs.hasShotFuel = beamBreakInputs.broken;
+    // beamBreakIO.updateInputs(beamBreakInputs);
+    // inputs.hasShotFuel = beamBreakInputs.broken;
     super.periodic();
   }
 }

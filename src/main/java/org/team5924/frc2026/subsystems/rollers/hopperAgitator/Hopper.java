@@ -34,7 +34,7 @@ public class Hopper
   @RequiredArgsConstructor
   @Getter
   public enum HopperState implements VoltageState {
-    ON(new LoggedTunableNumber("HopperAgitatorOnVoltage", 0.0)),
+    ON(new LoggedTunableNumber("HopperAgitatorOnVoltage", -6.0)),
     SPIT(new LoggedTunableNumber("HopperAgitatorSpitVoltage", 0.0)),
     OFF(() -> 0.0);
 
