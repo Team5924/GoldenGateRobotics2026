@@ -73,7 +73,7 @@ public class ShooterHood extends SubsystemBase {
     Logger.processInputs("ShooterHood", inputs);
 
     Logger.recordOutput("ShooterHood/GoalState", goalState.toString());
-    Logger.recordOutput("ShooterHood/CurrentState", RobotState.getInstance().getShooterHoodState());
+    Logger.recordOutput("ShooterHood/CurrentState", RobotState.getInstance().getShooterHoodState().toString());
     Logger.recordOutput("ShooterHood/TargetRads", goalState.rads.getAsDouble());
 
     shooterHoodMotorDisconnected.set(!inputs.shooterHoodMotorConnected);
