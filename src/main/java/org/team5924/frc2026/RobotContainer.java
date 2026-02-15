@@ -64,7 +64,7 @@ public class RobotContainer {
   private final SuperShooter shooter;
   private final ShooterHood shooterHood;
   private final ShooterRoller shooterRoller;
-  private final Intake intake;
+//   private final Intake intake;
 
   // private final ExampleSystem exampleSystem;
   // private final ExampleRoller exampleRoller;
@@ -95,7 +95,7 @@ public class RobotContainer {
             new ShooterRoller(
                 new ShooterRollerIOKrakenFOC(),
                 new BeamBreakIOBeamBreak(Constants.ShooterRoller.BEAM_BREAK_PORT));
-        intake = new Intake(new IntakeIOKrakenFOC());
+        // intake = new Intake(new IntakeIOKrakenFOC());
         shooter = new SuperShooter(shooterRoller, shooterHood);
         // exampleRoller = new ExampleRoller(new ExampleRollerIOKrakenFOC());
         break;
@@ -123,7 +123,7 @@ public class RobotContainer {
 
         shooterHood = new ShooterHood(new ShooterHoodIOSim());
         shooterRoller = new ShooterRoller(new ShooterRollerIOSim(), new BeamBreakIO() {});
-        intake = new Intake(new IntakeIO() {});
+        // intake = new Intake(new IntakeIO() {});
         shooter = new SuperShooter(shooterRoller, shooterHood);
         // exampleSystem = new ExampleSystem(new ExampleSystemIOSim());
         // exampleRoller = new ExampleRoller(new ExampleRollerIOSim());
@@ -142,7 +142,7 @@ public class RobotContainer {
 
         shooterHood = new ShooterHood(new ShooterHoodIO() {});
         shooterRoller = new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {});
-        intake = new Intake(new IntakeIOSim());
+        // intake = new Intake(new IntakeIOSim());
         shooter = new SuperShooter(shooterRoller, shooterHood);
         // exampleSystem = new ExampleSystem(new ExampleSystemIO() {});
         // exampleRoller = new ExampleRoller(new ExampleRollerIO() {});
@@ -166,12 +166,12 @@ public class RobotContainer {
               // add once climb is figured out
             }));
 
-    NamedCommands.registerCommand(
-        "Run Intake",
-        Commands.runOnce(
-            () -> {
-              intake.setGoalState(IntakeState.INTAKE);
-            }));
+    // NamedCommands.registerCommand(
+    //     "Run Intake",
+    //     Commands.runOnce(
+    //         () -> {
+    //           intake.setGoalState(IntakeState.INTAKE);
+    //         }));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());

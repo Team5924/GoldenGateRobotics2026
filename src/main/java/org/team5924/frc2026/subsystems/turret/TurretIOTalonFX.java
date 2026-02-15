@@ -16,6 +16,8 @@
 
 package org.team5924.frc2026.subsystems.turret;
 
+import static edu.wpi.first.units.Units.Rotations;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusCode;
@@ -31,17 +33,12 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-
-import static edu.wpi.first.units.Units.Rotation;
-import static edu.wpi.first.units.Units.Rotations;
-
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.util.Elastic;
@@ -184,29 +181,31 @@ public class TurretIOTalonFX implements TurretIO {
             .isOK();
 
     inputs.cancoderConnected =
-        BaseStatusSignal.refreshAll(cancoderAbsolutePosition, cancoderVelocity, cancoderSupplyVoltage)
+        BaseStatusSignal.refreshAll(
+                cancoderAbsolutePosition, cancoderVelocity, cancoderSupplyVoltage)
             .isOK();
 
-    
     if (!isCancoderOffset && cancoderAbsolutePosition != null) {
-        turretTalon.setPosition(getTurretAngleOffset());
-        isCancoderOffset = true;
+      turretTalon.setPosition(getTurretAngleOffset());
+      isCancoderOffset = true;
     }
 
     Logger.recordOutput("Turret/isCancoderOffset", isCancoderOffset);
 
     // inputs.turretPositionRads = Units.rotationsToRadians(turretPosition.getValueAsDouble());
-    // inputs.turretVelocityRadsPerSec = Units.rotationsToRadians(turretVelocity.getValueAsDouble());
+    // inputs.turretVelocityRadsPerSec =
+    // Units.rotationsToRadians(turretVelocity.getValueAsDouble());
     inputs.turretAppliedVoltage = turretAppliedVoltage.getValueAsDouble();
     inputs.turretSupplyCurrentAmps = turretSupplyCurrent.getValueAsDouble();
     inputs.turretTorqueCurrentAmps = turretTorqueCurrent.getValueAsDouble();
     inputs.turretTempCelsius = turretTempCelsius.getValueAsDouble();
 
-
-    
-    double talonPositionAbsolute = BaseStatusSignal.getLatencyCompensatedValue(turretPosition, turretVelocity).in(Rotations);
-    inputs.turretPositionRads = Units.rotationsToRadians(talonPositionAbsolute * Constants.Turret.REDUCTION);
-    inputs.turretVelocityRadsPerSec = Units.rotationsToRadians(turretVelocity.getValueAsDouble() * Constants.Turret.REDUCTION);
+    double talonPositionAbsolute =
+        BaseStatusSignal.getLatencyCompensatedValue(turretPosition, turretVelocity).in(Rotations);
+    inputs.turretPositionRads =
+        Units.rotationsToRadians(talonPositionAbsolute * Constants.Turret.REDUCTION);
+    inputs.turretVelocityRadsPerSec =
+        Units.rotationsToRadians(turretVelocity.getValueAsDouble() * Constants.Turret.REDUCTION);
 
     inputs.setpointRads = setpoint;
 

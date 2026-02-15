@@ -93,7 +93,15 @@ public class Turret extends SubsystemBase {
   }
 
   public void runVolts(double volts) {
+    if (!continueInDirection(getCurrentPositionRads(), volts)) return;
+
     io.runVolts(volts);
+  }
+
+  public boolean continueInDirection(double rads, double volts) {
+    double currentRads = getCurrentPositionRads();
+    // if (currentRads )
+    return false;
   }
 
   public void setGoalState(TurretState goalState) {
@@ -101,7 +109,7 @@ public class Turret extends SubsystemBase {
     switch (goalState) {
       case OPERATOR_CONTROL:
         RobotState.getInstance().setTurretState(TurretState.OPERATOR_CONTROL);
-        // turretPositionSetpointRadiansFromCenter = 
+        // turretPositionSetpointRadiansFromCenter =
         break;
       case MOVING:
         DriverStation.reportError(
@@ -131,8 +139,8 @@ public class Turret extends SubsystemBase {
     if (radiansFromCenter < 0.0) {
       alternative = radiansFromCenter + 2.0 * Math.PI;
     }
-    if (Math.abs(getCurrentPosition() - alternative)
-        < Math.abs(getCurrentPosition() - radiansFromCenter)) {
+    if (Math.abs(getCurrentPositionRads() - alternative)
+        < Math.abs(getCurrentPositionRads() - radiansFromCenter)) {
       return alternative;
     }
     return radiansFromCenter;
@@ -142,7 +150,7 @@ public class Turret extends SubsystemBase {
     // Radians comparison intentional because this is the raw value going into
     // rotor.
     return (stateTimer.get() - lastStateChangeTime > 0.5)
-        || EqualsUtil.epsilonEquals(setpoint, getCurrentPosition(), Math.toRadians(10.0));
+        || EqualsUtil.epsilonEquals(setpoint, getCurrentPositionRads(), Math.toRadians(10.0));
   }
 
   private Command positionSetpointUntilUnwrapped(
@@ -173,7 +181,7 @@ public class Turret extends SubsystemBase {
     return new WaitUntilCommand(
             () -> {
               return Math.abs(
-                      new Rotation2d(getCurrentPosition())
+                      new Rotation2d(getCurrentPositionRads())
                           .rotateBy(new Rotation2d(radiansFromCenter.getAsDouble()).unaryMinus())
                           .getRadians())
                   < toleranceRadians;
@@ -185,7 +193,7 @@ public class Turret extends SubsystemBase {
     return this.turretPositionSetpointRadiansFromCenter;
   }
 
-  public double getCurrentPosition() {
+  public double getCurrentPositionRads() {
     return Units.rotationsToRadians(inputs.cancoderAbsolutePosition);
   }
 
