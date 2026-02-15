@@ -46,11 +46,11 @@ public class ShooterCommands {
 
   public static Command manualShooterHood(
       ShooterHood hood,
-      DoubleSupplier hoodSupplier) {
+      DoubleSupplier inputSupplier) {
     return Commands.run(
       () -> {
         hood.setGoalState(ShooterHoodState.MANUAL);
-        hood.setInput(hoodSupplier.getAsDouble());
+        hood.setInput(inputSupplier.getAsDouble());
       },
       hood
     );
@@ -58,11 +58,11 @@ public class ShooterCommands {
 
   public static Command manualTurret(
       Turret turret,
-      DoubleSupplier hoodSupplier) {
+      DoubleSupplier inputSupplier) {
     return Commands.run(
       () -> {
         turret.setGoalState(TurretState.MANUAL);
-        turret.setInput(hoodSupplier.getAsDouble());
+        turret.setInput(inputSupplier.getAsDouble());
       },
       turret
     );

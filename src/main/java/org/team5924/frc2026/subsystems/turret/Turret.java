@@ -86,12 +86,12 @@ public class Turret extends SubsystemBase {
     Logger.processInputs("TurretSystem", inputs);
 
     Logger.recordOutput("Turret/GoalState", goalState.toString());
-    Logger.recordOutput("Turret/CurrentState", RobotState.getInstance().getTurretState());
+    Logger.recordOutput("Turret/CurrentState", RobotState.getInstance().getTurretState().toString());
     Logger.recordOutput("Turret/TargetRads", goalState.rads.getAsDouble());
 
     turretMotorDisconnected.set(!inputs.turretMotorConnected);
 
-    handleManualState();                                       
+    handleManualState();
 
     // prevents error spam
     if (!inputs.turretMotorConnected && wasTurretMotorConnected) {

@@ -121,12 +121,12 @@ public class TurretIOTalonFX implements TurretIO {
     StatusCode[] statusArray = new StatusCode[7];
 
     statusArray[0] = turretTalonConfig.apply(Constants.Turret.CONFIG);
-    statusArray[2] = turretTalonConfig.apply(slot0Configs);
-    statusArray[3] = turretTalonConfig.apply(motionMagicConfigs);
-    statusArray[4] = turretTalonConfig.apply(Constants.Turret.OPEN_LOOP_RAMPS_CONFIGS);
-    statusArray[5] = turretTalonConfig.apply(Constants.Turret.CLOSED_LOOP_RAMPS_CONFIGS);
-    statusArray[6] = turretTalonConfig.apply(feedbackConfigs);
-    statusArray[7] = cancoder.getConfigurator().apply(Constants.Turret.CANCODER_CONFIG);
+    statusArray[1] = turretTalonConfig.apply(slot0Configs);
+    statusArray[2] = turretTalonConfig.apply(motionMagicConfigs);
+    statusArray[3] = turretTalonConfig.apply(Constants.Turret.OPEN_LOOP_RAMPS_CONFIGS);
+    statusArray[4] = turretTalonConfig.apply(Constants.Turret.CLOSED_LOOP_RAMPS_CONFIGS);
+    statusArray[5] = turretTalonConfig.apply(feedbackConfigs);
+    statusArray[6] = cancoder.getConfigurator().apply(Constants.Turret.CANCODER_CONFIG);
 
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;

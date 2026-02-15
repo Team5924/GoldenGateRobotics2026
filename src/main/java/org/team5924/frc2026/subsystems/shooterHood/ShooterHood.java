@@ -45,7 +45,7 @@ public class ShooterHood extends SubsystemBase {
     OFF(() -> 0.0),
 
     // voltage speed at which to rotate the hood
-    MANUAL((new LoggedTunableNumber("ShooterHood/Manual", .7))),
+    MANUAL((new LoggedTunableNumber("ShooterHood/Manual", 1))),
 
     // using a double supplier of 0.0 because these will be auto-aim-calculated values
     AUTO_SHOOTING(() -> 0.0),
