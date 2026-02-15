@@ -35,7 +35,7 @@ public class ExampleSystem extends SubsystemBase {
   public enum ExampleSystemState {
     STOW(new LoggedTunableNumber("ExampleSystem/Stow", Math.toRadians(0))),
     MOVING(new LoggedTunableNumber("ExampleSystem/Moving", 0)),
-    UP(new LoggedTunableNumber("ExampleSystem/Stow", Math.toRadians(90))),
+    UP(new LoggedTunableNumber("ExampleSystem/Up", Math.toRadians(90))),
 
     // voltage at which the example subsystem motor moves when controlled by the operator
     OPERATOR_CONTROL(new LoggedTunableNumber("ExampleSystem/OperatorVoltage", 4.5));
@@ -55,7 +55,7 @@ public class ExampleSystem extends SubsystemBase {
 
   public ExampleSystem(ExampleSystemIO io) {
     this.io = io;
-    this.goalState = ExampleSystemState.MOVING;
+    this.goalState = ExampleSystemState.STOW;
     this.exampleMotorDisconnected =
         new Alert("Example System Motor Disconnected!", Alert.AlertType.kWarning);
     this.exampleMotorDisconnectedNotification =
@@ -69,8 +69,8 @@ public class ExampleSystem extends SubsystemBase {
 
     Logger.recordOutput("ExampleSystem/GoalState", goalState.toString());
     Logger.recordOutput(
-        "ExampleSystem/CurrentState", RobotState.getInstance().getExampleSystemState());
-    Logger.recordOutput("ExampleSystem/TargetRads", goalState.rads);
+        "ExampleSystem/CurrentState", RobotState.getInstance().getExampleSystemState().toString());
+    Logger.recordOutput("ExampleSystem/TargetRads", goalState.rads.getAsDouble());
 
     exampleMotorDisconnected.set(!inputs.exampleMotorConnected);
 
