@@ -18,7 +18,4 @@ package org.team5924.frc2026.subsystems.rollers.exampleRoller;
 
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO;
 
-public interface ExampleRollerIO extends GenericRollerSystemIO<ExampleRollerIOInputs> {
-  /* Run roller at volts */
-  default void runVolts(double volts) {}
-}
+public interface ExampleRollerIO extends GenericRollerSystemIO {}

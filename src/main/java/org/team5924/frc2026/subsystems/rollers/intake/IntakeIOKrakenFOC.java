@@ -19,18 +19,13 @@ package org.team5924.frc2026.subsystems.rollers.intake;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOKrakenFOC;
 
-public class IntakeIOKrakenFOC extends GenericRollerSystemIOKrakenFOC<IntakeIOInputs>
-    implements IntakeIO {
+public class IntakeIOKrakenFOC extends GenericRollerSystemIOKrakenFOC implements IntakeIO {
   public IntakeIOKrakenFOC() {
     super(
         Constants.Intake.CAN_ID,
         Constants.Intake.BUS,
         Constants.Intake.CONFIG,
         Constants.Intake.REDUCTION);
-  }
-
-  public void updateInputs(IntakeIOInputs inputs) {
-    super.updateInputs(inputs);
   }
 
   @Override
