@@ -46,28 +46,6 @@ public class ObjectDetection extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Object Detection Inputs", inputs);
 
-    List<TargetGroup> groups = inputs.latestGroupedTargets.groups();
-    for (int groupIndex = 0; groupIndex < groups.size(); ++groupIndex) {
-      TargetGroup group = groups.get(groupIndex);
-
-      List<PhotonTrackedTarget> targets = group.targets;
-      for (int targetIndex = 0; targetIndex < targets.size(); ++targetIndex) {
-        PhotonTrackedTarget target = targets.get(targetIndex);
-
-        String logPath =
-            "Object Detection Inputs/Target Group "
-                + groupIndex
-                + "/Target "
-                + target.objDetectId
-                + "/";
-        Logger.recordOutput(
-            logPath + "distanceToRobot",
-            Units.metersToInches(target.getBestCameraToTarget().getTranslation().getNorm()));
-        Logger.recordOutput(
-            logPath + "cameraToTarget", target.getBestCameraToTarget().getTranslation());
-      }
-    }
-
     if (!inputs.isCameraConnected) {
       Elastic.sendNotification(cameraDisconnectedNotification);
     }

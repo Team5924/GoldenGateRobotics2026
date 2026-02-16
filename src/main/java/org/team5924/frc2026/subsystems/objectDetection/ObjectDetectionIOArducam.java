@@ -21,6 +21,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.team5924.frc2026.Constants;
@@ -54,7 +56,33 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
     inputs.seesFuel = instance.hasTargets();
     inputs.fuelCount = instance.getTargets().size();
     inputs.groupCount = inputs.latestGroupedTargets.groups().size();
+    logGroups(inputs.latestGroupedTargets.groups());
   }
+
+
+  private void logGroups(List<TargetGroup> groups) {
+    for (int groupIndex = 0; groupIndex < groups.size(); ++groupIndex) {
+      TargetGroup group = groups.get(groupIndex);
+
+      List<PhotonTrackedTarget> targets = group.targets;
+      for (int targetIndex = 0; targetIndex < targets.size(); ++targetIndex) {
+        PhotonTrackedTarget target = targets.get(targetIndex);
+
+        String logPath =
+            "Object Detection Inputs/Target Group "
+                + groupIndex
+                + "/Target "
+                + target.objDetectId
+                + "/";
+        Logger.recordOutput(
+            logPath + "distanceToRobot",
+            Units.metersToInches(target.getBestCameraToTarget().getTranslation().getNorm()));
+        Logger.recordOutput(
+            logPath + "cameraToTarget", target.getBestCameraToTarget().getTranslation());
+      }
+    }
+  }
+  
 
   /* Get Pipeline Targets & Group Them */
   private TargetGroups getGroups(List<PhotonTrackedTarget> targets) {
@@ -85,24 +113,20 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
     }
 
     if (timer.get() >= 0.5) {
-      logGroups(fuelGroups);
+      printGroups(fuelGroups);
       timer.reset();
     }
 
     return new TargetGroups(fuelGroups);
   }
 
-  private void logGroups(List<TargetGroup> fuelGroups) {
+  private void printGroups(List<TargetGroup> fuelGroups) {
     for (int i = 0; i < fuelGroups.size(); ++i) {
       List<PhotonTrackedTarget> targets = fuelGroups.get(i).targets;
       System.out.println("-------- GROUP " + i + " --------> " + targets.size());
       for (int j = 0; j < targets.size(); ++j) {
         PhotonTrackedTarget target = targets.get(j);
-        System.out.println(
-            "  TARGET "
-                + j
-                + "  --  Position: "
-                + target.getBestCameraToTarget());
+        System.out.println("  TARGET " + j + "  --  Position: " + target.getBestCameraToTarget());
       }
     }
   }
@@ -124,7 +148,7 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
                     target.bestCameraToTarget, comparisonFuel.bestCameraToTarget));
 
         // if (timer.get() >= 0.5) {
-          // logComparison(target, comparisonFuel, groups, i, targetDistance);
+        // logComparison(target, comparisonFuel, groups, i, targetDistance);
         // }
         if (targetDistance <= Constants.ObjectDetection.DISTANCE_THRESHHOLD_INCHES
             && lowestDistance > targetDistance) {
@@ -136,18 +160,23 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
     return closestGroupIndex;
   }
 
-  private void logComparison(PhotonTrackedTarget target, PhotonTrackedTarget comparisonFuel, List<TargetGroup> groups, int i, double targetDistance) {
-          System.out.println("i: " + i + " // pitch: " + comparisonFuel.pitch);
-          System.out.println(
-              "TARGET SIZE THING:: :: : : : :: : :  " + groups.get(i).targets.size() + "\n");
-          System.out.println(
-              "-------TARGET DISTANCE-------\n"
-                  + "Target "
-                  + target.getDetectedObjectClassID()
-                  + " to Target "
-                  + comparisonFuel.getDetectedObjectClassID()
-                  + ": "
-                  + targetDistance);
+  private void logComparison(
+      PhotonTrackedTarget target,
+      PhotonTrackedTarget comparisonFuel,
+      List<TargetGroup> groups,
+      int i,
+      double targetDistance) {
+    System.out.println("i: " + i + " // pitch: " + comparisonFuel.pitch);
+    System.out.println(
+        "TARGET SIZE THING:: :: : : : :: : :  " + groups.get(i).targets.size() + "\n");
+    System.out.println(
+        "-------TARGET DISTANCE-------\n"
+            + "Target "
+            + target.getDetectedObjectClassID()
+            + " to Target "
+            + comparisonFuel.getDetectedObjectClassID()
+            + ": "
+            + targetDistance);
   }
 
   // Finds distance between 2 targets

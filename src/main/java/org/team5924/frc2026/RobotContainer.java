@@ -62,13 +62,21 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
+        // drive =
+        //     new Drive(
+        //         new GyroIOPigeon2(),
+        //         new ModuleIOTalonFX(TunerConstants.FrontLeft),
+        //         new ModuleIOTalonFX(TunerConstants.FrontRight),
+        //         new ModuleIOTalonFX(TunerConstants.BackLeft),
+        //         new ModuleIOTalonFX(TunerConstants.BackRight),
+                // (pose) -> {});
         drive =
             new Drive(
-                new GyroIOPigeon2(),
-                new ModuleIOTalonFX(TunerConstants.FrontLeft),
-                new ModuleIOTalonFX(TunerConstants.FrontRight),
-                new ModuleIOTalonFX(TunerConstants.BackLeft),
-                new ModuleIOTalonFX(TunerConstants.BackRight),
+                new GyroIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
                 (pose) -> {});
         // exampleSystem = new ExampleSystem(new ExampleSystemIOTalonFX());
         // exampleRoller = new ExampleRoller(new ExampleRollerIOKrakenFOC());
