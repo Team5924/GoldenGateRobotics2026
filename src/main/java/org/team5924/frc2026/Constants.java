@@ -249,7 +249,7 @@ public final class Constants {
   }
 
   public final class Turret {
-    public static final int CAN_ID = 0; // TODO: update to real can id
+    public static final int CAN_ID = 40; // TODO: update to real can id
     public static final String BUS = "rio";
     public static final double REDUCTION = (40.0 / 16.0) * (135.0 / 22.0);
     public static final double SIM_MOI = 0.001;
@@ -267,8 +267,8 @@ public final class Constants {
             .withNeutralMode(NeutralModeValue.Brake))
         .withSoftwareLimitSwitch(
           new SoftwareLimitSwitchConfigs()
-            .withForwardSoftLimitThreshold(1 / REDUCTION)
-            .withReverseSoftLimitThreshold(-1 / REDUCTION)
+            .withForwardSoftLimitThreshold(1 / REDUCTION) // rotations
+            .withReverseSoftLimitThreshold(-1 / REDUCTION) // rotations
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true));
 
@@ -284,14 +284,14 @@ public final class Constants {
         .withTorqueClosedLoopRampPeriod(0.02)
         .withVoltageClosedLoopRampPeriod(0.02);
 
-    public static final double MIN_POSITION_RADS = -Math.PI; // TODO: update!!!
-    public static final double MAX_POSITION_RADS = Math.PI; // TODO: update!!!
+    public static final double MIN_POSITION_RADS = -Math.PI;
+    public static final double MAX_POSITION_RADS = Math.PI;
 
-    public static final double CANCODER_OFFSET = 0.0; // TODO: update!!
+    public static final double CANCODER_OFFSET = 0.0; // TODO: update!! (in rotations)
 
     public static final double EPSILON = Units.degreesToRadians(5.0);
     
-    public static final int CANCODER_ID = 0; // TODO: update id
+    public static final int CANCODER_ID = 41; // TODO: update id
     public static final MagnetSensorConfigs CANCODER_CONFIG =
         new MagnetSensorConfigs()
           .withMagnetOffset(-1 * CANCODER_OFFSET) // TODO: update offset -> when the turret is facing forward (units: rotations)
