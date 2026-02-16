@@ -83,7 +83,7 @@ public class Turret extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("TurretSystem", inputs);
+    Logger.processInputs("Turret", inputs);
 
     Logger.recordOutput("Turret/GoalState", goalState.toString());
     Logger.recordOutput("Turret/CurrentState", RobotState.getInstance().getTurretState().toString());
@@ -132,7 +132,6 @@ public class Turret extends SubsystemBase {
     switch (goalState) {
       case MANUAL:
         RobotState.getInstance().setTurretState(TurretState.MANUAL);
-        // turretPositionSetpointRadiansFromCenter =
         break;
       case MOVING:
         DriverStation.reportError(
