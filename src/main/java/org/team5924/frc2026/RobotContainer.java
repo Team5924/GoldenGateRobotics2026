@@ -33,10 +33,8 @@ import org.team5924.frc2026.commands.drive.DriveCommands;
 import org.team5924.frc2026.generated.TunerConstants;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.drive.GyroIO;
-import org.team5924.frc2026.subsystems.drive.GyroIOPigeon2;
 import org.team5924.frc2026.subsystems.drive.GyroIOSim;
 import org.team5924.frc2026.subsystems.drive.ModuleIO;
-import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFXSim;
 import org.team5924.frc2026.subsystems.objectDetection.ObjectDetection;
 import org.team5924.frc2026.subsystems.objectDetection.ObjectDetectionIO;
@@ -69,7 +67,7 @@ public class RobotContainer {
         //         new ModuleIOTalonFX(TunerConstants.FrontRight),
         //         new ModuleIOTalonFX(TunerConstants.BackLeft),
         //         new ModuleIOTalonFX(TunerConstants.BackRight),
-                // (pose) -> {});
+        // (pose) -> {});
         drive =
             new Drive(
                 new GyroIO() {},

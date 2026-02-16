@@ -21,7 +21,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -59,7 +58,6 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
     logGroups(inputs.latestGroupedTargets.groups());
   }
 
-
   private void logGroups(List<TargetGroup> groups) {
     for (int groupIndex = 0; groupIndex < groups.size(); ++groupIndex) {
       TargetGroup group = groups.get(groupIndex);
@@ -82,7 +80,6 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
       }
     }
   }
-  
 
   /* Get Pipeline Targets & Group Them */
   private TargetGroups getGroups(List<PhotonTrackedTarget> targets) {
