@@ -22,12 +22,26 @@ import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOKrak
 public class ShooterRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC<ShooterRollerIOInputs>
     implements ShooterRollerIO {
 
+  private class ShooterRollerFollower extends GenericRollerSystemIOKrakenFOC<ShooterRollerIOInputs> {
+    public ShooterRollerFollower() {
+      super(
+        Constants.ShooterRollerFollower.CAN_ID,
+        Constants.ShooterRollerFollower.BUS,
+        Constants.ShooterRollerFollower.CONFIG,
+        Constants.ShooterRollerFollower.REDUCTION);
+    }
+  }
+  
+  private final ShooterRollerFollower shooterFollower;
+
   public ShooterRollerIOKrakenFOC() {
     super(
-        Constants.ShooterRoller.CAN_ID,
-        Constants.ShooterRoller.BUS,
-        Constants.ShooterRoller.CONFIG,
-        Constants.ShooterRoller.REDUCTION);
+        Constants.ShooterRollerLeader.CAN_ID,
+        Constants.ShooterRollerLeader.BUS,
+        Constants.ShooterRollerLeader.CONFIG,
+        Constants.ShooterRollerLeader.REDUCTION);
+    
+    shooterFollower = new ShooterRollerFollower();
   }
 
   public void updateInputs(ShooterRollerIOInputs inputs) {
@@ -37,5 +51,6 @@ public class ShooterRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC<Sho
   @Override
   public void runVolts(double volts) {
     super.runVolts(volts);
+    shooterFollower.runVolts(volts);
   }
 }

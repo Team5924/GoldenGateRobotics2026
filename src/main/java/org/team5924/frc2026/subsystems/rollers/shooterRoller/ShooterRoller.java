@@ -42,7 +42,7 @@ public class ShooterRoller
     OFF(() -> 0.0),
 
     // voltage speed at which to rotate the rollers
-    MANUAL(new LoggedTunableNumber("ShooterRoller/Manual", 10.0)),
+    MANUAL(new LoggedTunableNumber("ShooterRoller/Manual", 12.0)),
 
     // using a double supplier of 0.0 because these will be auto-aim-calculated values
     AUTO_SHOOTING(() -> 0.0),
@@ -50,7 +50,7 @@ public class ShooterRoller
     OPPONENT_SHUFFLING(() -> 0.0),
 
     // TODO: test and update volts
-    BUMPER_SHOOTING(new LoggedTunableNumber("ShooterRoller/BumperShooting", 10.0));
+    BUMPER_SHOOTING(new LoggedTunableNumber("ShooterRoller/BumperShooting", 12.0));
 
     private final DoubleSupplier voltageSupplier;
   }

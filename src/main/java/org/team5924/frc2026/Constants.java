@@ -190,7 +190,7 @@ public final class Constants {
             .withKV(0));
   }
 
-  public final class ShooterRoller {
+  public final class ShooterRollerLeader {
     public static final int CAN_ID = 23; // TODO: Add CANID Ports + Config later
     public static final String BUS = "rio";
     public static final double REDUCTION = 16.0 / 30.0;
@@ -206,6 +206,25 @@ public final class Constants {
         .withMotorOutput(
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake));
+  }
+
+  public final class ShooterRollerFollower {
+    public static final int CAN_ID = 24; // TODO: Add CANID Ports + Config later
+    public static final String BUS = "rio";
+    public static final double REDUCTION = 16.0 / 30.0;
+    public static final double SIM_MOI = 0.001;
+    public static final int BEAM_BREAK_PORT = 0;
+
+    public static final TalonFXConfiguration CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(60)
+            .withStatorCurrentLimit(60))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
   }
 
