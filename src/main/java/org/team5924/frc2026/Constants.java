@@ -247,7 +247,7 @@ public final class Constants {
   }
 
   public final class Indexer { //TODO: update these later
-    public final static int CAN_ID = 24;
+    public final static int CAN_ID = 31;
     public final static int CAN_ID_INVERSE = 25;
     public final static int BEAM_BREAK_ID = 0;
     public static final String BUS = "rio";
