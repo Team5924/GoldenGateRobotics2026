@@ -184,17 +184,18 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
         PhotonUtils.estimateCameraToTargetTranslation(
             PhotonUtils.calculateDistanceToTargetMeters(
                 Constants.ObjectDetection.CAMERA_TO_FLOOR_HEIGHT_METERS,
-                0,
-                comparison.getPitch(),
-                Constants.ObjectDetection.CAMERA_PITCH_DEGREES),
+                Constants.ObjectDetection.FUEL_TOP_TO_FLOOR_METERS,
+                Constants.ObjectDetection.CAMERA_PITCH_RADS,
+                comparison.getPitch()),
             new Rotation2d(comparison.getYaw()));
+
     Translation2d estimateTarget =
         PhotonUtils.estimateCameraToTargetTranslation(
             PhotonUtils.calculateDistanceToTargetMeters(
                 Constants.ObjectDetection.CAMERA_TO_FLOOR_HEIGHT_METERS,
-                0,
-                target.getPitch(),
-                Constants.ObjectDetection.CAMERA_PITCH_DEGREES),
+                Constants.ObjectDetection.FUEL_TOP_TO_FLOOR_METERS,
+                Constants.ObjectDetection.CAMERA_PITCH_RADS,
+                target.getPitch()),
             new Rotation2d(target.getYaw()));
     // gets forward x and right y to get & puts them in distance formula
     return Units.metersToInches(estimateTarget.getDistance(estimateComparison));

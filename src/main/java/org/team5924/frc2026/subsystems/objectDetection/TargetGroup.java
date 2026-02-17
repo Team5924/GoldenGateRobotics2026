@@ -48,7 +48,7 @@ public class TargetGroup {
                   Constants.ObjectDetection.CAMERA_TO_FLOOR_HEIGHT_METERS,
                   0,
                   target.getPitch(),
-                  Constants.ObjectDetection.CAMERA_PITCH_DEGREES));
+                  Constants.ObjectDetection.CAMERA_PITCH_RADS));
     }
     targets.add(target);
     fuelAmount++;
@@ -59,18 +59,15 @@ public class TargetGroup {
     Pose2d[] targetPoses = new Pose2d[fuelAmount];
     for (int i = 0; i < fuelAmount; i++) {
       var target = targets.get(i);
-      Translation2d targetTranslation2d = 
+      Translation2d targetTranslation2d =
           PhotonUtils.estimateCameraToTargetTranslation(
-            PhotonUtils.calculateDistanceToTargetMeters(
-              Constants.ObjectDetection.CAMERA_OFFSET_FROM_ROBOT_FRAME_METERS,
-              0,
-              target.getPitch(),
-              Constants.ObjectDetection.CAMERA_PITCH_DEGREES
-            ), 
-          new Rotation2d(target.getYaw()));
-      targetPoses[i] =
-          new Pose2d(
-              targetTranslation2d, new Rotation2d());
+              PhotonUtils.calculateDistanceToTargetMeters(
+                  Constants.ObjectDetection.CAMERA_TO_FLOOR_HEIGHT_METERS,
+                  Constants.ObjectDetection.FUEL_TOP_TO_FLOOR_METERS,
+                  Constants.ObjectDetection.CAMERA_PITCH_RADS,
+                  target.getPitch()),
+              new Rotation2d(target.getYaw()));
+      targetPoses[i] = new Pose2d(targetTranslation2d, new Rotation2d());
     }
     return targetPoses;
   }

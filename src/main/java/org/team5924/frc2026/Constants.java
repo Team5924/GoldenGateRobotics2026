@@ -27,6 +27,8 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S2CloseStateValue;
+
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -70,9 +72,9 @@ public final class Constants {
     public static final int FUEL_GROUP_MIN = 4; // Subject to Change
     public static final double DISTANCE_THRESHHOLD_INCHES = 1.0; //Subject to Change
     public static final double PATHFINDING_ANGLE_DEGREES = 45; //Subject to Change
-    public static final double CAMERA_TO_FLOOR_HEIGHT_METERS = 0.5; //TODO: Update with actual cad
-    public static final double CAMERA_OFFSET_FROM_ROBOT_FRAME_METERS = 0.5; //TODO: Update with actual cad
-    public static final double CAMERA_PITCH_DEGREES = 15; //TODO: Update with actual cad
+    public static final double CAMERA_TO_FLOOR_HEIGHT_METERS = Units.inchesToMeters(19.0); //TODO: Update with actual cad
+    public static final double FUEL_TOP_TO_FLOOR_METERS = Units.inchesToMeters(5.91 / 2.0);
+    public static final double CAMERA_PITCH_RADS = Units.degreesToRadians(-20.0); //TODO: Update with actual cad
   }
 
 
