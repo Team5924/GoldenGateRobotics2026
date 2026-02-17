@@ -146,7 +146,7 @@ public class RobotContainer {
         break;
     }
 
-    superShooter = new SuperShooter(shooterRoller, shooterHood , turret);
+    superShooter = new SuperShooter(shooterRoller, shooterHood, turret);
 
     // Auto commands
     NamedCommands.registerCommand(
@@ -205,26 +205,26 @@ public class RobotContainer {
       drive.setDefaultCommand(
           DriveCommands.joystickDrive(
               drive,
-              () -> -driveController.getLeftY(),
-              () -> -driveController.getRawAxis(0),
-              () -> -driveController.getRawAxis(2)));
+              () -> 0 * -driveController.getRawAxis(0),
+              () -> 0 * -driveController.getLeftY(),
+              () -> 0 * -driveController.getRawAxis(2)));
     } else {
       drive.setDefaultCommand(
           DriveCommands.joystickDrive(
               drive,
-              () -> -driveController.getLeftY(),
-              () -> -driveController.getLeftX(),
-              () -> -driveController.getRightX()));
+              () -> 0 * -driveController.getLeftY(),
+              () -> 0 * -driveController.getLeftX(),
+              () -> 0 * -driveController.getRightX()));
     }
-    // [driver] SLOW MODE YIPE
-    driveController
-        .y()
-        .whileTrue(
-            DriveCommands.joystickDrive(
-                drive,
-                () -> -driveController.getLeftY() * Constants.SLOW_MODE_MULTI,
-                () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
-                () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
+    // // [driver] SLOW MODE YIPE
+    // driveController
+    //     .y()
+    //     .whileTrue(
+    //         DriveCommands.joystickDrive(
+    //             drive,
+    //             () -> -driveController.getLeftY() * Constants.SLOW_MODE_MULTI,
+    //             () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
+    //             () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
 
     // [driver] 0-DEGREE MODE
     driveController
@@ -321,7 +321,7 @@ public class RobotContainer {
     // }));
 
     shooterHood.setDefaultCommand(ShooterCommands.manualShooterHood(shooterHood, () -> operatorController.getRightY()));
-    turret.setDefaultCommand(ShooterCommands.manualTurret(turret, () -> operatorController.getLeftX()));
+    // turret.setDefaultCommand(ShooterCommands.manualTurret(turret, () -> operatorController.getLeftX()));
   }
 
   /**

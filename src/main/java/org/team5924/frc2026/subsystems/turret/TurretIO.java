@@ -23,6 +23,7 @@ public interface TurretIO {
   public static class TurretIOInputs {
     public boolean turretMotorConnected = true;
     public double turretPositionRads = 0.0;
+    public double turretPositionRotations = 0.0;
     public double turretVelocityRadsPerSec = 0.0;
     public double turretAppliedVoltage = 0.0;
     public double turretSupplyCurrentAmps = 0.0;
@@ -39,6 +40,7 @@ public interface TurretIO {
     public double cancoderAbsolutePosition = 0.0;
     public double cancoderVelocity = 0.0;
     public double cancoderSupplyVoltage = 0.0;
+    public double cancoderPositionRotations;
   }
 
   /**

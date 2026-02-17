@@ -270,7 +270,9 @@ public final class Constants {
   public final class Turret {
     public static final int CAN_ID = 40; // TODO: update to real can id
     public static final String BUS = "rio";
-    public static final double REDUCTION = (40.0 / 16.0) * (135.0 / 22.0);
+    public static final double MOTOR_REDUCTION = (40.0 / 16.0) * (135.0 / 22.0);
+    public static final double CANCODER_REDUCTION = (135.0 / 22.0);
+    public static final double MOTOR_TO_CANCODER = (40.0 / 16.0);
     public static final double SIM_MOI = 0.001;
 
     public static final TalonFXConfiguration CONFIG =
@@ -286,8 +288,8 @@ public final class Constants {
             .withNeutralMode(NeutralModeValue.Brake))
         .withSoftwareLimitSwitch(
           new SoftwareLimitSwitchConfigs()
-            .withForwardSoftLimitThreshold(1 / REDUCTION) // rotations
-            .withReverseSoftLimitThreshold(-1 / REDUCTION) // rotations
+            .withForwardSoftLimitThreshold(1 / CANCODER_REDUCTION) // rotations
+            .withReverseSoftLimitThreshold(-1 / CANCODER_REDUCTION) // rotations
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true));
 
@@ -314,7 +316,7 @@ public final class Constants {
     public static final MagnetSensorConfigs CANCODER_CONFIG =
         new MagnetSensorConfigs()
           .withMagnetOffset(-1 * CANCODER_OFFSET) // TODO: update offset -> when the turret is facing forward (units: rotations)
-          // .withAbsoluteSensorDiscontinuityPoint(0.5) // TODO: update???
+          .withAbsoluteSensorDiscontinuityPoint(1) // TODO: update???
           .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
   }
 }
