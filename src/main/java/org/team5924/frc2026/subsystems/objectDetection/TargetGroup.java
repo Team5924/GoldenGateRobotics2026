@@ -17,10 +17,14 @@
 package org.team5924.frc2026.subsystems.objectDetection;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import java.util.ArrayList;
 import java.util.List;
+import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
+import org.team5924.frc2026.Constants;
 
 public class TargetGroup {
   public int fuelAmount;
@@ -39,7 +43,12 @@ public class TargetGroup {
     if (targets.isEmpty()) {
       firstFiducialTarget = target;
       distanceFromRobotFeet =
-          Units.metersToFeet(target.getBestCameraToTarget().getTranslation().getNorm());
+          Units.metersToFeet(
+              PhotonUtils.calculateDistanceToTargetMeters(
+                  Constants.ObjectDetection.CAMERA_TO_FLOOR_HEIGHT_METERS,
+                  0,
+                  target.getPitch(),
+                  Constants.ObjectDetection.CAMERA_PITCH_DEGREES));
     }
     targets.add(target);
     fuelAmount++;
@@ -49,10 +58,19 @@ public class TargetGroup {
   public Pose2d[] getFuelPoses() {
     Pose2d[] targetPoses = new Pose2d[fuelAmount];
     for (int i = 0; i < fuelAmount; i++) {
-      var target = targets.get(i).getBestCameraToTarget();
+      var target = targets.get(i);
+      Translation2d targetTranslation2d = 
+          PhotonUtils.estimateCameraToTargetTranslation(
+            PhotonUtils.calculateDistanceToTargetMeters(
+              Constants.ObjectDetection.CAMERA_OFFSET_FROM_ROBOT_FRAME_METERS,
+              0,
+              target.getPitch(),
+              Constants.ObjectDetection.CAMERA_PITCH_DEGREES
+            ), 
+          new Rotation2d(target.getYaw()));
       targetPoses[i] =
           new Pose2d(
-              target.getTranslation().toTranslation2d(), target.getRotation().toRotation2d());
+              targetTranslation2d, new Rotation2d());
     }
     return targetPoses;
   }

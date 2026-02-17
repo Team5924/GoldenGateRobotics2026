@@ -67,9 +67,12 @@ public final class Constants {
 
   public final class ObjectDetection {
     public static final String CAMERA_NAME = "objectDetection";
-    public static final int FUEL_GROUP_MIN = 4;
-    public static final double DISTANCE_THRESHHOLD_INCHES = 1.0;
-    public static final double PATHFINDING_ANGLE_DEGREES = 45;
+    public static final int FUEL_GROUP_MIN = 4; // Subject to Change
+    public static final double DISTANCE_THRESHHOLD_INCHES = 1.0; //Subject to Change
+    public static final double PATHFINDING_ANGLE_DEGREES = 45; //Subject to Change
+    public static final double CAMERA_TO_FLOOR_HEIGHT_METERS = 0.5; //TODO: Update with actual cad
+    public static final double CAMERA_OFFSET_FROM_ROBOT_FRAME_METERS = 0.5; //TODO: Update with actual cad
+    public static final double CAMERA_PITCH_DEGREES = 15; //TODO: Update with actual cad
   }
 
 

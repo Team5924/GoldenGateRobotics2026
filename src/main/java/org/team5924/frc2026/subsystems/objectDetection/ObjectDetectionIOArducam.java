@@ -16,13 +16,16 @@
 
 package org.team5924.frc2026.subsystems.objectDetection;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.ArrayList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.team5924.frc2026.Constants;
 
@@ -140,9 +143,7 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
     for (int i = 0; i < groups.size(); i++) {
       for (PhotonTrackedTarget comparisonFuel : groups.get(i).targets) {
         double targetDistance =
-            Units.metersToInches(
-                targetToTargetDistance(
-                    target.bestCameraToTarget, comparisonFuel.bestCameraToTarget));
+            Units.metersToInches(targetToTargetDistance(target, comparisonFuel));
 
         // if (timer.get() >= 0.5) {
         // logComparison(target, comparisonFuel, groups, i, targetDistance);
@@ -177,8 +178,25 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
   }
 
   // Finds distance between 2 targets
-  private double targetToTargetDistance(Transform3d target, Transform3d comparison) {
+  private double targetToTargetDistance(
+      PhotonTrackedTarget target, PhotonTrackedTarget comparison) {
+    Translation2d estimateComparison =
+        PhotonUtils.estimateCameraToTargetTranslation(
+            PhotonUtils.calculateDistanceToTargetMeters(
+                Constants.ObjectDetection.CAMERA_TO_FLOOR_HEIGHT_METERS,
+                0,
+                comparison.getPitch(),
+                Constants.ObjectDetection.CAMERA_PITCH_DEGREES),
+            new Rotation2d(comparison.getYaw()));
+    Translation2d estimateTarget =
+        PhotonUtils.estimateCameraToTargetTranslation(
+            PhotonUtils.calculateDistanceToTargetMeters(
+                Constants.ObjectDetection.CAMERA_TO_FLOOR_HEIGHT_METERS,
+                0,
+                target.getPitch(),
+                Constants.ObjectDetection.CAMERA_PITCH_DEGREES),
+            new Rotation2d(target.getYaw()));
     // gets forward x and right y to get & puts them in distance formula
-    return Units.metersToInches(target.getTranslation().getDistance(comparison.getTranslation()));
+    return Units.metersToInches(estimateTarget.getDistance(estimateComparison));
   }
 }
