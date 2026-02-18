@@ -209,7 +209,7 @@ public final class Constants {
             .withNeutralMode(NeutralModeValue.Brake));
   }
 
-  public final class Climb {
+  public final class Climb { // TODO: update these values
     public static final int CAN_ID = 0;
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
@@ -222,7 +222,12 @@ public final class Constants {
         .withMotorOutput(
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake));
+            .withNeutralMode(NeutralModeValue.Brake))
+          .withSlot0(
+          new Slot0Configs() // TODO: Tune PID gains for climb
+            .withKP(1.0)
+            .withKI(0)
+            .withKD(0));
 
 
   }

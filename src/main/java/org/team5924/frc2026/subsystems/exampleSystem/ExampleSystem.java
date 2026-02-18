@@ -31,7 +31,7 @@ public class ExampleSystem extends SubsystemBase {
 
   private final ExampleSystemIO io;
 
-  // private final ExampleSystemIOInputsAutoLogged inputs = new ExampleSystemIOInputsAutoLogged();
+  private final ExampleSystemIOInputsAutoLogged inputs = new ExampleSystemIOInputsAutoLogged();
 
   public enum ExampleSystemState {
     STOW(new LoggedTunableNumber("ExampleSystem/Stow", Math.toRadians(0))),
@@ -65,23 +65,23 @@ public class ExampleSystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // io.updateInputs(inputs);
-    // Logger.processInputs("ExampleSystem", inputs);
+    io.updateInputs(inputs);
+    Logger.processInputs("ExampleSystem", inputs);
 
     Logger.recordOutput("ExampleSystem/GoalState", goalState.toString());
     Logger.recordOutput(
         "ExampleSystem/CurrentState", RobotState.getInstance().getExampleSystemState());
     Logger.recordOutput("ExampleSystem/TargetRads", goalState.rads);
 
-    // exampleMotorDisconnected.set(!inputs.exampleMotorConnected);
+    exampleMotorDisconnected.set(!inputs.exampleMotorConnected);
 
     // prevents error spam
-    // if (!inputs.exampleMotorConnected && wasExampleMotorConnected) {
-    Elastic.sendNotification(exampleMotorDisconnectedNotification);
-  }
+    if (!inputs.exampleMotorConnected && wasExampleMotorConnected) {
+      Elastic.sendNotification(exampleMotorDisconnectedNotification);
+    }
 
-  // wasExampleMotorConnected = inputs.exampleMotorConnected;
-  // }
+    wasExampleMotorConnected = inputs.exampleMotorConnected;
+  }
 
   public void runVolts(double volts) {
     io.runVolts(volts);

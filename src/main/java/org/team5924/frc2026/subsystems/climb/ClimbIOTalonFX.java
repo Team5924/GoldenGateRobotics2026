@@ -22,7 +22,6 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.hardware.CANcoder;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -69,27 +68,6 @@ public class ClimbIOTalonFX implements ClimbIO {
 
     climbTalon.setPosition(0);
   }
-
-    private final TalonFX motor;
-    private final CANcoder cancoder;
-
-    public ClimbIOTalonFX() {
-        motor = new TalonFX(0);
-        cancoder = new CANcoder(0);
-
-        TalonFXConfiguration config = new TalonFXConfiguration();
-        config.Feedback.FeedbackRemoteSensorID = 0;
-        config.Feedback.FeedbackSensorSource = 
-            FeedbackSensorSourceValue.RemoteCANcoder;
-
-        motor.getConfigurator().apply(config);
-    }
-
-  @Override
-  public void updateInputs(ClimbIOInputs inputs) {
-    inputs.positionRad = motor.getPosition().getValueAsDouble();
-    inputs.velocityRadPerSec = motor.getVelocity().getValueAsDouble();
-    }
 
   @Override
   public void updateInputs(ClimbIOInputs inputs) {
