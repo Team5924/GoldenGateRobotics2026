@@ -39,7 +39,6 @@ public class IntakePivot extends SubsystemBase {
   // Intake Preset Positions
   public enum IntakePivotState {
     INTAKE_FLOOR(new LoggedTunableNumber("IntakePivot/FloorRads", Math.toRadians(126.0))),
-    SCORE_TROUGH(new LoggedTunableNumber("IntakePivot/TroughScoreRads", Math.toRadians(25.639507))),
     STOW(new LoggedTunableNumber("IntakePivot/Stow", Math.toRadians(0))), // TODO: find this
     MOVING(new LoggedTunableNumber("IntakePivot/Moving", 0)),
 
@@ -109,6 +108,9 @@ public class IntakePivot extends SubsystemBase {
   }
 
   public boolean isAtSetpoint() {
+    if (goalState == IntakePivotState.OPERATOR_CONTROL || goalState == IntakePivotState.MOVING) {
+      return false;
+    }
     return Math.abs(getIntakePivotPosRads() - this.goalState.rads.getAsDouble())
         < PIV_POS_TOLERANCE.getAsDouble();
   }

@@ -199,9 +199,9 @@ public class IntakePivotIOKrakenFOC implements IntakePivotIO {
 
   @Override
   public void setVoltage(double volts) {
-    if (atSoftStop(volts)){
-        intakePivotKraken.setControl(voltageControl.withOutput(0));
-        return;
+    if (atSoftStop(volts)) {
+      intakePivotKraken.setControl(voltageControl.withOutput(0));
+      return;
     }
     intakePivotKraken.setControl(voltageControl.withOutput(volts));
   }
@@ -216,6 +216,7 @@ public class IntakePivotIOKrakenFOC implements IntakePivotIO {
 
   @Override
   public void setPosition(double rads) {
+    setpoint = rads;
     intakePivotKraken.setControl(magicMotionVoltage.withPosition(Units.radiansToRotations(rads)));
   }
 

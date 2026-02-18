@@ -20,7 +20,7 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface IntakePivotIO {
   @AutoLog
-  public static class IntakePivotIOInputs {
+  public static class IntakePivotIOInputs { // TODO: Update these
     public boolean intakePivotMotorConnected = true;
     public double intakePivotPositionRads = 0.0;
     public double intakePivotVelocityRadsPerSec = 0.0;
