@@ -231,6 +231,20 @@ public final class Constants {
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
   }
+  public final class IntakePivot {//TODO:Update these
+    public static final int INTAKE_PIVOT_CAN_ID = 32;
+    public static final String INTAKE_PIVOT_BUS = "rio";
+    public static final int INTAKE_PIVOT_CURRENT_LIMIT = 60;
+    public static final InvertedValue INTAKE_PIVOT_INVERT = InvertedValue.Clockwise_Positive;
+    public static final NeutralModeValue INTAKE_PIVOT_BRAKE = NeutralModeValue.Brake;
+    public static final double INTAKE_PIVOT_REDUCTION = 1.0 * (2.3/7) * (32/18);
+
+    public static final double INTAKE_PIVOT_MIN_RADS =
+      Math.toRadians(-2.0); // TODO: test these values
+    public static final double INTAKE_PIVOT_MAX_RADS = Math.toRadians(128.0);
+    public static final double INTAKE_PIVOT_DEADZONE = 0.05;
+  }
+
 }
 
 
