@@ -41,31 +41,9 @@ public class AutoBuilder {
   public static void setStartingPosition(Supplier<String> supplier) {
     startingPositionSupplier = supplier;
   }
-
-  //   public Command basicDriveAuto() {
-  //     return Commands.runOnce(
-  //             () ->
-  //                 RobotState.getInstance()
-  //                     .resetPose(
-  //                         AllianceFlipUtil.apply(
-  //                             new Pose2d(
-  //                                 RobotState.getInstance().getEstimatedPose().getTranslation(),
-  //                                 Rotation2d.kPi))))
-  //         .andThen(
-  //             new DriveToPose(
-  //                     drive,
-  //                     () -> RobotState.getInstance().getEstimatedPose(),
-  //                     () -> RobotState.getInstance().getEstimatedPose(),
-  //                     () ->
-  //                         new Translation2d((AllianceFlipUtil.shouldFlip() ? -1.0 : 1.0) * -1.0,
-  // 0.0))
-  //                 .withTimeout(0.6));
-  //   }
-
   public Command scoreAndClimbAuto() {
     return Commands.sequence(
-        Robot.mAutoFactory.resetOdometry(startingPositionSupplier.get() + "StartToHub"),
-        Robot.mAutoFactory.trajectoryCmd(startingPositionSupplier.get() + "StartToHub"),
+        startToHub(startingPositionSupplier.get()),
         Commands.run(() -> shooter.setGoalState(ShooterState.AUTO_SHOOTING), shooter)
             .withTimeout(1.0),
         Commands.runOnce(() -> shooter.setGoalState(ShooterState.OFF), shooter),
@@ -84,7 +62,7 @@ public class AutoBuilder {
         Commands.deadline(
             Robot.mAutoFactory.trajectoryCmd("DepotIntake"),
             Commands.run(() -> intake.setGoalState(IntakeState.INTAKE), intake)),
-            Commands.runOnce(() -> intake.setGoalState(IntakeState.OFF), intake),
+        Commands.runOnce(() -> intake.setGoalState(IntakeState.OFF), intake),
         Robot.mAutoFactory.trajectoryCmd("DepotToHub"),
         Commands.run(() -> shooter.setGoalState(ShooterState.AUTO_SHOOTING), shooter)
             .withTimeout(1.0),
