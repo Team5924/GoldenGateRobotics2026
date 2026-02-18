@@ -60,31 +60,26 @@ public class Climb extends SubsystemBase {
   private final Notification climbMotorDisconnectedNotification;
   private boolean wasClimbMotorConnected = true;
 
-  // Climb Beam Breaks
-  private final BeamBreakIO grabBeamBreakIO;
-  private final BeamBreakIO latchBeamBreakIO;
-  private final BeamBreakIOInputsAutoLogged grabBeamBreakInputs = new BeamBreakIOInputsAutoLogged();
-  private final BeamBreakIOInputsAutoLogged latchBeamBreakInputs = new BeamBreakIOInputsAutoLogged();
+  // Climb Beam Break
+  private final BeamBreakIO beamBreakIO;
+  private final BeamBreakIOInputsAutoLogged beamBreakInputs = new BeamBreakIOInputsAutoLogged();
 
-  public Climb(ClimbIO io, BeamBreakIO grabBeamBreakIO, BeamBreakIO latchBeamBreakIO) {
+  public Climb(ClimbIO io, BeamBreakIO beamBreakIO) {
     this.io = io;
     this.goalState = ClimbState.STOW;
     this.climbMotorDisconnected =
         new Alert("Climb System Motor Disconnected!", Alert.AlertType.kWarning);
     this.climbMotorDisconnectedNotification =
         new Notification(NotificationLevel.WARNING, "Climb System Motor Disconnected", "");
-    this.grabBeamBreakIO = grabBeamBreakIO;
-    this.latchBeamBreakIO = latchBeamBreakIO;
+    this.beamBreakIO = beamBreakIO;
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    grabBeamBreakIO.updateInputs(grabBeamBreakInputs);
-    latchBeamBreakIO.updateInputs(latchBeamBreakInputs);
+    beamBreakIO.updateInputs(beamBreakInputs);
     Logger.processInputs("Climb", inputs);
-    Logger.processInputs("Climb/GrabBeamBreak", grabBeamBreakInputs);
-    Logger.processInputs("Climb/LatchBeamBreak", latchBeamBreakInputs);
+    Logger.processInputs("Climb/BeamBreak", beamBreakInputs);
 
     Logger.recordOutput("Climb/GoalState", goalState.toString());
     Logger.recordOutput("Climb/CurrentState", RobotState.getInstance().getClimbState().toString());
