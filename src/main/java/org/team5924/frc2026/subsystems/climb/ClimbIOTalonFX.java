@@ -103,6 +103,6 @@ public class ClimbIOTalonFX implements ClimbIO {
   @Override
   public void setPosition(double rads) {
     climbTalon.setControl(
-        positionOut.withPosition(rads * Constants.Climb.REDUCTION * Units.radiansToRotations(1.0)));
+        positionOut.withPosition(Constants.Climb.REDUCTION * Units.radiansToRotations(rads)));
   }
 }

@@ -1,6 +1,7 @@
 
-//  * Constants.java
-//  */
+/* 
+ * Constants.java
+*/
 
 /* 
  * Copyright (C) 2025-2026 Team 5924 - Golden Gate Robotics and/or its affiliates.
@@ -224,10 +225,10 @@ public final class Constants {
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake))
           .withSlot0(
-          new Slot0Configs() // TODO: Tune PID gains for climb
-            .withKP(1.0)
-            .withKI(0)
-            .withKD(0));
+            new Slot0Configs() // TODO: Tune PID gains for climb
+              .withKP(1.0)
+              .withKI(0)
+              .withKD(0));
 
 
   }

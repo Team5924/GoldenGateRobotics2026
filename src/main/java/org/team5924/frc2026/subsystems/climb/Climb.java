@@ -118,12 +118,11 @@ public class Climb extends SubsystemBase {
         break;
       default:
         RobotState.getInstance().setClimbState(goalState);
-        io.setPosition(goalState.rads.getAsDouble());
         break;
     }
   }
 
-  public void handleCurrentState() {
+  private void handleCurrentState() {
     switch (goalState) {
       case OPERATOR_CONTROL:
         io.runVolts(goalState.rads.getAsDouble());
