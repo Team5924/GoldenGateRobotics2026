@@ -201,21 +201,22 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    if (Constants.currentMode == Constants.Mode.SIM) {
-      drive.setDefaultCommand(
-          DriveCommands.joystickDrive(
-              drive,
-              () -> 0 * -driveController.getRawAxis(0),
-              () -> 0 * -driveController.getLeftY(),
-              () -> 0 * -driveController.getRawAxis(2)));
-    } else {
-      drive.setDefaultCommand(
-          DriveCommands.joystickDrive(
-              drive,
-              () -> 0 * -driveController.getLeftY(),
-              () -> 0 * -driveController.getLeftX(),
-              () -> 0 * -driveController.getRightX()));
-    }
+    
+    // if (Constants.currentMode == Constants.Mode.SIM) {
+    //   drive.setDefaultCommand(
+    //       DriveCommands.joystickDrive(
+    //           drive,
+    //           () -> 0 * -driveController.getRawAxis(0),
+    //           () -> 0 * -driveController.getLeftY(),
+    //           () -> 0 * -driveController.getRawAxis(2)));
+    // } else {
+    //   drive.setDefaultCommand(
+    //       DriveCommands.joystickDrive(
+    //           drive,
+    //           () -> 0 * -driveController.getLeftY(),
+    //           () -> 0 * -driveController.getLeftX(),
+    //           () -> 0 * -driveController.getRightX()));
+    // }
     // // [driver] SLOW MODE YIPE
     // driveController
     //     .y()
@@ -321,7 +322,7 @@ public class RobotContainer {
     // }));
 
     shooterHood.setDefaultCommand(ShooterCommands.manualShooterHood(shooterHood, () -> operatorController.getRightY()));
-    // turret.setDefaultCommand(ShooterCommands.manualTurret(turret, () -> operatorController.getLeftX()));
+    turret.setDefaultCommand(ShooterCommands.manualTurret(turret, () -> operatorController.getLeftX()));
   }
 
   /**

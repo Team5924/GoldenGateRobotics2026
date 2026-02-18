@@ -85,11 +85,14 @@ public class Turret extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Turret", inputs);
 
-    Logger.recordOutput("Turret/GoalState", goalState.toString());
-    Logger.recordOutput("Turret/CurrentState", RobotState.getInstance().getTurretState().toString());
-    Logger.recordOutput("Turret/TargetRads", goalState.rads.getAsDouble());
+    // Logger.recordOutput("Turret/GoalState", goalState.toString());
+    // Logger.recordOutput("Turret/CurrentState", RobotState.getInstance().getTurretState().toString());
+    // Logger.recordOutput("Turret/TargetRads", goalState.rads.getAsDouble());
 
     Logger.recordOutput("Turret/idk prob like rads", getCurrentPositionRads());
+    Logger.recordOutput("Turret/input volts", Math.signum(ShooterHoodState.MANUAL.getRads().getAsDouble() * input));
+    Logger.recordOutput("Turret/i within bounds", withinBounds(getCurrentPositionRads()));
+    Logger.recordOutput("Turret/i is it", Math.signum(ShooterHoodState.MANUAL.getRads().getAsDouble() * input) != withinBounds(getCurrentPositionRads()));
 
     turretMotorDisconnected.set(!inputs.turretMotorConnected);
 
@@ -115,7 +118,8 @@ public class Turret extends SubsystemBase {
   }
 
   public boolean continueInDirection(double rads, double volts) {
-    return (Math.signum(volts) != withinBounds(rads));
+    double bounds = withinBounds(rads);
+    return (Math.signum(volts) != bounds);
   }
 
   /**
@@ -123,10 +127,10 @@ public class Turret extends SubsystemBase {
    * @param rads rads
    * @return -1 for min bound, 0 for within, 1 for upper bound
    */
-  public int withinBounds(double rads) {
-    if (rads <= Constants.Turret.MIN_POSITION_RADS) return -1;
-    if (rads >= Constants.Turret.MAX_POSITION_RADS) return 1;
-    return 0;
+  public double withinBounds(double rads) {
+    if (rads <= Constants.Turret.MIN_POSITION_RADS) return -1.0;
+    if (rads >= Constants.Turret.MAX_POSITION_RADS) return 1.0;
+    return 0.0;
   }
 
   public void setGoalState(TurretState goalState) {

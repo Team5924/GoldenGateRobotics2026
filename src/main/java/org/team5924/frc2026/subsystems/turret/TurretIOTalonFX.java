@@ -111,7 +111,7 @@ public class TurretIOTalonFX implements TurretIO {
 
     FeedbackConfigs feedbackConfigs = new FeedbackConfigs();
     feedbackConfigs.SensorToMechanismRatio = Constants.Turret.CANCODER_REDUCTION;
-    feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     feedbackConfigs.RotorToSensorRatio = Constants.Turret.MOTOR_TO_CANCODER;
 
     turretTalonConfig = turretTalon.getConfigurator();
@@ -166,7 +166,8 @@ public class TurretIOTalonFX implements TurretIO {
     // magicMotionVoltage = new MotionMagicVoltage(0).withEnableFOC(true);
 
     BaseStatusSignal.waitForAll(0.5, cancoderAbsolutePosition);
-    turretTalon.setPosition(cancoderAbsolutePosition.getValueAsDouble());
+    cancoder.setPosition(0.0);
+    turretTalon.setPosition(cancoderPositionRotations.getValueAsDouble());
   }
 
   @Override
@@ -224,7 +225,7 @@ public class TurretIOTalonFX implements TurretIO {
     inputs.cancoderSupplyVoltage = cancoderSupplyVoltage.getValueAsDouble();
     inputs.cancoderPositionRotations = cancoderPositionRotations.getValueAsDouble();
 
-    inputs.turretPositionRotations = inputs.cancoderPositionRotations / Constants.Turret.CANCODER_REDUCTION;
+    inputs.turretPositionRotations = (inputs.cancoderPositionRotations) / Constants.Turret.CANCODER_REDUCTION;
 
     // inputs.minSoftStop = turretCANdi.getS1Closed().getValue();
     // inputs.maxSoftStop = turretCANdi.getS2Closed().getValue();

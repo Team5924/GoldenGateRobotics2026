@@ -284,14 +284,14 @@ public final class Constants {
             .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
           new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake))
         .withSoftwareLimitSwitch(
           new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitThreshold(1 / CANCODER_REDUCTION) // rotations
             .withReverseSoftLimitThreshold(-1 / CANCODER_REDUCTION) // rotations
-            .withForwardSoftLimitEnable(true)
-            .withReverseSoftLimitEnable(true));
+            .withForwardSoftLimitEnable(false)
+            .withReverseSoftLimitEnable(false));
 
     public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
       new OpenLoopRampsConfigs()
@@ -305,18 +305,19 @@ public final class Constants {
         .withTorqueClosedLoopRampPeriod(0.02)
         .withVoltageClosedLoopRampPeriod(0.02);
 
-    public static final double MIN_POSITION_RADS = -Math.PI;
-    public static final double MAX_POSITION_RADS = Math.PI;
+    public static final double MIN_POSITION_RADS = -Math.PI * .8;
+    public static final double MAX_POSITION_RADS = Math.PI * .8;
 
-    public static final double CANCODER_OFFSET = 0.0; // TODO: update!! (in rotations)
+    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0; // TODO: update!! (in rotations)
+    // public static final double CANCODER_OFFSET = 4.0;
 
     public static final double EPSILON = Units.degreesToRadians(5.0);
     
     public static final int CANCODER_ID = 41; // TODO: update id
     public static final MagnetSensorConfigs CANCODER_CONFIG =
         new MagnetSensorConfigs()
-          .withMagnetOffset(-1 * CANCODER_OFFSET) // TODO: update offset -> when the turret is facing forward (units: rotations)
-          .withAbsoluteSensorDiscontinuityPoint(1) // TODO: update???
+          .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET) // TODO: update offset -> when the turret is facing forward (units: rotations)
+          .withAbsoluteSensorDiscontinuityPoint(0.5) // TODO: update???
           .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
   }
 }
