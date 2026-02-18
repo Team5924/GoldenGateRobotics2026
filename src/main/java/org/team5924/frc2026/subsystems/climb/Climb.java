@@ -23,6 +23,8 @@ import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.RobotState;
+import org.team5924.frc2026.subsystems.sensors.BeamBreakIO;
+import org.team5924.frc2026.subsystems.sensors.BeamBreakIOInputsAutoLogged;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
@@ -58,19 +60,31 @@ public class Climb extends SubsystemBase {
   private final Notification climbMotorDisconnectedNotification;
   private boolean wasClimbMotorConnected = true;
 
-  public Climb(ClimbIO io) {
+  // Climb Beam Breaks
+  private final BeamBreakIO grabBeamBreakIO;
+  private final BeamBreakIO latchBeamBreakIO;
+  private final BeamBreakIOInputsAutoLogged grabBeamBreakInputs = new BeamBreakIOInputsAutoLogged();
+  private final BeamBreakIOInputsAutoLogged latchBeamBreakInputs = new BeamBreakIOInputsAutoLogged();
+
+  public Climb(ClimbIO io, BeamBreakIO grabBeamBreakIO, BeamBreakIO latchBeamBreakIO) {
     this.io = io;
     this.goalState = ClimbState.STOW;
     this.climbMotorDisconnected =
         new Alert("Climb System Motor Disconnected!", Alert.AlertType.kWarning);
     this.climbMotorDisconnectedNotification =
         new Notification(NotificationLevel.WARNING, "Climb System Motor Disconnected", "");
+    this.grabBeamBreakIO = grabBeamBreakIO;
+    this.latchBeamBreakIO = latchBeamBreakIO;
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    grabBeamBreakIO.updateInputs(grabBeamBreakInputs);
+    latchBeamBreakIO.updateInputs(latchBeamBreakInputs);
     Logger.processInputs("Climb", inputs);
+    Logger.processInputs("Climb/GrabBeamBreak", grabBeamBreakInputs);
+    Logger.processInputs("Climb/LatchBeamBreak", latchBeamBreakInputs);
 
     Logger.recordOutput("Climb/GoalState", goalState.toString());
     Logger.recordOutput("Climb/CurrentState", RobotState.getInstance().getClimbState().toString());
