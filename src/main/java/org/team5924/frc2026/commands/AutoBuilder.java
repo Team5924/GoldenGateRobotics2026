@@ -95,13 +95,13 @@ public class AutoBuilder {
   }
 
   private Command startToHub(String startingPosition) {
-    if(startingPosition == "Mid") {
-      return null;
+    if("Mid".equals(startingPosition)) {
+      return Commands.none();
     }
     else{
       return Commands.sequence(
-        Robot.mAutoFactory.resetOdometry(startingPositionSupplier.get() + "StartToHub"),
-        Robot.mAutoFactory.trajectoryCmd(startingPositionSupplier.get() + "StartToHub")
+        Robot.mAutoFactory.resetOdometry(startingPosition + "StartToHub"),
+        Robot.mAutoFactory.trajectoryCmd(startingPosition + "StartToHub")
       );
     }
   }
