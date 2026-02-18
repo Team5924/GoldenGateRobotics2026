@@ -39,9 +39,16 @@ public class AutoBuilder {
   private static Supplier<String> startingPositionSupplier;
 
   public static void setStartingPosition(Supplier<String> supplier) {
+    if (supplier == null)
+      throw new IllegalArgumentException("startingPositionSupplier must not be null");
     startingPositionSupplier = supplier;
   }
+
   public Command scoreAndClimbAuto() {
+    if (startingPositionSupplier == null) {
+      throw new IllegalStateException(
+          "setStartingPosition() must be called before building auto commands");
+    }
     return Commands.sequence(
         startToHub(startingPositionSupplier.get()),
         Commands.run(() -> shooter.setGoalState(ShooterState.AUTO_SHOOTING), shooter)
@@ -53,6 +60,10 @@ public class AutoBuilder {
   }
 
   public Command scorePickupAndClimbAuto() {
+    if (startingPositionSupplier == null) {
+      throw new IllegalStateException(
+          "setStartingPosition() must be called before building auto commands");
+    }
     return Commands.sequence(
         startToHub(startingPositionSupplier.get()),
         Commands.run(() -> shooter.setGoalState(ShooterState.AUTO_SHOOTING), shooter)
@@ -73,14 +84,12 @@ public class AutoBuilder {
   }
 
   private Command startToHub(String startingPosition) {
-    if("Mid".equals(startingPosition)) {
+    if ("Mid".equals(startingPosition)) {
       return Commands.none();
-    }
-    else{
+    } else {
       return Commands.sequence(
-        Robot.mAutoFactory.resetOdometry(startingPosition + "StartToHub"),
-        Robot.mAutoFactory.trajectoryCmd(startingPosition + "StartToHub")
-      );
+          Robot.mAutoFactory.resetOdometry(startingPosition + "StartToHub"),
+          Robot.mAutoFactory.trajectoryCmd(startingPosition + "StartToHub"));
     }
   }
 }
