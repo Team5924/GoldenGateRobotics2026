@@ -51,7 +51,7 @@ public class Turret extends SubsystemBase {
     MOVING(new LoggedTunableNumber("Turret/Moving", 0)),
 
     // voltage at which the example subsystem motor moves when controlled by the operator
-    MANUAL(new LoggedTunableNumber("Turret/OperatorVoltage", 2));
+    MANUAL(new LoggedTunableNumber("Turret/OperatorVoltage", 1.0));
 
     private final LoggedTunableNumber rads;
 
@@ -68,6 +68,11 @@ public class Turret extends SubsystemBase {
 
   private Timer stateTimer = new Timer();
   private double lastStateChangeTime;
+
+  private double radsPos;
+  private double inputVolts;
+  private double bounds;
+  private boolean cont;
 
   public Turret(TurretIO io) {
     this.io = io;
@@ -89,12 +94,14 @@ public class Turret extends SubsystemBase {
     // Logger.recordOutput("Turret/CurrentState", RobotState.getInstance().getTurretState().toString());
     // Logger.recordOutput("Turret/TargetRads", goalState.rads.getAsDouble());
 
-    Logger.recordOutput("Turret/idk prob like rads", getCurrentPositionRads());
-    Logger.recordOutput("Turret/input volts", Math.signum(ShooterHoodState.MANUAL.getRads().getAsDouble() * input));
-    Logger.recordOutput("Turret/i within bounds", withinBounds(getCurrentPositionRads()));
-    Logger.recordOutput("Turret/i is it", Math.signum(ShooterHoodState.MANUAL.getRads().getAsDouble() * input) != withinBounds(getCurrentPositionRads()));
-
     turretMotorDisconnected.set(!inputs.turretMotorConnected);
+
+    // Logger.recordOutput("Turret/idk prob like rads", radsPos);
+    // Logger.recordOutput("Turret/input volts", inputVolts);
+    // Logger.recordOutput("Turret/exceed bounds", bounds);
+    // Logger.recordOutput("Turret/continue", cont);
+    // Logger.recordOutput("Turret/tmp", inputs.turretMotorPosition);
+    // Logger.recordOutput("Turret/gcpr", getCurrentPositionRads());
 
     handleManualState();
 
@@ -108,18 +115,19 @@ public class Turret extends SubsystemBase {
   private void handleManualState() {
     if (!(goalState.equals(TurretState.MANUAL) && Math.abs(input) > 0.01)) return;
 
-    io.runVolts(ShooterHoodState.MANUAL.getRads().getAsDouble() * input);
+    runVolts(inputVolts = ShooterHoodState.MANUAL.getRads().getAsDouble() * input);
   }
 
   public void runVolts(double volts) {
-    if (!continueInDirection(getCurrentPositionRads(), volts)) return;
+    radsPos = getCurrentPositionRads();
+    if (!(cont = shouldContinueInDirection(volts, radsPos))) return;
 
     io.runVolts(volts);
   }
 
-  public boolean continueInDirection(double rads, double volts) {
-    double bounds = withinBounds(rads);
-    return (Math.signum(volts) != bounds);
+  public boolean shouldContinueInDirection(double volts, double rads) {
+    double voltDirection = Math.signum(volts);
+    return (voltDirection != (bounds = exceedBounds(rads)));
   }
 
   /**
@@ -127,7 +135,7 @@ public class Turret extends SubsystemBase {
    * @param rads rads
    * @return -1 for min bound, 0 for within, 1 for upper bound
    */
-  public double withinBounds(double rads) {
+  public double exceedBounds(double rads) {
     if (rads <= Constants.Turret.MIN_POSITION_RADS) return -1.0;
     if (rads >= Constants.Turret.MAX_POSITION_RADS) return 1.0;
     return 0.0;
@@ -222,7 +230,7 @@ public class Turret extends SubsystemBase {
   }
 
   public double getCurrentPositionRads() {
-    return Units.rotationsToRadians(inputs.turretPositionRotations);
+    return Units.rotationsToRadians(inputs.turretMotorPosition);
   }
 
   // public void setTeleopDefaultCommand() {

@@ -29,6 +29,7 @@ public interface TurretIO {
     public double turretSupplyCurrentAmps = 0.0;
     public double turretTorqueCurrentAmps = 0.0;
     public double turretTempCelsius = 0.0;
+    public double turretMotorPosition = 0.0;
 
     public double motionMagicVelocityTarget = 0.0;
     public double motionMagicPositionTarget = 0.0;
