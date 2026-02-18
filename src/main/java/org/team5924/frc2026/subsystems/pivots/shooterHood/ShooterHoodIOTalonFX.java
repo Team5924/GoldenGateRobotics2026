@@ -20,6 +20,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -27,6 +28,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 
 public class ShooterHoodIOTalonFX implements ShooterHoodIO {
@@ -38,6 +40,14 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   private final StatusSignal<Current> shooterHoodTorqueCurrent;
   private final StatusSignal<Temperature> shooterHoodTempCelsius;
 
+  private final CANcoder cancoder;
+  private final StatusSignal<Angle> cancoderAbsolutePosition;
+  private final StatusSignal<AngularVelocity> cancoderVelocity;
+  private final StatusSignal<Voltage> cancoderSupplyVoltage;
+  private final StatusSignal<Angle> cancoderPositionRotations;
+
+  private boolean isCancoderOffset = false;
+
   // Single shot for voltage mode, robot loop will call continuously
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
   private final PositionVoltage positionOut =
@@ -47,6 +57,8 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     shooterHoodTalon = new TalonFX(Constants.ShooterHood.CAN_ID, Constants.ShooterHood.BUS);
     shooterHoodTalon.getConfigurator().apply(Constants.ShooterHood.CONFIG);
 
+    cancoder = new CANcoder(Constants.ShooterHood.CANCODER_ID);
+
     // Get select status signals and set update frequency
     shooterHoodPosition = shooterHoodTalon.getPosition();
     shooterHoodVelocity = shooterHoodTalon.getVelocity();
@@ -54,6 +66,11 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     shooterHoodSupplyCurrent = shooterHoodTalon.getSupplyCurrent();
     shooterHoodTorqueCurrent = shooterHoodTalon.getTorqueCurrent();
     shooterHoodTempCelsius = shooterHoodTalon.getDeviceTemp();
+
+    cancoderAbsolutePosition = cancoder.getAbsolutePosition();
+    cancoderVelocity = cancoder.getVelocity();
+    cancoderSupplyVoltage = cancoder.getSupplyVoltage();
+    cancoderPositionRotations = cancoder.getPosition();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0,
@@ -64,7 +81,18 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
         shooterHoodTorqueCurrent,
         shooterHoodTempCelsius);
 
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        250.0,
+        cancoderAbsolutePosition,
+        cancoderVelocity,
+        cancoderSupplyVoltage,
+        cancoderPositionRotations);
+
     shooterHoodTalon.setPosition(0);
+
+    BaseStatusSignal.waitForAll(0.5, cancoderAbsolutePosition);
+    cancoder.setPosition(0.0);
+    shooterHoodTalon.setPosition(cancoderPositionRotations.getValueAsDouble());
   }
 
   @Override
@@ -78,6 +106,22 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
                 shooterHoodTorqueCurrent,
                 shooterHoodTempCelsius)
             .isOK();
+
+    inputs.cancoderConnected =
+        BaseStatusSignal.refreshAll(
+                cancoderAbsolutePosition,
+                cancoderVelocity,
+                cancoderSupplyVoltage,
+                cancoderPositionRotations)
+            .isOK();
+
+    if (!isCancoderOffset && cancoderAbsolutePosition != null) {
+      shooterHoodTalon.setPosition(getTurretAngleOffset());
+      isCancoderOffset = true;
+    }
+
+    Logger.recordOutput("Turret/isCancoderOffset", isCancoderOffset);
+
     inputs.shooterHoodPositionRads =
         Units.rotationsToRadians(shooterHoodPosition.getValueAsDouble())
             / Constants.ShooterHood.REDUCTION;
@@ -88,6 +132,16 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     inputs.shooterHoodSupplyCurrentAmps = shooterHoodSupplyCurrent.getValueAsDouble();
     inputs.shooterHoodTorqueCurrentAmps = shooterHoodTorqueCurrent.getValueAsDouble();
     inputs.shooterHoodTempCelsius = shooterHoodTempCelsius.getValueAsDouble();
+
+    inputs.cancoderAbsolutePosition = cancoderAbsolutePosition.getValueAsDouble();
+    inputs.cancoderVelocity = cancoderVelocity.getValueAsDouble();
+    inputs.cancoderSupplyVoltage = cancoderSupplyVoltage.getValueAsDouble();
+    inputs.cancoderPositionRotations = cancoderPositionRotations.getValueAsDouble();
+
+    inputs.shooterHoodPositionRads =
+        (inputs.cancoderPositionRotations) / Constants.ShooterHood.CANCODER_REDUCTION;
+    // this was shooterHoodPositionRotations, but I changed it to rads. I don't know if this is
+    // right or not.
   }
 
   @Override
@@ -104,5 +158,10 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   @Override
   public void stop() {
     shooterHoodTalon.stopMotor();
+  }
+
+  private double getTurretAngleOffset() {
+    BaseStatusSignal.waitForAll(10.0, cancoderAbsolutePosition);
+    return Units.rotationsToRadians(cancoderAbsolutePosition.getValueAsDouble());
   }
 }

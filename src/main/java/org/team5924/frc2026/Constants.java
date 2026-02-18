@@ -20,14 +20,18 @@ import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.DigitalInputsConfigs;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S2CloseStateValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
+
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -154,6 +158,9 @@ public final class Constants {
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
     public static final double SIM_MOI = 0.001;
+    public static final double CANCODER_REDUCTION = (24.0 / 15.0);
+    public static final double MOTOR_TO_CANCODER = (40.0 / 12.0);
+    public static final double MOTOR_REDUCTION = MOTOR_TO_CANCODER * CANCODER_REDUCTION;
     
     public static final TalonFXConfiguration CONFIG =
       new TalonFXConfiguration()
@@ -171,7 +178,23 @@ public final class Constants {
             .withKI(0)
             .withKD(0)
             .withKS(0) // TODO: ask CAD for these values later
-            .withKV(0));
+            .withKV(0))
+        .withSoftwareLimitSwitch(
+          new SoftwareLimitSwitchConfigs()
+            .withForwardSoftLimitThreshold(1 / CANCODER_REDUCTION) // rotations
+            .withReverseSoftLimitThreshold(-1 / CANCODER_REDUCTION) // rotations
+            .withForwardSoftLimitEnable(false)
+            .withReverseSoftLimitEnable(false));
+
+    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0; // TODO: update!! (in rotations)
+    // public static final double CANCODER_OFFSET = 4.0;
+
+    public static final int CANCODER_ID = 41; // TODO: update id
+      public static final MagnetSensorConfigs CANCODER_CONFIG =
+        new MagnetSensorConfigs()
+          .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET) // TODO: update offset -> when the turret is facing forward (units: rotations)
+          .withAbsoluteSensorDiscontinuityPoint(0.5) // TODO: update???
+          .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
   }
 
   public final class ShooterRoller {
@@ -231,6 +254,9 @@ public final class Constants {
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
   }
+
+  
+
 }
 
 
