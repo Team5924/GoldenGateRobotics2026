@@ -80,7 +80,7 @@ public class IntakePivot extends SubsystemBase {
     Logger.recordOutput("IntakePivot/GoalState", goalState.toString());
     Logger.recordOutput("IntakePivot/CurrentState", RobotState.getInstance().getIntakePivotState());
     Logger.recordOutput("IntakePivot/CurrentRads", getIntakePivotPosRads());
-    Logger.recordOutput("IntakePivot/TargetRads", goalState.rads);
+    Logger.recordOutput("IntakePivot/TargetRads", goalState.rads.getAsDouble());
     Logger.recordOutput("IntakePivot/IsAtSetpoint", isAtSetpoint());
 
     intakePivotMotorDisconnected.set(!pivotInput.intakePivotMotorConnected);

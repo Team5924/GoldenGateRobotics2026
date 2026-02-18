@@ -49,7 +49,7 @@ import org.team5924.frc2026.util.LoggedTunableNumber;
 public class IntakePivotIOKrakenFOC implements IntakePivotIO {
   private final TalonFX intakePivotKraken;
 
-  private final Alert initalMotorConfigAlert =
+  private final Alert initialMotorConfigAlert =
       new Alert(
           "Initial intake pivot motor config error! Restart robot code to clear.",
           Alert.AlertType.kError);
@@ -141,7 +141,7 @@ public class IntakePivotIOKrakenFOC implements IntakePivotIO {
     FeedbackConfigs feedbackConfigs = new FeedbackConfigs();
     feedbackConfigs.SensorToMechanismRatio = Constants.IntakePivot.INTAKE_PIVOT_REDUCTION;
     feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-    feedbackConfigs.RotorToSensorRatio = Constants.IntakePivot.INTAKE_PIVOT_REDUCTION;
+    feedbackConfigs.RotorToSensorRatio = 1.0;
 
     StatusCode[] statusArray = new StatusCode[6];
 
@@ -154,7 +154,7 @@ public class IntakePivotIOKrakenFOC implements IntakePivotIO {
 
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
-    initalMotorConfigAlert.set(isErrorPresent);
+    initialMotorConfigAlert.set(isErrorPresent);
 
     closedLoopReferenceSlope = intakePivotKraken.getClosedLoopReference();
 
@@ -199,6 +199,10 @@ public class IntakePivotIOKrakenFOC implements IntakePivotIO {
 
   @Override
   public void setVoltage(double volts) {
+    if (atSoftStop(volts)){
+        intakePivotKraken.setControl(voltageControl.withOutput(0));
+        return;
+    }
     intakePivotKraken.setControl(voltageControl.withOutput(volts));
   }
 
@@ -206,13 +210,13 @@ public class IntakePivotIOKrakenFOC implements IntakePivotIO {
     double currentAngle =
         Units.rotationsToRadians(intakePivotPosition.getValueAsDouble())
             / Constants.IntakePivot.INTAKE_PIVOT_REDUCTION;
-    return (currentAngle >= Constants.IntakePivot.INTAKE_PIVOT_MAX_RADS && volts < 0)
-        || (currentAngle <= Constants.IntakePivot.INTAKE_PIVOT_MIN_RADS && volts > 0);
+    return (currentAngle >= Constants.IntakePivot.INTAKE_PIVOT_MAX_RADS && volts > 0)
+        || (currentAngle <= Constants.IntakePivot.INTAKE_PIVOT_MIN_RADS && volts < 0);
   }
 
   @Override
   public void setPosition(double rads) {
-    intakePivotKraken.setControl(magicMotionVoltage.withPosition(rads));
+    intakePivotKraken.setControl(magicMotionVoltage.withPosition(Units.radiansToRotations(rads)));
   }
 
   public void updateTunableNumbers() {
@@ -255,5 +259,7 @@ public class IntakePivotIOKrakenFOC implements IntakePivotIO {
 
   // Stop
   @Override
-  public void stop() {}
+  public void stop() {
+    intakePivotKraken.stopMotor();
+  }
 }
