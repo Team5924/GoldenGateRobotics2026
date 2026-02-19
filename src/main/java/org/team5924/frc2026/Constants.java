@@ -296,10 +296,12 @@ public final class Constants {
             .withNeutralMode(NeutralModeValue.Brake))
         .withSoftwareLimitSwitch(
           new SoftwareLimitSwitchConfigs()
-            .withForwardSoftLimitThreshold(-0.5) // rotations
-            .withReverseSoftLimitThreshold(0.5) // rotations
-            // .withForwardSoftLimitEnable(true)
-            // .withReverseSoftLimitEnable(true)
+            .withForwardSoftLimitThreshold(
+              -0.5 * Constants.Turret.MOTOR_REDUCTION * Constants.Turret.MOTOR_TO_CANCODER * MIN_POSITION_MULTI) // rotations
+            .withReverseSoftLimitThreshold(
+              0.5 * Constants.Turret.MOTOR_REDUCTION * Constants.Turret.MOTOR_TO_CANCODER * MAX_POSITION_MULTI) // rotations
+            .withForwardSoftLimitEnable(true)
+            .withReverseSoftLimitEnable(true)
         );
 
     public static final double JOYSTICK_DEADZONE = 0.01;
