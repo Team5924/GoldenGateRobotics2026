@@ -53,7 +53,7 @@ public class SuperShooter extends SubsystemBase {
   }
 
   public void runTurretVolts(double volts) {
-    turret.runVolts(volts);
+    turret.tryRunVolts(volts);
   }
 
   public void setHoodPosition(double rads) {

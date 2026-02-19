@@ -67,10 +67,8 @@ public class Turret extends SubsystemBase {
   private boolean wasTurretMotorConnected = true;
 
   private Timer stateTimer = new Timer();
-  private double lastStateChangeTime;
+  // private double lastStateChangeTime;
 
-  private double radsPos;
-  private double inputVolts;
   private double bounds;
   private boolean cont;
 
@@ -98,8 +96,8 @@ public class Turret extends SubsystemBase {
 
     // Logger.recordOutput("Turret/idk prob like rads", radsPos);
     // Logger.recordOutput("Turret/input volts", inputVolts);
-    // Logger.recordOutput("Turret/exceed bounds", bounds);
-    // Logger.recordOutput("Turret/continue", cont);
+    Logger.recordOutput("Turret/exceed bounds", bounds);
+    Logger.recordOutput("Turret/continue", cont);
     // Logger.recordOutput("Turret/tmp", inputs.turretMotorPosition);
     // Logger.recordOutput("Turret/gcpr", getCurrentPositionRads());
 
@@ -113,14 +111,18 @@ public class Turret extends SubsystemBase {
   }
 
   private void handleManualState() {
-    if (!(goalState.equals(TurretState.MANUAL) && Math.abs(input) > 0.01)) return;
+    if (!goalState.equals(TurretState.MANUAL)) return;
 
-    runVolts(inputVolts = ShooterHoodState.MANUAL.getRads().getAsDouble() * input);
+    if (Math.abs(input) <= Constants.Turret.JOYSTICK_DEADZONE) {
+      io.runVolts(0);
+      return;
+    }
+
+    tryRunVolts(ShooterHoodState.MANUAL.getRads().getAsDouble() * input);
   }
 
-  public void runVolts(double volts) {
-    radsPos = getCurrentPositionRads();
-    if (!(cont = shouldContinueInDirection(volts, radsPos))) return;
+  public void tryRunVolts(double volts) {
+    if (!(cont = shouldContinueInDirection(volts, inputs.turretPositionRads))) return;
 
     io.runVolts(volts);
   }
@@ -161,7 +163,7 @@ public class Turret extends SubsystemBase {
         break;
     }
 
-    lastStateChangeTime = stateTimer.get();
+    // lastStateChangeTime = stateTimer.get();
   }
 
   // public void setPositionSetpointImpl(double radiansFromCenter, double radPerS) {
@@ -227,10 +229,6 @@ public class Turret extends SubsystemBase {
 
   public double getSetpoint() {
     return this.turretPositionSetpointRadiansFromCenter;
-  }
-
-  public double getCurrentPositionRads() {
-    return Units.rotationsToRadians(inputs.turretMotorPosition);
   }
 
   // public void setTeleopDefaultCommand() {

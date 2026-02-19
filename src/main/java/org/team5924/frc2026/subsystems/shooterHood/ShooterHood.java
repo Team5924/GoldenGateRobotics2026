@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import org.littletonrobotics.junction.Logger;
+import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
@@ -99,7 +100,12 @@ public class ShooterHood extends SubsystemBase {
   }
 
   private void handleManualState() {
-    if (!(goalState.equals(ShooterHoodState.MANUAL) && Math.abs(input) > 0.01)) return;
+    if (!goalState.equals(ShooterHoodState.MANUAL)) return;
+
+    if (Math.abs(input) <= Constants.ShooterHood.JOYSTICK_DEADZONE) {
+      io.runVolts(0);
+      return;
+    }
 
     io.runVolts(ShooterHoodState.MANUAL.getRads().getAsDouble() * input);
   }

@@ -190,6 +190,8 @@ public final class Constants {
             .withKD(0)
             .withKS(0) // TODO: ask CAD for these values later
             .withKV(0));
+    
+    public static final double JOYSTICK_DEADZONE = 0.01;
   }
 
   public final class ShooterRollerLeader {
@@ -299,6 +301,8 @@ public final class Constants {
             // .withForwardSoftLimitEnable(true)
             // .withReverseSoftLimitEnable(true)
         );
+
+    public static final double JOYSTICK_DEADZONE = 0.01;
 
     public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
       new OpenLoopRampsConfigs()
