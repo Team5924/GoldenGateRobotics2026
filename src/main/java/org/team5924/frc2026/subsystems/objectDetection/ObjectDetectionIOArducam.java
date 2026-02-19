@@ -16,27 +16,21 @@
 
 package org.team5924.frc2026.subsystems.objectDetection;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.ArrayList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.team5924.frc2026.Constants;
 
 public class ObjectDetectionIOArducam implements ObjectDetectionIO {
   private final PhotonCamera camera;
-  private final Transform3d robotToCamera; // the position of the Camera relative to the robot
   private final Timer timer = new Timer();
 
   public ObjectDetectionIOArducam() {
     camera = new PhotonCamera(Constants.ObjectDetection.CAMERA_NAME);
-    robotToCamera = new Transform3d();
     timer.start();
   }
 
@@ -65,21 +59,18 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
     for (int groupIndex = 0; groupIndex < groups.size(); ++groupIndex) {
       TargetGroup group = groups.get(groupIndex);
 
-      List<PhotonTrackedTarget> targets = group.targets;
+      List<Target> targets = group.targets;
       for (int targetIndex = 0; targetIndex < targets.size(); ++targetIndex) {
-        PhotonTrackedTarget target = targets.get(targetIndex);
+        Target target = targets.get(targetIndex);
 
         String logPath =
-            "Object Detection Inputs/Target Group "
-                + groupIndex
-                + "/Target "
-                + target.objDetectId
-                + "/";
+            "Object Detection Inputs/Target Group " + groupIndex + "/Target " + target.fuelID + "/";
         Logger.recordOutput(
             logPath + "distanceToRobot",
-            Units.metersToInches(target.getBestCameraToTarget().getTranslation().getNorm()));
+            Units.metersToFeet(ObjectDetectionUtils.getRobotToTargetDistance(target.fuel)));
         Logger.recordOutput(
-            logPath + "cameraToTarget", target.getBestCameraToTarget().getTranslation());
+            logPath + "cameraToTarget",
+            ObjectDetectionUtils.getRobotToTargetTranslation2d(target.fuel));
       }
     }
   }
@@ -87,29 +78,37 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
   /* Get Pipeline Targets & Group Them */
   private TargetGroups getGroups(List<PhotonTrackedTarget> targets) {
     List<TargetGroup> fuelGroups = new ArrayList<>(); // new group of groups
+    int currentID = 0;
     for (PhotonTrackedTarget target : targets) {
+      Target fuelTarget =
+          new Target(
+              currentID,
+              ObjectDetectionUtils.getRobotToTargetDistance(target),
+              target,
+              ObjectDetectionUtils.getRobotToTargetTransform2d(target));
       if (fuelGroups.isEmpty()) {
         TargetGroup group = new TargetGroup();
         group.addTarget(
-            target); // If list of groups is empty, make a group of the first target and add it
+            fuelTarget); // If list of groups is empty, make a group of the first target and add it
         fuelGroups.add(group);
       } else { // else, iterate through all groups and compare target to all other targets in groups
         // and find the smallest distance
         // checks for case -1, which results in needing the creation of a new group (fuel isn't
         // close to any previously compared fuel)
-        int closestGroupIndex = getClosestGroupIndex(target, fuelGroups);
+        int closestGroupIndex = ObjectDetectionUtils.getClosestGroupIndex(target, fuelGroups);
 
         switch (closestGroupIndex) {
           case -1:
             TargetGroup group = new TargetGroup();
-            group.addTarget(target);
+            group.addTarget(fuelTarget);
             fuelGroups.add(group);
             break;
           default:
-            fuelGroups.get(closestGroupIndex).addTarget(target);
+            fuelGroups.get(closestGroupIndex).addTarget(fuelTarget);
             break;
         }
       }
+      currentID++;
     }
 
     if (timer.get() >= 0.5) {
@@ -122,40 +121,28 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
 
   private void printGroups(List<TargetGroup> fuelGroups) {
     for (int i = 0; i < fuelGroups.size(); ++i) {
-      List<PhotonTrackedTarget> targets = fuelGroups.get(i).targets;
-      System.out.println("-------- GROUP " + i + " --------> " + targets.size());
-      for (int j = 0; j < targets.size(); ++j) {
-        PhotonTrackedTarget target = targets.get(j);
-        System.out.println("  TARGET " + j + "  --  Position: " + target.getBestCameraToTarget());
-      }
+      System.out.println(fuelGroups.get(i));
+      // List<Target> targets = fuelGroups.get(i).targets;
+      // System.out.println(
+      //     "-------- GROUP "
+      //         + i
+      //         + " --------> "
+      //         + targets.size()
+      //         + "\n  FIRST SIZE : "
+      //         + fuelGroups.get(i).firstFiducialTarget.distanceToRobotFeet);
+      // for (int j = 0; j < targets.size(); ++j) {
+      //   PhotonTrackedTarget target = targets.get(j).fuel;
+      //   System.out.println(
+      //       "  TARGET "
+      //           + j
+      //           + "  --  "
+      //           + PhotonUtils.calculateDistanceToTargetMeters(
+      //               Constants.ObjectDetection.CAMERA_TO_FLOOR_HEIGHT_METERS,
+      //               Constants.ObjectDetection.FUEL_TOP_TO_FLOOR_METERS,
+      //               target.getPitch(),
+      //               Constants.ObjectDetection.CAMERA_PITCH_RADS));
+      // }
     }
-  }
-
-  // Finds the Index of the closest group compared to a fuel
-  private int getClosestGroupIndex(PhotonTrackedTarget target, List<TargetGroup> groups) {
-    double lowestDistance =
-        Double
-            .POSITIVE_INFINITY; // arbitrary large number so no matter what the first lowestDistance
-    // comparison is always true
-    int closestGroupIndex =
-        -1; // in case if statement doesn't trigger (aka not within distance threshold or a lower
-    // target distance), returns a known number
-    for (int i = 0; i < groups.size(); i++) {
-      for (PhotonTrackedTarget comparisonFuel : groups.get(i).targets) {
-        double targetDistance =
-            Units.metersToInches(targetToTargetDistance(target, comparisonFuel));
-
-        // if (timer.get() >= 0.5) {
-        // logComparison(target, comparisonFuel, groups, i, targetDistance);
-        // }
-        if (targetDistance <= Constants.ObjectDetection.DISTANCE_THRESHHOLD_INCHES
-            && lowestDistance > targetDistance) {
-          lowestDistance = targetDistance;
-          closestGroupIndex = i;
-        }
-      }
-    }
-    return closestGroupIndex;
   }
 
   private void logComparison(
@@ -175,29 +162,5 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
             + comparisonFuel.getDetectedObjectClassID()
             + ": "
             + targetDistance);
-  }
-
-  // Finds distance between 2 targets
-  private double targetToTargetDistance(
-      PhotonTrackedTarget target, PhotonTrackedTarget comparison) {
-    Translation2d estimateComparison =
-        PhotonUtils.estimateCameraToTargetTranslation(
-            PhotonUtils.calculateDistanceToTargetMeters(
-                Constants.ObjectDetection.CAMERA_TO_FLOOR_HEIGHT_METERS,
-                Constants.ObjectDetection.FUEL_TOP_TO_FLOOR_METERS,
-                Constants.ObjectDetection.CAMERA_PITCH_RADS,
-                comparison.getPitch()),
-            new Rotation2d(comparison.getYaw()));
-
-    Translation2d estimateTarget =
-        PhotonUtils.estimateCameraToTargetTranslation(
-            PhotonUtils.calculateDistanceToTargetMeters(
-                Constants.ObjectDetection.CAMERA_TO_FLOOR_HEIGHT_METERS,
-                Constants.ObjectDetection.FUEL_TOP_TO_FLOOR_METERS,
-                Constants.ObjectDetection.CAMERA_PITCH_RADS,
-                target.getPitch()),
-            new Rotation2d(target.getYaw()));
-    // gets forward x and right y to get & puts them in distance formula
-    return Units.metersToInches(estimateTarget.getDistance(estimateComparison));
   }
 }

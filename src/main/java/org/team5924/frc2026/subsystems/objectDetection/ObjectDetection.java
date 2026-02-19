@@ -43,6 +43,11 @@ public class ObjectDetection extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Object Detection Inputs", inputs);
+    int groupID = 0;
+    for (TargetGroup group : inputs.latestGroupedTargets.groups()) {
+      group.logGroup(groupID);
+      groupID++;
+    }
 
     if (!inputs.isCameraConnected) {
       Elastic.sendNotification(cameraDisconnectedNotification);
@@ -58,6 +63,6 @@ public class ObjectDetection extends SubsystemBase {
         largestGroup = group;
       }
     }
-    return largestGroup.firstFiducialTarget;
+    return largestGroup.firstFiducialTarget.fuel;
   }
 }
