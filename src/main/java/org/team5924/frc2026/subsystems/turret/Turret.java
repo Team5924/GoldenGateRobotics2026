@@ -36,6 +36,7 @@ import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.util.Elastic;
+import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 import org.team5924.frc2026.util.LoggedTunableNumber;
@@ -125,7 +126,7 @@ public class Turret extends SubsystemBase {
   }
 
   public boolean isAtSetpoint() {
-    return Math.abs(inputs.turretPositionRads - goalState.rads.getAsDouble()) < Constants.Turret.EPSILON;
+    return EqualsUtil.epsilonEquals(inputs.setpointRads, inputs.turretPositionRads, Constants.Turret.EPSILON_RADS);
   }
 
   private void handleManualState() {
@@ -186,19 +187,6 @@ public class Turret extends SubsystemBase {
   // public void setPositionSetpointImpl(double radiansFromCenter, double radPerS) {
   //   Logger.recordOutput("Turret/radiansFromCenter", radiansFromCenter);
   //   io.setPositionSetpoint(radiansFromCenter, radPerS);
-  // }
-
-  // private double adjustSetpointForWrap(double radiansFromCenter) {
-  //   // We have two options the raw radiansFromCenter or +/- 2 * PI.
-  //   double alternative = radiansFromCenter - 2.0 * Math.PI;
-  //   if (radiansFromCenter < 0.0) {
-  //     alternative = radiansFromCenter + 2.0 * Math.PI;
-  //   }
-  //   if (Math.abs(getCurrentPositionRads() - alternative)
-  //       < Math.abs(getCurrentPositionRads() - radiansFromCenter)) {
-  //     return alternative;
-  //   }
-  //   return radiansFromCenter;
   // }
 
   // private boolean unwrapped(double setpoint) {

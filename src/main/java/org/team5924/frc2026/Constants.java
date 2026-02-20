@@ -281,7 +281,7 @@ public final class Constants {
 
     public static final double JOYSTICK_DEADZONE = 0.01;
 
-    public static final double EPSILON = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
+    public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
 
     public static final double STATE_TIMEOUT = 5.0;
 

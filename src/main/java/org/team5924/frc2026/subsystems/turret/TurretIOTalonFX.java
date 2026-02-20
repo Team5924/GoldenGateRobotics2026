@@ -205,6 +205,11 @@ public class TurretIOTalonFX implements TurretIO {
     inputs.turretTorqueCurrentAmps = turretTorqueCurrent.getValueAsDouble();
     inputs.turretTempCelsius = turretTempCelsius.getValueAsDouble();
 
+    inputs.motionMagicVelocityTarget =
+        motorPositionToRads(turretTalon.getClosedLoopReferenceSlope().getValueAsDouble());
+    inputs.motionMagicPositionTarget =
+        motorPositionToRads(turretTalon.getClosedLoopReference().getValueAsDouble());
+
     inputs.setpointRads = setpointRads;
 
     double currentTime = closedLoopReferenceSlope.getTimestamp().getTime();
@@ -264,7 +269,7 @@ public class TurretIOTalonFX implements TurretIO {
               "Turret Motion Magic Configs",
               "Error in periodically updating turret MotionMagic configs!"));
 
-       Logger.recordOutput("Turret/UpdatStatusCodeReport", statusCode);
+       Logger.recordOutput("Turret/UpdateStatusCodeReport", statusCode);
       }
     }, motionAcceleration, motionCruiseVelocity, motionJerk);
   }
@@ -305,5 +310,13 @@ public class TurretIOTalonFX implements TurretIO {
         / 2
         * Constants.Turret.MOTOR_TO_MECHANISM
         * Constants.Turret.MOTOR_TO_CANCODER;
+  }
+
+  private double motorPositionToRads(double motorPosition) { // TODO: double check this too!!!
+    return motorPosition
+        / Constants.Turret.MOTOR_TO_MECHANISM
+        / Constants.Turret.MOTOR_TO_CANCODER
+        * Math.PI
+        * 2;
   }
 }

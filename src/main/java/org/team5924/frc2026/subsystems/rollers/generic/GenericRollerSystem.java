@@ -85,7 +85,7 @@ public abstract class GenericRollerSystem<State extends GenericRollerSystem.Volt
   }
 
   protected void handleCurrentVoltageState() {
-    io.runVolts(getGoalState().getVoltageSupplier().getAsDouble());
+    runVolts(getGoalState().getVoltageSupplier().getAsDouble());
   }
 
   public void runVolts(double volts) {
