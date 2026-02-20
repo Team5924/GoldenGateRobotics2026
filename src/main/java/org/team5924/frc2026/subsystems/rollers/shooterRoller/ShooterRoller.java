@@ -19,20 +19,16 @@ package org.team5924.frc2026.subsystems.rollers.shooterRoller;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
+import org.team5924.frc2026.subsystems.sensors.BeamBreakIO;
+import org.team5924.frc2026.subsystems.sensors.BeamBreakIOInputsAutoLogged;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
-public class ShooterRoller
-    extends GenericRollerSystem<
-        ShooterRoller.ShooterRollerState,
-        ShooterRollerIOInputs,
-        ShooterRollerIO,
-        ShooterRollerIOInputsAutoLogged> {
-
-  // private static DigitalInput beamBreak;
+public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRollerState> {
 
   @RequiredArgsConstructor
   @Getter
@@ -51,8 +47,13 @@ public class ShooterRoller
 
   private ShooterRollerState goalState = ShooterRollerState.OFF;
 
-  public ShooterRoller(ShooterRollerIO io) {
-    super("ShooterRoller", io, new ShooterRollerIOInputsAutoLogged());
+  // Shooter Beam Break
+  private final BeamBreakIO beamBreakIO;
+  private final BeamBreakIOInputsAutoLogged beamBreakInputs = new BeamBreakIOInputsAutoLogged();
+
+  public ShooterRoller(ShooterRollerIO io, BeamBreakIO beamBreakIO) {
+    super("ShooterRoller", io);
+    this.beamBreakIO = beamBreakIO;
   }
 
   public void setGoalState(ShooterRollerState goalState) {
@@ -60,7 +61,10 @@ public class ShooterRoller
     RobotState.getInstance().setShooterRollerState(goalState);
   }
 
-  // public static boolean isGamePieceDetected() {
-  //   return beamBreak != null && beamBreak.get();
-  // }
+  @Override
+  public void periodic() {
+    super.periodic();
+    beamBreakIO.updateInputs(beamBreakInputs);
+    Logger.processInputs("ShooterRoller/BeamBreak", beamBreakInputs);
+  }
 }

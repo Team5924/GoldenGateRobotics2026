@@ -22,14 +22,12 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.subsystems.LEDs.LEDsIO.LEDsIOOutputs;
-import org.team5924.frc2026.subsystems.exampleSystem.ExampleSystem;
 
 public class LEDs extends SubsystemBase {
   private static LEDs global;
@@ -55,6 +53,8 @@ public class LEDs extends SubsystemBase {
 
   // Constants
   private static final Section fullSection = new Section(0, Constants.LEDs.length);
+
+  // private static final String LoggedTracer = null;
 
   public LEDs(LEDsIO io) {
     this.io = io;
@@ -131,14 +131,24 @@ public class LEDs extends SubsystemBase {
             Constants.LEDs.waveDisabledDuration);
       }
     } else if (DriverStation.isAutonomous()) {
-      wave(fullSection, Color.kGold, Color.kDarkBlue,  Constants.LEDs.waveFastCycleLength,  Constants.LEDs.waveFastDuration);
+      wave(
+          fullSection,
+          Color.kGold,
+          Color.kDarkBlue,
+          Constants.LEDs.waveFastCycleLength,
+          Constants.LEDs.waveFastDuration);
     } else {
       // Not implemented
     }
 
     // Override with loading animation
     if (Timer.getTimestamp() < 30.0) {
-      breath(fullSection, Color.kBlack, Color.kWhite,  Constants.LEDs.startupBreathDuration, Timer.getTimestamp());
+      breath(
+          fullSection,
+          Color.kBlack,
+          Color.kWhite,
+          Constants.LEDs.startupBreathDuration,
+          Timer.getTimestamp());
     }
 
     // Send to buffer
@@ -151,12 +161,12 @@ public class LEDs extends SubsystemBase {
     }
 
     // Record cycle time
-    LoggedTracer.record("Leds/Periodic");
+    // LoggedTracer.record("Leds/Periodic");
   }
 
   public void periodicAbstract() {
     io.applyOutputs(outputs);
-    LoggedTracer.record("Leds/AfterScheduler");
+    // LoggedTracer.record("Leds/AfterScheduler");
   }
 
   private Color solid(Section section, Color color) {
@@ -205,12 +215,12 @@ public class LEDs extends SubsystemBase {
   private void wave(Section section, Color c1, Color c2, double cycleLength, double duration) {
     double x = (1 - ((Timer.getTimestamp() % duration) / duration)) * 2.0 * Math.PI;
     double xDiffPerLed = (2.0 * Math.PI) / cycleLength;
-    x += xDiffPerLed * ( Constants.LEDs.length - section.end());
+    x += xDiffPerLed * (Constants.LEDs.length - section.end());
     for (int i = section.end() - 1; i >= section.start(); i--) {
       x += xDiffPerLed;
-      double ratio = (Math.pow(Math.sin(x),  Constants.LEDs.waveExponent) + 1.0) / 2.0;
+      double ratio = (Math.pow(Math.sin(x), Constants.LEDs.waveExponent) + 1.0) / 2.0;
       if (Double.isNaN(ratio)) {
-        ratio = (-Math.pow(Math.sin(x + Math.PI),  Constants.LEDs.waveExponent) + 1.0) / 2.0;
+        ratio = (-Math.pow(Math.sin(x + Math.PI), Constants.LEDs.waveExponent) + 1.0) / 2.0;
       }
       if (Double.isNaN(ratio)) {
         ratio = 0.5;

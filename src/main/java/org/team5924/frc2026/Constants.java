@@ -57,6 +57,7 @@ public final class Constants {
     REPLAY
   }
 
+  
   public static final boolean TUNING_MODE = false;
   public static final boolean ALLOW_ASSERTS = false;
   public static final double SLOW_MODE_MULTI = 0.5;
@@ -70,13 +71,13 @@ public final class Constants {
   //   public static final double CORAL_STATION_RADIANS_NORMAL = 0.959931;
 
   /* Hopper Agitator */
-  public final class Hopper {
+  public static final class Hopper {
     public static final int CAN_ID = 0; //TODO: Update value to real ID 
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0; //TODO: If reduction is needed, update
 
-    // public static final int BEAM_BREAK_ID = 0;
-    // public static final boolean BEAM_BREAK = false;
+    public static final int BEAM_BREAK_ID = 0;
+    public static final boolean BEAM_BREAK = false;
   
     // Hopper Motor Config
     public static final TalonFXConfiguration CONFIG = 
