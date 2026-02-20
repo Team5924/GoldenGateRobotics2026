@@ -18,6 +18,7 @@ package org.team5924.frc2026.subsystems.pivots.shooterHood;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -58,6 +59,9 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     shooterHoodTalon.getConfigurator().apply(Constants.ShooterHood.CONFIG);
 
     cancoder = new CANcoder(Constants.ShooterHood.CANCODER_ID);
+    cancoder.getConfigurator().apply(
+      new CANcoderConfiguration()
+        .withMagnetSensor(Constants.ShooterHood.CANCODER_CONFIG));
 
     // Get select status signals and set update frequency
     shooterHoodPosition = shooterHoodTalon.getPosition();
@@ -88,11 +92,10 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
         cancoderSupplyVoltage,
         cancoderPositionRotations);
 
-    shooterHoodTalon.setPosition(0);
 
     BaseStatusSignal.waitForAll(0.5, cancoderAbsolutePosition);
     cancoder.setPosition(0.0);
-    shooterHoodTalon.setPosition(cancoderPositionRotations.getValueAsDouble());
+    shooterHoodTalon.setPosition(0);
   }
 
   @Override
@@ -115,10 +118,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
                 cancoderPositionRotations)
             .isOK();
 
-    if (!isCancoderOffset && cancoderAbsolutePosition != null) {
-      shooterHoodTalon.setPosition(getTurretAngleOffset());
-      isCancoderOffset = true;
-    }
+
 
     Logger.recordOutput("Turret/isCancoderOffset", isCancoderOffset);
 
@@ -152,16 +152,11 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   @Override
   public void setPosition(double rads) {
     shooterHoodTalon.setControl(
-        positionOut.withPosition(Units.radiansToRotations(rads) * Constants.ShooterHood.REDUCTION));
+        positionOut.withPosition(Units.radiansToRotations(rads) * Constants.ShooterHood.CANCODER_REDUCTION));
   }
 
   @Override
   public void stop() {
     shooterHoodTalon.stopMotor();
-  }
-
-  private double getTurretAngleOffset() {
-    BaseStatusSignal.waitForAll(10.0, cancoderAbsolutePosition);
-    return Units.rotationsToRadians(cancoderAbsolutePosition.getValueAsDouble());
   }
 }

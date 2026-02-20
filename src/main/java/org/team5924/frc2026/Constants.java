@@ -190,11 +190,11 @@ public final class Constants {
     // public static final double CANCODER_OFFSET = 4.0;
 
     public static final int CANCODER_ID = 41; // TODO: update id
-      public static final MagnetSensorConfigs CANCODER_CONFIG =
-        new MagnetSensorConfigs()
-          .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET) // TODO: update offset -> when the turret is facing forward (units: rotations)
-          .withAbsoluteSensorDiscontinuityPoint(0.5) // TODO: update???
-          .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
+    public static final MagnetSensorConfigs CANCODER_CONFIG =
+      new MagnetSensorConfigs()
+        .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET) // TODO: update offset -> when the turret is facing forward (units: rotations)
+        .withAbsoluteSensorDiscontinuityPoint(0.5) // TODO: update???
+        .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
   }
 
   public final class ShooterRoller {
