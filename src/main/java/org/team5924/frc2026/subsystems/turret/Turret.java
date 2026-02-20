@@ -16,10 +16,19 @@
 
 package org.team5924.frc2026.subsystems.turret;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
+
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import lombok.Getter;
 import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
@@ -39,16 +48,18 @@ public class Turret extends SubsystemBase {
 
   @Setter private double input;
 
+  public final SysIdRoutine sysId;
+
   public enum TurretState {
-    OFF(new LoggedTunableNumber("Turret/Off", Math.toRadians(0))),
-    MOVING(new LoggedTunableNumber("Turret/Moving", 0)),
+    OFF(() -> 0.0),
+    MOVING(() -> 0.0),
 
     // voltage at which the example subsystem motor moves when controlled by the operator
     MANUAL(new LoggedTunableNumber("Turret/OperatorVoltage", 1.0));
 
-    private final LoggedTunableNumber rads;
+    private final DoubleSupplier rads;
 
-    TurretState(LoggedTunableNumber rads) {
+    TurretState(DoubleSupplier rads) {
       this.rads = rads;
     }
   }
@@ -60,7 +71,6 @@ public class Turret extends SubsystemBase {
   private boolean wasTurretMotorConnected = true;
 
   private Timer stateTimer = new Timer();
-  // private double lastStateChangeTime;
 
   private double bounds;
   private boolean cont;
@@ -73,18 +83,28 @@ public class Turret extends SubsystemBase {
     this.turretMotorDisconnectedNotification =
         new Notification(NotificationLevel.WARNING, "Turret Motor Disconnected", "");
 
-    stateTimer.start();
+    sysId =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                Volts.of(.75).per(Seconds),
+                Volts.of(1),
+                Seconds.of(new LoggedTunableNumber("Turret/SysIdTime", 10.0).getAsDouble()),
+                (state) -> Logger.recordOutput("Turret/SysIdState", state.toString())),
+            new SysIdRoutine.Mechanism((voltage) -> tryRunVolts(voltage.in(Volts)), null, this));
+
+    stateTimer.reset();
   }
 
   @Override
   public void periodic() {
+    io.periodicUpdates();
     io.updateInputs(inputs);
     Logger.processInputs("Turret", inputs);
 
-    // Logger.recordOutput("Turret/GoalState", goalState.toString());
-    // Logger.recordOutput("Turret/CurrentState",
-    // RobotState.getInstance().getTurretState().toString());
-    // Logger.recordOutput("Turret/TargetRads", goalState.rads.getAsDouble());
+    Logger.recordOutput("Turret/GoalState", goalState.toString());
+    Logger.recordOutput("Turret/CurrentState",
+    RobotState.getInstance().getTurretState().toString());
+    Logger.recordOutput("Turret/TargetRads", goalState.rads.getAsDouble());
 
     turretMotorDisconnected.set(!inputs.turretMotorConnected);
 
@@ -102,6 +122,10 @@ public class Turret extends SubsystemBase {
       Elastic.sendNotification(turretMotorDisconnectedNotification);
     }
     wasTurretMotorConnected = inputs.turretMotorConnected;
+  }
+
+  public boolean isAtSetpoint() {
+    return Math.abs(inputs.turretPositionRads - goalState.rads.getAsDouble()) < Constants.Turret.EPSILON;
   }
 
   private void handleManualState() {
@@ -156,7 +180,7 @@ public class Turret extends SubsystemBase {
         break;
     }
 
-    // lastStateChangeTime = stateTimer.get();
+    stateTimer.reset();
   }
 
   // public void setPositionSetpointImpl(double radiansFromCenter, double radPerS) {

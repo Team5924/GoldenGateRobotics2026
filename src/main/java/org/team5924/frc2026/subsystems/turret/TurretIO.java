@@ -52,18 +52,28 @@ public interface TurretIO {
   public default void updateInputs(TurretIOInputs inputs) {}
 
   /**
-   * Sets the subsystem motor to the specified voltage
+   * Updates that are be called in turret periodic
+   */
+  public default void periodicUpdates() {}
+
+  /**
+   * Sets the turret motor to the specified voltage
    *
    * @param volts number of volts
    */
   public default void runVolts(double volts) {}
 
   /**
-   * Sets the subsystem motor to a specified angle
+   * Sets the turret motor to a specified angle
    *
    * @param rads target angle
    */
   public default void setPosition(double rads) {}
+
+  /**
+   * Holds the turret motor at a set position
+   */
+  public default void holdPosition(double rads) {}
 
   /** stops the motor */
   default void stop() {}

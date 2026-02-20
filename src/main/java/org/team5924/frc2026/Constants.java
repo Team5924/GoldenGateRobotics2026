@@ -16,9 +16,9 @@
 
 package org.team5924.frc2026;
 
-import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.CustomParamsConfigs;
 import com.ctre.phoenix6.configs.DigitalInputsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
@@ -121,13 +121,6 @@ public final class Constants {
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
-
-    public static final CANdiConfiguration CANDI_CONFIG =
-      new CANdiConfiguration()
-        .withDigitalInputs(
-          new DigitalInputsConfigs()
-            .withS1CloseState(S1CloseStateValue.CloseWhenLow)
-            .withS2CloseState(S2CloseStateValue.CloseWhenLow));
 
     public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
       new OpenLoopRampsConfigs()
@@ -288,7 +281,9 @@ public final class Constants {
 
     public static final double JOYSTICK_DEADZONE = 0.01;
 
-    public static final double EPSILON = Units.degreesToRadians(2.0);
+    public static final double EPSILON = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
+
+    public static final double STATE_TIMEOUT = 5.0;
 
 
     /* CANCoder */
@@ -311,9 +306,9 @@ public final class Constants {
         .withSoftwareLimitSwitch(
           new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitThreshold(
-              -0.5 * Constants.Turret.MOTOR_TO_MECHANISM * Constants.Turret.MOTOR_TO_CANCODER * MIN_POSITION_MULTI) // rotations
+              -0.5 * MOTOR_TO_MECHANISM * MOTOR_TO_CANCODER * MIN_POSITION_MULTI) // rotations
             .withReverseSoftLimitThreshold(
-              0.5 * Constants.Turret.MOTOR_TO_MECHANISM * Constants.Turret.MOTOR_TO_CANCODER * MAX_POSITION_MULTI) // rotations
+              0.5 * MOTOR_TO_MECHANISM * MOTOR_TO_CANCODER * MAX_POSITION_MULTI) // rotations
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true));
 
