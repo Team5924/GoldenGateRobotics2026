@@ -20,18 +20,21 @@ import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.DigitalInputsConfigs;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S2CloseStateValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -158,38 +161,63 @@ public final class Constants {
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
     public static final double SIM_MOI = 0.001;
-    public static final double CANCODER_REDUCTION = (24.0 / 15.0);
+    public static final double CANCODER_TO_MECHANISM = 1.0;
     public static final double MOTOR_TO_CANCODER = (40.0 / 12.0);
-    public static final double MOTOR_REDUCTION = MOTOR_TO_CANCODER * CANCODER_REDUCTION;
+    public static final double MOTOR_TO_MECHANISM = MOTOR_TO_CANCODER * CANCODER_TO_MECHANISM;
     
+    public static final double MIN_POSITION_MULTI = 0.0; // rotations
+    public static final double MAX_POSITION_MULTI = 1.0; // rotations
+
+    public static final double MIN_POSITION_RADS = Math.PI * MIN_POSITION_MULTI;
+    public static final double MAX_POSITION_RADS = Math.PI * MAX_POSITION_MULTI;
+
+    public static final double JOYSTICK_DEADZONE = 0.01;
+
+    public static final double EPSILON = Units.degreesToRadians(2.0);
+
+    /* CANCoder */
+    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0; // TODO: update!! (in rotations)
+    public static final int CANCODER_ID = 41; // TODO: update id
+
+
     public static final TalonFXConfiguration CONFIG =
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(60)
-            .withStatorCurrentLimit(60))
+            .withStatorCurrentLimit(60)
+            .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive) // TODO: test this direction
             .withNeutralMode(NeutralModeValue.Brake))
-        .withSlot0(
-          new Slot0Configs() // TODO: TUNE THESE VALUES
-            .withKP(1)
-            .withKI(0)
-            .withKD(0)
-            .withKS(0) // TODO: ask CAD for these values later
-            .withKV(0))
         .withSoftwareLimitSwitch(
           new SoftwareLimitSwitchConfigs()
-            .withForwardSoftLimitThreshold(1 / CANCODER_REDUCTION) // rotations
-            .withReverseSoftLimitThreshold(-1 / CANCODER_REDUCTION) // rotations
-            .withForwardSoftLimitEnable(false)
-            .withReverseSoftLimitEnable(false));
+            .withForwardSoftLimitThreshold(1 / MOTOR_TO_MECHANISM) // TODO: get correct value for rotations
+            .withReverseSoftLimitThreshold(-1 / MOTOR_TO_MECHANISM) // TODO: get correct value for rotations
+            .withForwardSoftLimitEnable(true)
+            .withReverseSoftLimitEnable(true));
 
-    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0; // TODO: update!! (in rotations)
-    // public static final double CANCODER_OFFSET = 4.0;
+    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
+      new OpenLoopRampsConfigs()
+        .withDutyCycleOpenLoopRampPeriod(0.02)
+        .withTorqueOpenLoopRampPeriod(0.02)
+        .withVoltageOpenLoopRampPeriod(0.02);
 
-    public static final int CANCODER_ID = 41; // TODO: update id
+    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
+      new ClosedLoopRampsConfigs()
+        .withDutyCycleClosedLoopRampPeriod(0.02)
+        .withTorqueClosedLoopRampPeriod(0.02)
+        .withVoltageClosedLoopRampPeriod(0.02);
+
+    public static final FeedbackConfigs FEEDBACK_CONFIGS =
+      new FeedbackConfigs()
+        .withFeedbackRemoteSensorID(Constants.ShooterHood.CANCODER_ID)
+        .withFeedbackRotorOffset(Constants.ShooterHood.CANCODER_ABSOLUTE_OFFSET)
+        .withSensorToMechanismRatio(1.0 / Constants.ShooterHood.CANCODER_TO_MECHANISM)
+        .withRotorToSensorRatio(1.0 / Constants.ShooterHood.MOTOR_TO_CANCODER)
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
+
     public static final MagnetSensorConfigs CANCODER_CONFIG =
       new MagnetSensorConfigs()
         .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET) // TODO: update offset -> when the turret is facing forward (units: rotations)

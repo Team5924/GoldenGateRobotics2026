@@ -22,12 +22,17 @@ public interface ShooterHoodIO {
   @AutoLog
   public static class ShooterHoodIOInputs {
     public boolean shooterHoodMotorConnected = true;
+    public double shooterHoodPosition = 0.0;
     public double shooterHoodPositionRads = 0.0;
+    public double shooterHoodPositionCancoder = 0.0;
     public double shooterHoodVelocityRadsPerSec = 0.0;
     public double shooterHoodAppliedVoltage = 0.0;
     public double shooterHoodSupplyCurrentAmps = 0.0;
     public double shooterHoodTorqueCurrentAmps = 0.0;
     public double shooterHoodTempCelsius = 0.0;
+
+    public double setpointRads = 0.0;
+    public double acceleration = 0.0;
 
     public boolean cancoderConnected = true;
     public double cancoderAbsolutePosition = 0.0;
@@ -54,4 +59,7 @@ public interface ShooterHoodIO {
 
   /** stops the motor */
   default void stop() {}
+
+  /** Sets the shooter hood position to specified rads from center */
+  default void setPositionSetpoint(double radiansFromCenter, double radsPerSecond) {}
 }
