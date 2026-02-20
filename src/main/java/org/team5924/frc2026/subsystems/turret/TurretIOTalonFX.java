@@ -16,35 +16,22 @@
 
 package org.team5924.frc2026.subsystems.turret;
 
-import static edu.wpi.first.units.Units.Rotations;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
-import org.team5924.frc2026.util.Elastic;
-import org.team5924.frc2026.util.Elastic.Notification;
-import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
-import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class TurretIOTalonFX implements TurretIO {
   private final TalonFX turretTalon;
@@ -80,7 +67,8 @@ public class TurretIOTalonFX implements TurretIO {
   // private final LoggedTunableNumber kD = new LoggedTunableNumber("Turret/kD", 0.07);
   // private final LoggedTunableNumber kG = new LoggedTunableNumber("Turret/kG", 0.33);
 
-  // private final LoggedTunableNumber motionJerk = new LoggedTunableNumber("Turret/MotionJerk", 0.0);
+  // private final LoggedTunableNumber motionJerk = new LoggedTunableNumber("Turret/MotionJerk",
+  // 0.0);
   // private final LoggedTunableNumber motionAcceleration =
   //     new LoggedTunableNumber("Turret/MotionAcceleration", 900.0);
   // private final LoggedTunableNumber motionCruiseVelocity =
@@ -88,6 +76,7 @@ public class TurretIOTalonFX implements TurretIO {
 
   // Single shot for voltage mode, robot loop will call continuously
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
+
   // private final PositionVoltage positionOut =
   //     new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true).withSlot(0);
   // private final MotionMagicVoltage magicMotionVoltage;
@@ -156,7 +145,11 @@ public class TurretIOTalonFX implements TurretIO {
         turretTempCelsius);
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        250.0, cancoderAbsolutePosition, cancoderVelocity, cancoderSupplyVoltage, cancoderPositionRotations);
+        250.0,
+        cancoderAbsolutePosition,
+        cancoderVelocity,
+        cancoderSupplyVoltage,
+        cancoderPositionRotations);
 
     // magicMotionVoltage = new MotionMagicVoltage(0).withEnableFOC(true);
 
@@ -179,7 +172,10 @@ public class TurretIOTalonFX implements TurretIO {
 
     inputs.cancoderConnected =
         BaseStatusSignal.refreshAll(
-                cancoderAbsolutePosition, cancoderVelocity, cancoderSupplyVoltage, cancoderPositionRotations)
+                cancoderAbsolutePosition,
+                cancoderVelocity,
+                cancoderSupplyVoltage,
+                cancoderPositionRotations)
             .isOK();
 
     // if (!isCancoderOffset && cancoderAbsolutePosition != null) {
@@ -196,11 +192,15 @@ public class TurretIOTalonFX implements TurretIO {
     inputs.turretTorqueCurrentAmps = turretTorqueCurrent.getValueAsDouble();
     inputs.turretTempCelsius = turretTempCelsius.getValueAsDouble();
 
-    inputs.turretPosition = turretPosition.getValueAsDouble() / Constants.Turret.MOTOR_REDUCTION / Constants.Turret.MOTOR_TO_CANCODER;
+    inputs.turretPosition =
+        turretPosition.getValueAsDouble()
+            / Constants.Turret.MOTOR_REDUCTION
+            / Constants.Turret.MOTOR_TO_CANCODER;
     inputs.turretPositionRads = Units.rotationsToRadians(inputs.turretPosition);
 
     // double talonPositionAbsolute =
-    //     BaseStatusSignal.getLatencyCompensatedValue(turretPosition, turretVelocity).in(Rotations);
+    //     BaseStatusSignal.getLatencyCompensatedValue(turretPosition,
+    // turretVelocity).in(Rotations);
     // inputs.turretPositionRads =
     //     Units.rotationsToRadians(talonPositionAbsolute);
     // inputs.turretVelocityRadsPerSec =
@@ -222,7 +222,8 @@ public class TurretIOTalonFX implements TurretIO {
     inputs.cancoderSupplyVoltage = cancoderSupplyVoltage.getValueAsDouble();
     inputs.cancoderPositionRotations = cancoderPositionRotations.getValueAsDouble();
 
-    inputs.turretPositionCancoder = (inputs.cancoderPositionRotations) / Constants.Turret.CANCODER_REDUCTION;
+    inputs.turretPositionCancoder =
+        (inputs.cancoderPositionRotations) / Constants.Turret.CANCODER_REDUCTION;
 
     // inputs.minSoftStop = turretCANdi.getS1Closed().getValue();
     // inputs.maxSoftStop = turretCANdi.getS2Closed().getValue();

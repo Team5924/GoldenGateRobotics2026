@@ -16,26 +16,19 @@
 
 package org.team5924.frc2026.subsystems.turret;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.Setter;
-
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.RobotState;
-import org.team5924.frc2026.subsystems.shooterHood.ShooterHood.ShooterHoodState;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
-import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class Turret extends SubsystemBase {
@@ -89,7 +82,8 @@ public class Turret extends SubsystemBase {
     Logger.processInputs("Turret", inputs);
 
     // Logger.recordOutput("Turret/GoalState", goalState.toString());
-    // Logger.recordOutput("Turret/CurrentState", RobotState.getInstance().getTurretState().toString());
+    // Logger.recordOutput("Turret/CurrentState",
+    // RobotState.getInstance().getTurretState().toString());
     // Logger.recordOutput("Turret/TargetRads", goalState.rads.getAsDouble());
 
     turretMotorDisconnected.set(!inputs.turretMotorConnected);
@@ -133,7 +127,6 @@ public class Turret extends SubsystemBase {
   }
 
   /**
-   * 
    * @param rads rads
    * @return -1 for min bound, 0 for within, 1 for upper bound
    */
@@ -203,7 +196,8 @@ public class Turret extends SubsystemBase {
   // }
 
   // // FF is in rad/s.
-  // public Command positionSetpointCommand(DoubleSupplier radiansFromCenter, DoubleSupplier ffVel) {
+  // public Command positionSetpointCommand(DoubleSupplier radiansFromCenter, DoubleSupplier ffVel)
+  // {
   //   return positionSetpointUntilUnwrapped(radiansFromCenter, ffVel)
   //       .andThen(
   //           run(

@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lombok.Getter;
 import org.littletonrobotics.junction.Logger;
-import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
@@ -35,7 +34,7 @@ public class ExampleSystem extends SubsystemBase {
   public enum ExampleSystemState {
     STOW(new LoggedTunableNumber("ExampleSystem/Stow", Math.toRadians(0))),
     MOVING(new LoggedTunableNumber("ExampleSystem/Moving", 0)),
-    UP(new LoggedTunableNumber("ExampleSystem/Stow", Math.toRadians(90))),
+    UP(new LoggedTunableNumber("ExampleSystem/Up", Math.toRadians(90))),
 
     // voltage at which the example subsystem motor moves when controlled by the operator
     MANUAL(new LoggedTunableNumber("ExampleSystem/OperatorVoltage", 4.5));
@@ -55,7 +54,7 @@ public class ExampleSystem extends SubsystemBase {
 
   public ExampleSystem(ExampleSystemIO io) {
     this.io = io;
-    this.goalState = ExampleSystemState.MOVING;
+    this.goalState = ExampleSystemState.STOW;
     this.exampleMotorDisconnected =
         new Alert("Example System Motor Disconnected!", Alert.AlertType.kWarning);
     this.exampleMotorDisconnectedNotification =
@@ -68,9 +67,10 @@ public class ExampleSystem extends SubsystemBase {
     Logger.processInputs("ExampleSystem", inputs);
 
     Logger.recordOutput("ExampleSystem/GoalState", goalState.toString());
-    Logger.recordOutput(
-        "ExampleSystem/CurrentState", RobotState.getInstance().getExampleSystemState());
-    Logger.recordOutput("ExampleSystem/TargetRads", goalState.rads);
+    // Logger.recordOutput(
+    //     "ExampleSystem/CurrentState",
+    // RobotState.getInstance().getExampleSystemState().toString());
+    Logger.recordOutput("ExampleSystem/TargetRads", goalState.rads.getAsDouble());
 
     exampleMotorDisconnected.set(!inputs.exampleMotorConnected);
 
@@ -89,14 +89,14 @@ public class ExampleSystem extends SubsystemBase {
     this.goalState = goalState;
     switch (goalState) {
       case MANUAL:
-        RobotState.getInstance().setExampleSystemState(ExampleSystemState.MANUAL);
+        // RobotState.getInstance().setExampleSystemState(ExampleSystemState.MANUAL);
         break;
       case MOVING:
         DriverStation.reportError(
             "Example Subsystem: MOVING is an invalid goal state; it is a transition state!!", null);
         break;
       default:
-        RobotState.getInstance().setExampleSystemState(ExampleSystemState.MOVING);
+        // RobotState.getInstance().setExampleSystemState(ExampleSystemState.MOVING);
         io.setPosition(goalState.rads.getAsDouble());
         break;
     }

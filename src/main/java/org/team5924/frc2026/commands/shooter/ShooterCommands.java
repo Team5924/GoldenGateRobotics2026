@@ -1,5 +1,5 @@
 /*
- * DriveCommands.java
+ * ShooterCommands.java
  */
 
 /* 
@@ -16,57 +16,46 @@
 
 package org.team5924.frc2026.commands.shooter;
 
-import java.util.function.DoubleSupplier;
-
-import org.team5924.frc2026.subsystems.shooterHood.ShooterHood;
-import org.team5924.frc2026.subsystems.shooterHood.ShooterHood.ShooterHoodState;
-import org.team5924.frc2026.subsystems.superShooter.SuperShooter;
-import org.team5924.frc2026.subsystems.turret.Turret;
-import org.team5924.frc2026.subsystems.turret.Turret.TurretState;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import java.util.function.DoubleSupplier;
+import org.team5924.frc2026.subsystems.SuperShooter;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
+import org.team5924.frc2026.subsystems.turret.Turret;
+import org.team5924.frc2026.subsystems.turret.Turret.TurretState;
 
 public class ShooterCommands {
 
   private ShooterCommands() {}
 
   public static Command manualControl(
-      SuperShooter shooter,
-      DoubleSupplier hoodSupplier,
-      DoubleSupplier rollerSupplier) {
+      SuperShooter shooter, DoubleSupplier hoodSupplier, DoubleSupplier rollerSupplier) {
     return Commands.run(
-      () -> {
-        shooter.runRollerVolts(hoodSupplier.getAsDouble());
-        shooter.runHoodVolts(hoodSupplier.getAsDouble());
-      },
-      shooter
-    );
+        () -> {
+          shooter.runRollerVolts(hoodSupplier.getAsDouble());
+          shooter.runHoodVolts(hoodSupplier.getAsDouble());
+        },
+        shooter);
   }
 
-  public static Command manualShooterHood(
-      ShooterHood hood,
-      DoubleSupplier inputSupplier) {
+  public static Command manualShooterHood(ShooterHood hood, DoubleSupplier inputSupplier) {
     return Commands.run(
-      () -> {
-        hood.setGoalState(ShooterHoodState.MANUAL);
-        hood.setInput(inputSupplier.getAsDouble());
-      },
-      hood
-    );
+        () -> {
+          hood.setGoalState(ShooterHoodState.MANUAL);
+          hood.setInput(inputSupplier.getAsDouble());
+        },
+        hood);
   }
 
-  public static Command manualTurret(
-      Turret turret,
-      DoubleSupplier inputSupplier) {
+  public static Command manualTurret(Turret turret, DoubleSupplier inputSupplier) {
     return Commands.run(
-      () -> {
-        turret.setGoalState(TurretState.MANUAL);
-        turret.setInput(inputSupplier.getAsDouble());
-      },
-      turret
-    );
+        () -> {
+          turret.setGoalState(TurretState.MANUAL);
+          turret.setInput(inputSupplier.getAsDouble());
+        },
+        turret);
   }
 
-  // public 
+  // public
 }

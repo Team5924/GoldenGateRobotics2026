@@ -14,7 +14,7 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.shooterHood;
+package org.team5924.frc2026.subsystems.pivots.shooterHood;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -23,7 +23,6 @@ import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.RobotState;
@@ -85,7 +84,8 @@ public class ShooterHood extends SubsystemBase {
     Logger.processInputs("ShooterHood", inputs);
 
     Logger.recordOutput("ShooterHood/GoalState", goalState.toString());
-    Logger.recordOutput("ShooterHood/CurrentState", RobotState.getInstance().getShooterHoodState());
+    Logger.recordOutput(
+        "ShooterHood/CurrentState", RobotState.getInstance().getShooterHoodState().toString());
     Logger.recordOutput("ShooterHood/TargetRads", goalState.rads.getAsDouble());
 
     shooterHoodMotorDisconnected.set(!inputs.shooterHoodMotorConnected);
@@ -132,7 +132,10 @@ public class ShooterHood extends SubsystemBase {
 
     this.goalState = goalState;
     switch (goalState) {
-      case MANUAL, AUTO_SHOOTING, NEUTRAL_SHUFFLING, OPPONENT_SHUFFLING: // TODO: handle manual state ???
+      case MANUAL,
+      AUTO_SHOOTING,
+      NEUTRAL_SHUFFLING,
+      OPPONENT_SHUFFLING: // TODO: handle manual state ???
         RobotState.getInstance().setShooterHoodState(goalState);
         break;
       case MOVING:

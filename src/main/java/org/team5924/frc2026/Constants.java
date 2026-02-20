@@ -87,7 +87,7 @@ public final class Constants {
     public static final String BUS = "rio";
     public static final double REDUCTION = (24.0 / 12.0) * (24.0 / 12.0); //TODO: If reduction is needed, update
 
-    // public static final int BEAM_BREAK_ID = 0;
+    public static final int BEAM_BREAK_ID = 0;
     // public static final boolean BEAM_BREAK = false;
   
     // Hopper Motor Config

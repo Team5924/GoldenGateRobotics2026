@@ -19,19 +19,19 @@ package org.team5924.frc2026.subsystems.rollers.shooterRoller;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOKrakenFOC;
 
-public class ShooterRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC<ShooterRollerIOInputs>
+public class ShooterRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC
     implements ShooterRollerIO {
 
-  private class ShooterRollerFollower extends GenericRollerSystemIOKrakenFOC<ShooterRollerIOInputs> {
+  private class ShooterRollerFollower extends GenericRollerSystemIOKrakenFOC {
     public ShooterRollerFollower() {
       super(
-        Constants.ShooterRollerFollower.CAN_ID,
-        Constants.ShooterRollerFollower.BUS,
-        Constants.ShooterRollerFollower.CONFIG,
-        Constants.ShooterRollerFollower.REDUCTION);
+          Constants.ShooterRollerFollower.CAN_ID,
+          Constants.ShooterRollerFollower.BUS,
+          Constants.ShooterRollerFollower.CONFIG,
+          Constants.ShooterRollerFollower.REDUCTION);
     }
   }
-  
+
   private final ShooterRollerFollower shooterFollower;
 
   public ShooterRollerIOKrakenFOC() {
@@ -40,12 +40,8 @@ public class ShooterRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC<Sho
         Constants.ShooterRollerLeader.BUS,
         Constants.ShooterRollerLeader.CONFIG,
         Constants.ShooterRollerLeader.REDUCTION);
-    
-    shooterFollower = new ShooterRollerFollower();
-  }
 
-  public void updateInputs(ShooterRollerIOInputs inputs) {
-    super.updateInputs(inputs);
+    shooterFollower = new ShooterRollerFollower();
   }
 
   @Override

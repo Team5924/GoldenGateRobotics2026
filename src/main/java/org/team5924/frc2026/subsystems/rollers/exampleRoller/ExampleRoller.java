@@ -19,18 +19,12 @@ package org.team5924.frc2026.subsystems.rollers.exampleRoller;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
-public class ExampleRoller
-    extends GenericRollerSystem<
-        ExampleRoller.ExampleRollerState,
-        ExampleRollerIOInputs,
-        ExampleRollerIO,
-        ExampleRollerIOInputsAutoLogged> {
+public class ExampleRoller extends GenericRollerSystem<ExampleRoller.ExampleRollerState> {
   @RequiredArgsConstructor
   @Getter
   public enum ExampleRollerState implements VoltageState {
@@ -44,11 +38,11 @@ public class ExampleRoller
   private ExampleRollerState goalState = ExampleRollerState.IDLE;
 
   public ExampleRoller(ExampleRollerIO io) {
-    super("ExampleRoller", io, new ExampleRollerIOInputsAutoLogged());
+    super("ExampleRoller", io);
   }
 
   public void setGoalState(ExampleRollerState goalState) {
     this.goalState = goalState;
-    RobotState.getInstance().setExampleRollerState(goalState);
+    // RobotState.getInstance().setExampleRollerState(goalState);
   }
 }

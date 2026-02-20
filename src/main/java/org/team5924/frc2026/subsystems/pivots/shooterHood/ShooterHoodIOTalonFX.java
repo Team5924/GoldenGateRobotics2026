@@ -14,7 +14,7 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.shooterHood;
+package org.team5924.frc2026.subsystems.pivots.shooterHood;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
@@ -45,7 +45,8 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
       new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true);
 
   public ShooterHoodIOTalonFX() {
-    shooterHoodTalon = new TalonFX(Constants.ShooterHood.CAN_ID, new CANBus(Constants.ShooterHood.BUS));
+    shooterHoodTalon =
+        new TalonFX(Constants.ShooterHood.CAN_ID, new CANBus(Constants.ShooterHood.BUS));
     shooterHoodTalon.getConfigurator().apply(Constants.ShooterHood.CONFIG);
 
     // Get select status signals and set update frequency

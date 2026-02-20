@@ -18,7 +18,6 @@ package org.team5924.frc2026;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -26,7 +25,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -34,8 +32,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.team5924.frc2026.commands.drive.DriveCommands;
 import org.team5924.frc2026.commands.shooter.ShooterCommands;
 import org.team5924.frc2026.generated.TunerConstants;
-import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIO;
-import org.team5924.frc2026.subsystems.beamBreak.BeamBreakIOBeamBreak;
+import org.team5924.frc2026.subsystems.SuperShooter;
+import org.team5924.frc2026.subsystems.SuperShooter.ShooterState;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.drive.GyroIO;
 import org.team5924.frc2026.subsystems.drive.GyroIOPigeon2;
@@ -43,17 +41,17 @@ import org.team5924.frc2026.subsystems.drive.GyroIOSim;
 import org.team5924.frc2026.subsystems.drive.ModuleIO;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFXSim;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIO;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOTalonFX;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
+import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIO;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOKrakenFOC;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOSim;
-import org.team5924.frc2026.subsystems.shooterHood.ShooterHood;
-import org.team5924.frc2026.subsystems.shooterHood.ShooterHoodIO;
-import org.team5924.frc2026.subsystems.shooterHood.ShooterHoodIOSim;
-import org.team5924.frc2026.subsystems.shooterHood.ShooterHoodIOTalonFX;
-import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
-import org.team5924.frc2026.subsystems.superShooter.SuperShooter;
-import org.team5924.frc2026.subsystems.superShooter.SuperShooter.ShooterState;
+import org.team5924.frc2026.subsystems.sensors.BeamBreakIO;
+import org.team5924.frc2026.subsystems.sensors.BeamBreakIOHardware;
 import org.team5924.frc2026.subsystems.turret.Turret;
 import org.team5924.frc2026.subsystems.turret.TurretIO;
 import org.team5924.frc2026.subsystems.turret.TurretIOSim;
@@ -64,9 +62,9 @@ public class RobotContainer {
   private final Drive drive;
   private SwerveDriveSimulation driveSimulation = null;
   private final SuperShooter superShooter;
-//   private final Hopper hopper;
-//   private final Intake intake;
-//   private final Indexer indexer;
+  //   private final Hopper hopper;
+  //   private final Intake intake;
+  //   private final Indexer indexer;
 
   private final ShooterHood shooterHood;
   private final ShooterRoller shooterRoller;
@@ -99,7 +97,7 @@ public class RobotContainer {
         shooterRoller =
             new ShooterRoller(
                 new ShooterRollerIOKrakenFOC(),
-                new BeamBreakIOBeamBreak(Constants.ShooterRollerLeader.BEAM_BREAK_PORT));
+                new BeamBreakIOHardware(Constants.ShooterRollerLeader.BEAM_BREAK_PORT));
         turret = new Turret(new TurretIOTalonFX());
         // intake = new Intake(new IntakeIOKrakenFOC());
         // hopper = new Hopper(new HopperKrakenFOC());
@@ -164,30 +162,32 @@ public class RobotContainer {
               // add once climb is figured out
             }));
 
+    // TODO: Uncomment when intake subsystem is enabled
     // NamedCommands.registerCommand(
     //     "Run Intake",
     //     Commands.runOnce(
     //         () -> {
     //           intake.setGoalState(IntakeState.INTAKE);
     //         }));
+
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
-    // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    // // Set up SysId routines
+    // autoChooser.addOption(
+    //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    // autoChooser.addOption(
+    //     "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    // autoChooser.addOption(
+    //     "Drive SysId (Quasistatic Forward)",
+    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption(
+    //     "Drive SysId (Quasistatic Reverse)",
+    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // autoChooser.addOption(
+    //     "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption(
+    //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -201,7 +201,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    
+
     // if (Constants.currentMode == Constants.Mode.SIM) {
     //   drive.setDefaultCommand(
     //       DriveCommands.joystickDrive(
@@ -286,7 +286,7 @@ public class RobotContainer {
     // .b()
     // .onFalse(Commands.runOnce(() ->
     // exampleRoller.setGoalState(ExampleRollerState.IDLE)));
-    
+
     // operatorController
     //     .leftTrigger()
     //     .onTrue(Commands.runOnce(() -> intake.setGoalState(IntakeState.INTAKE)));
@@ -294,15 +294,21 @@ public class RobotContainer {
     //     .leftTrigger()
     //     .onFalse(Commands.runOnce(() -> intake.setGoalState(IntakeState.OFF)));
 
-    operatorController.rightBumper().onTrue(Commands.runOnce(() ->
-    {
-        shooterRoller.setGoalState(ShooterRollerState.BUMPER_SHOOTING);
-    }));
+    operatorController
+        .rightBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  shooterRoller.setGoalState(ShooterRollerState.BUMPER_SHOOTING);
+                }));
 
-    operatorController.rightBumper().onFalse(Commands.runOnce(() ->
-    {
-        shooterRoller.setGoalState(ShooterRollerState.OFF);
-    }));
+    operatorController
+        .rightBumper()
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  shooterRoller.setGoalState(ShooterRollerState.OFF);
+                }));
 
     // operatorController.leftBumper().onTrue(Commands.runOnce(() ->
     // {
@@ -321,8 +327,10 @@ public class RobotContainer {
     //     shooterHood.setInput(driveController.getLeftY());
     // }));
 
-    shooterHood.setDefaultCommand(ShooterCommands.manualShooterHood(shooterHood, () -> operatorController.getRightY()));
-    turret.setDefaultCommand(ShooterCommands.manualTurret(turret, () -> operatorController.getLeftX()));
+    shooterHood.setDefaultCommand(
+        ShooterCommands.manualShooterHood(shooterHood, () -> operatorController.getRightY()));
+    turret.setDefaultCommand(
+        ShooterCommands.manualTurret(turret, () -> operatorController.getLeftX()));
   }
 
   /**
