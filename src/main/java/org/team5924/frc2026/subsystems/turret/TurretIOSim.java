@@ -32,7 +32,7 @@ public class TurretIOSim implements TurretIO {
     sim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
-                gearbox, Constants.Turret.SIM_MOI, Constants.Turret.MOTOR_REDUCTION),
+                gearbox, Constants.Turret.SIM_MOI, Constants.Turret.MOTOR_TO_MECHANISM),
             gearbox);
   }
 

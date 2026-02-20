@@ -272,17 +272,31 @@ public final class Constants {
   }
 
   public final class Turret {
+    /* Turret */
     public static final int CAN_ID = 40; // TODO: update to real can id
     public static final String BUS = "rio";
-    public static final double MOTOR_REDUCTION = (40.0 / 16.0) * (135.0 / 22.0);
-    public static final double CANCODER_REDUCTION = (135.0 / 22.0);
     public static final double MOTOR_TO_CANCODER = (40.0 / 16.0);
+    public static final double CANCODER_TO_MECHANISM = (135.0 / 22.0);
+    public static final double MOTOR_TO_MECHANISM = MOTOR_TO_CANCODER * CANCODER_TO_MECHANISM;
     public static final double SIM_MOI = 0.001;
 
-    // multiplied by pi (half rotation)
-    public static final double MIN_POSITION_MULTI = 0.8;
-    public static final double MAX_POSITION_MULTI = 0.8;
+    public static final double MIN_POSITION_MULTI = 0.8; // rotations
+    public static final double MAX_POSITION_MULTI = 0.8; // rotations
 
+    public static final double MIN_POSITION_RADS = -Math.PI * MIN_POSITION_MULTI;
+    public static final double MAX_POSITION_RADS = Math.PI * MAX_POSITION_MULTI;
+
+    public static final double JOYSTICK_DEADZONE = 0.01;
+
+    public static final double EPSILON = Units.degreesToRadians(2.0);
+
+
+    /* CANCoder */
+    public static final int CANCODER_ID = 41; // TODO: update id
+    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0; // TODO: update!! (in rotations of cancoder)
+
+
+    /* Configs */
     public static final TalonFXConfiguration CONFIG =
       new TalonFXConfiguration()
         .withCurrentLimits(
@@ -297,14 +311,11 @@ public final class Constants {
         .withSoftwareLimitSwitch(
           new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitThreshold(
-              -0.5 * Constants.Turret.MOTOR_REDUCTION * Constants.Turret.MOTOR_TO_CANCODER * MIN_POSITION_MULTI) // rotations
+              -0.5 * Constants.Turret.MOTOR_TO_MECHANISM * Constants.Turret.MOTOR_TO_CANCODER * MIN_POSITION_MULTI) // rotations
             .withReverseSoftLimitThreshold(
-              0.5 * Constants.Turret.MOTOR_REDUCTION * Constants.Turret.MOTOR_TO_CANCODER * MAX_POSITION_MULTI) // rotations
+              0.5 * Constants.Turret.MOTOR_TO_MECHANISM * Constants.Turret.MOTOR_TO_CANCODER * MAX_POSITION_MULTI) // rotations
             .withForwardSoftLimitEnable(true)
-            .withReverseSoftLimitEnable(true)
-        );
-
-    public static final double JOYSTICK_DEADZONE = 0.01;
+            .withReverseSoftLimitEnable(true));
 
     public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
       new OpenLoopRampsConfigs()
@@ -318,28 +329,19 @@ public final class Constants {
         .withTorqueClosedLoopRampPeriod(0.02)
         .withVoltageClosedLoopRampPeriod(0.02);
 
-    public static final double MIN_POSITION_RADS = -Math.PI * MIN_POSITION_MULTI;
-    public static final double MAX_POSITION_RADS = Math.PI * MAX_POSITION_MULTI;
+    public static final FeedbackConfigs FEEDBACK_CONFIGS =
+      new FeedbackConfigs()
+        .withFeedbackRemoteSensorID(Constants.Turret.CANCODER_ID)
+        .withFeedbackRotorOffset(Constants.Turret.CANCODER_ABSOLUTE_OFFSET)
+        .withSensorToMechanismRatio(1.0 / Constants.Turret.CANCODER_TO_MECHANISM)
+        .withRotorToSensorRatio(1.0 / Constants.Turret.MOTOR_TO_CANCODER)
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
 
-    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0; // TODO: update!! (in rotations)
-    // public static final double CANCODER_OFFSET = 4.0;
-
-    public static final double EPSILON = Units.degreesToRadians(5.0);
-    
-    public static final int CANCODER_ID = 41; // TODO: update id
     public static final MagnetSensorConfigs CANCODER_CONFIG =
       new MagnetSensorConfigs()
         .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET) // TODO: update offset -> when the turret is facing forward (units: rotations)
         .withAbsoluteSensorDiscontinuityPoint(0.5)
         .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
-
-    public static final FeedbackConfigs FEEDBACK_CONFIGS =
-      new FeedbackConfigs()
-        .withFeedbackRemoteSensorID(Constants.Turret.CANCODER_ID)
-        .withFeedbackRotorOffset(Constants.Turret.CANCODER_ABSOLUTE_OFFSET)
-        .withSensorToMechanismRatio(1.0 / Constants.Turret.CANCODER_REDUCTION)
-        .withRotorToSensorRatio(1.0 / Constants.Turret.MOTOR_TO_CANCODER)
-        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
   }
 }
 
