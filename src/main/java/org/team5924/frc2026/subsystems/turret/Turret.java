@@ -66,7 +66,7 @@ public class Turret extends SubsystemBase {
   private final Notification turretMotorDisconnectedNotification;
   private boolean wasTurretMotorConnected = true;
 
-  private Timer stateTimer = new Timer();
+  private double lastStateChange = 0.0;
 
   private double bounds;
   private boolean cont;
@@ -87,8 +87,6 @@ public class Turret extends SubsystemBase {
                 Seconds.of(new LoggedTunableNumber("Turret/SysIdTime", 10.0).getAsDouble()),
                 (state) -> Logger.recordOutput("Turret/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism((voltage) -> tryRunVolts(voltage.in(Volts)), null, this));
-
-    stateTimer.reset();
   }
 
   @Override
@@ -121,8 +119,8 @@ public class Turret extends SubsystemBase {
   }
 
   public boolean isAtSetpoint() {
-    return EqualsUtil.epsilonEquals(
-        inputs.setpointRads, inputs.turretPositionRads, Constants.Turret.EPSILON_RADS);
+    return RobotState.getTime() - lastStateChange < Constants.Turret.STATE_TIMEOUT
+      || EqualsUtil.epsilonEquals(inputs.setpointRads, inputs.turretPositionRads, Constants.Turret.EPSILON_RADS);
   }
 
   private void handleManualState() {
@@ -177,7 +175,7 @@ public class Turret extends SubsystemBase {
         break;
     }
 
-    stateTimer.reset();
+    lastStateChange = RobotState.getTime();
   }
 
   // public void setPositionSetpointImpl(double radiansFromCenter, double radPerS) {
