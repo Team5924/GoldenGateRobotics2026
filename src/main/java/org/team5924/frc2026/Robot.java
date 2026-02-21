@@ -41,6 +41,7 @@ import org.team5924.frc2026.util.Elastic;
 public class Robot extends LoggedRobot {
   private static final double LOW_BATTERY_VOLTAGE = 11.0;
   private static final double LOW_BATTERY_DISABLED_TIME = 2.0;
+
   private Command autonomousCommand;
   private RobotContainer robotContainer;
 
