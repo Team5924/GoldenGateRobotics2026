@@ -21,6 +21,7 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -40,6 +41,11 @@ public class ClimbIOTalonFX implements ClimbIO {
   private final StatusSignal<Current> climbTorqueCurrent;
   private final StatusSignal<Temperature> climbTempCelsius;
 
+  private final CANcoder cancoder;
+  private final StatusSignal<Angle> cancoderPosition;
+  private final StatusSignal<AngularVelocity> cancoderVelocity;
+  private final StatusSignal<Voltage> cancoderSupplyVoltage;
+
   // Single shot for voltage mode, robot loop will call continuously
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
   private final PositionVoltage positionOut =
@@ -49,6 +55,8 @@ public class ClimbIOTalonFX implements ClimbIO {
     climbTalon = new TalonFX(Constants.Climb.CAN_ID, new CANBus(Constants.Climb.BUS));
     climbTalon.getConfigurator().apply(Constants.Climb.CONFIG);
 
+    cancoder = new CANcoder(Constants.Climb.CANCODER_ID);
+
     // Get select status signals and set update frequency
     climbPosition = climbTalon.getPosition();
     climbVelocity = climbTalon.getVelocity();
@@ -56,6 +64,10 @@ public class ClimbIOTalonFX implements ClimbIO {
     climbSupplyCurrent = climbTalon.getSupplyCurrent();
     climbTorqueCurrent = climbTalon.getTorqueCurrent();
     climbTempCelsius = climbTalon.getDeviceTemp();
+
+    cancoderPosition = cancoder.getAbsolutePosition();
+    cancoderVelocity = cancoder.getVelocity();
+    cancoderSupplyVoltage = cancoder.getSupplyVoltage();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0,
@@ -65,6 +77,9 @@ public class ClimbIOTalonFX implements ClimbIO {
         climbSupplyCurrent,
         climbTorqueCurrent,
         climbTempCelsius);
+
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        250.0, cancoderPosition, cancoderVelocity, cancoderSupplyVoltage);
 
     climbTalon.setPosition(0);
   }
@@ -80,6 +95,11 @@ public class ClimbIOTalonFX implements ClimbIO {
                 climbTorqueCurrent,
                 climbTempCelsius)
             .isOK();
+
+    inputs.cancoderConnected =
+        BaseStatusSignal.refreshAll(cancoderPosition, cancoderVelocity, cancoderSupplyVoltage)
+            .isOK();
+
     inputs.climbPositionRads =
         Units.rotationsToRadians(climbPosition.getValueAsDouble()) / Constants.Climb.REDUCTION;
     inputs.climbVelocityRadsPerSec =
@@ -88,6 +108,10 @@ public class ClimbIOTalonFX implements ClimbIO {
     inputs.climbSupplyCurrentAmps = climbSupplyCurrent.getValueAsDouble();
     inputs.climbTorqueCurrentAmps = climbTorqueCurrent.getValueAsDouble();
     inputs.climbTempCelsius = climbTempCelsius.getValueAsDouble();
+
+    inputs.cancoderPosition = cancoderPosition.getValueAsDouble();
+    inputs.cancoderVelocity = cancoderVelocity.getValueAsDouble();
+    inputs.cancoderSupplyVoltage = cancoderSupplyVoltage.getValueAsDouble();
   }
 
   @Override
