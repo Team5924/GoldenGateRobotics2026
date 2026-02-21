@@ -48,6 +48,9 @@ public interface ShooterHoodIO {
    */
   public default void updateInputs(ShooterHoodIOInputs inputs) {}
 
+  /** Updates that are be called in turret periodic */
+  public default void periodicUpdates() {}
+
   /**
    * Sets the subsystem motor to the specified voltage
    *
@@ -55,7 +58,15 @@ public interface ShooterHoodIO {
    */
   public default void runVolts(double volts) {}
 
+  /**
+   * Sets the turret motor to a specified angle
+   *
+   * @param rads target angle
+   */
   public default void setPosition(double rads) {}
+
+  /** Holds the turret motor at a set position */
+  public default void holdPosition(double rads) {}
 
   /** stops the motor */
   default void stop() {}

@@ -161,11 +161,13 @@ public final class Constants {
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
     public static final double SIM_MOI = 0.001;
-    public static final double CANCODER_TO_MECHANISM = 1.0;
+    public static final double CANCODER_TO_SPUR = 1.0;
     public static final double MOTOR_TO_CANCODER = (40.0 / 12.0);
-    public static final double MOTOR_TO_MECHANISM = MOTOR_TO_CANCODER * CANCODER_TO_MECHANISM;
-    
-    public static final double MIN_POSITION_MULTI = 0.0; // rotations
+    public static final double MOTOR_TO_SPUR = MOTOR_TO_CANCODER * CANCODER_TO_SPUR;
+    public static final double SPUR_TO_MECHANISM = (23.0 / 18.0);
+    public static final double MOTOR_TO_MECHANISM = MOTOR_TO_SPUR * SPUR_TO_MECHANISM;
+
+    public static final double MIN_POSITION_MULTI = 0.0; // TOD: make sure these are both set to the right values
     public static final double MAX_POSITION_MULTI = 1.0; // rotations
 
     public static final double MIN_POSITION_RADS = Math.PI * MIN_POSITION_MULTI;
@@ -173,13 +175,15 @@ public final class Constants {
 
     public static final double JOYSTICK_DEADZONE = 0.01;
 
-    public static final double EPSILON = Units.degreesToRadians(2.0);
+    public static final double EPSILON_RADS = Units.degreesToRadians(2.0);
+
+    public static final double STATE_TIMEOUT = 5.0;
 
     /* CANCoder */
-    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0; // TODO: update!! (in rotations)
+    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0; // TODO: update!! (in rotations of cancoder)
     public static final int CANCODER_ID = 41; // TODO: update id
 
-
+    /* Configs */
     public static final TalonFXConfiguration CONFIG =
       new TalonFXConfiguration()
         .withCurrentLimits(
@@ -214,7 +218,7 @@ public final class Constants {
       new FeedbackConfigs()
         .withFeedbackRemoteSensorID(Constants.ShooterHood.CANCODER_ID)
         .withFeedbackRotorOffset(Constants.ShooterHood.CANCODER_ABSOLUTE_OFFSET)
-        .withSensorToMechanismRatio(1.0 / Constants.ShooterHood.CANCODER_TO_MECHANISM)
+        .withSensorToMechanismRatio(1.0 / Constants.ShooterHood.CANCODER_TO_SPUR)
         .withRotorToSensorRatio(1.0 / Constants.ShooterHood.MOTOR_TO_CANCODER)
         .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
 
