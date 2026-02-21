@@ -46,6 +46,9 @@ import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIO;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOTalonFX;
+import org.team5924.frc2026.subsystems.rollers.hopper.Hopper;
+import org.team5924.frc2026.subsystems.rollers.hopper.HopperIO;
+import org.team5924.frc2026.subsystems.rollers.hopper.HopperKrakenFOC;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
@@ -65,6 +68,7 @@ public class RobotContainer {
   private final ShooterHood shooterHood;
   private final ShooterRoller shooterRoller;
   private final Intake intake;
+  private final Hopper hopper;
 
   // private final ExampleSystem exampleSystem;
   // private final ExampleRoller exampleRoller;
