@@ -28,7 +28,6 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -37,7 +36,6 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
-
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.util.Elastic;
@@ -70,9 +68,8 @@ public class TurretIOTalonFX implements TurretIO {
       new LoggedTunableNumber("Turret/MotionCruiseVelocity", 90.0);
   private final LoggedTunableNumber motionAcceleration =
       new LoggedTunableNumber("Turret/MotionAcceleration", 900.0);
-  private final LoggedTunableNumber motionJerk
-      = new LoggedTunableNumber("Turret/MotionJerk", 0.0);
-  
+  private final LoggedTunableNumber motionJerk = new LoggedTunableNumber("Turret/MotionJerk", 0.0);
+
   /* Status Signals */
   private final StatusSignal<Angle> turretPosition;
   private final StatusSignal<AngularVelocity> turretVelocity;
@@ -129,7 +126,8 @@ public class TurretIOTalonFX implements TurretIO {
 
     if (isErrorPresent)
       Elastic.sendNotification(
-          new Notification(NotificationLevel.WARNING, "Turret Configs", "Error in turret configs!"));
+          new Notification(
+              NotificationLevel.WARNING, "Turret Configs", "Error in turret configs!"));
 
     Logger.recordOutput("Turret/InitConfReport", statusArray);
 
@@ -193,13 +191,12 @@ public class TurretIOTalonFX implements TurretIO {
             .isOK();
 
     inputs.turretPosition =
-      BaseStatusSignal.getLatencyCompensatedValueAsDouble(turretPosition, turretVelocity)
-        / Constants.Turret.MOTOR_TO_MECHANISM
-        / Constants.Turret.MOTOR_TO_CANCODER;
+        BaseStatusSignal.getLatencyCompensatedValueAsDouble(turretPosition, turretVelocity)
+            / Constants.Turret.MOTOR_TO_MECHANISM
+            / Constants.Turret.MOTOR_TO_CANCODER;
     inputs.turretPositionRads = Units.rotationsToRadians(inputs.turretPosition);
 
-    inputs.turretVelocityRadsPerSec =
-      Units.rotationsToRadians(turretVelocity.getValueAsDouble());
+    inputs.turretVelocityRadsPerSec = Units.rotationsToRadians(turretVelocity.getValueAsDouble());
     inputs.turretAppliedVoltage = turretAppliedVoltage.getValueAsDouble();
     inputs.turretSupplyCurrentAmps = turretSupplyCurrent.getValueAsDouble();
     inputs.turretTorqueCurrentAmps = turretTorqueCurrent.getValueAsDouble();
@@ -236,42 +233,54 @@ public class TurretIOTalonFX implements TurretIO {
   }
 
   private void updateLoggedTunableNumbers() {
-    LoggedTunableNumber.ifChanged(0, () -> {
-      slot0Configs.kP = kP.get();
-      slot0Configs.kI = kI.get();
-      slot0Configs.kD = kD.get();
-      slot0Configs.kS = kS.get();
-      slot0Configs.kV = kV.get();
-      slot0Configs.kA = kA.get();
+    LoggedTunableNumber.ifChanged(
+        0,
+        () -> {
+          slot0Configs.kP = kP.get();
+          slot0Configs.kI = kI.get();
+          slot0Configs.kD = kD.get();
+          slot0Configs.kS = kS.get();
+          slot0Configs.kV = kV.get();
+          slot0Configs.kA = kA.get();
 
-      StatusCode statusCode = turretTalon.getConfigurator().apply(slot0Configs);
-      if (!statusCode.isOK()) {
-        Elastic.sendNotification(
-            new Notification(
-              NotificationLevel.WARNING,
-              "Turret Slot 0 Configs",
-              "Error in periodically updating turret Slot0 configs!"));
+          StatusCode statusCode = turretTalon.getConfigurator().apply(slot0Configs);
+          if (!statusCode.isOK()) {
+            Elastic.sendNotification(
+                new Notification(
+                    NotificationLevel.WARNING,
+                    "Turret Slot 0 Configs",
+                    "Error in periodically updating turret Slot0 configs!"));
 
-       Logger.recordOutput("Turret/UpdateSlot0Report", statusCode);
-      }
-    }, kP, kI, kD, kS, kV);
+            Logger.recordOutput("Turret/UpdateSlot0Report", statusCode);
+          }
+        },
+        kP,
+        kI,
+        kD,
+        kS,
+        kV);
 
-    LoggedTunableNumber.ifChanged(0, () -> {
-      motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
-      motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
-      motionMagicConfigs.MotionMagicJerk = motionJerk.get();
+    LoggedTunableNumber.ifChanged(
+        0,
+        () -> {
+          motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
+          motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
+          motionMagicConfigs.MotionMagicJerk = motionJerk.get();
 
-      StatusCode statusCode = turretTalon.getConfigurator().apply(motionMagicConfigs);
-      if (!statusCode.isOK()) {
-        Elastic.sendNotification(
-            new Notification(
-              NotificationLevel.WARNING,
-              "Turret Motion Magic Configs",
-              "Error in periodically updating turret MotionMagic configs!"));
+          StatusCode statusCode = turretTalon.getConfigurator().apply(motionMagicConfigs);
+          if (!statusCode.isOK()) {
+            Elastic.sendNotification(
+                new Notification(
+                    NotificationLevel.WARNING,
+                    "Turret Motion Magic Configs",
+                    "Error in periodically updating turret MotionMagic configs!"));
 
-       Logger.recordOutput("Turret/UpdateStatusCodeReport", statusCode);
-      }
-    }, motionAcceleration, motionCruiseVelocity, motionJerk);
+            Logger.recordOutput("Turret/UpdateStatusCodeReport", statusCode);
+          }
+        },
+        motionAcceleration,
+        motionCruiseVelocity,
+        motionJerk);
   }
 
   @Override
@@ -293,7 +302,7 @@ public class TurretIOTalonFX implements TurretIO {
   @Override
   public void holdPosition(double rads) {
     turretTalon.setControl(positionOut.withPosition(radsToMotorPosition(rads)));
-  } 
+  }
 
   @Override
   public void stop() {
@@ -301,7 +310,8 @@ public class TurretIOTalonFX implements TurretIO {
   }
 
   private double clampRads(double rads) {
-    return MathUtil.clamp(rads, Constants.Turret.MIN_POSITION_RADS, Constants.Turret.MAX_POSITION_RADS);
+    return MathUtil.clamp(
+        rads, Constants.Turret.MIN_POSITION_RADS, Constants.Turret.MAX_POSITION_RADS);
   }
 
   private double radsToMotorPosition(double rads) { // TODO: umm double check!!

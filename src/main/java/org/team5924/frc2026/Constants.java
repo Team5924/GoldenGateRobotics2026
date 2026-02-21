@@ -30,8 +30,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.S1CloseStateValue;
-import com.ctre.phoenix6.signals.S2CloseStateValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.util.Units;
@@ -326,10 +324,10 @@ public final class Constants {
 
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
       new FeedbackConfigs()
-        .withFeedbackRemoteSensorID(Constants.Turret.CANCODER_ID)
-        .withFeedbackRotorOffset(Constants.Turret.CANCODER_ABSOLUTE_OFFSET)
-        .withSensorToMechanismRatio(1.0 / Constants.Turret.CANCODER_TO_MECHANISM)
-        .withRotorToSensorRatio(1.0 / Constants.Turret.MOTOR_TO_CANCODER)
+        .withFeedbackRemoteSensorID(CANCODER_ID)
+        .withFeedbackRotorOffset(CANCODER_ABSOLUTE_OFFSET)
+        .withSensorToMechanismRatio(1.0 / CANCODER_TO_MECHANISM)
+        .withRotorToSensorRatio(1.0 / MOTOR_TO_CANCODER)
         .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
 
     public static final MagnetSensorConfigs CANCODER_CONFIG =
@@ -339,4 +337,3 @@ public final class Constants {
         .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
   }
 }
-

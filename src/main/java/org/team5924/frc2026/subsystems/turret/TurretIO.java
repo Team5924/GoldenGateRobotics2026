@@ -51,9 +51,7 @@ public interface TurretIO {
    */
   public default void updateInputs(TurretIOInputs inputs) {}
 
-  /**
-   * Updates that are be called in turret periodic
-   */
+  /** Updates that are be called in turret periodic */
   public default void periodicUpdates() {}
 
   /**
@@ -70,9 +68,7 @@ public interface TurretIO {
    */
   public default void setPosition(double rads) {}
 
-  /**
-   * Holds the turret motor at a set position
-   */
+  /** Holds the turret motor at a set position */
   public default void holdPosition(double rads) {}
 
   /** stops the motor */
