@@ -223,13 +223,8 @@ public final class Constants {
         .withMotorOutput(
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake))
-          .withSlot0(
-            new Slot0Configs() // TODO: Tune PID gains for climb
-              .withKP(1.0)
-              .withKI(0)
-              .withKD(0));
-              
+            .withNeutralMode(NeutralModeValue.Brake));
+
     public static final int CANCODER_ID = 0; // TODO: update id
 
 

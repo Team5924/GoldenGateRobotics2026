@@ -76,6 +76,7 @@ public class ClimbIOTalonFX implements ClimbIO {
     slot0Configs.kG = kG.get();
 
     climbTalon.getConfigurator().apply(Constants.Climb.CONFIG);
+    climbTalon.getConfigurator().apply(slot0Configs);
 
     cancoder = new CANcoder(Constants.Climb.CANCODER_ID);
 
@@ -139,13 +140,25 @@ public class ClimbIOTalonFX implements ClimbIO {
   }
 
   private void updateLoggedTunableNumbers() {
-    slot0Configs.kP = kP.get();
-    slot0Configs.kI = kI.get();
-    slot0Configs.kD = kD.get();
-    slot0Configs.kS = kS.get();
-    slot0Configs.kV = kV.get();
-    slot0Configs.kA = kA.get();
-    slot0Configs.kG = kG.get();
+    LoggedTunableNumber.ifChanged(
+        hashCode(),
+        () -> {
+          slot0Configs.kP = kP.get();
+          slot0Configs.kI = kI.get();
+          slot0Configs.kD = kD.get();
+          slot0Configs.kS = kS.get();
+          slot0Configs.kV = kV.get();
+          slot0Configs.kA = kA.get();
+          slot0Configs.kG = kG.get();
+          climbTalon.getConfigurator().apply(slot0Configs);
+        },
+        kP,
+        kI,
+        kD,
+        kS,
+        kV,
+        kA,
+        kG);
   }
 
   @Override
