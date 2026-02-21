@@ -21,7 +21,6 @@ import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import java.util.function.DoubleSupplier;
@@ -29,6 +28,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.Robot;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
@@ -68,8 +68,8 @@ public class Turret extends SubsystemBase {
 
   private double lastStateChange = 0.0;
 
-  private double bounds;
-  private boolean cont;
+  private double exceedBoundsDirection;
+  private boolean shouldContinue;
 
   public Turret(TurretIO io) {
     this.io = io;
@@ -99,17 +99,13 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput(
         "Turret/CurrentState", RobotState.getInstance().getTurretState().toString());
     Logger.recordOutput("Turret/TargetRads", goalState.rads.getAsDouble());
+    Logger.recordOutput("Turret/ExceedBoundsDirection", exceedBoundsDirection);
+    Logger.recordOutput("Turret/ShouldContinue", shouldContinue);
+
+    handleCurrentState();
+    handleManualState();
 
     turretMotorDisconnected.set(!inputs.turretMotorConnected);
-
-    // Logger.recordOutput("Turret/idk prob like rads", radsPos);
-    // Logger.recordOutput("Turret/input volts", inputVolts);
-    Logger.recordOutput("Turret/exceed bounds", bounds);
-    Logger.recordOutput("Turret/continue", cont);
-    // Logger.recordOutput("Turret/tmp", inputs.turretMotorPosition);
-    // Logger.recordOutput("Turret/gcpr", getCurrentPositionRads());
-
-    handleManualState();
 
     // prevents error spam
     if (!inputs.turretMotorConnected && wasTurretMotorConnected) {
@@ -120,7 +116,17 @@ public class Turret extends SubsystemBase {
 
   public boolean isAtSetpoint() {
     return RobotState.getTime() - lastStateChange < Constants.Turret.STATE_TIMEOUT
-      || EqualsUtil.epsilonEquals(inputs.setpointRads, inputs.turretPositionRads, Constants.Turret.EPSILON_RADS);
+        || EqualsUtil.epsilonEquals(
+            inputs.setpointRads, inputs.turretPositionRads, Constants.Turret.EPSILON_RADS);
+  }
+  
+  private void handleCurrentState() {
+    // switch (RobotState.getInstance().getTurretState()) {
+    //   case MOVING -> if (isAtSetpoint()) RobotState.getInstance().setTurretState(goalState);
+    //   }
+    //   case MANUAL -> handleManualState();
+    //   default -> io.setPosition(goalState.rads.getAsDouble());
+    // }
   }
 
   private void handleManualState() {
@@ -135,28 +141,28 @@ public class Turret extends SubsystemBase {
   }
 
   public void tryRunVolts(double volts) {
-    if (!(cont = shouldContinueInDirection(volts, inputs.turretPositionRads))) return;
+    if (!(shouldContinue = shouldContinueInDirection(volts, inputs.turretPositionRads))) return;
 
     io.runVolts(volts);
   }
 
   public boolean shouldContinueInDirection(double volts, double rads) {
     double voltDirection = Math.signum(volts);
-    return (voltDirection != (bounds = exceedBounds(rads)));
+    return (voltDirection != (exceedBoundsDirection = exceedBoundsDirection(rads)));
   }
 
   /**
    * @param rads rads
    * @return -1 for min bound, 0 for within, 1 for upper bound
    */
-  public double exceedBounds(double rads) {
+  public double exceedBoundsDirection(double rads) {
     if (rads <= Constants.Turret.MIN_POSITION_RADS) return -1.0;
     if (rads >= Constants.Turret.MAX_POSITION_RADS) return 1.0;
     return 0.0;
   }
 
   public void setGoalState(TurretState goalState) {
-    this.goalState = goalState;
+    if (goalState != TurretState.MOVING) this.goalState = goalState;
     switch (goalState) {
       case MANUAL:
         RobotState.getInstance().setTurretState(TurretState.MANUAL);

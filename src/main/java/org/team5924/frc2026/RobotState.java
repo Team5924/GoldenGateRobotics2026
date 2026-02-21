@@ -40,7 +40,7 @@ public class RobotState {
   }
 
   public static double getTime() {
-    return ((double)Logger.getTimestamp() * 1.0E-6);
+    return ((double) Logger.getTimestamp() * 1.0E-6);
   }
 
   Rotation2d gyroOffset = Rotation2d.kZero;

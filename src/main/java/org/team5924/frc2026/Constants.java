@@ -159,7 +159,7 @@ public final class Constants {
   }
 
   public final class ShooterHood {
-    public static final int CAN_ID = 22; // TODO: Add CANID Ports
+    public static final int CAN_ID = 22;
     public static final String BUS = "rio";
     public static final double REDUCTION = (40.0 / 12.0) * (24.0 / 15.0);
     public static final double SIM_MOI = 0.001;
@@ -186,7 +186,7 @@ public final class Constants {
   }
 
   public final class ShooterRollerLeader {
-    public static final int CAN_ID = 23; // TODO: Add CANID Ports + Config later
+    public static final int CAN_ID = 23; // TODO: Config later
     public static final String BUS = "rio";
     public static final double REDUCTION = 16.0 / 30.0;
     public static final double SIM_MOI = 0.001;
@@ -205,7 +205,7 @@ public final class Constants {
   }
 
   public final class ShooterRollerFollower {
-    public static final int CAN_ID = 24; // TODO: Add CANID Ports + Config later
+    public static final int CAN_ID = 24; // TODO: Config later
     public static final String BUS = "rio";
     public static final double REDUCTION = 16.0 / 30.0;
     public static final double SIM_MOI = 0.001;
