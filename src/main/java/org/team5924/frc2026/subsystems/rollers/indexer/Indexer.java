@@ -19,7 +19,6 @@ package org.team5924.frc2026.subsystems.rollers.indexer;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
@@ -33,7 +32,7 @@ public class Indexer extends GenericRollerSystem<Indexer.IndexerState> {
   @Getter
   public enum IndexerState implements VoltageState {
     OFF(() -> 0.0),
-    INDEXING(new LoggedTunableNumber("Indexer/IndexingVoltage", 3.0));
+    INDEXING(new LoggedTunableNumber("Indexer/IndexingVoltage", 4.0));
 
     private final DoubleSupplier voltageSupplier;
   }
@@ -57,7 +56,7 @@ public class Indexer extends GenericRollerSystem<Indexer.IndexerState> {
   @Override
   public void periodic() {
     super.periodic();
-    beamBreakIO.updateInputs(beamBreakInputs);
-    Logger.processInputs("Indexer/BeamBreak", beamBreakInputs);
+    // beamBreakIO.updateInputs(beamBreakInputs);
+    // Logger.processInputs("Indexer/BeamBreak", beamBreakInputs);
   }
 }

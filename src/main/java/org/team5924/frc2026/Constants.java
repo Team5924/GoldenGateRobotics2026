@@ -181,7 +181,7 @@ public final class Constants {
   public static final class Hopper {
     public static final int CAN_ID = 35; //TODO: Update value to real ID 
     public static final String BUS = "rio";
-    public static final double REDUCTION = 1.0; //TODO: If reduction is needed, update
+    public static final double REDUCTION = (16.0 / 12.0) * (24.0 / 16.0); //TODO: If reduction is needed, update
 
     public static final int BEAM_BREAK_ID = 0;
     // public static final boolean BEAM_BREAK = false;
@@ -201,11 +201,8 @@ public final class Constants {
 
   public final class Indexer { //TODO: update these later
     public final static int CAN_ID = 0;
-    public final static int CAN_ID_INVERSE = 0;
-    public final static int BEAM_BREAK_ID = 0;
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
-    public static final double REDUCTION_INVERSE = 1.0;
     public static final double SIM_MOI = 0.001;
 
     public static final TalonFXConfiguration CONFIG =
@@ -223,7 +220,7 @@ public final class Constants {
   public final class Intake {
     public static final int CAN_ID = 40; // TODO: Set CAN ID
     public static final String BUS = "rio";
-    public static final double REDUCTION = 1.0;
+    public static final double REDUCTION = 36.0 / 16.0;
     public static final double SIM_MOI = 0.001;
 
     public static final TalonFXConfiguration CONFIG =
@@ -244,7 +241,7 @@ public final class Constants {
     public static final String BUS = "rio";
     public static final double MOTOR_TO_CANCODER = 1.0; // TODO: update this!!
     public static final double CANCODER_TO_MECHANISM = 1.0; // TODO: update this!!!
-    public static final double MOTOR_TO_MECHANISM = (2.3 / 0.7) * (32.0 / 18.0);
+    public static final double MOTOR_TO_MECHANISM = (46.0 / 14.0) * (32.0 / 12.0);
     public static final double SIM_MOI = 0.001;
 
     public static final double OFFSET_RADS = 0.0;

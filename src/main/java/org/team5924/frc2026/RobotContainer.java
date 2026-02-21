@@ -43,6 +43,10 @@ import org.team5924.frc2026.subsystems.rollers.hopper.Hopper;
 import org.team5924.frc2026.subsystems.rollers.hopper.Hopper.HopperState;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperIO;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperKrakenFOC;
+import org.team5924.frc2026.subsystems.rollers.indexer.Indexer;
+import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIO;
+import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIOTalonFX;
+import org.team5924.frc2026.subsystems.rollers.indexer.Indexer.IndexerState;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
@@ -58,6 +62,7 @@ public class RobotContainer {
   //   private final ShooterRoller shooterRoller;
   private final Intake intakeSystem;
   private final Hopper hopperSystem;
+  private final Indexer indexerSystem;
 
   // private final ExampleSystem exampleSystem;
   // private final ExampleRoller exampleRoller;
@@ -88,9 +93,10 @@ public class RobotContainer {
         //     new ShooterRoller(
         //         new ShooterRollerIOKrakenFOC(),
         //         new BeamBreakIOHardware(Constants.ShooterRoller.BEAM_BREAK_PORT));
-        intakeSystem = new Intake(new IntakeIOKrakenFOC());
         // shooter = new SuperShooter(shooterRoller, shooterHood);
+        intakeSystem = new Intake(new IntakeIOKrakenFOC());
         hopperSystem = new Hopper(new HopperKrakenFOC());
+        indexerSystem = new Indexer(new IndexerIOTalonFX(), null);
         break;
 
       case SIM:
@@ -119,6 +125,7 @@ public class RobotContainer {
         intakeSystem = new Intake(new IntakeIOSim());
         // shooter = new SuperShooter(shooterRoller, shooterHood);
         hopperSystem = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
+        indexerSystem = new Indexer(new IndexerIO() {}, null);
         break;
 
       default:
@@ -138,6 +145,7 @@ public class RobotContainer {
         // shooter = new SuperShooter(shooterRoller, shooterHood);
         hopperSystem = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
         // vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
+        indexerSystem = new Indexer(new IndexerIO() {}, null);
         break;
     }
 
@@ -283,10 +291,20 @@ public class RobotContainer {
 
     operatorController
         .leftTrigger()
-        .onTrue(Commands.runOnce(() -> intakeSystem.setGoalState(IntakeState.INTAKE)));
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  intakeSystem.setGoalState(IntakeState.INTAKE);
+                  hopperSystem.setGoalState(HopperState.ON);
+                  indexerSystem.setGoalState(IndexerState.INDEXING);
+                }));
     operatorController
         .leftTrigger()
-        .onFalse(Commands.runOnce(() -> intakeSystem.setGoalState(IntakeState.OFF)));
+        .onFalse(Commands.runOnce(() -> {
+                  intakeSystem.setGoalState(IntakeState.OFF);
+                  hopperSystem.setGoalState(HopperState.OFF);
+                  indexerSystem.setGoalState(IndexerState.OFF);
+                }));
 
     operatorController
         .leftBumper()

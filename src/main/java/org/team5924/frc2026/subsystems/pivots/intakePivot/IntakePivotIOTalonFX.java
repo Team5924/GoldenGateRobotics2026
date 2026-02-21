@@ -68,7 +68,8 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
       new LoggedTunableNumber("IntakePivot/MotionCruiseVelocity", 90.0);
   private final LoggedTunableNumber motionAcceleration =
       new LoggedTunableNumber("IntakePivot/MotionAcceleration", 900.0);
-  private final LoggedTunableNumber motionJerk = new LoggedTunableNumber("IntakePivot/MotionJerk", 0.0);
+  private final LoggedTunableNumber motionJerk =
+      new LoggedTunableNumber("IntakePivot/MotionJerk", 0.0);
 
   /* Status Signals */
   private final StatusSignal<Angle> intakePivotPosition;
@@ -92,7 +93,8 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   private final MotionMagicVoltage magicMotionVoltage;
 
   public IntakePivotIOTalonFX() {
-    intakePivotTalon = new TalonFX(Constants.IntakePivot.CAN_ID, new CANBus(Constants.IntakePivot.BUS));
+    intakePivotTalon =
+        new TalonFX(Constants.IntakePivot.CAN_ID, new CANBus(Constants.IntakePivot.BUS));
     intakePivotCANCoder = new CANcoder(Constants.IntakePivot.CANCODER_ID);
 
     intakePivotTalonConfig = intakePivotTalon.getConfigurator();
@@ -119,7 +121,8 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     statusArray[3] = intakePivotTalonConfig.apply(Constants.IntakePivot.OPEN_LOOP_RAMPS_CONFIGS);
     statusArray[4] = intakePivotTalonConfig.apply(Constants.IntakePivot.CLOSED_LOOP_RAMPS_CONFIGS);
     statusArray[5] = intakePivotTalonConfig.apply(Constants.IntakePivot.FEEDBACK_CONFIGS);
-    statusArray[6] = intakePivotCANCoder.getConfigurator().apply(Constants.IntakePivot.CANCODER_CONFIG);
+    statusArray[6] =
+        intakePivotCANCoder.getConfigurator().apply(Constants.IntakePivot.CANCODER_CONFIG);
 
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
@@ -191,12 +194,14 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
             .isOK();
 
     inputs.intakePivotPosition =
-        BaseStatusSignal.getLatencyCompensatedValueAsDouble(intakePivotPosition, intakePivotVelocity)
+        BaseStatusSignal.getLatencyCompensatedValueAsDouble(
+                intakePivotPosition, intakePivotVelocity)
             / Constants.IntakePivot.MOTOR_TO_MECHANISM
             / Constants.IntakePivot.MOTOR_TO_CANCODER;
     inputs.intakePivotPositionRads = Units.rotationsToRadians(inputs.intakePivotPosition);
 
-    inputs.intakePivotVelocityRadsPerSec = Units.rotationsToRadians(intakePivotVelocity.getValueAsDouble());
+    inputs.intakePivotVelocityRadsPerSec =
+        Units.rotationsToRadians(intakePivotVelocity.getValueAsDouble());
     inputs.intakePivotAppliedVoltage = intakePivotAppliedVoltage.getValueAsDouble();
     inputs.intakePivotSupplyCurrentAmps = intakePivotSupplyCurrent.getValueAsDouble();
     inputs.intakePivotTorqueCurrentAmps = intakePivotTorqueCurrent.getValueAsDouble();
