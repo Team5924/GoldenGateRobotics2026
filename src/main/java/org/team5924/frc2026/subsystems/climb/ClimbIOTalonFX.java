@@ -18,8 +18,10 @@ package org.team5924.frc2026.subsystems.climb;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -31,22 +33,16 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.util.Elastic;
+import org.team5924.frc2026.util.Elastic.Notification;
+import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class ClimbIOTalonFX implements ClimbIO {
-
   private final TalonFX climbTalon;
-  private final StatusSignal<Angle> climbPosition;
-  private final StatusSignal<AngularVelocity> climbVelocity;
-  private final StatusSignal<Voltage> climbAppliedVoltage;
-  private final StatusSignal<Current> climbSupplyCurrent;
-  private final StatusSignal<Current> climbTorqueCurrent;
-  private final StatusSignal<Temperature> climbTempCelsius;
+  private final CANcoder climbCANCoder;
 
-  private final CANcoder cancoder;
-  private final StatusSignal<Angle> cancoderPosition;
-  private final StatusSignal<AngularVelocity> cancoderVelocity;
-  private final StatusSignal<Voltage> cancoderSupplyVoltage;
+  private TalonFXConfigurator climbTalonConfig;
 
   private final Slot0Configs slot0Configs;
 
@@ -58,6 +54,20 @@ public class ClimbIOTalonFX implements ClimbIO {
   private final LoggedTunableNumber kD = new LoggedTunableNumber("Climb/kD", 0.07);
   private final LoggedTunableNumber kG = new LoggedTunableNumber("Climb/kG", 0.33);
 
+  private final StatusSignal<Angle> climbPosition;
+  private final StatusSignal<AngularVelocity> climbVelocity;
+  private final StatusSignal<Voltage> climbAppliedVoltage;
+  private final StatusSignal<Current> climbSupplyCurrent;
+  private final StatusSignal<Current> climbTorqueCurrent;
+  private final StatusSignal<Temperature> climbTempCelsius;
+
+  private final StatusSignal<Angle> cancoderAbsolutePosition;
+  private final StatusSignal<AngularVelocity> cancoderVelocity;
+  private final StatusSignal<Voltage> cancoderSupplyVoltage;
+  private final StatusSignal<Angle> cancoderPositionRotations;
+
+  private final StatusSignal<Double> closedLoopReferenceSlope;
+
   // Single shot for voltage mode, robot loop will call continuously
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
   private final PositionVoltage positionOut =
@@ -65,6 +75,7 @@ public class ClimbIOTalonFX implements ClimbIO {
 
   public ClimbIOTalonFX() {
     climbTalon = new TalonFX(Constants.Climb.CAN_ID, new CANBus(Constants.Climb.BUS));
+    climbCANCoder = new CANcoder(Constants.Climb.CANCODER_ID);
 
     slot0Configs = new Slot0Configs();
     slot0Configs.kP = kP.get();
@@ -75,10 +86,24 @@ public class ClimbIOTalonFX implements ClimbIO {
     slot0Configs.kA = kA.get();
     slot0Configs.kG = kG.get();
 
-    climbTalon.getConfigurator().apply(Constants.Climb.CONFIG);
-    climbTalon.getConfigurator().apply(slot0Configs);
+    climbTalonConfig = climbTalon.getConfigurator();
 
-    cancoder = new CANcoder(Constants.Climb.CANCODER_ID);
+    // Apply Configs
+    StatusCode[] statusArray = new StatusCode[6];
+
+    statusArray[0] = climbTalonConfig.apply(Constants.Climb.CONFIG);
+    statusArray[1] = climbTalonConfig.apply(slot0Configs);
+    statusArray[2] = climbTalonConfig.apply(Constants.Climb.OPEN_LOOP_RAMPS_CONFIGS);
+    statusArray[3] = climbTalonConfig.apply(Constants.Climb.CLOSED_LOOP_RAMPS_CONFIGS);
+    statusArray[4] = climbTalonConfig.apply(Constants.Climb.FEEDBACK_CONFIGS);
+    statusArray[5] = climbCANCoder.getConfigurator().apply(Constants.Climb.CANCODER_CONFIG);
+
+    boolean isErrorPresent = false;
+    for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
+
+    if (isErrorPresent)
+      Elastic.sendNotification(
+          new Notification(NotificationLevel.WARNING, "Climb Configs", "Error in climb configs!"));
 
     // Get select status signals and set update frequency
     climbPosition = climbTalon.getPosition();
@@ -88,21 +113,29 @@ public class ClimbIOTalonFX implements ClimbIO {
     climbTorqueCurrent = climbTalon.getTorqueCurrent();
     climbTempCelsius = climbTalon.getDeviceTemp();
 
-    cancoderPosition = cancoder.getAbsolutePosition();
-    cancoderVelocity = cancoder.getVelocity();
-    cancoderSupplyVoltage = cancoder.getSupplyVoltage();
+    cancoderAbsolutePosition = climbCANCoder.getAbsolutePosition();
+    cancoderVelocity = climbCANCoder.getVelocity();
+    cancoderSupplyVoltage = climbCANCoder.getSupplyVoltage();
+    cancoderPositionRotations = climbCANCoder.getPosition();
+
+    closedLoopReferenceSlope = climbTalon.getClosedLoopReferenceSlope();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0,
+        100.0,
         climbPosition,
         climbVelocity,
         climbAppliedVoltage,
         climbSupplyCurrent,
         climbTorqueCurrent,
-        climbTempCelsius);
+        climbTempCelsius,
+        cancoderAbsolutePosition,
+        cancoderVelocity,
+        cancoderSupplyVoltage,
+        cancoderPositionRotations,
+        closedLoopReferenceSlope);
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        250.0, cancoderPosition, cancoderVelocity, cancoderSupplyVoltage);
+        250.0, cancoderAbsolutePosition, cancoderVelocity, cancoderSupplyVoltage);
 
     climbTalon.setPosition(0);
   }
@@ -120,7 +153,11 @@ public class ClimbIOTalonFX implements ClimbIO {
             .isOK();
 
     inputs.cancoderConnected =
-        BaseStatusSignal.refreshAll(cancoderPosition, cancoderVelocity, cancoderSupplyVoltage)
+        BaseStatusSignal.refreshAll(
+                cancoderAbsolutePosition,
+                cancoderVelocity,
+                cancoderSupplyVoltage,
+                cancoderPositionRotations)
             .isOK();
 
     inputs.climbPositionRads =
@@ -133,16 +170,22 @@ public class ClimbIOTalonFX implements ClimbIO {
     inputs.climbTorqueCurrentAmps = climbTorqueCurrent.getValueAsDouble();
     inputs.climbTempCelsius = climbTempCelsius.getValueAsDouble();
 
-    inputs.cancoderPosition = cancoderPosition.getValueAsDouble();
+    inputs.cancoderAbsolutePosition = cancoderAbsolutePosition.getValueAsDouble();
     inputs.cancoderVelocity = cancoderVelocity.getValueAsDouble();
     inputs.cancoderSupplyVoltage = cancoderSupplyVoltage.getValueAsDouble();
+    inputs.cancoderPositionRotations = cancoderPositionRotations.getValueAsDouble();
 
+    inputs.climbPositionCancoder =
+        (inputs.cancoderPositionRotations) / Constants.Climb.CANCODER_TO_MECHANISM;
+  }
+
+  public void periodicUpdates() {
     updateLoggedTunableNumbers();
   }
 
   private void updateLoggedTunableNumbers() {
     LoggedTunableNumber.ifChanged(
-        hashCode(),
+        0,
         () -> {
           slot0Configs.kP = kP.get();
           slot0Configs.kI = kI.get();

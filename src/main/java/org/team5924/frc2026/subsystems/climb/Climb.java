@@ -76,6 +76,7 @@ public class Climb extends SubsystemBase {
 
   @Override
   public void periodic() {
+    io.periodicUpdates();
     io.updateInputs(inputs);
     beamBreakIO.updateInputs(beamBreakInputs);
     Logger.processInputs("Climb", inputs);
