@@ -20,6 +20,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -66,8 +67,6 @@ public class ClimbIOTalonFX implements ClimbIO {
   private final StatusSignal<Voltage> cancoderSupplyVoltage;
   private final StatusSignal<Angle> cancoderPositionRotations;
 
-  private final StatusSignal<Double> closedLoopReferenceSlope;
-
   // Single shot for voltage mode, robot loop will call continuously
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
   private final PositionVoltage positionOut =
@@ -96,7 +95,7 @@ public class ClimbIOTalonFX implements ClimbIO {
     statusArray[2] = climbTalonConfig.apply(Constants.Climb.OPEN_LOOP_RAMPS_CONFIGS);
     statusArray[3] = climbTalonConfig.apply(Constants.Climb.CLOSED_LOOP_RAMPS_CONFIGS);
     statusArray[4] = climbTalonConfig.apply(Constants.Climb.FEEDBACK_CONFIGS);
-    statusArray[5] = climbCANCoder.getConfigurator().apply(Constants.Climb.CANCODER_CONFIG);
+    statusArray[5] = climbCANCoder.getConfigurator().apply(new CANcoderConfiguration().withMagnetSensor(Constants.Climb.CANCODER_CONFIG));
 
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
@@ -118,8 +117,6 @@ public class ClimbIOTalonFX implements ClimbIO {
     cancoderSupplyVoltage = climbCANCoder.getSupplyVoltage();
     cancoderPositionRotations = climbCANCoder.getPosition();
 
-    closedLoopReferenceSlope = climbTalon.getClosedLoopReferenceSlope();
-
     BaseStatusSignal.setUpdateFrequencyForAll(
         100.0,
         climbPosition,
@@ -131,8 +128,7 @@ public class ClimbIOTalonFX implements ClimbIO {
         cancoderAbsolutePosition,
         cancoderVelocity,
         cancoderSupplyVoltage,
-        cancoderPositionRotations,
-        closedLoopReferenceSlope);
+        cancoderPositionRotations);
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         250.0, cancoderAbsolutePosition, cancoderVelocity, cancoderSupplyVoltage);

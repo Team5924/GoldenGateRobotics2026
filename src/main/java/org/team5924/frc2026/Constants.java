@@ -258,11 +258,7 @@ public final class Constants {
         .withMotorOutput(
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake))
-        .withFeedback(
-          new FeedbackConfigs()
-          .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
-          .withFeedbackRemoteSensorID(Constants.Climb.CANCODER_ID));
+            .withNeutralMode(NeutralModeValue.Brake));
     
           public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
       new OpenLoopRampsConfigs()
@@ -280,8 +276,8 @@ public final class Constants {
       new FeedbackConfigs()
         .withFeedbackRemoteSensorID(CANCODER_ID)
         .withFeedbackRotorOffset(CANCODER_ABSOLUTE_OFFSET)
-        .withSensorToMechanismRatio(1.0 / CANCODER_TO_MECHANISM)
-        .withRotorToSensorRatio(1.0 / MOTOR_TO_CANCODER)
+        .withSensorToMechanismRatio(CANCODER_TO_MECHANISM)
+        .withRotorToSensorRatio(MOTOR_TO_CANCODER)
         .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
 
     public static final MagnetSensorConfigs CANCODER_CONFIG =
