@@ -16,14 +16,10 @@
 
 package org.team5924.frc2026.subsystems.pivots.intakePivot;
 
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
-
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,8 +39,6 @@ public class IntakePivot extends SubsystemBase {
   private double intakePivotPositionSetpointRadiansFromCenter = 0.0;
 
   @Setter private double input;
-
-  public final SysIdRoutine sysId;
 
   public enum IntakePivotState {
     OFF(() -> 0.0),
@@ -75,18 +69,9 @@ public class IntakePivot extends SubsystemBase {
     this.io = io;
     this.goalState = IntakePivotState.OFF;
     this.intakePivotMotorDisconnected =
-        new Alert("IntakePivot Motor Disconnected!", Alert.AlertType.kWarning);
+        new Alert("Intake Pivot Motor Disconnected!", Alert.AlertType.kWarning);
     this.intakePivotMotorDisconnectedNotification =
-        new Notification(NotificationLevel.WARNING, "IntakePivot Motor Disconnected", "");
-
-    sysId =
-        new SysIdRoutine(
-            new SysIdRoutine.Config(
-                Volts.of(.75).per(Seconds),
-                Volts.of(1),
-                Seconds.of(new LoggedTunableNumber("IntakePivot/SysIdTime", 10.0).getAsDouble()),
-                (state) -> Logger.recordOutput("IntakePivot/SysIdState", state.toString())),
-            new SysIdRoutine.Mechanism((voltage) -> tryRunVolts(voltage.in(Volts)), null, this));
+        new Notification(NotificationLevel.WARNING, "Intake Pivot Motor Disconnected", "");
 
     stateTimer.reset();
   }
