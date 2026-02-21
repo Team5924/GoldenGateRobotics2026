@@ -16,7 +16,7 @@
 
 package org.team5924.frc2026;
 
-import com.pathplanner.lib.auto.AutoBuilder;
+import choreo.auto.AutoFactory;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -30,9 +30,11 @@ import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.team5924.frc2026.commands.AutoBuilder;
 import org.team5924.frc2026.commands.drive.DriveCommands;
 import org.team5924.frc2026.generated.TunerConstants;
 import org.team5924.frc2026.subsystems.SuperShooter;
+import org.team5924.frc2026.subsystems.SuperShooter.ShooterState;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.drive.GyroIO;
 import org.team5924.frc2026.subsystems.drive.GyroIOPigeon2;
@@ -48,9 +50,9 @@ import org.team5924.frc2026.subsystems.rollers.hopper.Hopper;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperIO;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperKrakenFOC;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
+import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOKrakenFOC;
-import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOSim;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIO;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOKrakenFOC;
@@ -125,7 +127,7 @@ public class RobotContainer {
 
         shooterHood = new ShooterHood(new ShooterHoodIOSim());
         shooterRoller = new ShooterRoller(new ShooterRollerIOSim(), new BeamBreakIO() {});
-        intake = new Intake(new IntakeIOSim());
+        intake = new Intake(new IntakeIO() {});
         shooter = new SuperShooter(shooterRoller, shooterHood);
         hopper = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
         break;
@@ -149,15 +151,16 @@ public class RobotContainer {
         // vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
         break;
     }
+    configureAutoFactory();
 
     // Auto commands
-    // NamedCommands.registerCommand(
-    //     "Run Shooter",
-    //     Commands.runOnce(
-    //         () -> {
-    //           shooter.setGoalState(ShooterState.AUTO_SHOOTING);
-    //           // AutoScoreCommands.autoScore(drive, shooter);
-    //         }));
+    NamedCommands.registerCommand(
+        "Run Shooter",
+        Commands.runOnce(
+            () -> {
+              shooter.setGoalState(ShooterState.AUTO_SHOOTING);
+              // AutoScoreCommands.autoScore(drive, shooter);
+            }));
 
     NamedCommands.registerCommand(
         "Run L1 Climb",
@@ -166,16 +169,25 @@ public class RobotContainer {
               // add once climb is figured out
             }));
 
-    // TODO: Uncomment when intake subsystem is enabled
-    // NamedCommands.registerCommand(
-    //     "Run Intake",
-    //     Commands.runOnce(
-    //         () -> {
-    //           intake.setGoalState(IntakeState.INTAKE);
-    //         }));
+    NamedCommands.registerCommand(
+        "Run Intake",
+        Commands.runOnce(
+            () -> {
+              intake.setGoalState(IntakeState.INTAKE);
+            }));
 
     // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices");
+    LoggedDashboardChooser<String> startingPosition =
+        new LoggedDashboardChooser<>("Starting Position?");
+    startingPosition.addDefaultOption("Middle", "Mid");
+    startingPosition.addOption("Right", "Right");
+    startingPosition.addOption("Left", "Left");
+    AutoBuilder.setStartingPosition(startingPosition::get);
+    var autoBuilder = new AutoBuilder(drive, shooter, intake);
+
+    autoChooser.addDefaultOption("Score and Climb Auto", autoBuilder.scoreAndClimbAuto());
+    autoChooser.addOption("Score, Depot, and Climb Auto", autoBuilder.scorePickupAndClimbAuto());
 
     // Set up SysId routines
     autoChooser.addOption(
@@ -317,5 +329,10 @@ public class RobotContainer {
         "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
     Logger.recordOutput(
         "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
+  }
+
+  private void configureAutoFactory() {
+    Robot.mAutoFactory =
+        new AutoFactory(drive::getPose, drive::setPose, drive::followChoreoTrajectory, true, drive);
   }
 }

@@ -16,18 +16,16 @@
 
 package org.team5924.frc2026.commands;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
-import org.team5924.frc2026.RobotState;
-import org.team5924.frc2026.commands.drive.DriveToPose;
+import org.team5924.frc2026.Robot;
 import org.team5924.frc2026.subsystems.SuperShooter;
+import org.team5924.frc2026.subsystems.SuperShooter.ShooterState;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
-import org.team5924.frc2026.util.AllianceFlipUtil;
+import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 
 @RequiredArgsConstructor
 public class AutoBuilder {
@@ -37,22 +35,61 @@ public class AutoBuilder {
   // private final Climb climb;
   private final Intake intake;
 
-  public Command basicDriveAuto() {
-    return Commands.runOnce(
-            () ->
-                RobotState.getInstance()
-                    .resetPose(
-                        AllianceFlipUtil.apply(
-                            new Pose2d(
-                                RobotState.getInstance().getEstimatedPose().getTranslation(),
-                                Rotation2d.kPi))))
-        .andThen(
-            new DriveToPose(
-                    drive,
-                    () -> RobotState.getInstance().getEstimatedPose(),
-                    () -> RobotState.getInstance().getEstimatedPose(),
-                    () ->
-                        new Translation2d((AllianceFlipUtil.shouldFlip() ? -1.0 : 1.0) * -1.0, 0.0))
-                .withTimeout(0.6));
+  // Left, Mid, Right 1-5
+  private static Supplier<String> startingPositionSupplier;
+
+  public static void setStartingPosition(Supplier<String> supplier) {
+    if (supplier == null)
+      throw new IllegalArgumentException("startingPositionSupplier must not be null");
+    startingPositionSupplier = supplier;
+  }
+
+  public Command scoreAndClimbAuto() {
+    if (startingPositionSupplier == null) {
+      throw new IllegalStateException(
+          "setStartingPosition() must be called before building auto commands");
+    }
+    return Commands.sequence(
+        startToHub(startingPositionSupplier.get()),
+        Commands.run(() -> shooter.setGoalState(ShooterState.AUTO_SHOOTING), shooter)
+            .withTimeout(1.0),
+        Commands.runOnce(() -> shooter.setGoalState(ShooterState.OFF), shooter),
+        Robot.mAutoFactory.trajectoryCmd("HubToClimb")
+        // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
+        );
+  }
+
+  public Command scorePickupAndClimbAuto() {
+    if (startingPositionSupplier == null) {
+      throw new IllegalStateException(
+          "setStartingPosition() must be called before building auto commands");
+    }
+    return Commands.sequence(
+        startToHub(startingPositionSupplier.get()),
+        Commands.run(() -> shooter.setGoalState(ShooterState.AUTO_SHOOTING), shooter)
+            .withTimeout(1.0),
+        Commands.runOnce(() -> shooter.setGoalState(ShooterState.OFF), shooter),
+        Robot.mAutoFactory.trajectoryCmd("HubToDepot"),
+        Commands.deadline(
+            Robot.mAutoFactory.trajectoryCmd("DepotIntake"),
+            Commands.run(() -> intake.setGoalState(IntakeState.INTAKE), intake)),
+        Commands.runOnce(() -> intake.setGoalState(IntakeState.OFF), intake),
+        Robot.mAutoFactory.trajectoryCmd("DepotToHub"),
+        Commands.run(() -> shooter.setGoalState(ShooterState.AUTO_SHOOTING), shooter)
+            .withTimeout(1.0),
+        Commands.runOnce(() -> shooter.setGoalState(ShooterState.OFF), shooter),
+        Robot.mAutoFactory.trajectoryCmd("HubToClimb")
+        // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
+        );
+  }
+
+  private Command startToHub(String startingPosition) {
+    if ("Mid".equals(startingPosition)) {
+      return Commands.none();
+    } else {
+      return Commands.sequence(
+          Robot.mAutoFactory.resetOdometry(startingPosition + "StartToHub"),
+          Robot.mAutoFactory.trajectoryCmd(startingPosition + "StartToHub"));
+    }
   }
 }
