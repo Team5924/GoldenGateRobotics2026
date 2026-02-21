@@ -19,6 +19,7 @@ package org.team5924.frc2026.subsystems.climb;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -30,6 +31,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class ClimbIOTalonFX implements ClimbIO {
 
@@ -46,6 +48,16 @@ public class ClimbIOTalonFX implements ClimbIO {
   private final StatusSignal<AngularVelocity> cancoderVelocity;
   private final StatusSignal<Voltage> cancoderSupplyVoltage;
 
+  private final Slot0Configs slot0Configs;
+
+  private final LoggedTunableNumber kA = new LoggedTunableNumber("Climb/kA", 0.00);
+  private final LoggedTunableNumber kS = new LoggedTunableNumber("Climb/kS", 0.13);
+  private final LoggedTunableNumber kV = new LoggedTunableNumber("Climb/kV", 0.4);
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("Climb/kP", 6.0);
+  private final LoggedTunableNumber kI = new LoggedTunableNumber("Climb/kI", 0.0);
+  private final LoggedTunableNumber kD = new LoggedTunableNumber("Climb/kD", 0.07);
+  private final LoggedTunableNumber kG = new LoggedTunableNumber("Climb/kG", 0.33);
+
   // Single shot for voltage mode, robot loop will call continuously
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
   private final PositionVoltage positionOut =
@@ -53,6 +65,16 @@ public class ClimbIOTalonFX implements ClimbIO {
 
   public ClimbIOTalonFX() {
     climbTalon = new TalonFX(Constants.Climb.CAN_ID, new CANBus(Constants.Climb.BUS));
+
+    slot0Configs = new Slot0Configs();
+    slot0Configs.kP = kP.get();
+    slot0Configs.kI = kI.get();
+    slot0Configs.kD = kD.get();
+    slot0Configs.kS = kS.get();
+    slot0Configs.kV = kV.get();
+    slot0Configs.kA = kA.get();
+    slot0Configs.kG = kG.get();
+
     climbTalon.getConfigurator().apply(Constants.Climb.CONFIG);
 
     cancoder = new CANcoder(Constants.Climb.CANCODER_ID);
@@ -112,6 +134,18 @@ public class ClimbIOTalonFX implements ClimbIO {
     inputs.cancoderPosition = cancoderPosition.getValueAsDouble();
     inputs.cancoderVelocity = cancoderVelocity.getValueAsDouble();
     inputs.cancoderSupplyVoltage = cancoderSupplyVoltage.getValueAsDouble();
+
+    updateLoggedTunableNumbers();
+  }
+
+  private void updateLoggedTunableNumbers() {
+    slot0Configs.kP = kP.get();
+    slot0Configs.kI = kI.get();
+    slot0Configs.kD = kD.get();
+    slot0Configs.kS = kS.get();
+    slot0Configs.kV = kV.get();
+    slot0Configs.kA = kA.get();
+    slot0Configs.kG = kG.get();
   }
 
   @Override
