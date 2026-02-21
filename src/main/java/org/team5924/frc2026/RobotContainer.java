@@ -44,9 +44,9 @@ import org.team5924.frc2026.subsystems.rollers.hopper.Hopper.HopperState;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperIO;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperKrakenFOC;
 import org.team5924.frc2026.subsystems.rollers.indexer.Indexer;
+import org.team5924.frc2026.subsystems.rollers.indexer.Indexer.IndexerState;
 import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIO;
 import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIOTalonFX;
-import org.team5924.frc2026.subsystems.rollers.indexer.Indexer.IndexerState;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
@@ -60,9 +60,9 @@ public class RobotContainer {
   //   private final SuperShooter shooter;
   //   private final ShooterHood shooterHood;
   //   private final ShooterRoller shooterRoller;
-  private final Intake intakeSystem;
-  private final Hopper hopperSystem;
-  private final Indexer indexerSystem;
+//   private final Intake intakeSystem;
+//   private final Hopper hopperSystem;
+//   private final Indexer indexerSystem;
 
   // private final ExampleSystem exampleSystem;
   // private final ExampleRoller exampleRoller;
@@ -94,9 +94,11 @@ public class RobotContainer {
         //         new ShooterRollerIOKrakenFOC(),
         //         new BeamBreakIOHardware(Constants.ShooterRoller.BEAM_BREAK_PORT));
         // shooter = new SuperShooter(shooterRoller, shooterHood);
-        intakeSystem = new Intake(new IntakeIOKrakenFOC());
-        hopperSystem = new Hopper(new HopperKrakenFOC());
-        indexerSystem = new Indexer(new IndexerIOTalonFX(), null);
+
+
+        // intakeSystem = new Intake(new IntakeIOKrakenFOC());
+        // hopperSystem = new Hopper(new HopperKrakenFOC());
+        // indexerSystem = new Indexer(new IndexerIOTalonFX(), null);
         break;
 
       case SIM:
@@ -122,10 +124,9 @@ public class RobotContainer {
 
         // shooterHood = new ShooterHood(new ShooterHoodIOSim());
         // shooterRoller = new ShooterRoller(new ShooterRollerIOSim(), new BeamBreakIO() {});
-        intakeSystem = new Intake(new IntakeIOSim());
-        // shooter = new SuperShooter(shooterRoller, shooterHood);
-        hopperSystem = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
-        indexerSystem = new Indexer(new IndexerIO() {}, null);
+        // intakeSystem = new Intake(new IntakeIOSim());
+        // hopperSystem = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
+        // indexerSystem = new Indexer(new IndexerIO() {}, null);
         break;
 
       default:
@@ -141,11 +142,11 @@ public class RobotContainer {
 
         // shooterHood = new ShooterHood(new ShooterHoodIO() {});
         // shooterRoller = new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {});
-        intakeSystem = new Intake(new IntakeIO() {});
-        // shooter = new SuperShooter(shooterRoller, shooterHood);
-        hopperSystem = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
-        // vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
-        indexerSystem = new Indexer(new IndexerIO() {}, null);
+
+
+        // intakeSystem = new Intake(new IntakeIO() {});
+        // hopperSystem = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
+        // indexerSystem = new Indexer(new IndexerIO() {}, null);
         break;
     }
 
@@ -158,12 +159,12 @@ public class RobotContainer {
     //           // AutoScoreCommands.autoScore(drive, shooter);
     //         }));
 
-    NamedCommands.registerCommand(
-        "Run L1 Climb",
-        Commands.runOnce(
-            () -> {
-              // add once climb is figured out
-            }));
+    // NamedCommands.registerCommand(
+    //     "Run L1 Climb",
+    //     Commands.runOnce(
+    //         () -> {
+    //           // add once climb is figured out
+    //         }));
 
     // TODO: Uncomment when intake subsystem is enabled
     // NamedCommands.registerCommand(
@@ -176,21 +177,21 @@ public class RobotContainer {
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
-    // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    // // Set up SysId routines
+    // autoChooser.addOption(
+    //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    // autoChooser.addOption(
+    //     "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    // autoChooser.addOption(
+    //     "Drive SysId (Quasistatic Forward)",
+    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption(
+    //     "Drive SysId (Quasistatic Reverse)",
+    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // autoChooser.addOption(
+    //     "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption(
+    //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -230,40 +231,40 @@ public class RobotContainer {
     //             () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
 
     // [driver] 0-DEGREE MODE
-    driveController
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driveController.getLeftY(),
-                () -> -driveController.getLeftX(),
-                () -> Rotation2d.kZero));
+    // driveController
+    //     .a()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -driveController.getLeftY(),
+    //             () -> -driveController.getLeftX(),
+    //             () -> Rotation2d.kZero));
 
     // [driver] Switch to X pattern when X button is pressed
-    driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // [driver] Reset gyro to 0° when B button is pressed
-    driveController
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
-                    drive)
-                .ignoringDisable(true));
+    // driveController
+    //     .b()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
+    //                 drive)
+    //             .ignoringDisable(true));
 
-    final Runnable resetGyro =
-        Constants.currentMode == Constants.Mode.SIM
-            ? () ->
-                drive.setPose(
-                    driveSimulation
-                        .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose during
-            // simulation
-            : () ->
-                drive.setPose(
-                    new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
-    driveController.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+    // final Runnable resetGyro =
+    //     Constants.currentMode == Constants.Mode.SIM
+    //         ? () ->
+    //             drive.setPose(
+    //                 driveSimulation
+    //                     .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose during
+    //         // simulation
+    //         : () ->
+    //             drive.setPose(
+    //                 new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
+    // driveController.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
     // // [operator] press a -> deploy example subystem up
     // operatorController
@@ -289,38 +290,50 @@ public class RobotContainer {
     // .onFalse(Commands.runOnce(() ->
     // exampleRoller.setGoalState(ExampleRollerState.IDLE)));
 
-    operatorController
-        .leftTrigger()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  intakeSystem.setGoalState(IntakeState.INTAKE);
-                  hopperSystem.setGoalState(HopperState.ON);
-                  indexerSystem.setGoalState(IndexerState.INDEXING);
-                }));
-    operatorController
-        .leftTrigger()
-        .onFalse(Commands.runOnce(() -> {
-                  intakeSystem.setGoalState(IntakeState.OFF);
-                  hopperSystem.setGoalState(HopperState.OFF);
-                  indexerSystem.setGoalState(IndexerState.OFF);
-                }));
+    // operatorController
+    //     .leftTrigger()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //             () -> {
+    //               intakeSystem.setGoalState(IntakeState.INTAKE);
+    //             }));
+    // operatorController
+    //     .leftTrigger()
+    //     .onFalse(
+    //         Commands.runOnce(
+    //             () -> {
+    //               intakeSystem.setGoalState(IntakeState.OFF);
+    //             }));
 
-    operatorController
-        .leftBumper()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  hopperSystem.setGoalState(HopperState.ON);
-                }));
+    // operatorController
+    //     .leftBumper()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //             () -> {
+    //               hopperSystem.setGoalState(HopperState.ON);
+    //             }));
+    // operatorController
+    //     .leftBumper()
+    //     .onFalse(
+    //         Commands.runOnce(
+    //             () -> {
+    //               hopperSystem.setGoalState(HopperState.OFF);
+    //             }));
 
-    operatorController
-        .leftBumper()
-        .onFalse(
-            Commands.runOnce(
-                () -> {
-                  hopperSystem.setGoalState(HopperState.OFF);
-                }));
+    // operatorController
+    //     .rightTrigger()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //             () -> {
+    //               indexerSystem.setGoalState(IndexerState.INDEXING);
+    //             }));
+    // operatorController
+    //     .rightTrigger()
+    //     .onFalse(
+    //         Commands.runOnce(
+    //             () -> {
+    //               indexerSystem.setGoalState(IndexerState.OFF);
+    //             }));
   }
 
   /**

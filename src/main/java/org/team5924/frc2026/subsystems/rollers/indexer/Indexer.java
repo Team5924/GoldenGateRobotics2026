@@ -40,12 +40,12 @@ public class Indexer extends GenericRollerSystem<Indexer.IndexerState> {
   private IndexerState goalState = IndexerState.OFF;
 
   // Indexer Beam Break
-  private final BeamBreakIO beamBreakIO;
+  // private final BeamBreakIO beamBreakIO;
   private final BeamBreakIOInputsAutoLogged beamBreakInputs = new BeamBreakIOInputsAutoLogged();
 
   public Indexer(IndexerIO indexerIO, BeamBreakIO beamBreakIO) {
     super("Indexer", indexerIO);
-    this.beamBreakIO = beamBreakIO;
+    // this.beamBreakIO = beamBreakIO;
   }
 
   public void setGoalState(IndexerState goalState) {
