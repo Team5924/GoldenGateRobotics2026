@@ -17,14 +17,20 @@
 
 package org.team5924.frc2026;
 
+import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
+
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -101,7 +107,17 @@ public final class Constants {
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
 
+    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
+      new OpenLoopRampsConfigs()
+        .withDutyCycleOpenLoopRampPeriod(0.02)
+        .withTorqueOpenLoopRampPeriod(0.02)
+        .withVoltageOpenLoopRampPeriod(0.02);
 
+    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
+      new ClosedLoopRampsConfigs()
+        .withDutyCycleClosedLoopRampPeriod(0.02)
+        .withTorqueClosedLoopRampPeriod(0.02)
+        .withVoltageClosedLoopRampPeriod(0.02);
   }
 
   public final class GenericRollerSystem {
@@ -213,15 +229,32 @@ public final class Constants {
   }
 
   public final class Climb { // TODO: update these values
-    public static final int CAN_ID = 0;
+    public static final int CAN_ID = 60;
     public static final String BUS = "rio";
-    public static final double REDUCTION = 1.0;
+    public static final double MOTOR_TO_CANCODER = (7.0 / 1.0); // TODO: Update Reductions
+    public static final double CANCODER_TO_MECHANISM = (7.0 / 1.0);
+    public static final double MOTOR_TO_MECHANISM = MOTOR_TO_CANCODER * CANCODER_TO_MECHANISM;
+    public static final double SIM_MOI = 0.001;
+
+    public static final double MIN_POSITION_MULTI = 0.8; // rotations
+    public static final double MAX_POSITION_MULTI = 0.8; // rotations
+
+    public static final double MIN_POSITION_RADS = -Math.PI * MIN_POSITION_MULTI;
+    public static final double MAX_POSITION_RADS = Math.PI * MAX_POSITION_MULTI;
+
+    public static final double JOYSTICK_DEADZONE = 0.01;
+
+    public static final double STATE_TIMEOUT = 5.0;
+
+    public static final int CANCODER_ID = 0; // TODO: update id
+    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0; 
+
     public static final TalonFXConfiguration CONFIG =
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(35)
-            .withStatorCurrentLimit(35))
+            .withSupplyCurrentLimit(60)
+            .withStatorCurrentLimit(60))
         .withMotorOutput(
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
@@ -230,9 +263,31 @@ public final class Constants {
           new FeedbackConfigs()
           .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
           .withFeedbackRemoteSensorID(Constants.Climb.CANCODER_ID));
+    
+          public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
+      new OpenLoopRampsConfigs()
+        .withDutyCycleOpenLoopRampPeriod(0.02)
+        .withTorqueOpenLoopRampPeriod(0.02)
+        .withVoltageOpenLoopRampPeriod(0.02);
 
-    public static final int CANCODER_ID = 0; // TODO: update id
+    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
+      new ClosedLoopRampsConfigs()
+        .withDutyCycleClosedLoopRampPeriod(0.02)
+        .withTorqueClosedLoopRampPeriod(0.02)
+        .withVoltageClosedLoopRampPeriod(0.02);
 
+    public static final FeedbackConfigs FEEDBACK_CONFIGS =
+      new FeedbackConfigs()
+        .withFeedbackRemoteSensorID(CANCODER_ID)
+        .withFeedbackRotorOffset(CANCODER_ABSOLUTE_OFFSET)
+        .withSensorToMechanismRatio(1.0 / CANCODER_TO_MECHANISM)
+        .withRotorToSensorRatio(1.0 / MOTOR_TO_CANCODER)
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
 
+    public static final MagnetSensorConfigs CANCODER_CONFIG =
+      new MagnetSensorConfigs()
+        .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET) 
+        .withAbsoluteSensorDiscontinuityPoint(0.5)
+        .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
   }
 }

@@ -30,13 +30,12 @@ import org.team5924.frc2026.util.LoggedTunableNumber;
 public class ExampleSystem extends SubsystemBase {
 
   private final ExampleSystemIO io;
-
   private final ExampleSystemIOInputsAutoLogged inputs = new ExampleSystemIOInputsAutoLogged();
 
   public enum ExampleSystemState {
     STOW(new LoggedTunableNumber("ExampleSystem/Stow", Math.toRadians(0))),
     MOVING(new LoggedTunableNumber("ExampleSystem/Moving", 0)),
-    UP(new LoggedTunableNumber("ExampleSystem/Stow", Math.toRadians(90))),
+    UP(new LoggedTunableNumber("ExampleSystem/Up", Math.toRadians(90))),
 
     // voltage at which the example subsystem motor moves when controlled by the operator
     OPERATOR_CONTROL(new LoggedTunableNumber("ExampleSystem/OperatorVoltage", 4.5));
@@ -79,7 +78,6 @@ public class ExampleSystem extends SubsystemBase {
     if (!inputs.exampleMotorConnected && wasExampleMotorConnected) {
       Elastic.sendNotification(exampleMotorDisconnectedNotification);
     }
-
     wasExampleMotorConnected = inputs.exampleMotorConnected;
   }
 
