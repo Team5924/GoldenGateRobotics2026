@@ -157,11 +157,9 @@ public class ClimbIOTalonFX implements ClimbIO {
             .isOK();
 
     inputs.climbPositionRads =
-        Units.rotationsToRadians(climbPosition.getValueAsDouble())
-            / Constants.Climb.MOTOR_TO_MECHANISM;
+        Units.rotationsToRadians(climbPosition.getValueAsDouble());
     inputs.climbVelocityRadsPerSec =
-        Units.rotationsToRadians(climbVelocity.getValueAsDouble())
-            / Constants.Climb.MOTOR_TO_MECHANISM;
+        Units.rotationsToRadians(climbVelocity.getValueAsDouble());
     inputs.climbSupplyCurrentAmps = climbSupplyCurrent.getValueAsDouble();
     inputs.climbTorqueCurrentAmps = climbTorqueCurrent.getValueAsDouble();
     inputs.climbTempCelsius = climbTempCelsius.getValueAsDouble();
@@ -172,7 +170,7 @@ public class ClimbIOTalonFX implements ClimbIO {
     inputs.cancoderPositionRotations = cancoderPositionRotations.getValueAsDouble();
 
     inputs.climbPositionCancoder =
-        (inputs.cancoderPositionRotations) / Constants.Climb.CANCODER_TO_MECHANISM;
+        Units.rotationsToRadians(inputs.cancoderPositionRotations) / Constants.Climb.CANCODER_TO_MECHANISM;
   }
 
   public void periodicUpdates() {
@@ -214,7 +212,6 @@ public class ClimbIOTalonFX implements ClimbIO {
   @Override
   public void setPosition(double rads) {
     climbTalon.setControl(
-        positionOut.withPosition(
-            Constants.Climb.MOTOR_TO_MECHANISM * Units.radiansToRotations(rads)));
+        positionOut.withPosition(Units.radiansToRotations(rads)));
   }
 }
