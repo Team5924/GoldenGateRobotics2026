@@ -18,9 +18,11 @@
 package org.team5924.frc2026;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -223,7 +225,11 @@ public final class Constants {
         .withMotorOutput(
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake));
+            .withNeutralMode(NeutralModeValue.Brake))
+        .withFeedback(
+          new FeedbackConfigs()
+          .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
+          .withFeedbackRemoteSensorID(Constants.Climb.CANCODER_ID));
 
     public static final int CANCODER_ID = 0; // TODO: update id
 
