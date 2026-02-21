@@ -160,6 +160,7 @@ public class ClimbIOTalonFX implements ClimbIO {
         Units.rotationsToRadians(climbPosition.getValueAsDouble());
     inputs.climbVelocityRadsPerSec =
         Units.rotationsToRadians(climbVelocity.getValueAsDouble());
+    inputs.climbAppliedVoltage = climbAppliedVoltage.getValueAsDouble();
     inputs.climbSupplyCurrentAmps = climbSupplyCurrent.getValueAsDouble();
     inputs.climbTorqueCurrentAmps = climbTorqueCurrent.getValueAsDouble();
     inputs.climbTempCelsius = climbTempCelsius.getValueAsDouble();
