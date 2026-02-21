@@ -258,7 +258,8 @@ public class TurretIOTalonFX implements TurretIO {
         kI,
         kD,
         kS,
-        kV);
+        kV,
+        kA);
 
     LoggedTunableNumber.ifChanged(
         0,
