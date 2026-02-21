@@ -97,7 +97,7 @@ public class RobotContainer {
                 new BeamBreakIOHardware(Constants.ShooterRoller.BEAM_BREAK_PORT));
         intake = new Intake(new IntakeIOKrakenFOC());
         shooter = new SuperShooter(shooterRoller, shooterHood);
-        // exampleRoller = new ExampleRoller(new ExampleRollerIOKrakenFOC());
+        hopper = new Hopper(new HopperKrakenFOC());
         break;
 
       case SIM:
@@ -125,8 +125,7 @@ public class RobotContainer {
         shooterRoller = new ShooterRoller(new ShooterRollerIOSim(), new BeamBreakIO() {});
         intake = new Intake(new IntakeIO() {});
         shooter = new SuperShooter(shooterRoller, shooterHood);
-        // exampleSystem = new ExampleSystem(new ExampleSystemIOSim());
-        // exampleRoller = new ExampleRoller(new ExampleRollerIOSim());
+        hopper = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
         break;
 
       default:
@@ -144,8 +143,7 @@ public class RobotContainer {
         shooterRoller = new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {});
         intake = new Intake(new IntakeIO() {});
         shooter = new SuperShooter(shooterRoller, shooterHood);
-        // exampleSystem = new ExampleSystem(new ExampleSystemIO() {});
-        // exampleRoller = new ExampleRoller(new ExampleRollerIO() {});
+        hopper = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
         // vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
         break;
     }

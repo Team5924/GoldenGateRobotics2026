@@ -22,8 +22,12 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.net.WebServer;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.littletonrobotics.junction.LogFileUtil;
@@ -36,9 +40,18 @@ import org.team5924.frc2026.generated.TunerConstants;
 import org.team5924.frc2026.util.Elastic;
 
 public class Robot extends LoggedRobot {
+  private static final double LOW_BATTERY_VOLTAGE = 11.0;
+  private static final double LOW_BATTERY_DISABLED_TIME = 2.0;
+
   private Command autonomousCommand;
   private RobotContainer robotContainer;
   public static AutoFactory mAutoFactory;
+
+  private final Timer disabledTimer = new Timer();
+  private final Alert lowBatteryAlert =
+      new Alert(
+          "Battery voltage is very low, turn off the robot or replace the battery to avoid damage.",
+          AlertType.kWarning);
 
   public Robot() {
     // Record metadata
@@ -104,6 +117,12 @@ public class Robot extends LoggedRobot {
     // Camera stream for Elastic
     CameraServer.startAutomaticCapture();
 
+    // Silence joystick alerts
+    DriverStation.silenceJoystickConnectionWarning(true);
+
+    // Reset alert timers
+    disabledTimer.restart();
+
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
@@ -125,6 +144,21 @@ public class Robot extends LoggedRobot {
 
     // Return to non-RT thread priority (do not modify the first argument)
     // Threads.setCurrentThreadPriority(false, 10);
+
+    // Low battery alert
+    if (DriverStation.isEnabled()) {
+      disabledTimer.reset();
+      lowBatteryAlert.set(false);
+    }
+    double batteryVoltage = RobotController.getBatteryVoltage();
+    if (batteryVoltage > 0.0
+        && batteryVoltage <= LOW_BATTERY_VOLTAGE
+        && disabledTimer.hasElapsed(LOW_BATTERY_DISABLED_TIME)) {
+      lowBatteryAlert.set(true);
+      // Leds.getGlobal().lowBatteryAlert = true;
+    } else {
+      lowBatteryAlert.set(false);
+    }
   }
 
   /** This function is called once when the robot is disabled. */
