@@ -157,18 +157,20 @@ public final class Constants {
   }
 
   public final class ShooterHood {
-    public static final int CAN_ID = 0; // TODO: Add CANID Ports
+    public static final int CAN_ID = 0; // TODO: Update id
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
     public static final double SIM_MOI = 0.001;
+
+    public static final double MOTOR_TO_CANCODER = (40.0 / 12.0) * (24.0 / 15.0);
     public static final double CANCODER_TO_SPUR = 1.0;
-    public static final double MOTOR_TO_CANCODER = (40.0 / 12.0);
-    public static final double MOTOR_TO_SPUR = MOTOR_TO_CANCODER * CANCODER_TO_SPUR;
     public static final double SPUR_TO_MECHANISM = (23.0 / 18.0);
+
+    public static final double MOTOR_TO_SPUR = MOTOR_TO_CANCODER * CANCODER_TO_SPUR;
     public static final double MOTOR_TO_MECHANISM = MOTOR_TO_SPUR * SPUR_TO_MECHANISM;
 
-    public static final double MIN_POSITION_MULTI = 0.0; // TOD): make sure these are both set to the right values
-    public static final double MAX_POSITION_MULTI = 1.0; // rotations
+    public static final double MIN_POSITION_MULTI = 0.0; // TODO: make sure these are both set to the right values (rotations)
+    public static final double MAX_POSITION_MULTI = 1.0;
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
@@ -197,8 +199,8 @@ public final class Constants {
             .withNeutralMode(NeutralModeValue.Brake))
         .withSoftwareLimitSwitch(
           new SoftwareLimitSwitchConfigs()
-            .withForwardSoftLimitThreshold(1 / MOTOR_TO_MECHANISM) // TODO: get correct value for rotations
-            .withReverseSoftLimitThreshold(1 / MOTOR_TO_MECHANISM) // TODO: get correct value for rotations
+            .withForwardSoftLimitThreshold(MOTOR_TO_MECHANISM * MIN_POSITION_MULTI) // TODO: get correct value for rotations
+            .withReverseSoftLimitThreshold(MOTOR_TO_MECHANISM * MAX_POSITION_MULTI) // TODO: get correct value for rotations
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true));
 
@@ -218,15 +220,15 @@ public final class Constants {
       new FeedbackConfigs()
         .withFeedbackRemoteSensorID(Constants.ShooterHood.CANCODER_ID)
         .withFeedbackRotorOffset(Constants.ShooterHood.CANCODER_ABSOLUTE_OFFSET)
-        .withSensorToMechanismRatio(1.0 / Constants.ShooterHood.CANCODER_TO_SPUR)
-        .withRotorToSensorRatio(1.0 / Constants.ShooterHood.MOTOR_TO_CANCODER)
+        .withSensorToMechanismRatio(Constants.ShooterHood.CANCODER_TO_SPUR)
+        .withRotorToSensorRatio(Constants.ShooterHood.MOTOR_TO_CANCODER)
         .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
 
     public static final MagnetSensorConfigs CANCODER_CONFIG =
       new MagnetSensorConfigs()
         .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET) // TODO: update offset -> when the turret is facing forward (units: rotations)
         .withAbsoluteSensorDiscontinuityPoint(1.0) // TODO: update???
-        .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
+        .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive);
   }
 
   public final class ShooterRoller {
