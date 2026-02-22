@@ -32,10 +32,10 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.team5924.frc2026.commands.drive.DriveCommands;
 import org.team5924.frc2026.generated.TunerConstants;
-import org.team5924.frc2026.subsystems.SuperShooter;
 import org.team5924.frc2026.subsystems.LEDs.LEDs;
 import org.team5924.frc2026.subsystems.LEDs.LEDsHardware;
 import org.team5924.frc2026.subsystems.LEDs.LEDsIO;
+import org.team5924.frc2026.subsystems.SuperShooter;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.drive.GyroIO;
 import org.team5924.frc2026.subsystems.drive.GyroIOPigeon2;
@@ -133,7 +133,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIOSim());
         shooter = new SuperShooter(shooterRoller, shooterHood);
         hopper = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
-        leds = new LEDs(new LEDsIO () {}); //TODO: sim implementation
+        leds = new LEDs(new LEDsIO() {}); // TODO: sim implementation
         break;
 
       default:
@@ -153,7 +153,7 @@ public class RobotContainer {
         shooter = new SuperShooter(shooterRoller, shooterHood);
         hopper = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
         // vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});4
-        leds = new LEDs(new LEDsIO () {});
+        leds = new LEDs(new LEDsIO() {});
         break;
     }
 

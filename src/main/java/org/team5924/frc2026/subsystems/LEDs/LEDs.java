@@ -142,7 +142,7 @@ public class LEDs extends SubsystemBase {
     }
 
     // Override with loading animation
-    if (Timer.getTimestamp() < 30.0) {
+    if (Timer.getTimestamp() < 30.0 && !estopped) {
       breath(
           fullSection,
           Color.kBlack,
