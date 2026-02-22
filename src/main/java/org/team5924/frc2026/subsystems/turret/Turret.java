@@ -142,7 +142,7 @@ public class Turret extends SubsystemBase {
   }
 
   public void tryRunVolts(double volts) {
-    if (!(shouldContinue = shouldContinueInDirection(volts, inputs.turretPositionRads))) return;
+    // if (!(shouldContinue = shouldContinueInDirection(volts, inputs.turretPositionRads))) return;
 
     io.runVolts(volts);
   }

@@ -191,8 +191,7 @@ public class TurretIOTalonFX implements TurretIO {
             .isOK();
 
     inputs.turretPosition =
-        BaseStatusSignal.getLatencyCompensatedValueAsDouble(turretPosition, turretVelocity)
-            / Constants.Turret.MOTOR_TO_MECHANISM;
+        BaseStatusSignal.getLatencyCompensatedValueAsDouble(turretPosition, turretVelocity);
     inputs.turretPositionRads = Units.rotationsToRadians(inputs.turretPosition);
 
     inputs.turretVelocityRadsPerSec = Units.rotationsToRadians(turretVelocity.getValueAsDouble());
@@ -315,10 +314,10 @@ public class TurretIOTalonFX implements TurretIO {
   }
 
   private double radsToMotorPosition(double rads) {
-    return Units.radiansToRotations(rads) * Constants.Turret.MOTOR_TO_MECHANISM;
+    return Units.radiansToRotations(rads); // * Constants.Turret.MOTOR_TO_MECHANISM;
   }
 
   private double motorPositionToRads(double motorPosition) {
-    return Units.rotationsToRadians(motorPosition) / Constants.Turret.MOTOR_TO_MECHANISM;
+    return Units.rotationsToRadians(motorPosition); // / Constants.Turret.MOTOR_TO_MECHANISM;
   }
 }

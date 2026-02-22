@@ -265,8 +265,8 @@ public final class Constants {
     public static final int CAN_ID = 40; // TODO: update to real can id
     public static final String BUS = "rio";
 
-    public static final double MOTOR_TO_CANCODER = (20.0 / 12.0);
-    public static final double CANCODER_TO_MECHANISM = (135.0 / 20.0);
+    public static final double MOTOR_TO_CANCODER = (22.0 / 12.0); // TODO: change to 20 for new
+    public static final double CANCODER_TO_MECHANISM = (135.0 / 22.0); // TODO: change to 20 for new  
     public static final double MOTOR_TO_MECHANISM = MOTOR_TO_CANCODER * CANCODER_TO_MECHANISM;
   
     public static final double SIM_MOI = 0.001;
@@ -277,7 +277,7 @@ public final class Constants {
     public static final double MIN_POSITION_RADS = Math.PI * MIN_POSITION_MULTI;
     public static final double MAX_POSITION_RADS = Math.PI * MAX_POSITION_MULTI;
 
-    public static final double JOYSTICK_DEADZONE = 0.01;
+    public static final double JOYSTICK_DEADZONE = 0.05;
 
     public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
 
@@ -304,9 +304,9 @@ public final class Constants {
         .withSoftwareLimitSwitch(
           new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitThreshold(
-              0.5 * MOTOR_TO_MECHANISM * MIN_POSITION_MULTI) // motor rotations
+              0.5 * MIN_POSITION_MULTI) // motor rotations
             .withReverseSoftLimitThreshold(
-              0.5 * MOTOR_TO_MECHANISM * MAX_POSITION_MULTI) // motor rotations
+              0.5 * MAX_POSITION_MULTI) // motor rotations
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true));
 
