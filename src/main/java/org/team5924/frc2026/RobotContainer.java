@@ -31,6 +31,7 @@ import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.team5924.frc2026.commands.drive.DriveCommands;
+import org.team5924.frc2026.commands.intakePivot.IntakePivotCommands;
 import org.team5924.frc2026.generated.TunerConstants;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.drive.GyroIO;
@@ -52,6 +53,10 @@ import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOKrakenFOC;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOSim;
+import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot;
+import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOTalonFX;
+import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
+import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIO;;
 
 public class RobotContainer {
   // Subsystems
@@ -63,6 +68,7 @@ public class RobotContainer {
   private final Intake intakeSystem;
   private final Hopper hopperSystem;
   private final Indexer indexerSystem;
+  private final IntakePivot intakePivot;
 
   // private final ExampleSystem exampleSystem;
   // private final ExampleRoller exampleRoller;
@@ -99,6 +105,7 @@ public class RobotContainer {
         intakeSystem = new Intake(new IntakeIOKrakenFOC());
         hopperSystem = new Hopper(new HopperKrakenFOC());
         indexerSystem = new Indexer(new IndexerIOTalonFX(), null);
+        intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
         break;
 
       case SIM:
@@ -127,6 +134,7 @@ public class RobotContainer {
         intakeSystem = new Intake(new IntakeIOSim());
         hopperSystem = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
         indexerSystem = new Indexer(new IndexerIO() {}, null);
+        intakePivot = new IntakePivot(new IntakePivotIO() {});
         break;
 
       default:
@@ -147,6 +155,7 @@ public class RobotContainer {
         intakeSystem = new Intake(new IntakeIO() {});
         hopperSystem = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
         indexerSystem = new Indexer(new IndexerIO() {}, null);
+        intakePivot = new IntakePivot(new IntakePivotIO() {});
         break;
     }
 
@@ -334,6 +343,8 @@ public class RobotContainer {
                 () -> {
                   indexerSystem.setGoalState(IndexerState.OFF);
                 }));
+
+    intakePivot.setDefaultCommand(IntakePivotCommands.manualIntakePivot(intakePivot, operatorController::getRightY));
   }
 
   /**

@@ -237,7 +237,7 @@ public final class Constants {
 
   public final class IntakePivot {
     /* Turret */
-    public static final int CAN_ID = 43; // TODO: update to real can id
+    public static final int CAN_ID = 41; // TODO: update to real can id
     public static final String BUS = "rio";
     public static final double MOTOR_TO_CANCODER = 1.0; // TODO: update this!!
     public static final double CANCODER_TO_MECHANISM = 1.0; // TODO: update this!!!
@@ -252,7 +252,7 @@ public final class Constants {
     public static final double MIN_POSITION_RADS = -Math.PI * MIN_POSITION_MULTI;
     public static final double MAX_POSITION_RADS = Math.PI * MAX_POSITION_MULTI;
 
-    public static final double JOYSTICK_DEADZONE = 0.01;
+    public static final double JOYSTICK_DEADZONE = 0.05;
 
     public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
 

@@ -51,7 +51,7 @@ public class IntakePivot extends SubsystemBase {
     MOVING(() -> 0.0),
 
     // voltage at which the example subsystem motor moves when controlled by the operator
-    MANUAL(new LoggedTunableNumber("IntakePivot/OperatorVoltage", 1.0));
+    MANUAL(new LoggedTunableNumber("IntakePivot/OperatorVoltage", 7.0));
 
     @Getter private final DoubleSupplier rads;
 
@@ -137,7 +137,7 @@ public class IntakePivot extends SubsystemBase {
   }
 
   public void tryRunVolts(double volts) {
-    if (!(cont = shouldContinueInDirection(volts, inputs.intakePivotPositionRads))) return;
+    // if (!(cont = shouldContinueInDirection(volts, inputs.intakePivotPositionRads))) return;
 
     io.runVolts(volts);
   }
