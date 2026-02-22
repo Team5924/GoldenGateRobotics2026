@@ -172,8 +172,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
             .isOK();
 
     inputs.shooterHoodPosition =
-        shooterHoodPosition.getValueAsDouble()
-            / Constants.ShooterHood.MOTOR_TO_MECHANISM;
+        shooterHoodPosition.getValueAsDouble() / Constants.ShooterHood.MOTOR_TO_MECHANISM;
     inputs.shooterHoodPositionRads = Units.rotationsToRadians(inputs.shooterHoodPosition);
 
     inputs.shooterHoodVelocityRadsPerSec =
@@ -191,9 +190,9 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     inputs.cancoderPositionRotations = cancoderPositionRotations.getValueAsDouble();
 
     inputs.shooterHoodPositionCancoder =
-        (inputs.cancoderPositionRotations) 
-          / Constants.ShooterHood.CANCODER_TO_SPUR
-          / Constants.ShooterHood.SPUR_TO_MECHANISM;
+        (inputs.cancoderPositionRotations)
+            / Constants.ShooterHood.CANCODER_TO_SPUR
+            / Constants.ShooterHood.SPUR_TO_MECHANISM;
   }
 
   @Override
@@ -245,6 +244,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     setpointRads = clampRads(rads);
   }
 
+  /* Unused but nice to have */
   @Override
   public void holdPosition(double rads) {
     shooterHoodTalon.setControl(positionOut.withPosition(radsToMotorPosition(rads)));
@@ -260,7 +260,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
         rads, Constants.ShooterHood.MIN_POSITION_RADS, Constants.ShooterHood.MAX_POSITION_RADS);
   }
 
-  private double radsToMotorPosition(double rads) { 
+  private double radsToMotorPosition(double rads) {
     return Units.radiansToRotations(rads) * Constants.ShooterHood.MOTOR_TO_MECHANISM;
   }
 
