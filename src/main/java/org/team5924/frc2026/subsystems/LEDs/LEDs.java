@@ -160,13 +160,11 @@ public class LEDs extends SubsystemBase {
       e.printStackTrace();
     }
 
+    // Apply outputs to hardware
+    io.applyOutputs(outputs);
+
     // Record cycle time
     // LoggedTracer.record("Leds/Periodic");
-  }
-
-  public void periodicAbstract() {
-    io.applyOutputs(outputs);
-    // LoggedTracer.record("Leds/AfterScheduler");
   }
 
   private Color solid(Section section, Color color) {
