@@ -32,7 +32,6 @@ public interface ShooterHoodIO {
     public double shooterHoodTempCelsius = 0.0;
 
     public double setpointRads = 0.0;
-    public double acceleration = 0.0;
 
     public boolean cancoderConnected = true;
     public double cancoderAbsolutePosition = 0.0;
@@ -48,7 +47,7 @@ public interface ShooterHoodIO {
    */
   public default void updateInputs(ShooterHoodIOInputs inputs) {}
 
-  /** Updates that are be called in turret periodic */
+  /** Updates that are be called in shooter hood periodic */
   public default void periodicUpdates() {}
 
   /**

@@ -94,7 +94,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     slot0Configs.kA = kA.get();
 
     // Apply Configs
-    StatusCode[] statusArray = new StatusCode[7];
+    StatusCode[] statusArray = new StatusCode[6];
 
     statusArray[0] = shooterHoodTalonConfig.apply(Constants.ShooterHood.CONFIG);
     statusArray[1] = shooterHoodTalonConfig.apply(slot0Configs);
@@ -225,7 +225,8 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
         kI,
         kD,
         kS,
-        kV);
+        kV,
+        kA);
   }
 
   @Override

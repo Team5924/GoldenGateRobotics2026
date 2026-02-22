@@ -167,11 +167,11 @@ public final class Constants {
     public static final double SPUR_TO_MECHANISM = (23.0 / 18.0);
     public static final double MOTOR_TO_MECHANISM = MOTOR_TO_SPUR * SPUR_TO_MECHANISM;
 
-    public static final double MIN_POSITION_MULTI = 0.0; // TOD: make sure these are both set to the right values
+    public static final double MIN_POSITION_MULTI = 0.0; // TOD): make sure these are both set to the right values
     public static final double MAX_POSITION_MULTI = 1.0; // rotations
 
-    public static final double MIN_POSITION_RADS = Math.PI * MIN_POSITION_MULTI;
-    public static final double MAX_POSITION_RADS = Math.PI * MAX_POSITION_MULTI;
+    public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
+    public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
 
     public static final double JOYSTICK_DEADZONE = 0.01;
 
@@ -198,7 +198,7 @@ public final class Constants {
         .withSoftwareLimitSwitch(
           new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitThreshold(1 / MOTOR_TO_MECHANISM) // TODO: get correct value for rotations
-            .withReverseSoftLimitThreshold(-1 / MOTOR_TO_MECHANISM) // TODO: get correct value for rotations
+            .withReverseSoftLimitThreshold(1 / MOTOR_TO_MECHANISM) // TODO: get correct value for rotations
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true));
 
@@ -225,7 +225,7 @@ public final class Constants {
     public static final MagnetSensorConfigs CANCODER_CONFIG =
       new MagnetSensorConfigs()
         .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET) // TODO: update offset -> when the turret is facing forward (units: rotations)
-        .withAbsoluteSensorDiscontinuityPoint(0.5) // TODO: update???
+        .withAbsoluteSensorDiscontinuityPoint(1.0) // TODO: update???
         .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
   }
 
