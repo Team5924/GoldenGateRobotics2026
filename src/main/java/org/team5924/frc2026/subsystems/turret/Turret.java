@@ -28,7 +28,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
-import org.team5924.frc2026.Robot;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
@@ -119,14 +118,16 @@ public class Turret extends SubsystemBase {
         || EqualsUtil.epsilonEquals(
             inputs.setpointRads, inputs.turretPositionRads, Constants.Turret.EPSILON_RADS);
   }
-  
+
   private void handleCurrentState() {
-    // switch (RobotState.getInstance().getTurretState()) {
-    //   case MOVING -> if (isAtSetpoint()) RobotState.getInstance().setTurretState(goalState);
-    //   }
-    //   case MANUAL -> handleManualState();
-    //   default -> io.setPosition(goalState.rads.getAsDouble());
-    // }
+    switch (RobotState.getInstance().getTurretState()) {
+      case MOVING -> {
+        if (isAtSetpoint()) RobotState.getInstance().setTurretState(goalState);
+      }
+      case MANUAL -> handleManualState();
+      case OFF -> io.stop();
+      default -> io.setPosition(goalState.rads.getAsDouble());
+    }
   }
 
   private void handleManualState() {
@@ -184,64 +185,7 @@ public class Turret extends SubsystemBase {
     lastStateChange = RobotState.getTime();
   }
 
-  // public void setPositionSetpointImpl(double radiansFromCenter, double radPerS) {
-  //   Logger.recordOutput("Turret/radiansFromCenter", radiansFromCenter);
-  //   io.setPositionSetpoint(radiansFromCenter, radPerS);
-  // }
-
-  // private boolean unwrapped(double setpoint) {
-  //   // Radians comparison intentional because this is the raw value going into
-  //   // rotor.
-  //   return (stateTimer.get() - lastStateChangeTime > 0.5)
-  //       || EqualsUtil.epsilonEquals(setpoint, getCurrentPositionRads(), Math.toRadians(10.0));
-  // }
-
-  // private Command positionSetpointUntilUnwrapped(
-  //     DoubleSupplier radiansFromCenter, DoubleSupplier ffVel) {
-  //   return run(() -> {
-  //         // Intentional do not wrap turret
-  //         double setpoint = radiansFromCenter.getAsDouble();
-  //         setPositionSetpointImpl(setpoint, unwrapped(setpoint) ? ffVel.getAsDouble() : 0.0);
-  //         turretPositionSetpointRadiansFromCenter = setpoint;
-  //       })
-  //       .until(() -> unwrapped(radiansFromCenter.getAsDouble()));
-  // }
-
-  // // FF is in rad/s.
-  // public Command positionSetpointCommand(DoubleSupplier radiansFromCenter, DoubleSupplier ffVel)
-  // {
-  //   return positionSetpointUntilUnwrapped(radiansFromCenter, ffVel)
-  //       .andThen(
-  //           run(
-  //               () -> {
-  //                 double setpoint = adjustSetpointForWrap(radiansFromCenter.getAsDouble());
-  //                 setPositionSetpointImpl(setpoint, ffVel.getAsDouble());
-  //                 turretPositionSetpointRadiansFromCenter = setpoint;
-  //               }))
-  //       .withName("Turret positionSetpointCommand");
-  // }
-
-  // public Command waitForPosition(DoubleSupplier radiansFromCenter, double toleranceRadians) {
-  //   return new WaitUntilCommand(
-  //           () -> {
-  //             return Math.abs(
-  //                     new Rotation2d(getCurrentPositionRads())
-  //                         .rotateBy(new Rotation2d(radiansFromCenter.getAsDouble()).unaryMinus())
-  //                         .getRadians())
-  //                 < toleranceRadians;
-  //           })
-  //       .withName("Turret wait for position");
-  // }
-
   public double getSetpoint() {
     return this.turretPositionSetpointRadiansFromCenter;
   }
-
-  // public void setTeleopDefaultCommand() {
-  //   this.setDefaultCommand(
-  //       run(() -> {
-  //             setPositionSetpointImpl(turretPositionSetpointRadiansFromCenter, 0.0);
-  //           })
-  //           .withName("Turret Maintain Setpoint (default)"));
-  // }
 }

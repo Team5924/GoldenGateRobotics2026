@@ -192,8 +192,7 @@ public class TurretIOTalonFX implements TurretIO {
 
     inputs.turretPosition =
         BaseStatusSignal.getLatencyCompensatedValueAsDouble(turretPosition, turretVelocity)
-            / Constants.Turret.MOTOR_TO_MECHANISM
-            / Constants.Turret.MOTOR_TO_CANCODER;
+            / Constants.Turret.MOTOR_TO_MECHANISM;
     inputs.turretPositionRads = Units.rotationsToRadians(inputs.turretPosition);
 
     inputs.turretVelocityRadsPerSec = Units.rotationsToRadians(turretVelocity.getValueAsDouble());
@@ -224,7 +223,7 @@ public class TurretIOTalonFX implements TurretIO {
     inputs.cancoderPositionRotations = cancoderPositionRotations.getValueAsDouble();
 
     inputs.turretPositionCancoder =
-        (inputs.cancoderPositionRotations) / Constants.Turret.CANCODER_TO_MECHANISM;
+        inputs.cancoderPositionRotations / Constants.Turret.CANCODER_TO_MECHANISM;
   }
 
   @Override
@@ -315,19 +314,11 @@ public class TurretIOTalonFX implements TurretIO {
         rads, Constants.Turret.MIN_POSITION_RADS, Constants.Turret.MAX_POSITION_RADS);
   }
 
-  private double radsToMotorPosition(double rads) { // TODO: umm double check!!
-    return rads
-        / Math.PI
-        / 2
-        * Constants.Turret.MOTOR_TO_MECHANISM
-        * Constants.Turret.MOTOR_TO_CANCODER;
+  private double radsToMotorPosition(double rads) {
+    return Units.radiansToRotations(rads) * Constants.Turret.MOTOR_TO_MECHANISM;
   }
 
-  private double motorPositionToRads(double motorPosition) { // TODO: double check this too!!!
-    return motorPosition
-        / Constants.Turret.MOTOR_TO_MECHANISM
-        / Constants.Turret.MOTOR_TO_CANCODER
-        * Math.PI
-        * 2;
+  private double motorPositionToRads(double motorPosition) {
+    return Units.rotationsToRadians(motorPosition) / Constants.Turret.MOTOR_TO_MECHANISM;
   }
 }
