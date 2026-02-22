@@ -24,7 +24,6 @@ import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -192,6 +191,7 @@ public final class Constants {
           new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(60)
             .withStatorCurrentLimit(60)
+            .withSupplyCurrentLimitEnable(true)
             .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
           new MotorOutputConfigs()
@@ -219,7 +219,7 @@ public final class Constants {
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
       new FeedbackConfigs()
         .withFeedbackRemoteSensorID(Constants.ShooterHood.CANCODER_ID)
-        .withFeedbackRotorOffset(Constants.ShooterHood.CANCODER_ABSOLUTE_OFFSET)
+        .withFeedbackRotorOffset(-Constants.ShooterHood.CANCODER_ABSOLUTE_OFFSET)
         .withSensorToMechanismRatio(Constants.ShooterHood.CANCODER_TO_SPUR)
         .withRotorToSensorRatio(Constants.ShooterHood.MOTOR_TO_CANCODER)
         .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
