@@ -74,7 +74,7 @@ public class ClimbIOTalonFX implements ClimbIO {
 
   public ClimbIOTalonFX() {
     climbTalon = new TalonFX(Constants.Climb.CAN_ID, new CANBus(Constants.Climb.BUS));
-    climbCANCoder = new CANcoder(Constants.Climb.CANCODER_ID);
+    climbCANCoder = new CANcoder(Constants.Climb.CANCODER_ID, new CANBus(Constants.Climb.BUS));
 
     slot0Configs = new Slot0Configs();
     slot0Configs.kP = kP.get();
