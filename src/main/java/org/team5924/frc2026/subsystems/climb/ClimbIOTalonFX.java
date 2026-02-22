@@ -173,13 +173,14 @@ public class ClimbIOTalonFX implements ClimbIO {
             / Constants.Climb.CANCODER_TO_MECHANISM;
   }
 
+  @Override
   public void periodicUpdates() {
     updateLoggedTunableNumbers();
   }
 
   private void updateLoggedTunableNumbers() {
     LoggedTunableNumber.ifChanged(
-        0,
+        hashCode(),
         () -> {
           slot0Configs.kP = kP.get();
           slot0Configs.kI = kI.get();
