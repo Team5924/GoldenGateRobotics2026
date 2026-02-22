@@ -60,9 +60,9 @@ public class RobotContainer {
   //   private final SuperShooter shooter;
   //   private final ShooterHood shooterHood;
   //   private final ShooterRoller shooterRoller;
-//   private final Intake intakeSystem;
-//   private final Hopper hopperSystem;
-//   private final Indexer indexerSystem;
+  private final Intake intakeSystem;
+  private final Hopper hopperSystem;
+  private final Indexer indexerSystem;
 
   // private final ExampleSystem exampleSystem;
   // private final ExampleRoller exampleRoller;
@@ -96,9 +96,9 @@ public class RobotContainer {
         // shooter = new SuperShooter(shooterRoller, shooterHood);
 
 
-        // intakeSystem = new Intake(new IntakeIOKrakenFOC());
-        // hopperSystem = new Hopper(new HopperKrakenFOC());
-        // indexerSystem = new Indexer(new IndexerIOTalonFX(), null);
+        intakeSystem = new Intake(new IntakeIOKrakenFOC());
+        hopperSystem = new Hopper(new HopperKrakenFOC());
+        indexerSystem = new Indexer(new IndexerIOTalonFX(), null);
         break;
 
       case SIM:
@@ -124,9 +124,9 @@ public class RobotContainer {
 
         // shooterHood = new ShooterHood(new ShooterHoodIOSim());
         // shooterRoller = new ShooterRoller(new ShooterRollerIOSim(), new BeamBreakIO() {});
-        // intakeSystem = new Intake(new IntakeIOSim());
-        // hopperSystem = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
-        // indexerSystem = new Indexer(new IndexerIO() {}, null);
+        intakeSystem = new Intake(new IntakeIOSim());
+        hopperSystem = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
+        indexerSystem = new Indexer(new IndexerIO() {}, null);
         break;
 
       default:
@@ -144,54 +144,54 @@ public class RobotContainer {
         // shooterRoller = new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {});
 
 
-        // intakeSystem = new Intake(new IntakeIO() {});
-        // hopperSystem = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
-        // indexerSystem = new Indexer(new IndexerIO() {}, null);
+        intakeSystem = new Intake(new IntakeIO() {});
+        hopperSystem = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
+        indexerSystem = new Indexer(new IndexerIO() {}, null);
         break;
     }
 
     // Auto commands
-    // NamedCommands.registerCommand(
-    //     "Run Shooter",
-    //     Commands.runOnce(
-    //         () -> {
-    //           shooter.setGoalState(ShooterState.AUTO_SHOOTING);
-    //           // AutoScoreCommands.autoScore(drive, shooter);
-    //         }));
+    NamedCommands.registerCommand(
+        "Run Shooter",
+        Commands.runOnce(
+            () -> {
+              // shooter.setGoalState(ShooterState.AUTO_SHOOTING);
+              // AutoScoreCommands.autoScore(drive, shooter);
+            }));
 
-    // NamedCommands.registerCommand(
-    //     "Run L1 Climb",
-    //     Commands.runOnce(
-    //         () -> {
-    //           // add once climb is figured out
-    //         }));
+    NamedCommands.registerCommand(
+        "Run L1 Climb",
+        Commands.runOnce(
+            () -> {
+              // add once climb is figured out
+            }));
 
     // TODO: Uncomment when intake subsystem is enabled
-    // NamedCommands.registerCommand(
-    //     "Run Intake",
-    //     Commands.runOnce(
-    //         () -> {
-    //           intake.setGoalState(IntakeState.INTAKE);
-    //         }));
+    NamedCommands.registerCommand(
+        "Run Intake",
+        Commands.runOnce(
+            () -> {
+              // intake.setGoalState(IntakeState.INTAKE);
+            }));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // // Set up SysId routines
-    // autoChooser.addOption(
-    //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    // autoChooser.addOption(
-    //     "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    // autoChooser.addOption(
-    //     "Drive SysId (Quasistatic Forward)",
-    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    // autoChooser.addOption(
-    //     "Drive SysId (Quasistatic Reverse)",
-    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    // autoChooser.addOption(
-    //     "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    // autoChooser.addOption(
-    //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addOption(
+        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Forward)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Reverse)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -290,50 +290,50 @@ public class RobotContainer {
     // .onFalse(Commands.runOnce(() ->
     // exampleRoller.setGoalState(ExampleRollerState.IDLE)));
 
-    // operatorController
-    //     .leftTrigger()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               intakeSystem.setGoalState(IntakeState.INTAKE);
-    //             }));
-    // operatorController
-    //     .leftTrigger()
-    //     .onFalse(
-    //         Commands.runOnce(
-    //             () -> {
-    //               intakeSystem.setGoalState(IntakeState.OFF);
-    //             }));
+    operatorController
+        .leftTrigger()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  intakeSystem.setGoalState(IntakeState.INTAKE);
+                }));
+    operatorController
+        .leftTrigger()
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  intakeSystem.setGoalState(IntakeState.OFF);
+                }));
 
-    // operatorController
-    //     .leftBumper()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               hopperSystem.setGoalState(HopperState.ON);
-    //             }));
-    // operatorController
-    //     .leftBumper()
-    //     .onFalse(
-    //         Commands.runOnce(
-    //             () -> {
-    //               hopperSystem.setGoalState(HopperState.OFF);
-    //             }));
+    operatorController
+        .leftBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  hopperSystem.setGoalState(HopperState.ON);
+                }));
+    operatorController
+        .leftBumper()
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  hopperSystem.setGoalState(HopperState.OFF);
+                }));
 
-    // operatorController
-    //     .rightTrigger()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               indexerSystem.setGoalState(IndexerState.INDEXING);
-    //             }));
-    // operatorController
-    //     .rightTrigger()
-    //     .onFalse(
-    //         Commands.runOnce(
-    //             () -> {
-    //               indexerSystem.setGoalState(IndexerState.OFF);
-    //             }));
+    operatorController
+        .rightTrigger()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  indexerSystem.setGoalState(IndexerState.INDEXING);
+                }));
+    operatorController
+        .rightTrigger()
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  indexerSystem.setGoalState(IndexerState.OFF);
+                }));
   }
 
   /**
