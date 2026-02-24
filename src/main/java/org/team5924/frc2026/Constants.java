@@ -271,11 +271,11 @@ public final class Constants {
   
     public static final double SIM_MOI = 0.001;
 
-    public static final double MIN_POSITION_MULTI = -0.8; // rotations
-    public static final double MAX_POSITION_MULTI = 0.8; // rotations
+    public static final double MIN_POSITION_MULTI = -0.4; // rotations
+    public static final double MAX_POSITION_MULTI = 0.4; // rotations
 
-    public static final double MIN_POSITION_RADS = Math.PI * MIN_POSITION_MULTI;
-    public static final double MAX_POSITION_RADS = Math.PI * MAX_POSITION_MULTI;
+    public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
+    public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
 
     public static final double JOYSTICK_DEADZONE = 0.05;
 
@@ -300,15 +300,7 @@ public final class Constants {
         .withMotorOutput(
           new MotorOutputConfigs()
             .withInverted(InvertedValue.Clockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake))
-        .withSoftwareLimitSwitch(
-          new SoftwareLimitSwitchConfigs()
-            .withForwardSoftLimitThreshold(
-              0.5 * MIN_POSITION_MULTI) // motor? rotations
-            .withReverseSoftLimitThreshold(
-              0.5 * MAX_POSITION_MULTI) // motor? rotations
-            .withForwardSoftLimitEnable(true)
-            .withReverseSoftLimitEnable(true));
+            .withNeutralMode(NeutralModeValue.Brake));
 
     public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
       new OpenLoopRampsConfigs()
@@ -321,6 +313,15 @@ public final class Constants {
         .withDutyCycleClosedLoopRampPeriod(0.02)
         .withTorqueClosedLoopRampPeriod(0.02)
         .withVoltageClosedLoopRampPeriod(0.02);
+
+    public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
+      new SoftwareLimitSwitchConfigs()
+        .withForwardSoftLimitThreshold(
+          MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
+        .withReverseSoftLimitThreshold(
+          MAX_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
+        .withForwardSoftLimitEnable(true)
+        .withReverseSoftLimitEnable(true);
 
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
       new FeedbackConfigs()

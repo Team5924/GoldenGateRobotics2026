@@ -50,7 +50,9 @@ public class Turret extends SubsystemBase {
     MOVING(() -> 0.0),
 
     // voltage at which the example subsystem motor moves when controlled by the operator
-    MANUAL(new LoggedTunableNumber("Turret/OperatorVoltage", 1.0));
+    MANUAL(new LoggedTunableNumber("Turret/OperatorVoltage", 1.0)),
+
+    ZEFO(() -> 0.0);
 
     @Getter private final DoubleSupplier rads;
 
@@ -102,11 +104,9 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("Turret/ShouldContinue", shouldContinue);
 
     handleCurrentState();
-    handleManualState();
 
     turretMotorDisconnected.set(!inputs.turretMotorConnected);
 
-    // prevents error spam
     if (!inputs.turretMotorConnected && wasTurretMotorConnected) {
       Elastic.sendNotification(turretMotorDisconnectedNotification);
     }

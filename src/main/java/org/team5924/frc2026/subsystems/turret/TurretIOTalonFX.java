@@ -111,15 +111,16 @@ public class TurretIOTalonFX implements TurretIO {
     motionMagicConfigs.MotionMagicJerk = motionJerk.get();
 
     // Apply Configs
-    StatusCode[] statusArray = new StatusCode[7];
+    StatusCode[] statusArray = new StatusCode[8];
 
     statusArray[0] = turretTalonConfig.apply(Constants.Turret.CONFIG);
-    statusArray[1] = turretTalonConfig.apply(slot0Configs);
-    statusArray[2] = turretTalonConfig.apply(motionMagicConfigs);
-    statusArray[3] = turretTalonConfig.apply(Constants.Turret.OPEN_LOOP_RAMPS_CONFIGS);
-    statusArray[4] = turretTalonConfig.apply(Constants.Turret.CLOSED_LOOP_RAMPS_CONFIGS);
-    statusArray[5] = turretTalonConfig.apply(Constants.Turret.FEEDBACK_CONFIGS);
-    statusArray[6] = turretCANCoder.getConfigurator().apply(Constants.Turret.CANCODER_CONFIG);
+    statusArray[1] = turretTalonConfig.apply(Constants.Turret.OPEN_LOOP_RAMPS_CONFIGS);
+    statusArray[2] = turretTalonConfig.apply(Constants.Turret.CLOSED_LOOP_RAMPS_CONFIGS);
+    statusArray[3] = turretTalonConfig.apply(Constants.Turret.SOFTWARE_LIMIT_CONFIGS);
+    statusArray[4] = turretTalonConfig.apply(Constants.Turret.FEEDBACK_CONFIGS);
+    statusArray[5] = turretTalonConfig.apply(motionMagicConfigs);
+    statusArray[6] = turretTalonConfig.apply(slot0Configs);
+    statusArray[7] = turretCANCoder.getConfigurator().apply(Constants.Turret.CANCODER_CONFIG);
 
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
@@ -232,7 +233,7 @@ public class TurretIOTalonFX implements TurretIO {
 
   private void updateLoggedTunableNumbers() {
     LoggedTunableNumber.ifChanged(
-        0,
+        hashCode(),
         () -> {
           slot0Configs.kP = kP.get();
           slot0Configs.kI = kI.get();
@@ -314,10 +315,10 @@ public class TurretIOTalonFX implements TurretIO {
   }
 
   private double radsToMotorPosition(double rads) {
-    return Units.radiansToRotations(rads); // * Constants.Turret.MOTOR_TO_MECHANISM;
+    return Units.radiansToRotations(rads * Constants.Turret.MOTOR_TO_MECHANISM);
   }
 
   private double motorPositionToRads(double motorPosition) {
-    return Units.rotationsToRadians(motorPosition); // / Constants.Turret.MOTOR_TO_MECHANISM;
+    return Units.rotationsToRadians(motorPosition / Constants.Turret.MOTOR_TO_MECHANISM);
   }
 }
