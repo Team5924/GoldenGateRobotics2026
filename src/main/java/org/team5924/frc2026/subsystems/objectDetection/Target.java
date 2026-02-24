@@ -17,6 +17,8 @@
 package org.team5924.frc2026.subsystems.objectDetection;
 
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import java.io.Serializable;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -26,6 +28,7 @@ public class Target implements Serializable {
   public double distanceToRobotFeet;
   public PhotonTrackedTarget fuel;
   public Transform2d robotToFuel;
+  public Transform2d robotToFuelFeet;
 
   public Target() {
     fuelID = 0;
@@ -35,17 +38,26 @@ public class Target implements Serializable {
   }
 
   public Target(
-      int fuelID, double distanceToRobot, PhotonTrackedTarget fuel, Transform2d fuelToRobot) {
+      int fuelID, double distanceToRobot, PhotonTrackedTarget fuel, Transform2d robotToFuel) {
     this.fuelID = fuelID;
     this.distanceToRobotFeet = distanceToRobot;
     this.fuel = fuel;
-    this.robotToFuel = fuelToRobot;
+    this.robotToFuel = robotToFuel;
+    robotToFuelFeet =
+        new Transform2d(
+            Units.metersToFeet(robotToFuel.getX()),
+            Units.metersToFeet(robotToFuel.getY()),
+            robotToFuel.getRotation());
+  }
+
+  public Translation2d getRobotOffset() {
+    return new Translation2d(robotToFuel.getX(), robotToFuel.getX());
   }
 
   public void logTarget(String logPath) {
     Logger.recordOutput(logPath + "/distanceFeet", distanceToRobotFeet);
     Logger.recordOutput(logPath + "/fuelID", fuelID);
-    Logger.recordOutput(logPath + "/fuelToRobotTransform2d", robotToFuel);
+    Logger.recordOutput(logPath + "/robotToFuelTransform2d", robotToFuel);
   }
 
   @Override

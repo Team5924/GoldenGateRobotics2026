@@ -70,11 +70,12 @@ public final class Constants {
   public final class ObjectDetection {
     public static final String CAMERA_NAME = "objectDetection";
     public static final int FUEL_GROUP_MIN = 4; // Subject to Change
-    public static final double FUEL_CENTER_DISTANCE_THRESHHOLD_INCHES = 4 + 5.91; //Subject to Change
-    public static final double PATHFINDING_ANGLE_DEGREES = 45; //Subject to Change
+    public static final double FUEL_DIAMETER_INCHES = 5.91;
+    public static final double FUEL_CENTER_DISTANCE_THRESHOLD_INCHES = 4 + FUEL_DIAMETER_INCHES; //Subject to Change
     public static final double CAMERA_OFFSET_FROM_ROBOT_FRAME_METERS = Units.inchesToMeters(-8.25); //TODO: update with actual cad; - means camera in robot frame, + means out;
-    public static final double FUEL_CENTER_TO_FLOOR_METERS = Units.inchesToMeters(5.91 / 2.0);
-    public static final double CAMERA_TO_FUEL_CENTER_HEIGHT_METERS = Units.inchesToMeters(19.0) - FUEL_CENTER_TO_FLOOR_METERS; //TODO: Update with actual cad
+    public static final double FLOOR_TO_FUEL_CENTER_METERS = Units.inchesToMeters(FUEL_DIAMETER_INCHES / 2.0);
+    public static final double FLOOR_TO_CAMERA_METERS = Units.inchesToMeters(19.0); //TODO: Update with actual cad
+    public static final double FUEL_CENTER_TO_CAMERA_METERS = FLOOR_TO_CAMERA_METERS - FLOOR_TO_FUEL_CENTER_METERS;
     public static final double CAMERA_PITCH_RADS = Units.degreesToRadians(-20.0); //TODO: Update with actual cad
   }
 

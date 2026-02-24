@@ -66,11 +66,8 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
         String logPath =
             "Object Detection Inputs/Target Group " + groupIndex + "/Target " + target.fuelID + "/";
         Logger.recordOutput(
-            logPath + "distanceToRobot",
-            Units.metersToFeet(ObjectDetectionUtils.getRobotToTargetDistance(target.fuel)));
-        Logger.recordOutput(
-            logPath + "cameraToTarget",
-            ObjectDetectionUtils.getRobotToTargetTranslation2d(target.fuel));
+            logPath + "distanceToRobotFeet", Units.metersToFeet(target.distanceToRobotFeet));
+        Logger.recordOutput(logPath + "cameraToTargetFeet", target.robotToFuelFeet);
       }
     }
   }
@@ -95,7 +92,8 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
         // and find the smallest distance
         // checks for case -1, which results in needing the creation of a new group (fuel isn't
         // close to any previously compared fuel)
-        int closestGroupIndex = ObjectDetectionUtils.getClosestGroupIndex(fuelTarget, fuelGroups);
+        int closestGroupIndex =
+            ObjectDetectionUtils.optimizedGetClosestGroupIndex(fuelTarget, fuelGroups);
 
         switch (closestGroupIndex) {
           case -1:
