@@ -95,7 +95,7 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
         // and find the smallest distance
         // checks for case -1, which results in needing the creation of a new group (fuel isn't
         // close to any previously compared fuel)
-        int closestGroupIndex = ObjectDetectionUtils.getClosestGroupIndex(target, fuelGroups);
+        int closestGroupIndex = ObjectDetectionUtils.getClosestGroupIndex(fuelTarget, fuelGroups);
 
         switch (closestGroupIndex) {
           case -1:

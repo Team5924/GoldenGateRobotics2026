@@ -25,14 +25,16 @@ import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.team5924.frc2026.Constants;
 
+
+/* Handles Math & Other Util Functions for Object Detection */
 public class ObjectDetectionUtils {
   private ObjectDetectionUtils() {}
 
   // Returns the distance from a target to the robot
   public static double getCameraToTargetDistance(PhotonTrackedTarget target) {
     return PhotonUtils.calculateDistanceToTargetMeters(
-        Constants.ObjectDetection.CAMERA_TO_FLOOR_HEIGHT_METERS,
-        Constants.ObjectDetection.FUEL_TOP_TO_FLOOR_METERS,
+        Constants.ObjectDetection.CAMERA_TO_FUEL_CENTER_HEIGHT_METERS,
+        Constants.ObjectDetection.FUEL_CENTER_TO_FLOOR_METERS,
         Constants.ObjectDetection.CAMERA_PITCH_RADS,
         Units.degreesToRadians(target.getPitch()));
   }
@@ -40,7 +42,7 @@ public class ObjectDetectionUtils {
   public static double getRobotToTargetDistance(PhotonTrackedTarget target) {
     return Math.sqrt(
             Math.pow(getCameraToTargetDistance(target), 2.0)
-                - Math.pow(Constants.ObjectDetection.CAMERA_TO_FLOOR_HEIGHT_METERS, 2.0))
+                - Math.pow(Constants.ObjectDetection.CAMERA_TO_FUEL_CENTER_HEIGHT_METERS, 2.0))
         - Constants.ObjectDetection.CAMERA_OFFSET_FROM_ROBOT_FRAME_METERS;
   }
 
@@ -57,11 +59,10 @@ public class ObjectDetectionUtils {
   }
 
   // Returns the distance between 2 targets.
-  public static double getTargetToTargetDistanceInches(
-      PhotonTrackedTarget target, PhotonTrackedTarget comparison) {
+  public static double getTargetToTargetDistanceInches(Target target, Target comparison) {
 
-    Translation2d targetTranslation2d = getRobotToTargetTranslation2d(target);
-    Translation2d comparisonTranslation2d = getRobotToTargetTranslation2d(comparison);
+    Translation2d targetTranslation2d = getRobotToTargetTranslation2d(target.fuel);
+    Translation2d comparisonTranslation2d = getRobotToTargetTranslation2d(comparison.fuel);
 
     return Units.metersToInches(targetTranslation2d.getDistance(comparisonTranslation2d));
   }
@@ -73,7 +74,7 @@ public class ObjectDetectionUtils {
   }
 
   // Finds the Index of the closest group compared to a another fuel
-  public static int getClosestGroupIndex(PhotonTrackedTarget target, List<TargetGroup> groups) {
+  public static int getClosestGroupIndex(Target target, List<TargetGroup> groups) {
     double lowestDistance =
         Double
             .POSITIVE_INFINITY; // arbitrary large number so no matter what the first lowestDistance
@@ -83,13 +84,12 @@ public class ObjectDetectionUtils {
     // target distance), returns a known number
     for (int i = 0; i < groups.size(); i++) {
       for (Target comparisonFuel : groups.get(i).targets) {
-        double targetDistance =
-            Units.metersToInches(getTargetToTargetDistanceInches(target, comparisonFuel.fuel));
+        double targetDistance = getTargetToTargetDistanceInches(target, comparisonFuel);
 
         // if (timer.get() >= 0.5) {
         // logComparison(target, comparisonFuel, groups, i, targetDistance);
         // }
-        if (targetDistance <= Constants.ObjectDetection.DISTANCE_THRESHHOLD_INCHES
+        if (targetDistance <= Constants.ObjectDetection.FUEL_CENTER_DISTANCE_THRESHHOLD_INCHES
             && lowestDistance > targetDistance) {
           lowestDistance = targetDistance;
           closestGroupIndex = i;
