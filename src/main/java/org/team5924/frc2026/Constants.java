@@ -304,9 +304,9 @@ public final class Constants {
         .withSoftwareLimitSwitch(
           new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitThreshold(
-              0.5 * MIN_POSITION_MULTI) // motor rotations
+              0.5 * MIN_POSITION_MULTI) // motor? rotations
             .withReverseSoftLimitThreshold(
-              0.5 * MAX_POSITION_MULTI) // motor rotations
+              0.5 * MAX_POSITION_MULTI) // motor? rotations
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true));
 
