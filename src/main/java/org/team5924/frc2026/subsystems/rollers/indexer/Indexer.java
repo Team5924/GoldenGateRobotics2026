@@ -20,6 +20,7 @@ import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.littletonrobotics.junction.Logger;
+import org.team5924.frc2026.IndexerIOTalonFX;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
@@ -49,7 +50,11 @@ public class Indexer extends GenericRollerSystem<Indexer.IndexerState> {
     this.beamBreakIO = beamBreakIO;
   }
 
-  public void setGoalState(IndexerState goalState) {
+  public Indexer(IndexerIOTalonFX indexerIOTalonFX) {
+    //TODO Auto-generated constructor stub
+}
+
+public void setGoalState(IndexerState goalState) {
     this.goalState = goalState;
     RobotState.getInstance().setIndexerState(goalState);
   }
