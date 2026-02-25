@@ -105,7 +105,7 @@ public class RobotContainer {
         shooterRoller =
             new ShooterRoller(
                 new ShooterRollerIOKrakenFOC(),
-                new BeamBreakIOHardware(Constants.ShooterRollerLeader.BEAM_BREAK_PORT));
+                new BeamBreakIOHardware(Constants.ShooterRollerLeaderLeft.BEAM_BREAK_PORT));
         intake = new Intake(new IntakeIOKrakenFOC());
         hopper = new Hopper(new HopperKrakenFOC());
         turret = new Turret(new TurretIOTalonFX());
