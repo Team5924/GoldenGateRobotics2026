@@ -102,28 +102,28 @@ public class RobotContainer {
                 new ModuleIOTalonFXSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
                 driveSimulation::setSimulationWorldPose);
         vision =
-        new Vision(
-            drive::addVisionMeasurement,
-            new VisionIOPhotonVisionSim(
-                VisionConstants.FRONT_LEFT_NAME,
-                VisionConstants.FRONT_LEFT_TRANSFORM,
-                VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
-                drive::getPose),
-            new VisionIOPhotonVisionSim(
-                VisionConstants.FRONT_RIGHT_NAME,
-                VisionConstants.FRONT_RIGHT_TRANSFORM,
-                VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
-                drive::getPose),
-            new VisionIOPhotonVisionSim(
-                VisionConstants.BACK_LEFT_NAME,
-                VisionConstants.BACK_LEFT_TRANSFORM,
-                VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
-                drive::getPose),
-            new VisionIOPhotonVisionSim(
-                VisionConstants.BACK_RIGHT_NAME,
-                VisionConstants.BACK_RIGHT_TRANSFORM,
-                VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
-                drive::getPose));
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.FRONT_LEFT_NAME,
+                    VisionConstants.FRONT_LEFT_TRANSFORM,
+                    VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
+                    drive::getPose),
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.FRONT_RIGHT_NAME,
+                    VisionConstants.FRONT_RIGHT_TRANSFORM,
+                    VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
+                    drive::getPose),
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.BACK_LEFT_NAME,
+                    VisionConstants.BACK_LEFT_TRANSFORM,
+                    VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
+                    drive::getPose),
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.BACK_RIGHT_NAME,
+                    VisionConstants.BACK_RIGHT_TRANSFORM,
+                    VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
+                    drive::getPose));
         // exampleSystem = new ExampleSystem(new ExampleSystemIOSim());
         // exampleRoller = new ExampleRoller(new ExampleRollerIOSim());
         break;
