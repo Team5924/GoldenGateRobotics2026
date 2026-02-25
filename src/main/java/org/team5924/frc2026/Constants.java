@@ -158,6 +158,8 @@ public final class Constants {
   public final class ShooterHood {
     public static final int CAN_ID = 0; // TODO: Update id
     public static final String BUS = "rio";
+    public static final double REDUCTION = 1.0;
+    public static final double SIM_MOI = 0.001;
 
     public static final double MOTOR_TO_CANCODER = (40.0 / 12.0) * (24.0 / 15.0);
     public static final double CANCODER_TO_SPUR = 1.0;
