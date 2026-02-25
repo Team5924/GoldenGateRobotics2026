@@ -158,8 +158,6 @@ public final class Constants {
   public final class ShooterHood {
     public static final int CAN_ID = 0; // TODO: Update id
     public static final String BUS = "rio";
-    public static final double REDUCTION = 1.0;
-    public static final double SIM_MOI = 0.001;
 
     public static final double MOTOR_TO_CANCODER = (40.0 / 12.0) * (24.0 / 15.0);
     public static final double CANCODER_TO_SPUR = 1.0;
@@ -174,7 +172,7 @@ public final class Constants {
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
 
-    public static final double JOYSTICK_DEADZONE = 0.01;
+    public static final double JOYSTICK_DEADZONE = 0.05;
 
     public static final double EPSILON_RADS = Units.degreesToRadians(2.0);
 
@@ -196,13 +194,7 @@ public final class Constants {
         .withMotorOutput(
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive) // TODO: test this direction
-            .withNeutralMode(NeutralModeValue.Brake))
-        .withSoftwareLimitSwitch(
-          new SoftwareLimitSwitchConfigs()
-            .withForwardSoftLimitThreshold(MOTOR_TO_MECHANISM * MIN_POSITION_MULTI) // TODO: get correct value for rotations
-            .withReverseSoftLimitThreshold(MOTOR_TO_MECHANISM * MAX_POSITION_MULTI) // TODO: get correct value for rotations
-            .withForwardSoftLimitEnable(true)
-            .withReverseSoftLimitEnable(true));
+            .withNeutralMode(NeutralModeValue.Brake));
 
     public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
       new OpenLoopRampsConfigs()
@@ -215,6 +207,13 @@ public final class Constants {
         .withDutyCycleClosedLoopRampPeriod(0.02)
         .withTorqueClosedLoopRampPeriod(0.02)
         .withVoltageClosedLoopRampPeriod(0.02);
+
+    public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
+      new SoftwareLimitSwitchConfigs()
+            .withForwardSoftLimitThreshold(MOTOR_TO_MECHANISM * MIN_POSITION_MULTI) // TODO: get correct value for rotations
+            .withReverseSoftLimitThreshold(MOTOR_TO_MECHANISM * MAX_POSITION_MULTI) // TODO: get correct value for rotations
+            .withForwardSoftLimitEnable(true)
+            .withReverseSoftLimitEnable(true);
 
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
       new FeedbackConfigs()
