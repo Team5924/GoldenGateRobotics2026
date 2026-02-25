@@ -45,6 +45,14 @@ import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIO;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOTalonFX;
+import org.team5924.frc2026.subsystems.rollers.hopper.Hopper;
+import org.team5924.frc2026.subsystems.rollers.hopper.HopperIO;
+import org.team5924.frc2026.subsystems.rollers.hopper.HopperKrakenFOC;
+import org.team5924.frc2026.subsystems.rollers.indexer.Indexer;
+import org.team5924.frc2026.subsystems.rollers.intake.Intake;
+import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
+import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOKrakenFOC;
+import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOSim;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIO;
@@ -62,9 +70,9 @@ public class RobotContainer {
   private final Drive drive;
   private SwerveDriveSimulation driveSimulation = null;
   private final SuperShooter superShooter;
-  //   private final Hopper hopper;
-  //   private final Intake intake;
-  //   private final Indexer indexer;
+    private final Hopper hopper;
+    private final Intake intake;
+    // private final Indexer indexer;
 
   private final ShooterHood shooterHood;
   private final ShooterRoller shooterRoller;
@@ -98,10 +106,9 @@ public class RobotContainer {
             new ShooterRoller(
                 new ShooterRollerIOKrakenFOC(),
                 new BeamBreakIOHardware(Constants.ShooterRollerLeader.BEAM_BREAK_PORT));
+        intake = new Intake(new IntakeIOKrakenFOC());
+        hopper = new Hopper(new HopperKrakenFOC());
         turret = new Turret(new TurretIOTalonFX());
-        // intake = new Intake(new IntakeIOKrakenFOC());
-        // hopper = new Hopper(new HopperKrakenFOC());
-        // indexer = new Indexer(new IndexerIOTalonFX());
         break;
 
       case SIM:
@@ -120,8 +127,9 @@ public class RobotContainer {
 
         shooterHood = new ShooterHood(new ShooterHoodIOSim());
         shooterRoller = new ShooterRoller(new ShooterRollerIOSim(), new BeamBreakIO() {});
+        intake = new Intake(new IntakeIOSim());
+        hopper = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
         turret = new Turret(new TurretIOSim());
-        // intake = new Intake(new IntakeIO() {});
         break;
 
       default:
@@ -137,10 +145,10 @@ public class RobotContainer {
 
         shooterHood = new ShooterHood(new ShooterHoodIO() {});
         shooterRoller = new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {});
+        intake = new Intake(new IntakeIO() {});
+        hopper = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
         turret = new Turret(new TurretIO() {});
-        // hopper = new Hopper(new HopperIO() {});
-        // intake = new Intake(new IntakeIO() {});
-        // indexer = new Indexer(new IndexerIO() {});
+        // vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
         break;
     }
 

@@ -207,7 +207,6 @@ public final class Constants {
     public static final String BUS = "rio";
     public static final double REDUCTION = 16.0 / 30.0;
     public static final double SIM_MOI = 0.001;
-    public static final int BEAM_BREAK_PORT = 0;
 
     public static final TalonFXConfiguration CONFIG =
       new TalonFXConfiguration()
