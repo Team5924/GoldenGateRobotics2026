@@ -21,14 +21,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import lombok.Getter;
 import lombok.Setter;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.subsystems.SuperShooter.ShooterState;
-import org.team5924.frc2026.subsystems.exampleSystem.ExampleSystem.ExampleSystemState;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
-import org.team5924.frc2026.subsystems.rollers.exampleRoller.ExampleRoller.ExampleRollerState;
 import org.team5924.frc2026.subsystems.rollers.hopper.Hopper.HopperState;
 import org.team5924.frc2026.subsystems.rollers.indexer.Indexer.IndexerState;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
+import org.team5924.frc2026.subsystems.turret.Turret.TurretState;
 
 @Getter
 public class RobotState {
@@ -37,6 +37,10 @@ public class RobotState {
   public static RobotState getInstance() {
     if (instance == null) instance = new RobotState();
     return instance;
+  }
+
+  public static double getTime() {
+    return ((double) Logger.getTimestamp() * 1.0E-6);
   }
 
   Rotation2d gyroOffset = Rotation2d.kZero;
@@ -60,8 +64,8 @@ public class RobotState {
   @Getter @Setter private Rotation2d yawPosition = new Rotation2d();
   @Getter @Setter private double yawVelocityRadPerSec = 0.0;
 
-  /* ### Example Subsystem ### */
-  @Getter @Setter private ExampleSystemState exampleSystemState = ExampleSystemState.STOW;
+  // Turret
+  @Getter @Setter private TurretState turretState = TurretState.OFF;
 
   /* ### HopperState ### */
   @Getter @Setter private HopperState hopperState = HopperState.OFF;
@@ -72,13 +76,12 @@ public class RobotState {
   /*### Shooter Hood ### */
   @Getter @Setter private ShooterHoodState shooterHoodState = ShooterHoodState.OFF;
 
-  /* ### Example Roller ### */
-  @Getter @Setter private ExampleRollerState exampleRollerState = ExampleRollerState.IDLE;
-
   /* ### Intake ### */
   @Getter @Setter private IntakeState intakeState = IntakeState.OFF;
+
   /* ### Indexer ### */
   @Getter @Setter private IndexerState indexerState = IndexerState.OFF;
+
   /*### Shooter Roller ### */
   @Getter @Setter private ShooterRollerState shooterRollerState = ShooterRollerState.OFF;
 }

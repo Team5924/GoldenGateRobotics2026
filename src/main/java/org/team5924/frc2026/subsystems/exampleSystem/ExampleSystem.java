@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lombok.Getter;
 import org.littletonrobotics.junction.Logger;
-import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
@@ -38,7 +37,7 @@ public class ExampleSystem extends SubsystemBase {
     UP(new LoggedTunableNumber("ExampleSystem/Up", Math.toRadians(90))),
 
     // voltage at which the example subsystem motor moves when controlled by the operator
-    OPERATOR_CONTROL(new LoggedTunableNumber("ExampleSystem/OperatorVoltage", 4.5));
+    MANUAL(new LoggedTunableNumber("ExampleSystem/OperatorVoltage", 4.5));
 
     private final LoggedTunableNumber rads;
 
@@ -68,8 +67,9 @@ public class ExampleSystem extends SubsystemBase {
     Logger.processInputs("ExampleSystem", inputs);
 
     Logger.recordOutput("ExampleSystem/GoalState", goalState.toString());
-    Logger.recordOutput(
-        "ExampleSystem/CurrentState", RobotState.getInstance().getExampleSystemState().toString());
+    // Logger.recordOutput(
+    //     "ExampleSystem/CurrentState",
+    // RobotState.getInstance().getExampleSystemState().toString());
     Logger.recordOutput("ExampleSystem/TargetRads", goalState.rads.getAsDouble());
 
     exampleMotorDisconnected.set(!inputs.exampleMotorConnected);
@@ -88,15 +88,15 @@ public class ExampleSystem extends SubsystemBase {
   public void setGoalState(ExampleSystemState goalState) {
     this.goalState = goalState;
     switch (goalState) {
-      case OPERATOR_CONTROL:
-        RobotState.getInstance().setExampleSystemState(ExampleSystemState.OPERATOR_CONTROL);
+      case MANUAL:
+        // RobotState.getInstance().setExampleSystemState(ExampleSystemState.MANUAL);
         break;
       case MOVING:
         DriverStation.reportError(
             "Example Subsystem: MOVING is an invalid goal state; it is a transition state!!", null);
         break;
       default:
-        RobotState.getInstance().setExampleSystemState(ExampleSystemState.MOVING);
+        // RobotState.getInstance().setExampleSystemState(ExampleSystemState.MOVING);
         io.setPosition(goalState.rads.getAsDouble());
         break;
     }
