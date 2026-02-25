@@ -19,15 +19,16 @@ package org.team5924.frc2026.subsystems.rollers.indexer;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
+import org.team5924.frc2026.subsystems.sensors.BeamBreakIO;
+import org.team5924.frc2026.subsystems.sensors.BeamBreakIOInputsAutoLogged;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
-public class Indexer
-    extends GenericRollerSystem<
-        Indexer.IndexerState, IndexerIOInputs, IndexerIO, IndexerIOInputsAutoLogged> {
+public class Indexer extends GenericRollerSystem<Indexer.IndexerState> {
   @RequiredArgsConstructor
   @Getter
   public enum IndexerState implements VoltageState {
@@ -39,12 +40,24 @@ public class Indexer
 
   private IndexerState goalState = IndexerState.OFF;
 
-  public Indexer(IndexerIO indexerIO) {
-    super("Indexer", indexerIO, new IndexerIOInputsAutoLogged());
+  // Indexer Beam Break
+  private final BeamBreakIO beamBreakIO;
+  private final BeamBreakIOInputsAutoLogged beamBreakInputs = new BeamBreakIOInputsAutoLogged();
+
+  public Indexer(IndexerIO indexerIO, BeamBreakIO beamBreakIO) {
+    super("Indexer", indexerIO);
+    this.beamBreakIO = beamBreakIO;
   }
 
   public void setGoalState(IndexerState goalState) {
     this.goalState = goalState;
     RobotState.getInstance().setIndexerState(goalState);
+  }
+
+  @Override
+  public void periodic() {
+    super.periodic();
+    beamBreakIO.updateInputs(beamBreakInputs);
+    Logger.processInputs("Indexer/BeamBreak", beamBreakInputs);
   }
 }

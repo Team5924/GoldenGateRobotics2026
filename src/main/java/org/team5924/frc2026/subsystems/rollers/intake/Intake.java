@@ -25,9 +25,7 @@ import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.Volta
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
-public class Intake
-    extends GenericRollerSystem<
-        Intake.IntakeState, IntakeIOInputs, IntakeIO, IntakeIOInputsAutoLogged> {
+public class Intake extends GenericRollerSystem<Intake.IntakeState> {
 
   @RequiredArgsConstructor
   @Getter
@@ -35,13 +33,14 @@ public class Intake
     OFF(() -> 0.0),
     SPITOUT(new LoggedTunableNumber("Intake/SpitOut", -12.0)),
     INTAKE(new LoggedTunableNumber("Intake/Intake", 12.0));
+
     private final DoubleSupplier voltageSupplier;
   }
 
   private IntakeState goalState = IntakeState.OFF;
 
   public Intake(IntakeIO io) {
-    super("Intake", io, new IntakeIOInputsAutoLogged());
+    super("Intake", io);
   }
 
   public void setGoalState(IntakeState goalState) {
