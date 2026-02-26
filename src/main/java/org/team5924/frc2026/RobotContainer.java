@@ -142,22 +142,22 @@ public class RobotContainer {
                     VisionConstants.FRONT_LEFT_NAME,
                     VisionConstants.FRONT_LEFT_TRANSFORM,
                     VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
-                    drive::getPose),
+                    driveSimulation::getSimulatedDriveTrainPose),
                 new VisionIOPhotonVisionSim(
                     VisionConstants.FRONT_RIGHT_NAME,
                     VisionConstants.FRONT_RIGHT_TRANSFORM,
                     VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
-                    drive::getPose),
+                    driveSimulation::getSimulatedDriveTrainPose),
                 new VisionIOPhotonVisionSim(
                     VisionConstants.BACK_LEFT_NAME,
                     VisionConstants.BACK_LEFT_TRANSFORM,
                     VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
-                    drive::getPose),
+                    driveSimulation::getSimulatedDriveTrainPose),
                 new VisionIOPhotonVisionSim(
                     VisionConstants.BACK_RIGHT_NAME,
                     VisionConstants.BACK_RIGHT_TRANSFORM,
                     VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
-                    drive::getPose));
+                    driveSimulation::getSimulatedDriveTrainPose));
 
         shooterHood = new ShooterHood(new ShooterHoodIOSim());
         shooterRoller = new ShooterRoller(new ShooterRollerIOSim(), new BeamBreakIO() {});

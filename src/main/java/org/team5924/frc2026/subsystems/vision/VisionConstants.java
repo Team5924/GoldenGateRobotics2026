@@ -34,7 +34,7 @@ public class VisionConstants {
   public static final double CAMERA_X = Units.inchesToMeters(12.5);
   public static final double CAMERA_Y = Units.inchesToMeters(13.75);
   public static final double CAMERA_Z_RIGHT = Units.inchesToMeters(9.5);
-  public static final double CAMERA_Z_LEFT = Units.inchesToMeters(9 + 9 / 16);
+  public static final double CAMERA_Z_LEFT = Units.inchesToMeters(9.0 + 9.0 / 16.0);
   public static final double CAMERA_PITCH = Math.toRadians(45.0);
 
   // +x = forward, +y = left, +z = up
@@ -49,7 +49,7 @@ public class VisionConstants {
           new Rotation3d(0.0, CAMERA_PITCH, -Math.PI / 4));
   public static final Transform3d BACK_LEFT_TRANSFORM =
       new Transform3d(
-          new Translation3d(-14.25, 13, CAMERA_Z_LEFT),
+          new Translation3d(Units.inchesToMeters(-14.25), Units.inchesToMeters(13.0), CAMERA_Z_LEFT),
           new Rotation3d(0.0, CAMERA_PITCH, 3 * Math.PI / 4));
   public static final Transform3d BACK_RIGHT_TRANSFORM =
       new Transform3d(
@@ -60,7 +60,7 @@ public class VisionConstants {
   //     new ArrayList<Integer>(List.of());
 
   // https://www.arducam.com/100fps-global-shutter-color-usb-camera-board-1mp-ov9782-uvc-webcam-module-with-low-distortion-m12-lens-without-microphones-for-computer-laptop-android-device-and-raspberry-pi-arducam.html
-  public static final SimCameraProperties SIM_ARDUCAM_PROPERIES =
+  public static final SimCameraProperties SIM_ARDUCAM_PROPERTIES =
       new SimCameraProperties()
           .setCalibration(1280, 800, VisionUtil.getDiagFov(1280, 800, 70))
           .setFPS(20)
