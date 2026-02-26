@@ -32,8 +32,8 @@ import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class ShooterHood extends SubsystemBase {
-
   private final ShooterHoodIO io;
+  private final boolean isLeft;
 
   public LoggedTunableNumber ShooterHoodPivotTolerance =
       new LoggedTunableNumber("ShooterHoodPivotToleranceRads", .02);
@@ -69,13 +69,14 @@ public class ShooterHood extends SubsystemBase {
   private final Notification shooterHoodMotorDisconnectedNotification;
   private boolean wasShooterHoodMotorConnected = true;
 
-  public ShooterHood(ShooterHoodIO io) {
+  public ShooterHood(ShooterHoodIO io, boolean isLeft) {
     this.io = io;
     this.goalState = ShooterHoodState.OFF;
     this.shooterHoodMotorDisconnected =
         new Alert("Shooter Hood Motor Disconnected!", Alert.AlertType.kWarning);
     this.shooterHoodMotorDisconnectedNotification =
         new Notification(NotificationLevel.WARNING, "Shooter Hood Motor Disconnected", "");
+    this.isLeft = isLeft;
   }
 
   @Override
@@ -84,8 +85,7 @@ public class ShooterHood extends SubsystemBase {
     Logger.processInputs("ShooterHood", inputs);
 
     Logger.recordOutput("ShooterHood/GoalState", goalState.toString());
-    Logger.recordOutput(
-        "ShooterHood/CurrentState", RobotState.getInstance().getShooterHoodState().toString());
+    Logger.recordOutput("ShooterHood/CurrentState", getRespectiveShooterHoodState().toString());
     Logger.recordOutput("ShooterHood/TargetRads", goalState.rads.getAsDouble());
 
     shooterHoodMotorDisconnected.set(!inputs.shooterHoodMotorConnected);
@@ -102,7 +102,7 @@ public class ShooterHood extends SubsystemBase {
   private void handleManualState() {
     if (!goalState.equals(ShooterHoodState.MANUAL)) return;
 
-    if (Math.abs(input) <= Constants.ShooterHood.JOYSTICK_DEADZONE) {
+    if (Math.abs(input) <= Constants.GeneralShooterHood.JOYSTICK_DEADZONE) {
       io.runVolts(0);
       return;
     }
@@ -136,16 +136,27 @@ public class ShooterHood extends SubsystemBase {
       AUTO_SHOOTING,
       NEUTRAL_SHUFFLING,
       OPPONENT_SHUFFLING: // TODO: handle manual state ???
-        RobotState.getInstance().setShooterHoodState(goalState);
+        setRespectiveShooterHoodState(goalState);
         break;
       case MOVING:
         DriverStation.reportError(
             "Shooter Hood: MOVING is an invalid goal state; it is a transition state!!", null);
         break;
       default:
-        RobotState.getInstance().setShooterHoodState(goalState);
+        setRespectiveShooterHoodState(goalState);
         io.setPosition(goalState.rads.getAsDouble());
         break;
     }
+  }
+
+  private void setRespectiveShooterHoodState(ShooterHoodState state) {
+    if (isLeft) RobotState.getInstance().setLeftShooterHoodState(state);
+    else RobotState.getInstance().setRightShooterHoodState(state);
+  }
+
+  private ShooterHoodState getRespectiveShooterHoodState() {
+    return isLeft
+        ? RobotState.getInstance().getLeftShooterHoodState()
+        : RobotState.getInstance().getRightShooterHoodState();
   }
 }

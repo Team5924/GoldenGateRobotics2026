@@ -149,6 +149,17 @@ public final class Constants {
    * ### Shooters ###
    */
 
+  public final class GeneralShooterHood {
+    public static final double JOYSTICK_DEADZONE = 0.05;
+    public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
+  }
+
+  public final class GeneralTurret {
+    public static final double JOYSTICK_DEADZONE = 0.05;
+    public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
+    public static final double STATE_TIMEOUT = 5.0;
+  }
+
   /* Left */
   public final class ShooterHoodLeft {
     public static final int CAN_ID = 22;
@@ -173,8 +184,6 @@ public final class Constants {
             .withKD(0)
             .withKS(0) // TODO: ask CAD for these values later
             .withKV(0));
-    
-    public static final double JOYSTICK_DEADZONE = 0.01;
   }
 
   public final class ShooterRollerLeaderLeft {
@@ -231,12 +240,6 @@ public final class Constants {
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
-
-    public static final double JOYSTICK_DEADZONE = 0.05;
-
-    public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
-
-    public static final double STATE_TIMEOUT = 5.0;
 
 
     /* CANCoder */
@@ -317,8 +320,6 @@ public final class Constants {
             .withKD(0)
             .withKS(0) // TODO: ask CAD for these values later
             .withKV(0));
-    
-    public static final double JOYSTICK_DEADZONE = 0.01;
   }
 
   public final class ShooterRollerLeaderRight {

@@ -45,6 +45,8 @@ public class Turret extends SubsystemBase {
 
   public final SysIdRoutine sysId;
 
+  private final boolean isLeft;
+
   public enum TurretState {
     OFF(() -> 0.0),
     MOVING(() -> 0.0),
@@ -72,13 +74,14 @@ public class Turret extends SubsystemBase {
   private double exceedBoundsDirection;
   private boolean shouldContinue;
 
-  public Turret(TurretIO io) {
+  public Turret(TurretIO io, boolean isLeft) {
     this.io = io;
     this.goalState = TurretState.OFF;
     this.turretMotorDisconnected =
         new Alert("Turret Motor Disconnected!", Alert.AlertType.kWarning);
     this.turretMotorDisconnectedNotification =
         new Notification(NotificationLevel.WARNING, "Turret Motor Disconnected", "");
+    this.isLeft = isLeft;
 
     sysId =
         new SysIdRoutine(
@@ -97,8 +100,7 @@ public class Turret extends SubsystemBase {
     Logger.processInputs("Turret", inputs);
 
     Logger.recordOutput("Turret/GoalState", goalState.toString());
-    Logger.recordOutput(
-        "Turret/CurrentState", RobotState.getInstance().getTurretState().toString());
+    Logger.recordOutput("Turret/CurrentState", getRespectiveTurretState());
     Logger.recordOutput("Turret/TargetRads", goalState.rads.getAsDouble());
     Logger.recordOutput("Turret/ExceedBoundsDirection", exceedBoundsDirection);
     Logger.recordOutput("Turret/ShouldContinue", shouldContinue);
@@ -114,15 +116,19 @@ public class Turret extends SubsystemBase {
   }
 
   public boolean isAtSetpoint() {
-    return RobotState.getTime() - lastStateChange < Constants.Turret.STATE_TIMEOUT
+    return RobotState.getTime() - lastStateChange < Constants.GeneralTurret.STATE_TIMEOUT
         || EqualsUtil.epsilonEquals(
-            inputs.setpointRads, inputs.turretPositionRads, Constants.Turret.EPSILON_RADS);
+            inputs.setpointRads, inputs.turretPositionRads, Constants.GeneralTurret.EPSILON_RADS);
   }
 
   private void handleCurrentState() {
-    switch (RobotState.getInstance().getTurretState()) {
+    TurretState cTurretState =
+        isLeft
+            ? RobotState.getInstance().getLeftTurretState()
+            : RobotState.getInstance().getRightTurretState();
+    switch (cTurretState) {
       case MOVING -> {
-        if (isAtSetpoint()) RobotState.getInstance().setTurretState(goalState);
+        if (isAtSetpoint()) setRespectiveTurretState(goalState);
       }
       case MANUAL -> handleManualState();
       case OFF -> io.stop();
@@ -133,7 +139,7 @@ public class Turret extends SubsystemBase {
   private void handleManualState() {
     if (!goalState.equals(TurretState.MANUAL)) return;
 
-    if (Math.abs(input) <= Constants.Turret.JOYSTICK_DEADZONE) {
+    if (Math.abs(input) <= Constants.GeneralTurret.JOYSTICK_DEADZONE) {
       io.runVolts(0);
       return;
     }
@@ -157,8 +163,12 @@ public class Turret extends SubsystemBase {
    * @return -1 for min bound, 0 for within, 1 for upper bound
    */
   public double exceedBoundsDirection(double rads) {
-    if (rads <= Constants.Turret.MIN_POSITION_RADS) return -1.0;
-    if (rads >= Constants.Turret.MAX_POSITION_RADS) return 1.0;
+    double min =
+        isLeft ? Constants.TurretLeft.MIN_POSITION_RADS : Constants.TurretRight.MIN_POSITION_RADS;
+    double max =
+        isLeft ? Constants.TurretLeft.MAX_POSITION_RADS : Constants.TurretRight.MAX_POSITION_RADS;
+    if (rads <= min) return -1.0;
+    if (rads >= max) return 1.0;
     return 0.0;
   }
 
@@ -166,23 +176,34 @@ public class Turret extends SubsystemBase {
     if (goalState != TurretState.MOVING) this.goalState = goalState;
     switch (goalState) {
       case MANUAL:
-        RobotState.getInstance().setTurretState(TurretState.MANUAL);
+        setRespectiveTurretState(TurretState.MANUAL);
         break;
       case MOVING:
         DriverStation.reportError(
             "Turret: MOVING is an invalid goal state; it is a transition state!!", null);
         break;
       case OFF:
-        RobotState.getInstance().setTurretState(TurretState.OFF);
+        setRespectiveTurretState(TurretState.OFF);
         io.stop();
         break;
       default:
-        RobotState.getInstance().setTurretState(TurretState.MOVING);
+        setRespectiveTurretState(TurretState.MOVING);
         io.setPosition(goalState.rads.getAsDouble());
         break;
     }
 
     lastStateChange = RobotState.getTime();
+  }
+
+  private void setRespectiveTurretState(TurretState state) {
+    if (isLeft) RobotState.getInstance().setLeftTurretState(state);
+    else RobotState.getInstance().setRightTurretState(state);
+  }
+
+  private TurretState getRespectiveTurretState() {
+    return isLeft
+        ? RobotState.getInstance().getLeftTurretState()
+        : RobotState.getInstance().getRightTurretState();
   }
 
   public double getSetpoint() {

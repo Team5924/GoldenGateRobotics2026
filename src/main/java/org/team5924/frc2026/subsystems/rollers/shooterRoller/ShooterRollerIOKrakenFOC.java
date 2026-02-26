@@ -23,25 +23,39 @@ public class ShooterRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC
     implements ShooterRollerIO {
 
   private class ShooterRollerFollower extends GenericRollerSystemIOKrakenFOC {
-    public ShooterRollerFollower(boolean left) {
+    public ShooterRollerFollower(boolean isLeft) {
       super(
-          left ? Constants.ShooterRollerFollowerLeft.CAN_ID : Constants.ShooterRollerFollowerRight.CAN_ID,
-          left ? Constants.ShooterRollerFollowerLeft.BUS : Constants.ShooterRollerFollowerRight.BUS,
-          left ? Constants.ShooterRollerFollowerLeft.CONFIG : Constants.ShooterRollerFollowerRight.CONFIG,
-          left ? Constants.ShooterRollerFollowerLeft.REDUCTION : Constants.ShooterRollerFollowerRight.REDUCTION);
+          isLeft
+              ? Constants.ShooterRollerFollowerLeft.CAN_ID
+              : Constants.ShooterRollerFollowerRight.CAN_ID,
+          isLeft
+              ? Constants.ShooterRollerFollowerLeft.BUS
+              : Constants.ShooterRollerFollowerRight.BUS,
+          isLeft
+              ? Constants.ShooterRollerFollowerLeft.CONFIG
+              : Constants.ShooterRollerFollowerRight.CONFIG,
+          isLeft
+              ? Constants.ShooterRollerFollowerLeft.REDUCTION
+              : Constants.ShooterRollerFollowerRight.REDUCTION);
     }
   }
 
   private final ShooterRollerFollower shooterFollower;
 
-  public ShooterRollerIOKrakenFOC(boolean left) {
-      super(
-          left ? Constants.ShooterRollerLeaderLeft.CAN_ID : Constants.ShooterRollerLeaderRight.CAN_ID,
-          left ? Constants.ShooterRollerLeaderLeft.BUS : Constants.ShooterRollerLeaderRight.BUS,
-          left ? Constants.ShooterRollerLeaderLeft.CONFIG : Constants.ShooterRollerLeaderRight.CONFIG,
-          left ? Constants.ShooterRollerLeaderLeft.REDUCTION : Constants.ShooterRollerLeaderRight.REDUCTION);
+  public ShooterRollerIOKrakenFOC(boolean isLeft) {
+    super(
+        isLeft
+            ? Constants.ShooterRollerLeaderLeft.CAN_ID
+            : Constants.ShooterRollerLeaderRight.CAN_ID,
+        isLeft ? Constants.ShooterRollerLeaderLeft.BUS : Constants.ShooterRollerLeaderRight.BUS,
+        isLeft
+            ? Constants.ShooterRollerLeaderLeft.CONFIG
+            : Constants.ShooterRollerLeaderRight.CONFIG,
+        isLeft
+            ? Constants.ShooterRollerLeaderLeft.REDUCTION
+            : Constants.ShooterRollerLeaderRight.REDUCTION);
 
-    shooterFollower = new ShooterRollerFollower(left);
+    shooterFollower = new ShooterRollerFollower(isLeft);
   }
 
   @Override

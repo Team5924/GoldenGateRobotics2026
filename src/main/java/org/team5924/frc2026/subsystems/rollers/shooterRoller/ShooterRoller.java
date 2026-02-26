@@ -57,11 +57,14 @@ public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRoll
   private final BeamBreakIO beamBreakIO;
   private final BeamBreakIOInputsAutoLogged beamBreakInputs = new BeamBreakIOInputsAutoLogged();
 
+  private final boolean isLeft;
+
   @Setter private double input;
 
-  public ShooterRoller(ShooterRollerIO io, BeamBreakIO beamBreakIO) {
+  public ShooterRoller(ShooterRollerIO io, BeamBreakIO beamBreakIO, boolean isLeft) {
     super("ShooterRoller", io);
     this.beamBreakIO = beamBreakIO;
+    this.isLeft = isLeft;
   }
 
   @Override
@@ -100,7 +103,9 @@ public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRoll
 
   public void setGoalState(ShooterRollerState goalState) {
     this.goalState = goalState;
-    RobotState.getInstance().setShooterRollerState(goalState);
+
+    if (isLeft) RobotState.getInstance().setLeftShooterRollerState(goalState);
+    else RobotState.getInstance().setRightShooterRollerState(goalState);
   }
 
   @Override
