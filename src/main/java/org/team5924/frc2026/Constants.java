@@ -16,6 +16,12 @@
 
 package org.team5924.frc2026;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.photonvision.simulation.SimCameraProperties;
+import org.team5924.frc2026.util.VisionUtil;
+
 import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -28,6 +34,11 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S2CloseStateValue;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -230,6 +241,22 @@ public final class Constants {
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
+  }
+
+  public static final class Field { // TODO: update all of these when new field released
+      public static final double FIELD_BORDER_MARGIN = 0.5;
+      public static final AprilTagFields FIELD_TYPE = AprilTagFields.k2025ReefscapeWelded; // TODO: update to new field
+      public static final AprilTagFieldLayout field = AprilTagFieldLayout.loadField(FIELD_TYPE);
+      public static final double FIELD_WIDTH = field.getFieldWidth();
+      public static final double FIELD_LENGTH = field.getFieldLength();
+
+      public static final double faceLength = Units.inchesToMeters(36.792600);
+      public static final double fieldWidth = field.getFieldWidth();
+      public static final Translation2d blueCenter =
+          new Translation2d(Units.inchesToMeters(176.745), Units.inchesToMeters(158.5));
+
+      public static final Translation2d redCenter =
+          new Translation2d(Units.inchesToMeters(514.13), Units.inchesToMeters(158.5));
   }
 }
 

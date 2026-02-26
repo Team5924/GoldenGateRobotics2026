@@ -57,11 +57,18 @@ import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOKrak
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOSim;
 import org.team5924.frc2026.subsystems.sensors.BeamBreakIO;
 import org.team5924.frc2026.subsystems.sensors.BeamBreakIOHardware;
+import org.team5924.frc2026.subsystems.vision.Vision;
+import org.team5924.frc2026.subsystems.vision.VisionConstants;
+import org.team5924.frc2026.subsystems.vision.VisionIO;
+import org.team5924.frc2026.subsystems.vision.VisionIOPhotonVision;
+import org.team5924.frc2026.subsystems.vision.VisionIOPhotonVisionSim;
 
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private SwerveDriveSimulation driveSimulation = null;
+
+  private Vision vision;
   private final SuperShooter shooter;
   private final ShooterHood shooterHood;
   private final ShooterRoller shooterRoller;
@@ -92,6 +99,18 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight),
                 (pose) -> {});
 
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVision(
+                    VisionConstants.FRONT_LEFT_NAME, VisionConstants.FRONT_LEFT_TRANSFORM),
+                new VisionIOPhotonVision(
+                    VisionConstants.FRONT_RIGHT_NAME, VisionConstants.FRONT_RIGHT_TRANSFORM),
+                new VisionIOPhotonVision(
+                    VisionConstants.BACK_LEFT_NAME, VisionConstants.BACK_LEFT_TRANSFORM),
+                new VisionIOPhotonVision(
+                    VisionConstants.BACK_RIGHT_NAME, VisionConstants.BACK_RIGHT_TRANSFORM));
+
         shooterHood = new ShooterHood(new ShooterHoodIOTalonFX());
         shooterRoller =
             new ShooterRoller(
@@ -115,13 +134,30 @@ public class RobotContainer {
                 new ModuleIOTalonFXSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
                 new ModuleIOTalonFXSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
                 driveSimulation::setSimulationWorldPose);
-        // vision = new Vision(drive,
-        // new VisionIOPhotonVisionSim(
-        // camera0Name, robotToCamera0,
-        // driveSimulation::getSimulatedDriveTrainPose),
-        // new VisionIOPhotonVisionSim(
-        // camera0Name, robotToCamera0,
-        // driveSimulation::getSimulatedDriveTrainPose);
+
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.FRONT_LEFT_NAME,
+                    VisionConstants.FRONT_LEFT_TRANSFORM,
+                    VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
+                    driveSimulation::getSimulatedDriveTrainPose),
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.FRONT_RIGHT_NAME,
+                    VisionConstants.FRONT_RIGHT_TRANSFORM,
+                    VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
+                    driveSimulation::getSimulatedDriveTrainPose),
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.BACK_LEFT_NAME,
+                    VisionConstants.BACK_LEFT_TRANSFORM,
+                    VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
+                    driveSimulation::getSimulatedDriveTrainPose),
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.BACK_RIGHT_NAME,
+                    VisionConstants.BACK_RIGHT_TRANSFORM,
+                    VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
+                    driveSimulation::getSimulatedDriveTrainPose));
 
         shooterHood = new ShooterHood(new ShooterHoodIOSim());
         shooterRoller = new ShooterRoller(new ShooterRollerIOSim(), new BeamBreakIO() {});
@@ -140,13 +176,18 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 (pose) -> {});
-
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIO() {},
+                new VisionIO() {},
+                new VisionIO() {},
+                new VisionIO() {});
         shooterHood = new ShooterHood(new ShooterHoodIO() {});
         shooterRoller = new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {});
         intake = new Intake(new IntakeIO() {});
         shooter = new SuperShooter(shooterRoller, shooterHood);
         hopper = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
-        // vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
         break;
     }
 
@@ -205,21 +246,24 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    if (Constants.currentMode == Constants.Mode.SIM) {
-      drive.setDefaultCommand(
-          DriveCommands.joystickDrive(
-              drive,
-              () -> -driveController.getLeftY(),
-              () -> -driveController.getRawAxis(0),
-              () -> -driveController.getRawAxis(2)));
-    } else {
-      drive.setDefaultCommand(
-          DriveCommands.joystickDrive(
-              drive,
-              () -> -driveController.getLeftY(),
-              () -> -driveController.getLeftX(),
-              () -> -driveController.getRightX()));
-    }
+
+    // TODO: uncomment this out!
+    // if (Constants.currentMode == Constants.Mode.SIM) {
+    //   drive.setDefaultCommand(
+    //       DriveCommands.joystickDrive(
+    //           drive,
+    //           () -> -driveController.getLeftY(),
+    //           () -> -driveController.getRawAxis(0),
+    //           () -> -driveController.getRawAxis(2)));
+    // } else {
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -driveController.getLeftY(),
+            () -> -driveController.getLeftX(),
+            () -> -driveController.getRightX()));
+    // }
+
     // [driver] SLOW MODE YIPE
     driveController
         .y()

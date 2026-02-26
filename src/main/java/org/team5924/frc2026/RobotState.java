@@ -42,10 +42,8 @@ public class RobotState {
   Rotation2d gyroOffset = Rotation2d.kZero;
 
   // Pose Estimation Members
-  @AutoLogOutput(key = "RobotState/OdometryPose")
-  @Getter
-  @Setter
-  private Pose2d odometryPose = new Pose2d();
+  // @AutoLogOutput(key = "RobotState/OdometryPose")
+  @Getter @Setter private Pose2d odometryPose = new Pose2d();
 
   @Getter @Setter @AutoLogOutput private Pose2d estimatedPose = Pose2d.kZero;
 
