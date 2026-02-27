@@ -231,7 +231,7 @@ public final class Constants {
   public final class Climb { // TODO: update these values
     public static final int CAN_ID = 60;
     public static final String BUS = "rio";
-    public static final double MOTOR_TO_CANCODER = (7.0 / 1.0); // TODO: Update Reductions
+    public static final double MOTOR_TO_CANCODER = (7.0 / 1.0); // TODO: Update Reductions and add hook to reduction
     public static final double CANCODER_TO_MECHANISM = (7.0 / 1.0);
     public static final double MOTOR_TO_MECHANISM = MOTOR_TO_CANCODER * CANCODER_TO_MECHANISM;
     public static final double SIM_MOI = 0.001;
@@ -282,7 +282,7 @@ public final class Constants {
 
     public static final MagnetSensorConfigs CANCODER_CONFIG =
       new MagnetSensorConfigs()
-        .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET) 
+        .withMagnetOffset(1.0 * CANCODER_ABSOLUTE_OFFSET) 
         .withAbsoluteSensorDiscontinuityPoint(0.5)
         .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
   }

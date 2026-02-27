@@ -35,7 +35,7 @@ public class Climb extends SubsystemBase {
   private final ClimbIO io;
   private final ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
 
-  public enum ClimbState {
+  public enum ClimbState { // TODO: Update climb level values - distance not rads!!!
     STOW(new LoggedTunableNumber("Climb/Stow", 0)),
     LEVEL_ONE(new LoggedTunableNumber("Climb/LevelOne", 0)),
     LEVEL_TWO(new LoggedTunableNumber("Climb/LevelTwo", 0)),
@@ -46,6 +46,8 @@ public class Climb extends SubsystemBase {
     MOVING(() -> 0.0),
     // voltage at which the climb subsystem motor moves when controlled by the operator
     OPERATOR_CONTROL(new LoggedTunableNumber("Climb/OperatorVoltage", 4.5));
+
+    // TODO: add distance to rads method
 
     private final DoubleSupplier rads;
 
@@ -90,7 +92,6 @@ public class Climb extends SubsystemBase {
 
     handleCurrentState();
 
-    // prevents error spam
     if (!inputs.climbMotorConnected && wasClimbMotorConnected) {
       Elastic.sendNotification(climbMotorDisconnectedNotification);
     }
