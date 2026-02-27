@@ -75,7 +75,7 @@ public abstract class GenericRollerSystem<State extends GenericRollerSystem.Volt
       lastState = getGoalState();
     }
 
-    handleCurrentVoltageState();
+    handleCurrentState();
     Logger.recordOutput("Rollers/" + name + "Goal", getGoalState().toString());
 
     if (!inputs.motorConnected && wasMotorConnected) {
@@ -84,7 +84,7 @@ public abstract class GenericRollerSystem<State extends GenericRollerSystem.Volt
     wasMotorConnected = inputs.motorConnected;
   }
 
-  protected void handleCurrentVoltageState() {
+  protected void handleCurrentState() {
     runVolts(getGoalState().getVoltageSupplier().getAsDouble());
   }
 

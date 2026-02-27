@@ -54,7 +54,7 @@ public class Turret extends SubsystemBase {
     // voltage at which the example subsystem motor moves when controlled by the operator
     MANUAL(new LoggedTunableNumber("Turret/OperatorVoltage", 1.0)),
 
-    ZEFO(() -> 0.0);
+    ZERO(() -> 0.0);
 
     @Getter private final DoubleSupplier rads;
 

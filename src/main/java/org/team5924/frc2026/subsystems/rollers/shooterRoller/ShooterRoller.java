@@ -68,7 +68,7 @@ public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRoll
   }
 
   @Override
-  protected void handleCurrentVoltageState() {
+  protected void handleCurrentState() {
     switch (goalState) {
       case OFF:
         io.runVolts(0);
@@ -91,7 +91,7 @@ public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRoll
         break;
 
       case BUMPER_SHOOTING:
-        super.handleCurrentVoltageState();
+        super.handleCurrentState();
         break;
 
       default:
