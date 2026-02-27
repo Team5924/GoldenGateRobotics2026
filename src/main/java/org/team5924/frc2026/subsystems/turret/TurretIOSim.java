@@ -1,5 +1,5 @@
 /*
- * ExampleSystemIOSim.java
+ * TurretIOSim.java
  */
 
 /* 
@@ -14,7 +14,7 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.exampleSystem;
+package org.team5924.frc2026.subsystems.turret;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -23,34 +23,43 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import org.team5924.frc2026.Constants;
 
-public class ExampleSystemIOSim implements ExampleSystemIO {
+public class TurretIOSim implements TurretIO {
   private final DCMotorSim sim;
   private final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
   private double appliedVoltage = 0.0;
 
-  public ExampleSystemIOSim() {
+  public TurretIOSim(boolean isLeft) {
     sim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
-                gearbox, Constants.Example.SIM_MOI, Constants.Example.REDUCTION),
+                isLeft
+                    ? Constants.TurretLeft.MOTOR_TO_MECHANISM
+                    : Constants.TurretRight.MOTOR_TO_MECHANISM,
+                isLeft ? Constants.TurretLeft.SIM_MOI : Constants.TurretRight.SIM_MOI),
             gearbox);
   }
 
   @Override
-  public void updateInputs(ExampleSystemIOInputs inputs) {
+  public void updateInputs(TurretIOInputs inputs) {
     if (DriverStation.isDisabled()) runVolts(0.0);
 
     sim.update(Constants.LOOP_PERIODIC_SECONDS);
-    inputs.examplePositionRads = sim.getAngularPositionRad();
-    inputs.exampleVelocityRadsPerSec = sim.getAngularVelocityRadPerSec();
-    inputs.exampleAppliedVoltage = appliedVoltage;
-    inputs.exampleSupplyCurrentAmps = sim.getCurrentDrawAmps();
+    inputs.turretMotorConnected = true;
+    inputs.turretPositionRads = sim.getAngularPositionRad();
+    inputs.turretVelocityRadsPerSec = sim.getAngularVelocityRadPerSec();
+    inputs.turretAppliedVoltage = appliedVoltage;
+    inputs.turretSupplyCurrentAmps = sim.getCurrentDrawAmps();
   }
 
   @Override
   public void runVolts(double volts) {
     appliedVoltage = MathUtil.clamp(volts, -12.0, 12.0);
     sim.setInputVoltage(appliedVoltage);
+  }
+
+  @Override
+  public void setPosition(double rads) {
+    sim.setAngle(rads);
   }
 
   @Override

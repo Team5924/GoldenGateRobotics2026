@@ -28,11 +28,12 @@ public class ShooterHoodIOSim implements ShooterHoodIO {
   private final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
   private double appliedVoltage = 0.0;
 
-  public ShooterHoodIOSim() {
+  public ShooterHoodIOSim(boolean isLeft) {
     sim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
-                gearbox, Constants.ShooterHood.SIM_MOI, Constants.ShooterHood.REDUCTION),
+                isLeft ? Constants.ShooterHoodLeft.REDUCTION : Constants.ShooterHoodRight.REDUCTION,
+                isLeft ? Constants.ShooterHoodLeft.SIM_MOI : Constants.ShooterHoodRight.SIM_MOI),
             gearbox);
   }
 
