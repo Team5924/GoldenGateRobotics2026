@@ -17,6 +17,7 @@
 package org.team5924.frc2026.subsystems.pivots.shooterHood;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -38,14 +39,39 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   private final StatusSignal<Current> shooterHoodTorqueCurrent;
   private final StatusSignal<Temperature> shooterHoodTempCelsius;
 
-  // Single shot for voltage mode, robot loop will call continuously
-  private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
-  private final PositionVoltage positionOut =
-      new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true);
+  private final double reduction;
 
-  public ShooterHoodIOTalonFX() {
-    shooterHoodTalon = new TalonFX(Constants.ShooterHood.CAN_ID, Constants.ShooterHood.BUS);
-    shooterHoodTalon.getConfigurator().apply(Constants.ShooterHood.CONFIG);
+  // These constants will replace the reduction in the shooter cancoder branch
+  // private final double cancoderToMechanism;
+  // private final double motorToMechanism;
+  // private final double minPositionRads;
+  // private final double maxPositionRads;
+
+  // Single shot for voltage mode, robot loop will call continuously
+  private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true);
+  private final PositionVoltage positionOut =
+      new PositionVoltage(0).withEnableFOC(true);
+  public ShooterHoodIOTalonFX(boolean isLeft) {
+    reduction = isLeft ? Constants.ShooterHoodLeft.REDUCTION : Constants.ShooterHoodRight.REDUCTION;
+    // cancoderToMechanism = isLeft ? Constants.ShooterHoodLeft.CANCODER_TO_MECHANISM :
+    // Constants.ShooterHoodRight.CANCODER_TO_MECHANISM;
+    // motorToMechanism = isLeft ? Constants.ShooterHoodLeft.MOTOR_TO_MECHANISM :
+    // Constants.ShooterHoodRight.MOTOR_TO_MECHANISM;
+    // minPositionRads = isLeft ? Constants.ShooterHoodLeft.MIN_POSITION_RADS :
+    // Constants.ShooterHoodRight.MIN_POSITION_RADS;
+    // maxPositionRads = isLeft ? Constants.ShooterHoodLeft.MAX_POSITION_RADS :
+    // Constants.ShooterHoodRight.MAX_POSITION_RADS;
+
+    shooterHoodTalon =
+        new TalonFX(
+            isLeft ? Constants.ShooterHoodLeft.CAN_ID : Constants.ShooterHoodRight.CAN_ID,
+            new CANBus(isLeft ? Constants.ShooterHoodLeft.BUS : Constants.ShooterHoodRight.BUS));
+    // shooterHoodCANCoder = new CANcoder(isLeft ? Constants.ShooterHoodLeft.CANCODER_ID :
+    // Constants.ShooterHoodRight.CANCODER_ID);
+
+    shooterHoodTalon
+        .getConfigurator()
+        .apply(isLeft ? Constants.ShooterHoodLeft.CONFIG : Constants.ShooterHoodRight.CONFIG);
 
     // Get select status signals and set update frequency
     shooterHoodPosition = shooterHoodTalon.getPosition();
@@ -79,11 +105,9 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
                 shooterHoodTempCelsius)
             .isOK();
     inputs.shooterHoodPositionRads =
-        Units.rotationsToRadians(shooterHoodPosition.getValueAsDouble())
-            / Constants.ShooterHood.REDUCTION;
+        Units.rotationsToRadians(shooterHoodPosition.getValueAsDouble()) / reduction;
     inputs.shooterHoodVelocityRadsPerSec =
-        Units.rotationsToRadians(shooterHoodVelocity.getValueAsDouble())
-            / Constants.ShooterHood.REDUCTION;
+        Units.rotationsToRadians(shooterHoodVelocity.getValueAsDouble()) / reduction;
     inputs.shooterHoodAppliedVoltage = shooterHoodAppliedVoltage.getValueAsDouble();
     inputs.shooterHoodSupplyCurrentAmps = shooterHoodSupplyCurrent.getValueAsDouble();
     inputs.shooterHoodTorqueCurrentAmps = shooterHoodTorqueCurrent.getValueAsDouble();
@@ -98,7 +122,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   @Override
   public void setPosition(double rads) {
     shooterHoodTalon.setControl(
-        positionOut.withPosition(Units.radiansToRotations(rads) * Constants.ShooterHood.REDUCTION));
+        positionOut.withPosition(Units.radiansToRotations(rads) * reduction));
   }
 
   @Override
