@@ -173,6 +173,9 @@ public final class Constants {
     public static final double CANCODER_TO_SPUR = 1.0;
     public static final double SPUR_TO_MECHANISM = (23.0 / 18.0); // TODO: double check this
 
+    /** how far the hood physically rotates */
+    public static final double MECHANISM_RANGE_PERCENT = 30.0 / 360.0;
+
     public static final double MOTOR_TO_SPUR = MOTOR_TO_CANCODER * CANCODER_TO_SPUR;
     public static final double MOTOR_TO_MECHANISM = MOTOR_TO_SPUR * SPUR_TO_MECHANISM;
     public static final double CANCODER_TO_MECHANISM = MOTOR_TO_CANCODER * CANCODER_TO_SPUR * SPUR_TO_MECHANISM;
@@ -379,6 +382,9 @@ public final class Constants {
     public static final double CANCODER_TO_SPUR = 1.0;
     public static final double SPUR_TO_MECHANISM = (23.0 / 18.0); // TODO: double check this
     public static final double CANCODER_TO_MECHANISM = MOTOR_TO_CANCODER * CANCODER_TO_SPUR * SPUR_TO_MECHANISM;
+
+    /** how far the hood physically rotates */
+    public static final double MECHANISM_RANGE_PERCENT = 30.0 / 360.0;
 
     public static final double MOTOR_TO_SPUR = MOTOR_TO_CANCODER * CANCODER_TO_SPUR;
     public static final double MOTOR_TO_MECHANISM = MOTOR_TO_SPUR * SPUR_TO_MECHANISM;

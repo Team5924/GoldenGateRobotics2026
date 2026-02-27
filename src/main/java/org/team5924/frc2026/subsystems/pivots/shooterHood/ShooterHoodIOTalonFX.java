@@ -97,6 +97,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   private final double motorToMechanism;
   private final double minPositionRads;
   private final double maxPositionRads;
+  private final double mechanismRangePercent;
 
   public ShooterHoodIOTalonFX(boolean isLeft) {
     cancoderToMechanism =
@@ -115,6 +116,10 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
         isLeft
             ? Constants.ShooterHoodLeft.MAX_POSITION_RADS
             : Constants.ShooterHoodRight.MAX_POSITION_RADS;
+    mechanismRangePercent =
+        isLeft
+            ? Constants.ShooterHoodLeft.MECHANISM_RANGE_PERCENT
+            : Constants.ShooterHoodRight.MECHANISM_RANGE_PERCENT;
 
     shooterHoodTalon =
         new TalonFX(
@@ -222,6 +227,8 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     magicMotionVoltage = new MotionMagicVoltage(0.0).withEnableFOC(true).withSlot(0);
 
     BaseStatusSignal.waitForAll(0.5, cancoderAbsolutePosition);
+
+    // this assumes that the shooter hood is starting at the bottom position
     shooterHoodCANCoder.setPosition(0.0);
     shooterHoodTalon.setPosition(0.0);
   }
@@ -371,11 +378,10 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   }
 
   private double radsToMotorPosition(double rads) {
-    return Units.radiansToRotations(rads) * motorToMechanism;
+    return Units.radiansToRotations(rads) * motorToMechanism * mechanismRangePercent;
   }
 
-  /* Unused but nice to have */
   private double motorPositionToRads(double motorPosition) {
-    return Units.rotationsToRadians(motorPosition) / motorToMechanism;
+    return Units.rotationsToRadians(motorPosition) / motorToMechanism / mechanismRangePercent;
   }
 }
