@@ -48,10 +48,9 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   // private final double maxPositionRads;
 
   // Single shot for voltage mode, robot loop will call continuously
-  private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
+  private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true);
   private final PositionVoltage positionOut =
-      new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true);
-
+      new PositionVoltage(0).withEnableFOC(true);
   public ShooterHoodIOTalonFX(boolean isLeft) {
     reduction = isLeft ? Constants.ShooterHoodLeft.REDUCTION : Constants.ShooterHoodRight.REDUCTION;
     // cancoderToMechanism = isLeft ? Constants.ShooterHoodLeft.CANCODER_TO_MECHANISM :
