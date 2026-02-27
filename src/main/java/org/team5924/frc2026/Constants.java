@@ -18,26 +18,20 @@ package org.team5924.frc2026;
 
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.DigitalInputsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.S1CloseStateValue;
-import com.ctre.phoenix6.signals.S2CloseStateValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.util.Units;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.util.Units;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -177,7 +171,7 @@ public final class Constants {
 
     public static final double MOTOR_TO_CANCODER = (40.0 / 12.0) * (24.0 / 15.0);
     public static final double CANCODER_TO_SPUR = 1.0;
-    public static final double SPUR_TO_MECHANISM = (23.0 / 18.0);
+    public static final double SPUR_TO_MECHANISM = (23.0 / 18.0); // TODO: double check this
 
     public static final double MOTOR_TO_SPUR = MOTOR_TO_CANCODER * CANCODER_TO_SPUR;
     public static final double MOTOR_TO_MECHANISM = MOTOR_TO_SPUR * SPUR_TO_MECHANISM;
@@ -381,9 +375,9 @@ public final class Constants {
     public static final double REDUCTION = (40.0 / 12.0) * (24.0 / 17.0);
     public static final double SIM_MOI = 0.001;
 
-    public static final double MOTOR_TO_CANCODER = (40.0 / 12.0) * (24.0 / 15.0);
+    public static final double MOTOR_TO_CANCODER = (40.0 / 12.0) * (24.0 / 17.0);
     public static final double CANCODER_TO_SPUR = 1.0;
-    public static final double SPUR_TO_MECHANISM = (23.0 / 18.0);
+    public static final double SPUR_TO_MECHANISM = (23.0 / 18.0); // TODO: double check this
     public static final double CANCODER_TO_MECHANISM = MOTOR_TO_CANCODER * CANCODER_TO_SPUR * SPUR_TO_MECHANISM;
 
     public static final double MOTOR_TO_SPUR = MOTOR_TO_CANCODER * CANCODER_TO_SPUR;

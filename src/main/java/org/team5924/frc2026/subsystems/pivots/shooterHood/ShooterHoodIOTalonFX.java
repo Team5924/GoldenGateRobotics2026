@@ -66,10 +66,11 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   private final LoggedTunableNumber kA = new LoggedTunableNumber("ShooterHood/kA", 0.00);
 
   private final LoggedTunableNumber motionCruiseVelocity =
-      new LoggedTunableNumber("Turret/MotionCruiseVelocity", 90.0);
+      new LoggedTunableNumber("ShooterHood/MotionCruiseVelocity", 90.0);
   private final LoggedTunableNumber motionAcceleration =
-      new LoggedTunableNumber("Turret/MotionAcceleration", 900.0);
-  private final LoggedTunableNumber motionJerk = new LoggedTunableNumber("Turret/MotionJerk", 0.0);
+      new LoggedTunableNumber("ShooterHood/MotionAcceleration", 900.0);
+  private final LoggedTunableNumber motionJerk =
+      new LoggedTunableNumber("ShooterHood/MotionJerk", 0.0);
 
   /* Status Signals */
   private final StatusSignal<Angle> shooterHoodPosition;
@@ -85,6 +86,8 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   private final StatusSignal<Angle> cancoderPositionRotations;
 
   private final StatusSignal<Double> closedLoopReferenceSlope;
+  private double prevClosedLoopReferenceSlope = 0.0;
+  private double prevReferenceSlopeTimestamp = 0.0;
 
   private final VoltageOut voltageOut;
   private final PositionVoltage positionOut;
@@ -236,9 +239,19 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
                 closedLoopReferenceSlope)
             .isOK();
 
-    inputs.shooterHoodPosition = shooterHoodPosition.getValueAsDouble();
-    inputs.shooterHoodPositionRads =
-        Units.rotationsToRadians(shooterHoodPosition.getValueAsDouble());
+    inputs.cancoderConnected =
+        BaseStatusSignal.refreshAll(
+                cancoderAbsolutePosition,
+                cancoderVelocity,
+                cancoderSupplyVoltage,
+                cancoderPositionRotations)
+            .isOK();
+
+    inputs.shooterHoodPosition =
+        BaseStatusSignal.getLatencyCompensatedValueAsDouble(
+            shooterHoodPosition, shooterHoodVelocity);
+    inputs.shooterHoodPositionRads = Units.rotationsToRadians(inputs.shooterHoodPosition);
+
     inputs.shooterHoodVelocityRadsPerSec =
         Units.rotationsToRadians(shooterHoodVelocity.getValueAsDouble());
     inputs.shooterHoodAppliedVoltage = shooterHoodAppliedVoltage.getValueAsDouble();
@@ -246,14 +259,28 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     inputs.shooterHoodTorqueCurrentAmps = shooterHoodTorqueCurrent.getValueAsDouble();
     inputs.shooterHoodTempCelsius = shooterHoodTempCelsius.getValueAsDouble();
 
+    inputs.motionMagicVelocityTarget =
+        motorPositionToRads(shooterHoodTalon.getClosedLoopReferenceSlope().getValueAsDouble());
+    inputs.motionMagicPositionTarget =
+        motorPositionToRads(shooterHoodTalon.getClosedLoopReference().getValueAsDouble());
+
     inputs.setpointRads = setpointRads;
+
+    double currentTime = closedLoopReferenceSlope.getTimestamp().getTime();
+    double timeDiff = currentTime - prevReferenceSlopeTimestamp;
+    if (timeDiff > 0.0) {
+      inputs.acceleration =
+          (inputs.motionMagicVelocityTarget - prevClosedLoopReferenceSlope) / timeDiff;
+    }
+    prevClosedLoopReferenceSlope = inputs.motionMagicVelocityTarget;
+    prevReferenceSlopeTimestamp = currentTime;
 
     inputs.cancoderAbsolutePosition = cancoderAbsolutePosition.getValueAsDouble();
     inputs.cancoderVelocity = cancoderVelocity.getValueAsDouble();
     inputs.cancoderSupplyVoltage = cancoderSupplyVoltage.getValueAsDouble();
     inputs.cancoderPositionRotations = cancoderPositionRotations.getValueAsDouble();
 
-    inputs.shooterHoodPositionCancoder = (inputs.cancoderPositionRotations) / cancoderToMechanism;
+    inputs.shooterHoodPositionCancoder = inputs.cancoderPositionRotations / cancoderToMechanism;
   }
 
   @Override
@@ -288,6 +315,28 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
         kS,
         kV,
         kA);
+
+    LoggedTunableNumber.ifChanged(
+        0,
+        () -> {
+          motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
+          motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
+          motionMagicConfigs.MotionMagicJerk = motionJerk.get();
+
+          StatusCode statusCode = shooterHoodTalon.getConfigurator().apply(motionMagicConfigs);
+          if (!statusCode.isOK()) {
+            Elastic.sendNotification(
+                new Notification(
+                    NotificationLevel.WARNING,
+                    "Shooter Hood Motion Magic Configs",
+                    "Error in periodically updating shooter hood MotionMagic configs!"));
+
+            Logger.recordOutput("ShooterHood/UpdateStatusCodeReport", statusCode);
+          }
+        },
+        motionAcceleration,
+        motionCruiseVelocity,
+        motionJerk);
   }
 
   @Override
