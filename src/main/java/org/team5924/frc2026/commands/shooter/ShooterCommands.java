@@ -29,11 +29,10 @@ public class ShooterCommands {
 
   private ShooterCommands() {}
 
-  public static Command manualControl(
-      SuperShooter shooter, DoubleSupplier hoodSupplier, DoubleSupplier rollerSupplier) {
+  public static Command manualShooter(
+      SuperShooter shooter, DoubleSupplier hoodSupplier) {
     return Commands.run(
         () -> {
-          shooter.runRollerVolts(hoodSupplier.getAsDouble());
           shooter.runHoodVolts(hoodSupplier.getAsDouble());
         },
         shooter);

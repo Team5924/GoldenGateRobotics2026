@@ -72,8 +72,8 @@ public final class Constants {
     public static final double BORDER_MARGIN = 0.5;
     public static final AprilTagFieldLayout field =
         AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
-    public static final double WIDTH = field.getFieldWidth();
-    public static final double LENGTH = field.getFieldLength();
+    public static final double LENGTH = field.getFieldLength(); // x
+    public static final double WIDTH = field.getFieldWidth(); // y
 
     public static final double CENTER_X = WIDTH / 2;
     public static final double CENTER_Y = LENGTH / 2;

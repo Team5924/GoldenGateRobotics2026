@@ -63,4 +63,10 @@ public class ShooterRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC
     super.runVolts(volts);
     shooterFollower.runVolts(volts);
   }
+
+  @Override
+  public void stop() {
+    super.stop();
+    shooterFollower.stop();
+  }
 }
