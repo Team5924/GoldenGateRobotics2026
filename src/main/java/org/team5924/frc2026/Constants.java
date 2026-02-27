@@ -429,6 +429,40 @@ public final class Constants {
           new MotorOutputConfigs()
             .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
+       public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
+      new OpenLoopRampsConfigs()
+        .withDutyCycleOpenLoopRampPeriod(0.02)
+        .withTorqueOpenLoopRampPeriod(0.02)
+        .withVoltageOpenLoopRampPeriod(0.02);
+
+    public static final ClosedLoopRampsConfigs CLOSED_LOOP_RAMPS_CONFIGS =
+      new ClosedLoopRampsConfigs()
+        .withDutyCycleClosedLoopRampPeriod(0.02)
+        .withTorqueClosedLoopRampPeriod(0.02)
+        .withVoltageClosedLoopRampPeriod(0.02);
+
+    public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
+      new SoftwareLimitSwitchConfigs()
+        .withForwardSoftLimitThreshold(
+          MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
+        .withReverseSoftLimitThreshold(
+          MAX_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
+        .withForwardSoftLimitEnable(true)
+        .withReverseSoftLimitEnable(true);
+
+    public static final FeedbackConfigs FEEDBACK_CONFIGS =
+      new FeedbackConfigs()
+        .withFeedbackRemoteSensorID(CANCODER_ID)
+        .withFeedbackRotorOffset(CANCODER_ABSOLUTE_OFFSET)
+        .withSensorToMechanismRatio(CANCODER_TO_MECHANISM)
+        .withRotorToSensorRatio(MOTOR_TO_CANCODER)
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
+
+    public static final MagnetSensorConfigs CANCODER_CONFIG =
+      new MagnetSensorConfigs()
+        .withMagnetOffset(-CANCODER_ABSOLUTE_OFFSET) // TODO: update offset -> when the turret is facing forward (units: rotations)
+        .withAbsoluteSensorDiscontinuityPoint(0.5)
+        .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
   }
 
   public final class Climb { // TODO: update these values
