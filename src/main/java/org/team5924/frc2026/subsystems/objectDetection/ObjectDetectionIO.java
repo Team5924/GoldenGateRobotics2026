@@ -32,6 +32,7 @@ public interface ObjectDetectionIO {
     public boolean isCameraConnected = false;
     public boolean seesFuel = false;
     public int fuelCount = 0;
+    public int fuelInGroups = 0;
     public int groupCount = 0;
   }
 

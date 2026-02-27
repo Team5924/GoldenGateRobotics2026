@@ -16,25 +16,24 @@
 
 package org.team5924.frc2026.subsystems.objectDetection;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Getter;
+import org.photonvision.PhotonUtils;
 
 public class TargetGroup implements Serializable {
   public int fuelAmount;
   public List<Target> targets;
   public Target firstFiducialTarget;
 
-  /** Positions of fuel relative to the robot */
-  @Getter private List<Translation2d> fuelPositions;
-
   public TargetGroup() {
-    fuelAmount = 0;
-    targets = new ArrayList<>();
-    firstFiducialTarget = new Target();
-    fuelPositions = new ArrayList<>();
+    this.fuelAmount = 0;
+    this.targets = new ArrayList<>();
+    this.firstFiducialTarget = new Target();
   }
 
   public void addTarget(Target target) {
@@ -43,28 +42,34 @@ public class TargetGroup implements Serializable {
     }
     targets.add(target);
     fuelAmount++;
-
-    fuelPositions.add(ObjectDetectionUtils.getRobotToTargetTranslation2d(target.fuel));
   }
 
   /* Gets Poses of Fuel Within Group */
-  // public Pose2d[] getFuelPoses() {
-  //   Pose2d[] targetPoses = new Pose2d[fuelAmount];
-  //   for (int i = 0; i < fuelAmount; i++) {
-  //     var target = targets.get(i).fuel;
-  //     Translation2d targetTranslation2d =
-  //         PhotonUtils.estimateCameraToTargetTranslation(
-  //             ObjectDetectionUtils.getRobotToTargetDistance(target),
-  //             new Rotation2d(Units.degreesToRadians(target.getYaw())));
-  //     targetPoses[i] = new Pose2d(targetTranslation2d, new Rotation2d());
-  //   }
-  //   return targetPoses;
-  // }
+  public Pose2d[] getFuelPoses() {
+    Pose2d[] targetPoses = new Pose2d[fuelAmount];
+    for (int i = 0; i < fuelAmount; i++) {
+      var target = targets.get(i).fuel;
+      Translation2d targetTranslation2d =
+          PhotonUtils.estimateCameraToTargetTranslation(
+              ObjectDetectionUtils.getRobotToTargetDistance(target),
+              new Rotation2d(Units.degreesToRadians(target.getYaw())));
+      targetPoses[i] = new Pose2d(targetTranslation2d, new Rotation2d());
+    }
+    return targetPoses;
+  }
+
+  public List<Translation2d> getFuelTranslations() {
+    List<Translation2d> fuelPositions = new ArrayList<>();
+    for (Target fuel : targets) {
+      fuelPositions.add(fuel.getRobotOffset());
+    }
+    return fuelPositions;
+  }
 
   public void logGroup(int id) {
     for (Target target : targets) {
       String logPath =
-          "Group"
+          "Group "
               + id
               + "Target Group First Fiducial "
               + firstFiducialTarget.fuelID

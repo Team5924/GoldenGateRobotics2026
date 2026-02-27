@@ -18,7 +18,10 @@ package org.team5924.frc2026.subsystems.objectDetection;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
@@ -36,17 +39,23 @@ public class ObjectDetection extends SubsystemBase {
     cameraDisconnected = new Alert("Object Detection Camera Disconnected!", AlertType.kWarning);
     cameraDisconnectedNotification =
         new Notification(NotificationLevel.WARNING, "Object Detection Camera Disconnected!", "");
+
+    CommandScheduler.getInstance().unregisterSubsystem(this);
+
+    Notifier notifier = new Notifier(() -> periodic());
+    notifier.startPeriodic(0.1);
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    // Logger.processInputs("Object Detection Inputs", inputs);
-    // int groupID = 0;
-    // for (TargetGroup group : inputs.latestGroupedTargets.groups()) {
-    //   group.logGroup(groupID);
-    //   groupID++;
-    // }
+    Logger.processInputs("Object Detection Inputs", inputs);
+    int groupID = 0;
+    for (TargetGroup group : inputs.latestGroupedTargets.groups()) {
+      group.logGroup(groupID);
+
+      groupID++;
+    }
 
     if (!inputs.isCameraConnected) {
       Elastic.sendNotification(cameraDisconnectedNotification);

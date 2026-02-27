@@ -52,7 +52,8 @@ public class ObjectDetectionUtils {
    */
   public static Translation2d getCameraToTargetTranslation2d(PhotonTrackedTarget target) {
     return PhotonUtils.estimateCameraToTargetTranslation(
-        getRobotToTargetDistance(target), new Rotation2d(Units.degreesToRadians(target.getYaw())));
+        getRobotToTargetDistance(target),
+        new Rotation2d(Units.degreesToRadians(-1 * (target.getYaw()))));
   }
 
   /**
@@ -61,7 +62,7 @@ public class ObjectDetectionUtils {
    */
   public static Translation2d getRobotToTargetTranslation2d(PhotonTrackedTarget target) {
     double targetDistance = getRobotToTargetDistance(target);
-    double targetYawRads = Units.degreesToRadians(target.getYaw());
+    double targetYawRads = Units.degreesToRadians(-1 * target.getYaw());
     return new Translation2d(
         targetDistance * Math.cos(targetYawRads), targetDistance * Math.sin(targetYawRads));
   }
@@ -116,7 +117,7 @@ public class ObjectDetectionUtils {
     Translation2d targetPosition = target.getRobotOffset();
 
     for (int i = 0; i < groups.size(); i++) {
-      List<Translation2d> comparisonPositions = groups.get(i).getFuelPositions();
+      List<Translation2d> comparisonPositions = groups.get(i).getFuelTranslations();
       for (Translation2d comparisonPosition : comparisonPositions) {
         double targetDistance = targetPosition.getDistance(comparisonPosition);
 
@@ -128,5 +129,13 @@ public class ObjectDetectionUtils {
       }
     }
     return closestGroupIndex;
+  }
+
+  public static int getFuelInGroupsAmount(List<TargetGroup> groups) {
+    int amount = 0;
+    for (TargetGroup group : groups) {
+      amount += group.targets.size();
+    }
+    return amount;
   }
 }

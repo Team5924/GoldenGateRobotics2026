@@ -52,6 +52,8 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
     inputs.seesFuel = instance.hasTargets();
     inputs.fuelCount = instance.getTargets().size();
     inputs.groupCount = inputs.latestGroupedTargets.groups().size();
+    inputs.fuelInGroups =
+        ObjectDetectionUtils.getFuelInGroupsAmount(inputs.latestGroupedTargets.groups());
     logGroups(inputs.latestGroupedTargets.groups());
   }
 
@@ -92,8 +94,7 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
         // and find the smallest distance
         // checks for case -1, which results in needing the creation of a new group (fuel isn't
         // close to any previously compared fuel)
-        int closestGroupIndex =
-            ObjectDetectionUtils.optimizedGetClosestGroupIndex(fuelTarget, fuelGroups);
+        int closestGroupIndex = ObjectDetectionUtils.getClosestGroupIndex(fuelTarget, fuelGroups);
 
         switch (closestGroupIndex) {
           case -1:
@@ -109,10 +110,10 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
       currentID++;
     }
 
-    if (timer.get() >= 0.5) {
-      printGroups(fuelGroups);
-      timer.reset();
-    }
+    // if (timer.get() >= 0.5) {
+    //   printGroups(fuelGroups);
+    //   timer.reset();
+    // }
 
     return new TargetGroups(fuelGroups);
   }
