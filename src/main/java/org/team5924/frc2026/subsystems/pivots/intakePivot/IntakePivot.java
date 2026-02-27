@@ -50,6 +50,9 @@ public class IntakePivot extends SubsystemBase {
     OFF(() -> 0.0),
     MOVING(() -> 0.0),
 
+    DOWN(new LoggedTunableNumber("IntakePivot/DownRads", 7.0)),
+    STOW(new LoggedTunableNumber("IntakePivot/StowRads", 7.0)),
+
     // voltage at which the example subsystem motor moves when controlled by the operator
     MANUAL(new LoggedTunableNumber("IntakePivot/OperatorVoltage", 7.0));
 
@@ -104,12 +107,8 @@ public class IntakePivot extends SubsystemBase {
 
     intakePivotMotorDisconnected.set(!inputs.intakePivotMotorConnected);
 
-    // Logger.recordOutput("IntakePivot/idk prob like rads", radsPos);
-    // Logger.recordOutput("IntakePivot/input volts", inputVolts);
     Logger.recordOutput("IntakePivot/exceed bounds", bounds);
     Logger.recordOutput("IntakePivot/continue", cont);
-    // Logger.recordOutput("IntakePivot/tmp", inputs.intakePivotMotorPosition);
-    // Logger.recordOutput("IntakePivot/gcpr", getCurrentPositionRads());
 
     handleManualState();
 
