@@ -20,8 +20,10 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -51,16 +53,23 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
 
   /* Configs */
   private final Slot0Configs slot0Configs;
+  private final MotionMagicConfigs motionMagicConfigs;
   private double setpointRads;
 
   /* Gains */
+  // TODO: Change values later
   private final LoggedTunableNumber kP = new LoggedTunableNumber("ShooterHood/kP", 1.0);
   private final LoggedTunableNumber kI = new LoggedTunableNumber("ShooterHood/kI", 0.0);
-  private final LoggedTunableNumber kD =
-      new LoggedTunableNumber("ShooterHood/kD", 0.00); // TODO: Change values later
+  private final LoggedTunableNumber kD = new LoggedTunableNumber("ShooterHood/kD", 0.00);
   private final LoggedTunableNumber kS = new LoggedTunableNumber("ShooterHood/kS", 0.0);
   private final LoggedTunableNumber kV = new LoggedTunableNumber("ShooterHood/kV", 0.0);
   private final LoggedTunableNumber kA = new LoggedTunableNumber("ShooterHood/kA", 0.00);
+
+  private final LoggedTunableNumber motionCruiseVelocity =
+      new LoggedTunableNumber("Turret/MotionCruiseVelocity", 90.0);
+  private final LoggedTunableNumber motionAcceleration =
+      new LoggedTunableNumber("Turret/MotionAcceleration", 900.0);
+  private final LoggedTunableNumber motionJerk = new LoggedTunableNumber("Turret/MotionJerk", 0.0);
 
   /* Status Signals */
   private final StatusSignal<Angle> shooterHoodPosition;
@@ -79,13 +88,44 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
 
   private final VoltageOut voltageOut;
   private final PositionVoltage positionOut;
+  private final MotionMagicVoltage magicMotionVoltage;
 
-  public ShooterHoodIOTalonFX() {
+  private final double cancoderToMechanism;
+  private final double motorToMechanism;
+  private final double minPositionRads;
+  private final double maxPositionRads;
+
+  public ShooterHoodIOTalonFX(boolean isLeft) {
+    cancoderToMechanism =
+        isLeft
+            ? Constants.ShooterHoodLeft.CANCODER_TO_MECHANISM
+            : Constants.ShooterHoodRight.CANCODER_TO_MECHANISM;
+    motorToMechanism =
+        isLeft
+            ? Constants.ShooterHoodLeft.MOTOR_TO_MECHANISM
+            : Constants.ShooterHoodRight.MOTOR_TO_MECHANISM;
+    minPositionRads =
+        isLeft
+            ? Constants.ShooterHoodLeft.MIN_POSITION_RADS
+            : Constants.ShooterHoodRight.MIN_POSITION_RADS;
+    maxPositionRads =
+        isLeft
+            ? Constants.ShooterHoodLeft.MAX_POSITION_RADS
+            : Constants.ShooterHoodRight.MAX_POSITION_RADS;
+
     shooterHoodTalon =
-        new TalonFX(Constants.ShooterHood.CAN_ID, new CANBus(Constants.ShooterHood.BUS));
-    shooterHoodCANCoder = new CANcoder(Constants.ShooterHood.CANCODER_ID);
+        new TalonFX(
+            isLeft ? Constants.ShooterHoodLeft.CAN_ID : Constants.ShooterHoodRight.CAN_ID,
+            new CANBus(isLeft ? Constants.ShooterHoodLeft.BUS : Constants.ShooterHoodRight.BUS));
+    shooterHoodCANCoder =
+        new CANcoder(
+            isLeft
+                ? Constants.ShooterHoodLeft.CANCODER_ID
+                : Constants.ShooterHoodRight.CANCODER_ID);
 
-    shooterHoodTalonConfig = shooterHoodTalon.getConfigurator();
+    shooterHoodTalon
+        .getConfigurator()
+        .apply(isLeft ? Constants.ShooterHoodLeft.CONFIG : Constants.ShooterHoodRight.CONFIG);
 
     slot0Configs = new Slot0Configs();
     slot0Configs.kP = kP.get();
@@ -95,17 +135,45 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     slot0Configs.kV = kV.get();
     slot0Configs.kA = kA.get();
 
+    motionMagicConfigs = new MotionMagicConfigs();
+    motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
+    motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
+    motionMagicConfigs.MotionMagicJerk = motionJerk.get();
+
     // Apply Configs
     StatusCode[] statusArray = new StatusCode[7];
 
-    statusArray[0] = shooterHoodTalonConfig.apply(Constants.ShooterHood.CONFIG);
+    statusArray[0] =
+        shooterHoodTalonConfig.apply(
+            isLeft ? Constants.ShooterHoodLeft.CONFIG : Constants.ShooterHoodRight.CONFIG);
     statusArray[1] = shooterHoodTalonConfig.apply(slot0Configs);
-    statusArray[2] = shooterHoodTalonConfig.apply(Constants.ShooterHood.OPEN_LOOP_RAMPS_CONFIGS);
-    statusArray[3] = shooterHoodTalonConfig.apply(Constants.ShooterHood.CLOSED_LOOP_RAMPS_CONFIGS);
-    statusArray[4] = shooterHoodTalonConfig.apply(Constants.ShooterHood.FEEDBACK_CONFIGS);
-    statusArray[5] = shooterHoodTalonConfig.apply(Constants.ShooterHood.SOFTWARE_LIMIT_CONFIGS);
+    statusArray[2] =
+        shooterHoodTalonConfig.apply(
+            isLeft
+                ? Constants.ShooterHoodLeft.OPEN_LOOP_RAMPS_CONFIGS
+                : Constants.ShooterHoodRight.OPEN_LOOP_RAMPS_CONFIGS);
+    statusArray[3] =
+        shooterHoodTalonConfig.apply(
+            isLeft
+                ? Constants.ShooterHoodLeft.CLOSED_LOOP_RAMPS_CONFIGS
+                : Constants.ShooterHoodRight.CLOSED_LOOP_RAMPS_CONFIGS);
+    statusArray[4] =
+        shooterHoodTalonConfig.apply(
+            isLeft
+                ? Constants.ShooterHoodLeft.FEEDBACK_CONFIGS
+                : Constants.ShooterHoodRight.FEEDBACK_CONFIGS);
+    statusArray[5] =
+        shooterHoodTalonConfig.apply(
+            isLeft
+                ? Constants.ShooterHoodLeft.SOFTWARE_LIMIT_CONFIGS
+                : Constants.ShooterHoodRight.SOFTWARE_LIMIT_CONFIGS);
     statusArray[6] =
-        shooterHoodCANCoder.getConfigurator().apply(Constants.ShooterHood.CANCODER_CONFIG);
+        shooterHoodCANCoder
+            .getConfigurator()
+            .apply(
+                isLeft
+                    ? Constants.ShooterHoodLeft.CANCODER_CONFIG
+                    : Constants.ShooterHoodRight.CANCODER_CONFIG);
 
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
@@ -148,6 +216,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
 
     voltageOut = new VoltageOut(0.0);
     positionOut = new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true).withSlot(0);
+    magicMotionVoltage = new MotionMagicVoltage(0.0).withEnableFOC(true).withSlot(0);
 
     BaseStatusSignal.waitForAll(0.5, cancoderAbsolutePosition);
     shooterHoodCANCoder.setPosition(0.0);
@@ -167,19 +236,9 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
                 closedLoopReferenceSlope)
             .isOK();
 
-    inputs.cancoderConnected =
-        BaseStatusSignal.refreshAll(
-                cancoderAbsolutePosition,
-                cancoderVelocity,
-                cancoderSupplyVoltage,
-                cancoderPositionRotations)
-            .isOK();
-
-    inputs.shooterHoodPosition =
-        BaseStatusSignal.getLatencyCompensatedValueAsDouble(
-            shooterHoodPosition, shooterHoodVelocity);
-    inputs.shooterHoodPositionRads = Units.rotationsToRadians(inputs.shooterHoodPosition);
-
+    inputs.shooterHoodPosition = shooterHoodPosition.getValueAsDouble();
+    inputs.shooterHoodPositionRads =
+        Units.rotationsToRadians(shooterHoodPosition.getValueAsDouble());
     inputs.shooterHoodVelocityRadsPerSec =
         Units.rotationsToRadians(shooterHoodVelocity.getValueAsDouble());
     inputs.shooterHoodAppliedVoltage = shooterHoodAppliedVoltage.getValueAsDouble();
@@ -194,10 +253,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     inputs.cancoderSupplyVoltage = cancoderSupplyVoltage.getValueAsDouble();
     inputs.cancoderPositionRotations = cancoderPositionRotations.getValueAsDouble();
 
-    inputs.shooterHoodPositionCancoder =
-        (inputs.cancoderPositionRotations)
-            / Constants.ShooterHood.CANCODER_TO_SPUR
-            / Constants.ShooterHood.SPUR_TO_MECHANISM;
+    inputs.shooterHoodPositionCancoder = (inputs.cancoderPositionRotations) / cancoderToMechanism;
   }
 
   @Override
@@ -247,6 +303,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     }
 
     setpointRads = clampRads(rads);
+    shooterHoodTalon.setControl(magicMotionVoltage.withPosition(radsToMotorPosition(setpointRads)));
   }
 
   /* Unused but nice to have */
@@ -261,16 +318,15 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   }
 
   private double clampRads(double rads) {
-    return MathUtil.clamp(
-        rads, Constants.ShooterHood.MIN_POSITION_RADS, Constants.ShooterHood.MAX_POSITION_RADS);
+    return MathUtil.clamp(rads, minPositionRads, maxPositionRads);
   }
 
   private double radsToMotorPosition(double rads) {
-    return Units.radiansToRotations(rads) * Constants.ShooterHood.MOTOR_TO_MECHANISM;
+    return Units.radiansToRotations(rads) * motorToMechanism;
   }
 
   /* Unused but nice to have */
   private double motorPositionToRads(double motorPosition) {
-    return Units.rotationsToRadians(motorPosition) / Constants.ShooterHood.MOTOR_TO_MECHANISM;
+    return Units.rotationsToRadians(motorPosition) / motorToMechanism;
   }
 }

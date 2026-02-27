@@ -19,16 +19,17 @@ package org.team5924.frc2026.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lombok.Getter;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
-import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
-import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
+import org.team5924.frc2026.subsystems.turret.Turret;
 
 public class SuperShooter extends SubsystemBase {
-  private final ShooterRoller roller;
-  private final ShooterHood hood;
+  @Getter private final ShooterRoller roller;
+  @Getter private final ShooterHood hood;
+  @Getter private final Turret turret;
 
   public enum ShooterState {
     OFF(),
+    MANUAL(),
     AUTO_SHOOTING(),
     BUMPER_SHOOTING(),
     NEUTRAL_SHUFFLING(),
@@ -39,38 +40,40 @@ public class SuperShooter extends SubsystemBase {
 
   @Getter private ShooterState goalState = ShooterState.OFF;
 
+  public void runHoodVolts(double volts) {
+    hood.runVolts(volts);
+  }
+
+  public void runTurretVolts(double volts) {
+    turret.tryRunVolts(volts);
+  }
+
+  public void setHoodPosition(double rads) {
+    hood.setPosition(rads);
+  }
+
+  public void setRollerInput(double input) {
+    roller.setInput(input);
+  }
+
+  public void setHoodInputs(double input) {
+    hood.setInput(input);
+  }
+
+  public void setTurretInputs(double input) {
+    turret.setInput(input);
+  }
+
   public void setGoalState(ShooterState goalState) {
     this.goalState = goalState;
   }
 
-  public SuperShooter(ShooterRoller roller, ShooterHood hood) {
+  public SuperShooter(ShooterRoller roller, ShooterHood hood, Turret turret) {
     this.roller = roller;
     this.hood = hood;
+    this.turret = turret;
   }
 
   @Override
-  public void periodic() {
-    switch (goalState) {
-      case OFF:
-        roller.setGoalState(ShooterRollerState.OFF);
-        hood.setGoalState(ShooterHoodState.OFF);
-        break;
-      case AUTO_SHOOTING:
-        roller.setGoalState(ShooterRollerState.AUTO_SHOOTING);
-        hood.setGoalState(ShooterHoodState.AUTO_SHOOTING);
-        break;
-      case BUMPER_SHOOTING:
-        roller.setGoalState(ShooterRollerState.BUMPER_SHOOTING);
-        hood.setGoalState(ShooterHoodState.BUMPER_SHOOTING);
-        break;
-      case NEUTRAL_SHUFFLING:
-        roller.setGoalState(ShooterRollerState.NEUTRAL_SHUFFLING);
-        hood.setGoalState(ShooterHoodState.NEUTRAL_SHUFFLING);
-        break;
-      case OPPONENT_SHUFFLING:
-        roller.setGoalState(ShooterRollerState.OPPONENT_SHUFFLING);
-        hood.setGoalState(ShooterHoodState.OPPONENT_SHUFFLING);
-        break;
-    }
-  }
+  public void periodic() {}
 }
