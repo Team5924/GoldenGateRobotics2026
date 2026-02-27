@@ -29,8 +29,7 @@ public class ShooterCommands {
 
   private ShooterCommands() {}
 
-  public static Command manualShooter(
-      SuperShooter shooter, DoubleSupplier hoodSupplier) {
+  public static Command manualShooter(SuperShooter shooter, DoubleSupplier hoodSupplier) {
     return Commands.run(
         () -> {
           shooter.runHoodVolts(hoodSupplier.getAsDouble());
