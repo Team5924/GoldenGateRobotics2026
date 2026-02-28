@@ -86,9 +86,9 @@ public class Turret extends SubsystemBase {
     sysId =
         new SysIdRoutine(
             new SysIdRoutine.Config(
-                Volts.of(.75).per(Seconds),
+                Volts.per(Seconds).of(.75),
                 Volts.of(1),
-                Seconds.of(new LoggedTunableNumber("Turret/SysIdTime", 10.0).getAsDouble()),
+                Seconds.of(Constants.SYS_ID_TIME),
                 (state) -> Logger.recordOutput("Turret/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism((voltage) -> tryRunVolts(voltage.in(Volts)), null, this));
   }
@@ -139,7 +139,7 @@ public class Turret extends SubsystemBase {
   private void handleManualState() {
     if (!goalState.equals(TurretState.MANUAL)) return;
 
-    if (Math.abs(input) <= Constants.GeneralTurret.JOYSTICK_DEADZONE) {
+    if (Math.abs(input) <= Constants.JOYSTICK_DEADZONE) {
       io.runVolts(0);
       return;
     }

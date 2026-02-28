@@ -64,6 +64,8 @@ public final class Constants {
 
   /* General */
   public static final double LOOP_PERIODIC_SECONDS = 0.02;
+  public static final double SYS_ID_TIME = 0;
+  public static final double JOYSTICK_DEADZONE = 0.05;
   
   public final class Field {
     // origin = rightmost corner of blue alliance wall
@@ -131,12 +133,10 @@ public final class Constants {
    */
 
   public final class GeneralShooterHood {
-    public static final double JOYSTICK_DEADZONE = 0.05;
     public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
   }
 
   public final class GeneralTurret {
-    public static final double JOYSTICK_DEADZONE = 0.05;
     public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
     public static final double STATE_TIMEOUT = 5.0;
   }
