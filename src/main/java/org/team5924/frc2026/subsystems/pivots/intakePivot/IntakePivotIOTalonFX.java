@@ -105,13 +105,14 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     motionMagicConfigs.MotionMagicJerk = motionJerk.get();
 
     // Apply Configs
-    StatusCode[] statusArray = new StatusCode[5];
+    StatusCode[] statusArray = new StatusCode[6];
 
     statusArray[0] = intakePivotTalonConfig.apply(Constants.IntakePivot.CONFIG);
     statusArray[1] = intakePivotTalonConfig.apply(slot0Configs);
     statusArray[2] = intakePivotTalonConfig.apply(motionMagicConfigs);
     statusArray[3] = intakePivotTalonConfig.apply(Constants.IntakePivot.OPEN_LOOP_RAMPS_CONFIGS);
     statusArray[4] = intakePivotTalonConfig.apply(Constants.IntakePivot.CLOSED_LOOP_RAMPS_CONFIGS);
+    statusArray[5] = intakePivotTalonConfig.apply(Constants.IntakePivot.SOFTWARE_LIMIT_CONFIGS);
     
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
@@ -168,7 +169,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
         BaseStatusSignal.getLatencyCompensatedValueAsDouble(
                 intakePivotPosition, intakePivotVelocity)
             / Constants.IntakePivot.MOTOR_TO_MECHANISM;
-    inputs.intakePivotPositionRads = Units.rotationsToRadians(inputs.intakePivotPosition);
+    inputs.intakePivotPositionRads = Units.rotationsToRadians(inputs.intakePivotPosition) / Constants.IntakePivot.MECHANISM_RANGE_PERCENT;
 
     inputs.intakePivotVelocityRadsPerSec = Units.rotationsToRadians(intakePivotVelocity.getValueAsDouble()) / Constants.IntakePivot.MOTOR_TO_MECHANISM;
     inputs.intakePivotAppliedVoltage = intakePivotAppliedVoltage.getValueAsDouble();
