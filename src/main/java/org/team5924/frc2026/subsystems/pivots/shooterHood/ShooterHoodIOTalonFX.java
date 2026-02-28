@@ -384,4 +384,5 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   private double motorPositionToRads(double motorPosition) {
     return Units.rotationsToRadians(motorPosition) / motorToMechanism / mechanismRangePercent;
   }
+  
 }
