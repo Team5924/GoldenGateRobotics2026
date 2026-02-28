@@ -91,9 +91,29 @@ public class TurretIOTalonFX implements TurretIO {
   private final PositionVoltage positionOut;
   private final MotionMagicVoltage magicMotionVoltage;
 
-  public TurretIOTalonFX() {
-    turretTalon = new TalonFX(Constants.Turret.CAN_ID, new CANBus(Constants.Turret.BUS));
-    turretCANCoder = new CANcoder(Constants.Turret.CANCODER_ID);
+  private final double cancoderToMechanism;
+  private final double motorToMechanism;
+  private final double minPositionRads;
+  private final double maxPositionRads;
+
+  public TurretIOTalonFX(boolean isLeft) {
+    cancoderToMechanism =
+        isLeft
+            ? Constants.TurretLeft.CANCODER_TO_MECHANISM
+            : Constants.TurretRight.CANCODER_TO_MECHANISM;
+    motorToMechanism =
+        isLeft ? Constants.TurretLeft.MOTOR_TO_MECHANISM : Constants.TurretRight.MOTOR_TO_MECHANISM;
+    minPositionRads =
+        isLeft ? Constants.TurretLeft.MIN_POSITION_RADS : Constants.TurretRight.MIN_POSITION_RADS;
+    maxPositionRads =
+        isLeft ? Constants.TurretLeft.MAX_POSITION_RADS : Constants.TurretRight.MAX_POSITION_RADS;
+
+    turretTalon =
+        new TalonFX(
+            isLeft ? Constants.TurretLeft.CAN_ID : Constants.TurretRight.CAN_ID,
+            new CANBus(isLeft ? Constants.TurretLeft.BUS : Constants.TurretRight.BUS));
+    turretCANCoder =
+        new CANcoder(isLeft ? Constants.TurretLeft.CANCODER_ID : Constants.TurretRight.CANCODER_ID);
 
     turretTalonConfig = turretTalon.getConfigurator();
 
@@ -113,14 +133,38 @@ public class TurretIOTalonFX implements TurretIO {
     // Apply Configs
     StatusCode[] statusArray = new StatusCode[8];
 
-    statusArray[0] = turretTalonConfig.apply(Constants.Turret.CONFIG);
-    statusArray[1] = turretTalonConfig.apply(Constants.Turret.OPEN_LOOP_RAMPS_CONFIGS);
-    statusArray[2] = turretTalonConfig.apply(Constants.Turret.CLOSED_LOOP_RAMPS_CONFIGS);
-    statusArray[3] = turretTalonConfig.apply(Constants.Turret.SOFTWARE_LIMIT_CONFIGS);
-    statusArray[4] = turretTalonConfig.apply(Constants.Turret.FEEDBACK_CONFIGS);
+    statusArray[0] =
+        turretTalonConfig.apply(
+            isLeft ? Constants.TurretLeft.CONFIG : Constants.TurretRight.CONFIG);
+    statusArray[1] =
+        turretTalonConfig.apply(
+            isLeft
+                ? Constants.TurretLeft.OPEN_LOOP_RAMPS_CONFIGS
+                : Constants.TurretRight.OPEN_LOOP_RAMPS_CONFIGS);
+    statusArray[2] =
+        turretTalonConfig.apply(
+            isLeft
+                ? Constants.TurretLeft.CLOSED_LOOP_RAMPS_CONFIGS
+                : Constants.TurretRight.CLOSED_LOOP_RAMPS_CONFIGS);
+    statusArray[3] =
+        turretTalonConfig.apply(
+            isLeft
+                ? Constants.TurretLeft.SOFTWARE_LIMIT_CONFIGS
+                : Constants.TurretRight.SOFTWARE_LIMIT_CONFIGS);
+    statusArray[4] =
+        turretTalonConfig.apply(
+            isLeft
+                ? Constants.TurretLeft.FEEDBACK_CONFIGS
+                : Constants.TurretRight.FEEDBACK_CONFIGS);
     statusArray[5] = turretTalonConfig.apply(motionMagicConfigs);
     statusArray[6] = turretTalonConfig.apply(slot0Configs);
-    statusArray[7] = turretCANCoder.getConfigurator().apply(Constants.Turret.CANCODER_CONFIG);
+    statusArray[7] =
+        turretCANCoder
+            .getConfigurator()
+            .apply(
+                isLeft
+                    ? Constants.TurretLeft.CANCODER_CONFIG
+                    : Constants.TurretRight.CANCODER_CONFIG);
 
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
@@ -222,8 +266,7 @@ public class TurretIOTalonFX implements TurretIO {
     inputs.cancoderSupplyVoltage = cancoderSupplyVoltage.getValueAsDouble();
     inputs.cancoderPositionRotations = cancoderPositionRotations.getValueAsDouble();
 
-    inputs.turretPositionCancoder =
-        inputs.cancoderPositionRotations / Constants.Turret.CANCODER_TO_MECHANISM;
+    inputs.turretPositionCancoder = inputs.cancoderPositionRotations / cancoderToMechanism;
   }
 
   @Override
@@ -310,15 +353,14 @@ public class TurretIOTalonFX implements TurretIO {
   }
 
   private double clampRads(double rads) {
-    return MathUtil.clamp(
-        rads, Constants.Turret.MIN_POSITION_RADS, Constants.Turret.MAX_POSITION_RADS);
+    return MathUtil.clamp(rads, minPositionRads, maxPositionRads);
   }
 
   private double radsToMotorPosition(double rads) {
-    return Units.radiansToRotations(rads * Constants.Turret.MOTOR_TO_MECHANISM);
+    return Units.radiansToRotations(rads * motorToMechanism);
   }
 
   private double motorPositionToRads(double motorPosition) {
-    return Units.rotationsToRadians(motorPosition / Constants.Turret.MOTOR_TO_MECHANISM);
+    return Units.rotationsToRadians(motorPosition / motorToMechanism);
   }
 }

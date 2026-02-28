@@ -40,10 +40,6 @@ public class SuperShooter extends SubsystemBase {
 
   @Getter private ShooterState goalState = ShooterState.OFF;
 
-  public void runRollerVolts(double volts) {
-    roller.runVolts(volts);
-  }
-
   public void runHoodVolts(double volts) {
     hood.runVolts(volts);
   }
@@ -79,31 +75,5 @@ public class SuperShooter extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {
-    // switch (goalState) {
-    //   case OFF:
-    //     roller.setGoalState(ShooterRollerState.OFF);
-    //     hood.setGoalState(ShooterHoodState.OFF);
-    //     break;
-    //   case MANUAL:
-    //     hood.setGoalState(ShooterHoodState.BUMPER_SHOOTING);
-    //     break;
-    //   case AUTO_SHOOTING:
-    //     roller.setGoalState(ShooterRollerState.AUTO_SHOOTING);
-    //     hood.setGoalState(ShooterHoodState.AUTO_SHOOTING);
-    //     break;
-    //   case BUMPER_SHOOTING:
-    //     roller.setGoalState(ShooterRollerState.BUMPER_SHOOTING);
-    //     hood.setGoalState(ShooterHoodState.BUMPER_SHOOTING);
-    //     break;
-    //   case NEUTRAL_SHUFFLING:
-    //     roller.setGoalState(ShooterRollerState.NEUTRAL_SHUFFLING);
-    //     hood.setGoalState(ShooterHoodState.NEUTRAL_SHUFFLING);
-    //     break;
-    //   case OPPONENT_SHUFFLING:
-    //     roller.setGoalState(ShooterRollerState.OPPONENT_SHUFFLING);
-    //     hood.setGoalState(ShooterHoodState.OPPONENT_SHUFFLING);
-    //     break;
-    // }
-  }
+  public void periodic() {}
 }

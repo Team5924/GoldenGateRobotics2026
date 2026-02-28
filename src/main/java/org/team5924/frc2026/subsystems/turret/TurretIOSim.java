@@ -28,11 +28,14 @@ public class TurretIOSim implements TurretIO {
   private final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
   private double appliedVoltage = 0.0;
 
-  public TurretIOSim() {
+  public TurretIOSim(boolean isLeft) {
     sim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
-                gearbox, Constants.Turret.SIM_MOI, Constants.Turret.MOTOR_TO_MECHANISM),
+                isLeft
+                    ? Constants.TurretLeft.MOTOR_TO_MECHANISM
+                    : Constants.TurretRight.MOTOR_TO_MECHANISM,
+                isLeft ? Constants.TurretLeft.SIM_MOI : Constants.TurretRight.SIM_MOI),
             gearbox);
   }
 
@@ -41,6 +44,7 @@ public class TurretIOSim implements TurretIO {
     if (DriverStation.isDisabled()) runVolts(0.0);
 
     sim.update(Constants.LOOP_PERIODIC_SECONDS);
+    inputs.turretMotorConnected = true;
     inputs.turretPositionRads = sim.getAngularPositionRad();
     inputs.turretVelocityRadsPerSec = sim.getAngularVelocityRadPerSec();
     inputs.turretAppliedVoltage = appliedVoltage;

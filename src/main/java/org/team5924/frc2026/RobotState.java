@@ -64,24 +64,28 @@ public class RobotState {
   @Getter @Setter private Rotation2d yawPosition = new Rotation2d();
   @Getter @Setter private double yawVelocityRadPerSec = 0.0;
 
-  // Turret
-  @Getter @Setter private TurretState turretState = TurretState.OFF;
-
-  /* ### HopperState ### */
-  @Getter @Setter private HopperState hopperState = HopperState.OFF;
-
-  /*### Shooter ### */
-  @Getter @Setter private ShooterState shooterState = ShooterState.OFF;
-
-  /*### Shooter Hood ### */
-  @Getter @Setter private ShooterHoodState shooterHoodState = ShooterHoodState.OFF;
-
   /* ### Intake ### */
   @Getter @Setter private IntakeState intakeState = IntakeState.OFF;
+
+  /* ### Hopper ### */
+  @Getter @Setter private HopperState hopperState = HopperState.OFF;
 
   /* ### Indexer ### */
   @Getter @Setter private IndexerState indexerState = IndexerState.OFF;
 
+  /*### Shooter ### */
+  @Getter @Setter private ShooterState leftShooterState = ShooterState.OFF;
+  @Getter @Setter private ShooterState rightShooterState = ShooterState.OFF;
+
+  // Turret
+  @Getter @Setter private TurretState leftTurretState = TurretState.OFF;
+  @Getter @Setter private TurretState rightTurretState = TurretState.OFF;
+
+  /*### Shooter Hood ### */
+  @Getter @Setter private ShooterHoodState leftShooterHoodState = ShooterHoodState.OFF;
+  @Getter @Setter private ShooterHoodState rightShooterHoodState = ShooterHoodState.OFF;
+
   /*### Shooter Roller ### */
-  @Getter @Setter private ShooterRollerState shooterRollerState = ShooterRollerState.OFF;
+  @Getter @Setter private ShooterRollerState leftShooterRollerState = ShooterRollerState.OFF;
+  @Getter @Setter private ShooterRollerState rightShooterRollerState = ShooterRollerState.OFF;
 }

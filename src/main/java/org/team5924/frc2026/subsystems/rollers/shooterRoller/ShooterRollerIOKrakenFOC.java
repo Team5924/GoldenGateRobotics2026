@@ -23,30 +23,50 @@ public class ShooterRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC
     implements ShooterRollerIO {
 
   private class ShooterRollerFollower extends GenericRollerSystemIOKrakenFOC {
-    public ShooterRollerFollower() {
+    public ShooterRollerFollower(boolean isLeft) {
       super(
-          Constants.ShooterRollerFollower.CAN_ID,
-          Constants.ShooterRollerFollower.BUS,
-          Constants.ShooterRollerFollower.CONFIG,
-          Constants.ShooterRollerFollower.REDUCTION);
+          isLeft
+              ? Constants.ShooterRollerFollowerLeft.CAN_ID
+              : Constants.ShooterRollerFollowerRight.CAN_ID,
+          isLeft
+              ? Constants.ShooterRollerFollowerLeft.BUS
+              : Constants.ShooterRollerFollowerRight.BUS,
+          isLeft
+              ? Constants.ShooterRollerFollowerLeft.CONFIG
+              : Constants.ShooterRollerFollowerRight.CONFIG,
+          isLeft
+              ? Constants.ShooterRollerFollowerLeft.REDUCTION
+              : Constants.ShooterRollerFollowerRight.REDUCTION);
     }
   }
 
   private final ShooterRollerFollower shooterFollower;
 
-  public ShooterRollerIOKrakenFOC() {
+  public ShooterRollerIOKrakenFOC(boolean isLeft) {
     super(
-        Constants.ShooterRollerLeader.CAN_ID,
-        Constants.ShooterRollerLeader.BUS,
-        Constants.ShooterRollerLeader.CONFIG,
-        Constants.ShooterRollerLeader.REDUCTION);
+        isLeft
+            ? Constants.ShooterRollerLeaderLeft.CAN_ID
+            : Constants.ShooterRollerLeaderRight.CAN_ID,
+        isLeft ? Constants.ShooterRollerLeaderLeft.BUS : Constants.ShooterRollerLeaderRight.BUS,
+        isLeft
+            ? Constants.ShooterRollerLeaderLeft.CONFIG
+            : Constants.ShooterRollerLeaderRight.CONFIG,
+        isLeft
+            ? Constants.ShooterRollerLeaderLeft.REDUCTION
+            : Constants.ShooterRollerLeaderRight.REDUCTION);
 
-    shooterFollower = new ShooterRollerFollower();
+    shooterFollower = new ShooterRollerFollower(isLeft);
   }
 
   @Override
   public void runVolts(double volts) {
     super.runVolts(volts);
     shooterFollower.runVolts(volts);
+  }
+
+  @Override
+  public void stop() {
+    super.stop();
+    shooterFollower.stop();
   }
 }
