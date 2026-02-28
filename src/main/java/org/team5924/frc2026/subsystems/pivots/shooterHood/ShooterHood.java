@@ -16,9 +16,13 @@
 
 package org.team5924.frc2026.subsystems.pivots.shooterHood;
 
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
+
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -65,18 +69,35 @@ public class ShooterHood extends SubsystemBase {
 
   @Setter private double input;
 
+  public final SysIdRoutine sysId;
+
   private final Alert shooterHoodMotorDisconnected;
   private final Notification shooterHoodMotorDisconnectedNotification;
   private boolean wasShooterHoodMotorConnected = true;
 
+  private final Alert notImplementedAlert;
+  private boolean showNotImplementedAlert;
+
   public ShooterHood(ShooterHoodIO io, boolean isLeft) {
     this.io = io;
-    this.goalState = ShooterHoodState.OFF;
-    this.shooterHoodMotorDisconnected =
-        new Alert("Shooter Hood Motor Disconnected!", Alert.AlertType.kWarning);
-    this.shooterHoodMotorDisconnectedNotification =
-        new Notification(NotificationLevel.WARNING, "Shooter Hood Motor Disconnected", "");
     this.isLeft = isLeft;
+
+    goalState = ShooterHoodState.OFF;
+    shooterHoodMotorDisconnected =
+        new Alert("Shooter Hood Motor Disconnected!", Alert.AlertType.kWarning);
+    shooterHoodMotorDisconnectedNotification =
+        new Notification(NotificationLevel.WARNING, "Shooter Hood Motor Disconnected", "");
+
+    notImplementedAlert = new Alert("Auto Shooting not yet implemented!", Alert.AlertType.kWarning);
+
+    sysId =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                Volts.of(.75).per(Seconds),
+                Volts.of(1),
+                Seconds.of(new LoggedTunableNumber("ShooterHood/SysIdTime", 10.0).getAsDouble()),
+                (state) -> Logger.recordOutput("ShooterHood/SysIdState", state.toString())),
+            new SysIdRoutine.Mechanism((voltage) -> runVolts(voltage.in(Volts)), null, this));
   }
 
   @Override
@@ -90,13 +111,30 @@ public class ShooterHood extends SubsystemBase {
 
     shooterHoodMotorDisconnected.set(!inputs.shooterHoodMotorConnected);
 
-    handleManualState();
+    handleCurrentState();
 
     // prevents error spam
     if (!inputs.shooterHoodMotorConnected && wasShooterHoodMotorConnected) {
       Elastic.sendNotification(shooterHoodMotorDisconnectedNotification);
     }
     wasShooterHoodMotorConnected = inputs.shooterHoodMotorConnected;
+  }
+
+  private void handleCurrentState() {
+    showNotImplementedAlert = false;
+    switch (getRespectiveShooterHoodState()) {
+      case MOVING -> {
+        if (isAtSetpoint()) setRespectiveShooterHoodState(goalState);
+      }
+      case AUTO_SHOOTING, NEUTRAL_SHUFFLING, OPPONENT_SHUFFLING -> {
+        showNotImplementedAlert = true; // TODO: handle this sometime
+      }
+      case MANUAL -> handleManualState();
+      case OFF -> io.stop();
+      default -> io.setPosition(goalState.rads.getAsDouble());
+    }
+
+    notImplementedAlert.set(showNotImplementedAlert);
   }
 
   private void handleManualState() {
@@ -132,10 +170,7 @@ public class ShooterHood extends SubsystemBase {
 
     this.goalState = goalState;
     switch (goalState) {
-      case MANUAL,
-      AUTO_SHOOTING,
-      NEUTRAL_SHUFFLING,
-      OPPONENT_SHUFFLING: // TODO: handle manual state ???
+      case MANUAL, AUTO_SHOOTING, NEUTRAL_SHUFFLING, OPPONENT_SHUFFLING:
         setRespectiveShooterHoodState(goalState);
         break;
       case MOVING:
