@@ -21,14 +21,11 @@ import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -479,7 +476,9 @@ public final class Constants {
     public static final double MIN_POSITION_RADS = -Math.PI * MIN_POSITION_MULTI;
     public static final double MAX_POSITION_RADS = Math.PI * MAX_POSITION_MULTI;
 
-    public static final double JOYSTICK_DEADZONE = 0.01;
+    
+    public static final double EPSILON_RADS = Units.degreesToRadians(2.0); 
+    public static final double JOYSTICK_DEADZONE = 0.05;
 
     public static final double STATE_TIMEOUT = 5.0;
 
@@ -497,7 +496,7 @@ public final class Constants {
             .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
     
-          public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
+    public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
       new OpenLoopRampsConfigs()
         .withDutyCycleOpenLoopRampPeriod(0.02)
         .withTorqueOpenLoopRampPeriod(0.02)

@@ -27,6 +27,7 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -46,6 +47,7 @@ public class ClimbIOTalonFX implements ClimbIO {
   private final TalonFXConfigurator climbTalonConfig;
 
   private final Slot0Configs slot0Configs;
+  private double setpointRads;
 
   private final LoggedTunableNumber kA = new LoggedTunableNumber("Climb/kA", 0.00);
   private final LoggedTunableNumber kS = new LoggedTunableNumber("Climb/kS", 0.13);
@@ -67,12 +69,22 @@ public class ClimbIOTalonFX implements ClimbIO {
   private final StatusSignal<Voltage> cancoderSupplyVoltage;
   private final StatusSignal<Angle> cancoderPositionRotations;
 
+  private final double cancoderToMechanism;
+  private final double motorToMechanism;
+  private final double minPositionRads;
+  private final double maxPositionRads;
+
   // Single shot for voltage mode, robot loop will call continuously
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
   private final PositionVoltage positionOut =
       new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true);
 
   public ClimbIOTalonFX() {
+    cancoderToMechanism = Constants.Climb.CANCODER_TO_MECHANISM;
+    motorToMechanism = Constants.Climb.MOTOR_TO_MECHANISM;
+    minPositionRads = Constants.Climb.MIN_POSITION_MULTI;
+    maxPositionRads = Constants.Climb.MAX_POSITION_MULTI;
+
     climbTalon = new TalonFX(Constants.Climb.CAN_ID, new CANBus(Constants.Climb.BUS));
     climbCANCoder = new CANcoder(Constants.Climb.CANCODER_ID, new CANBus(Constants.Climb.BUS));
 
@@ -163,14 +175,15 @@ public class ClimbIOTalonFX implements ClimbIO {
     inputs.climbTorqueCurrentAmps = climbTorqueCurrent.getValueAsDouble();
     inputs.climbTempCelsius = climbTempCelsius.getValueAsDouble();
 
+    inputs.setpointRads = setpointRads;
+
     inputs.cancoderAbsolutePosition = cancoderAbsolutePosition.getValueAsDouble();
     inputs.cancoderVelocity = cancoderVelocity.getValueAsDouble();
     inputs.cancoderSupplyVoltage = cancoderSupplyVoltage.getValueAsDouble();
     inputs.cancoderPositionRotations = cancoderPositionRotations.getValueAsDouble();
 
     inputs.climbPositionCancoder =
-        Units.rotationsToRadians(inputs.cancoderPositionRotations)
-            / Constants.Climb.CANCODER_TO_MECHANISM;
+        Units.rotationsToRadians(inputs.cancoderPositionRotations) / cancoderToMechanism;
   }
 
   @Override
@@ -212,6 +225,19 @@ public class ClimbIOTalonFX implements ClimbIO {
 
   @Override
   public void setPosition(double rads) {
-    climbTalon.setControl(positionOut.withPosition(Units.radiansToRotations(rads)));
+    setpointRads = clampRads(rads);
+    climbTalon.setControl(positionOut.withPosition(Units.radiansToRotations(setpointRads)));
+  }
+
+  private double clampRads(double rads) {
+    return MathUtil.clamp(rads, minPositionRads, maxPositionRads);
+  }
+
+  private double radsToMotorPosition(double rads) {
+    return Units.radiansToRotations(rads * motorToMechanism);
+  }
+
+  private double motorPositionToRads(double motorPosition) {
+    return Units.rotationsToRadians(motorPosition / motorToMechanism);
   }
 }

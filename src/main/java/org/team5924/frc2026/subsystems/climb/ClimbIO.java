@@ -30,6 +30,9 @@ public interface ClimbIO {
     public double climbTorqueCurrentAmps = 0.0;
     public double climbTempCelsius = 0.0;
 
+    public double setpointRads = 0.0;
+    public double acceleration = 0.0;
+
     public boolean cancoderConnected = true;
     public double cancoderAbsolutePosition = 0.0;
     public double cancoderVelocity = 0.0;
