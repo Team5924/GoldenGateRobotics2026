@@ -132,7 +132,7 @@ public class Climb extends SubsystemBase {
       return;
     }
 
-    io.runVolts(distanceToRadians(ClimbState.MANUAL.getDistance().getAsDouble()) * input);
+    io.runVolts(ClimbState.MANUAL.getDistance().getAsDouble() * input);
   }
   
   public void setGoalState(ClimbState goalState) {

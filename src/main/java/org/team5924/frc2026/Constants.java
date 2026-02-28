@@ -619,9 +619,9 @@ public final class Constants {
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
         .withForwardSoftLimitThreshold(
-          MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
+          MAX_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor rotations
         .withReverseSoftLimitThreshold(
-          MAX_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
+          -MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor rotations
         .withForwardSoftLimitEnable(true)
         .withReverseSoftLimitEnable(true);
 

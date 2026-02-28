@@ -66,7 +66,7 @@ public class ClimbIOTalonFX implements ClimbIO {
       new LoggedTunableNumber("Climb/MotionCruiseVelocity", 90.0);
   private final LoggedTunableNumber motionAcceleration =
       new LoggedTunableNumber("Climb/MotionAcceleration", 900.0);
-  private final LoggedTunableNumber motionJerk = new LoggedTunableNumber("Turret/MotionJerk", 0.0);
+  private final LoggedTunableNumber motionJerk = new LoggedTunableNumber("Climb/MotionJerk", 0.0);
 
   private final StatusSignal<Angle> climbPosition;
   private final StatusSignal<AngularVelocity> climbVelocity;
@@ -272,7 +272,7 @@ public class ClimbIOTalonFX implements ClimbIO {
         kG);
 
       LoggedTunableNumber.ifChanged(
-        0,
+        hashCode(),
         () -> {
           motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
           motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
