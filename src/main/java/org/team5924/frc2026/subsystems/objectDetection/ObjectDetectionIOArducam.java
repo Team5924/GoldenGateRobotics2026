@@ -19,6 +19,7 @@ package org.team5924.frc2026.subsystems.objectDetection;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
@@ -46,15 +47,19 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
       return;
     }
 
-    var instance = results.get(results.size() - 1);
-    inputs.latestTargetsObservation = new TargetObservation(instance.getTargets());
-    inputs.latestGroupedTargets = getGroups(instance.getTargets());
-    inputs.seesFuel = instance.hasTargets();
-    inputs.fuelCount = instance.getTargets().size();
-    inputs.groupCount = inputs.latestGroupedTargets.groups().size();
-    inputs.fuelInGroups =
-        ObjectDetectionUtils.getFuelInGroupsAmount(inputs.latestGroupedTargets.groups());
-    logGroups(inputs.latestGroupedTargets.groups());
+    try {
+      var instance = results.get(results.size() - 1);
+      inputs.latestTargetsObservation = new TargetObservation(instance.getTargets());
+      inputs.latestGroupedTargets = getGroups(instance.getTargets());
+      inputs.seesFuel = instance.hasTargets();
+      inputs.fuelCount = instance.getTargets().size();
+      inputs.groupCount = inputs.latestGroupedTargets.groups().size();
+      inputs.fuelInGroups =
+          ObjectDetectionUtils.getFuelInGroupsAmount(inputs.latestGroupedTargets.groups());
+      logGroups(inputs.latestGroupedTargets.groups());
+    } catch (ConcurrentModificationException e) {
+      System.out.println("ERMM CHAT, WE MIGHT BE BREAKING RN LOWK ONG FRFR TBF");
+    }
   }
 
   private void logGroups(List<TargetGroup> groups) {
@@ -86,7 +91,7 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
               target,
               ObjectDetectionUtils.getRobotToTargetTransform2d(target));
       if (fuelGroups.isEmpty()) {
-        TargetGroup group = new TargetGroup();
+        TargetGroup group = new TargetGroup(0);
         group.addTarget(
             fuelTarget); // If list of groups is empty, make a group of the first target and add it
         fuelGroups.add(group);
@@ -98,7 +103,7 @@ public class ObjectDetectionIOArducam implements ObjectDetectionIO {
 
         switch (closestGroupIndex) {
           case -1:
-            TargetGroup group = new TargetGroup();
+            TargetGroup group = new TargetGroup(fuelGroups.size() - 1);
             group.addTarget(fuelTarget);
             fuelGroups.add(group);
             break;

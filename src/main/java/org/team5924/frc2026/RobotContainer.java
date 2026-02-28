@@ -33,8 +33,10 @@ import org.team5924.frc2026.commands.drive.DriveCommands;
 import org.team5924.frc2026.generated.TunerConstants;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.drive.GyroIO;
+import org.team5924.frc2026.subsystems.drive.GyroIOPigeon2;
 import org.team5924.frc2026.subsystems.drive.GyroIOSim;
 import org.team5924.frc2026.subsystems.drive.ModuleIO;
+import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFXSim;
 import org.team5924.frc2026.subsystems.objectDetection.ObjectDetection;
 import org.team5924.frc2026.subsystems.objectDetection.ObjectDetectionIO;
@@ -60,21 +62,13 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        // drive =
-        //     new Drive(
-        //         new GyroIOPigeon2(),
-        //         new ModuleIOTalonFX(TunerConstants.FrontLeft),
-        //         new ModuleIOTalonFX(TunerConstants.FrontRight),
-        //         new ModuleIOTalonFX(TunerConstants.BackLeft),
-        //         new ModuleIOTalonFX(TunerConstants.BackRight),
-        // (pose) -> {});
         drive =
             new Drive(
-                new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
+                new GyroIOPigeon2(),
+                new ModuleIOTalonFX(TunerConstants.FrontLeft),
+                new ModuleIOTalonFX(TunerConstants.FrontRight),
+                new ModuleIOTalonFX(TunerConstants.BackLeft),
+                new ModuleIOTalonFX(TunerConstants.BackRight),
                 (pose) -> {});
         // exampleSystem = new ExampleSystem(new ExampleSystemIOTalonFX());
         // exampleRoller = new ExampleRoller(new ExampleRollerIOKrakenFOC());

@@ -65,7 +65,7 @@ public class ObjectDetection extends SubsystemBase {
   }
 
   public PhotonTrackedTarget getFirstTargetOfLargestGroup() {
-    TargetGroup largestGroup = new TargetGroup();
+    TargetGroup largestGroup = new TargetGroup(0);
     for (var group : inputs.latestGroupedTargets.groups()) {
       if (largestGroup.fuelAmount < group.fuelAmount) {
         largestGroup = group;

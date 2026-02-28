@@ -19,21 +19,21 @@ package org.team5924.frc2026.subsystems.objectDetection;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import org.photonvision.PhotonUtils;
 
 public class TargetGroup implements Serializable {
   public int fuelAmount;
   public List<Target> targets;
   public Target firstFiducialTarget;
+  public int groupID;
 
-  public TargetGroup() {
+  public TargetGroup(int groupID) {
     this.fuelAmount = 0;
     this.targets = new ArrayList<>();
     this.firstFiducialTarget = new Target();
+    this.groupID = groupID;
   }
 
   public void addTarget(Target target) {
@@ -50,9 +50,7 @@ public class TargetGroup implements Serializable {
     for (int i = 0; i < fuelAmount; i++) {
       var target = targets.get(i).fuel;
       Translation2d targetTranslation2d =
-          PhotonUtils.estimateCameraToTargetTranslation(
-              ObjectDetectionUtils.getRobotToTargetDistance(target),
-              new Rotation2d(Units.degreesToRadians(target.getYaw())));
+          ObjectDetectionUtils.getRobotToTargetTranslation2d(target);
       targetPoses[i] = new Pose2d(targetTranslation2d, new Rotation2d());
     }
     return targetPoses;
@@ -70,10 +68,10 @@ public class TargetGroup implements Serializable {
     for (Target target : targets) {
       String logPath =
           "Group "
-              + id
-              + "Target Group First Fiducial "
+              + groupID
+              + "/Target Group First Fiducial "
               + firstFiducialTarget.fuelID
-              + "/Target"
+              + "/Target "
               + target.fuelID
               + "/";
       target.logTarget(logPath);
