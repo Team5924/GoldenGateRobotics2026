@@ -577,8 +577,8 @@ public final class Constants {
     public static final double MIN_POSITION_MULTI = 0.8; // rotations
     public static final double MAX_POSITION_MULTI = 0.8; // rotations
 
-    public static final double MIN_POSITION_RADS = -Math.PI * MIN_POSITION_MULTI;
-    public static final double MAX_POSITION_RADS = Math.PI * MAX_POSITION_MULTI;
+    public static final double MIN_POSITION_RADS = -2 * Math.PI * MIN_POSITION_MULTI;
+    public static final double MAX_POSITION_RADS = 2 * Math.PI * MAX_POSITION_MULTI;
 
     
     public static final double EPSILON_RADS = Units.degreesToRadians(2.0); 
@@ -623,7 +623,7 @@ public final class Constants {
     public static final MagnetSensorConfigs CANCODER_CONFIG =
       new MagnetSensorConfigs()
         .withMagnetOffset(1.0 * CANCODER_ABSOLUTE_OFFSET) 
-        .withAbsoluteSensorDiscontinuityPoint(0.5)
+        .withAbsoluteSensorDiscontinuityPoint(1.0)
         .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
   }
 }

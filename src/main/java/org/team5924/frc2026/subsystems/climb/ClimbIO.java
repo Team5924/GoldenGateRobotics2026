@@ -22,6 +22,7 @@ public interface ClimbIO {
   @AutoLog
   public static class ClimbIOInputs {
     public boolean climbMotorConnected = true;
+    public double climbPosition = 0.0;
     public double climbPositionRads = 0.0;
     public double climbPositionCancoder = 0.0;
     public double climbVelocityRadsPerSec = 0.0;
@@ -29,6 +30,9 @@ public interface ClimbIO {
     public double climbSupplyCurrentAmps = 0.0;
     public double climbTorqueCurrentAmps = 0.0;
     public double climbTempCelsius = 0.0;
+
+    public double motionMagicVelocityTarget = 0.0;
+    public double motionMagicPositionTarget = 0.0;
 
     public double setpointRads = 0.0;
     public double acceleration = 0.0;
@@ -58,6 +62,8 @@ public interface ClimbIO {
   public default void runVolts(double volts) {}
 
   public default void setPosition(double rads) {}
+
+  public default void holdPosition(double rads) {}
 
   /** stops the motor */
   default void stop() {}
