@@ -29,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.FieldState;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
@@ -110,7 +111,7 @@ public class IntakePivot extends SubsystemBase {
   }
 
   public boolean isAtSetpoint() {
-    return RobotState.getTime() - lastStateChange < Constants.IntakePivot.STATE_TIMEOUT
+    return FieldState.getInstance().getTime() - lastStateChange < Constants.IntakePivot.STATE_TIMEOUT
         || EqualsUtil.epsilonEquals(
           inputs.setpointRads, inputs.intakePivotPositionRads, Constants.IntakePivot.EPSILON_RADS);
   }
@@ -162,6 +163,6 @@ public class IntakePivot extends SubsystemBase {
         break;
     }
 
-    lastStateChange = RobotState.getTime();
+    lastStateChange = FieldState.getInstance().getTime();
   }
 }
