@@ -31,7 +31,8 @@ import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 public class AutoBuilder {
 
   private final Drive drive;
-  private final SuperShooter shooter;
+  private final SuperShooter superShooterLeft;
+  private final SuperShooter superShooterRight;
   // private final Climb climb;
   private final Intake intake;
 
@@ -40,20 +41,25 @@ public class AutoBuilder {
 
   public static void setStartingPosition(Supplier<String> supplier) {
     if (supplier == null)
-      throw new IllegalArgumentException("startingPositionSupplier must not be null");
+      throw new IllegalArgumentException("startingPositionSupplier can't be null");
     startingPositionSupplier = supplier;
   }
 
   public Command scoreAndClimbAuto() {
     if (startingPositionSupplier == null) {
       throw new IllegalStateException(
-          "setStartingPosition() must be called before building auto commands");
+          "starting position must be set before building auto commands");
     }
     return Commands.sequence(
         startToHub(startingPositionSupplier.get()),
-        Commands.run(() -> shooter.setGoalState(ShooterState.AUTO_SHOOTING), shooter)
-            .withTimeout(1.0),
-        Commands.runOnce(() -> shooter.setGoalState(ShooterState.OFF), shooter),
+        Commands.parallel(
+          Commands.run(() -> superShooterLeft.setGoalState(ShooterState.AUTO_SHOOTING), superShooterLeft),
+          Commands.run(() -> superShooterRight.setGoalState(ShooterState.AUTO_SHOOTING), superShooterRight)
+        ).withTimeout(1.0), // TODO: Edit timing
+        Commands.parallel(
+          Commands.runOnce(() -> superShooterLeft.setGoalState(ShooterState.OFF), superShooterLeft),
+          Commands.runOnce(() -> superShooterRight.setGoalState(ShooterState.OFF), superShooterRight)
+        ),
         Robot.mAutoFactory.trajectoryCmd("HubToClimb")
         // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
         );
@@ -62,22 +68,32 @@ public class AutoBuilder {
   public Command scorePickupAndClimbAuto() {
     if (startingPositionSupplier == null) {
       throw new IllegalStateException(
-          "setStartingPosition() must be called before building auto commands");
+          "starting position must be set before building auto commands");
     }
     return Commands.sequence(
         startToHub(startingPositionSupplier.get()),
-        Commands.run(() -> shooter.setGoalState(ShooterState.AUTO_SHOOTING), shooter)
-            .withTimeout(1.0),
-        Commands.runOnce(() -> shooter.setGoalState(ShooterState.OFF), shooter),
+        Commands.parallel(
+          Commands.run(() -> superShooterLeft.setGoalState(ShooterState.AUTO_SHOOTING), superShooterLeft),
+          Commands.run(() -> superShooterRight.setGoalState(ShooterState.AUTO_SHOOTING), superShooterRight)
+        ).withTimeout(1.0), // TODO: Edit timing
+        Commands.parallel(
+          Commands.runOnce(() -> superShooterLeft.setGoalState(ShooterState.OFF), superShooterLeft),
+          Commands.runOnce(() -> superShooterRight.setGoalState(ShooterState.OFF), superShooterRight)
+        ),
         Robot.mAutoFactory.trajectoryCmd("HubToDepot"),
         Commands.deadline(
             Robot.mAutoFactory.trajectoryCmd("DepotIntake"),
             Commands.run(() -> intake.setGoalState(IntakeState.INTAKE), intake)),
         Commands.runOnce(() -> intake.setGoalState(IntakeState.OFF), intake),
         Robot.mAutoFactory.trajectoryCmd("DepotToHub"),
-        Commands.run(() -> shooter.setGoalState(ShooterState.AUTO_SHOOTING), shooter)
-            .withTimeout(1.0),
-        Commands.runOnce(() -> shooter.setGoalState(ShooterState.OFF), shooter),
+        Commands.parallel(
+          Commands.run(() -> superShooterLeft.setGoalState(ShooterState.AUTO_SHOOTING), superShooterLeft),
+          Commands.run(() -> superShooterRight.setGoalState(ShooterState.AUTO_SHOOTING), superShooterRight)
+        ).withTimeout(1.0), // TODO: Edit timing
+        Commands.parallel(
+          Commands.runOnce(() -> superShooterLeft.setGoalState(ShooterState.OFF), superShooterLeft),
+          Commands.runOnce(() -> superShooterRight.setGoalState(ShooterState.OFF), superShooterRight)
+        ),
         Robot.mAutoFactory.trajectoryCmd("HubToClimb")
         // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
         );
