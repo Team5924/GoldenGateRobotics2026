@@ -19,6 +19,7 @@ package org.team5924.frc2026.subsystems.pivots.shooterHood;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -39,8 +40,8 @@ public class ShooterHood extends SubsystemBase {
   private final ShooterHoodIO io;
   private final boolean isLeft;
 
-  public LoggedTunableNumber ShooterHoodPivotTolerance =
-      new LoggedTunableNumber("ShooterHoodPivotToleranceRads", .02);
+  public LoggedTunableNumber tolerance =
+      new LoggedTunableNumber("ShooterHood/ToleranceDeg", Constants.GeneralShooterHood.EPSILON_RADS);
   private final ShooterHoodIOInputsAutoLogged inputs = new ShooterHoodIOInputsAutoLogged();
 
   @RequiredArgsConstructor
@@ -154,7 +155,7 @@ public class ShooterHood extends SubsystemBase {
 
   public boolean isAtSetpoint() {
     return Math.abs(getShooterHoodPositionRads() - this.goalState.rads.getAsDouble())
-        < ShooterHoodPivotTolerance.getAsDouble();
+        < Units.degreesToRadians(tolerance.getAsDouble());
   }
 
   public void runVolts(double volts) {
