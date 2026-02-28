@@ -1,5 +1,5 @@
 /*
- * ShooterHoodIO.java
+ * TurretIO.java
  */
 
 /* 
@@ -14,22 +14,22 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.pivots.shooterHood;
+package org.team5924.frc2026.subsystems.turret;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface ShooterHoodIO {
+public interface TurretIO {
   @AutoLog
-  public static class ShooterHoodIOInputs {
-    public boolean shooterHoodMotorConnected = true;
-    public double shooterHoodPosition = 0.0;
-    public double shooterHoodPositionRads = 0.0;
-    public double shooterHoodPositionCancoder = 0.0;
-    public double shooterHoodVelocityRadsPerSec = 0.0;
-    public double shooterHoodAppliedVoltage = 0.0;
-    public double shooterHoodSupplyCurrentAmps = 0.0;
-    public double shooterHoodTorqueCurrentAmps = 0.0;
-    public double shooterHoodTempCelsius = 0.0;
+  public static class TurretIOInputs {
+    public boolean turretMotorConnected = true;
+    public double turretPosition = 0.0;
+    public double turretPositionRads = 0.0;
+    public double turretPositionCancoder = 0.0;
+    public double turretVelocityRadsPerSec = 0.0;
+    public double turretAppliedVoltage = 0.0;
+    public double turretSupplyCurrentAmps = 0.0;
+    public double turretTorqueCurrentAmps = 0.0;
+    public double turretTempCelsius = 0.0;
 
     public double motionMagicVelocityTarget = 0.0;
     public double motionMagicPositionTarget = 0.0;
@@ -49,13 +49,13 @@ public interface ShooterHoodIO {
    *
    * @param inputs Inputs to update
    */
-  public default void updateInputs(ShooterHoodIOInputs inputs) {}
+  public default void updateInputs(TurretIOInputs inputs) {}
 
-  /** Updates that are be called in shooter hood periodic */
+  /** Updates that are be called in turret periodic */
   public default void periodicUpdates() {}
 
   /**
-   * Sets the subsystem motor to the specified voltage
+   * Sets the turret motor to the specified voltage
    *
    * @param volts number of volts
    */
@@ -74,6 +74,6 @@ public interface ShooterHoodIO {
   /** stops the motor */
   default void stop() {}
 
-  /** Sets the shooter hood position to specified rads from center */
+  /** Sets the turret position to specified rads from center */
   default void setPositionSetpoint(double radiansFromCenter, double radsPerSecond) {}
 }

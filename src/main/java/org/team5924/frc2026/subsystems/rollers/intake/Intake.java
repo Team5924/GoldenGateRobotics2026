@@ -31,8 +31,8 @@ public class Intake extends GenericRollerSystem<Intake.IntakeState> {
   @Getter
   public enum IntakeState implements VoltageState {
     OFF(() -> 0.0),
-    SPITOUT(new LoggedTunableNumber("Intake/SpitOut", -12.0)),
-    INTAKE(new LoggedTunableNumber("Intake/Intake", 12.0));
+    SPITOUT(new LoggedTunableNumber("Intake/SpitOut", -8.0)),
+    INTAKE(new LoggedTunableNumber("Intake/Intake", 8.0));
 
     private final DoubleSupplier voltageSupplier;
   }
