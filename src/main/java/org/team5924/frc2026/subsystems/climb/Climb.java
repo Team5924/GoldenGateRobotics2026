@@ -54,13 +54,11 @@ public class Climb extends SubsystemBase {
     MOVING(() -> 0.0),
     // voltage at which the climb subsystem motor moves when controlled by the operator
     MANUAL(new LoggedTunableNumber("Climb/OperatorVoltage", 4.5));
+    
+    @Getter private final DoubleSupplier distance;
 
-    // TODO: add distance to rads method
-
-    @Getter private final DoubleSupplier rads;
-
-    ClimbState(DoubleSupplier rads) {
-      this.rads = rads;
+    ClimbState(DoubleSupplier distance) {
+      this.distance = distance;
     }
   }
 
@@ -96,7 +94,7 @@ public class Climb extends SubsystemBase {
 
     Logger.recordOutput("Climb/GoalState", goalState.toString());
     Logger.recordOutput("Climb/CurrentState", RobotState.getInstance().getClimbState().toString());
-    Logger.recordOutput("Climb/TargetRads", goalState.rads.getAsDouble());
+    Logger.recordOutput("Climb/TargetRads", distanceToRadians(goalState.distance.getAsDouble()));
 
     climbMotorDisconnected.set(!inputs.climbMotorConnected);
 
@@ -110,7 +108,7 @@ public class Climb extends SubsystemBase {
   }
 
   public boolean isAtSetpoint() {
-    return RobotState.getTime() - lastStateChange < Constants.Climb.STATE_TIMEOUT
+    return RobotState.getTime() - lastStateChange > Constants.Climb.STATE_TIMEOUT
         || EqualsUtil.epsilonEquals(
             inputs.setpointRads, inputs.climbPositionRads, Constants.Climb.EPSILON_RADS);
   }
@@ -122,23 +120,22 @@ public class Climb extends SubsystemBase {
       }
       case MANUAL -> handleManualState();
       case OFF -> io.stop();
-      default -> io.setPosition(goalState.rads.getAsDouble());
+      default -> io.setPosition(distanceToRadians(goalState.distance.getAsDouble()));
     }
   }
 
   private void handleManualState() {
-    if (!goalState.equals(TurretState.MANUAL)) return;
+    if (!goalState.equals(ClimbState.MANUAL)) return;
 
     if (Math.abs(input) <= Constants.Climb.JOYSTICK_DEADZONE) {
       io.runVolts(0);
       return;
     }
 
-    io.runVolts(ClimbState.MANUAL.getRads().getAsDouble() * input);
+    io.runVolts(distanceToRadians(ClimbState.MANUAL.getDistance().getAsDouble()) * input);
   }
   
   public void setGoalState(ClimbState goalState) {
-    this.goalState = goalState;
     switch (goalState) {
       case MANUAL:
         RobotState.getInstance().setClimbState(ClimbState.MANUAL);
@@ -146,12 +143,28 @@ public class Climb extends SubsystemBase {
       case MOVING:
         DriverStation.reportError(
             "Climb: MOVING is an invalid goal state; it is a transition state!!", null);
-        break;
+        return;
       default:
         RobotState.getInstance().setClimbState(goalState);
         break;
     }
+    this.goalState = goalState;
 
     lastStateChange = RobotState.getTime();
+  }
+
+  private double distanceToRadians(double distance) {
+    double r = Constants.Climb.DRUM_CORE_RADIUS_METERS;
+    double t = Constants.Climb.ROPE_THICKNESS_METERS;
+
+    double a = t / (4.0 * Math.PI);
+    double b = r;
+    double c = -distance;
+
+    double discriminant = b * b - 4 * a * c;
+
+    if (discriminant < 0) return 0;
+
+    return (-b + Math.sqrt(discriminant)) / (2 * a);
   }
 }

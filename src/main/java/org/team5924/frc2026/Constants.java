@@ -572,6 +572,10 @@ public final class Constants {
     public static final double MOTOR_TO_CANCODER = (7.0 / 1.0); // TODO: Update Reductions and add hook to reduction
     public static final double CANCODER_TO_MECHANISM = (7.0 / 1.0);
     public static final double MOTOR_TO_MECHANISM = MOTOR_TO_CANCODER * CANCODER_TO_MECHANISM;
+
+    public static final double DRUM_CORE_RADIUS_METERS = 0.02; //TODO: Update with physical values from cad/robot
+    public static final double ROPE_THICKNESS_METERS = 0.005; 
+
     public static final double SIM_MOI = 0.001;
 
     public static final double MIN_POSITION_MULTI = 0.8; // rotations
@@ -611,6 +615,15 @@ public final class Constants {
         .withDutyCycleClosedLoopRampPeriod(0.02)
         .withTorqueClosedLoopRampPeriod(0.02)
         .withVoltageClosedLoopRampPeriod(0.02);
+
+    public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
+      new SoftwareLimitSwitchConfigs()
+        .withForwardSoftLimitThreshold(
+          MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
+        .withReverseSoftLimitThreshold(
+          MAX_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
+        .withForwardSoftLimitEnable(true)
+        .withReverseSoftLimitEnable(true);
 
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
       new FeedbackConfigs()

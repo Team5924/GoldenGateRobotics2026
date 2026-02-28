@@ -97,8 +97,8 @@ public class ClimbIOTalonFX implements ClimbIO {
   public ClimbIOTalonFX() {
     cancoderToMechanism = Constants.Climb.CANCODER_TO_MECHANISM;
     motorToMechanism = Constants.Climb.MOTOR_TO_MECHANISM;
-    minPositionRads = Constants.Climb.MIN_POSITION_MULTI;
-    maxPositionRads = Constants.Climb.MAX_POSITION_MULTI;
+    minPositionRads = Constants.Climb.MIN_POSITION_RADS;
+    maxPositionRads = Constants.Climb.MAX_POSITION_RADS;
 
     climbTalon = new TalonFX(Constants.Climb.CAN_ID, new CANBus(Constants.Climb.BUS));
     climbCANCoder = new CANcoder(Constants.Climb.CANCODER_ID, new CANBus(Constants.Climb.BUS));
@@ -125,7 +125,7 @@ public class ClimbIOTalonFX implements ClimbIO {
     statusArray[0] = climbTalonConfig.apply(Constants.Climb.CONFIG);
     statusArray[1] = climbTalonConfig.apply(Constants.Climb.OPEN_LOOP_RAMPS_CONFIGS);
     statusArray[2] = climbTalonConfig.apply(Constants.Climb.CLOSED_LOOP_RAMPS_CONFIGS);
-    statusArray[3] = climbTalonConfig.apply(Constants.Climb.FEEDBACK_CONFIGS);
+    statusArray[3] = climbTalonConfig.apply(Constants.Climb.SOFTWARE_LIMIT_CONFIGS);
     statusArray[4] = climbTalonConfig.apply(Constants.Climb.FEEDBACK_CONFIGS);
     statusArray[5] = climbTalonConfig.apply(motionMagicConfigs);
     statusArray[6] = climbTalonConfig.apply(slot0Configs);
