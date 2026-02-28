@@ -19,11 +19,8 @@ package org.team5924.frc2026.commands.intakePivot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import java.util.function.DoubleSupplier;
-import org.team5924.frc2026.subsystems.SuperShooter;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
-import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
-import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
 
 public class IntakePivotCommands {
   public static Command manualIntakePivot(IntakePivot pivot, DoubleSupplier inputSupplier) {

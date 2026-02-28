@@ -24,7 +24,6 @@ public interface IntakePivotIO {
     public boolean intakePivotMotorConnected = true;
     public double intakePivotPosition = 0.0;
     public double intakePivotPositionRads = 0.0;
-    public double intakePivotPositionCancoder = 0.0;
     public double intakePivotVelocityRadsPerSec = 0.0;
     public double intakePivotAppliedVoltage = 0.0;
     public double intakePivotSupplyCurrentAmps = 0.0;
@@ -36,12 +35,6 @@ public interface IntakePivotIO {
 
     public double setpointRads = 0.0;
     public double acceleration = 0.0;
-
-    public boolean cancoderConnected = true;
-    public double cancoderAbsolutePosition = 0.0;
-    public double cancoderVelocity = 0.0;
-    public double cancoderSupplyVoltage = 0.0;
-    public double cancoderPositionRotations = 0.0;
   }
 
   /**
@@ -74,6 +67,6 @@ public interface IntakePivotIO {
   /** stops the motor */
   default void stop() {}
 
-  /** Sets the intakePivot position to specified rads from center */
-  default void setPositionSetpoint(double radiansFromCenter, double radsPerSecond) {}
+  /** Sets the intakePivot position to specified rads from bottom */
+  default void setPositionSetpoint(double radiansFromBottom, double radsPerSecond) {}
 }

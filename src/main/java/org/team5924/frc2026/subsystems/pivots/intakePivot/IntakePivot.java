@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
@@ -39,12 +40,13 @@ public class IntakePivot extends SubsystemBase {
 
   private final IntakePivotIO io;
   private final IntakePivotIOInputsAutoLogged inputs = new IntakePivotIOInputsAutoLogged();
-  private double intakePivotPositionSetpointRadiansFromCenter = 0.0;
 
   @Setter private double input;
 
   public final SysIdRoutine sysId;
 
+  @RequiredArgsConstructor
+  @Getter
   public enum IntakePivotState {
     OFF(() -> 0.0),
     MOVING(() -> 0.0),
@@ -55,11 +57,7 @@ public class IntakePivot extends SubsystemBase {
     // voltage at which the example subsystem motor moves when controlled by the operator
     MANUAL(new LoggedTunableNumber("IntakePivot/OperatorVoltage", 7.0));
 
-    @Getter private final DoubleSupplier rads;
-
-    IntakePivotState(DoubleSupplier rads) {
-      this.rads = rads;
-    }
+    private final DoubleSupplier rads;
   }
 
   @Getter private IntakePivotState goalState = IntakePivotState.OFF;
@@ -165,65 +163,4 @@ public class IntakePivot extends SubsystemBase {
 
     lastStateChange = RobotState.getTime();
   }
-
-  // public void setPositionSetpointImpl(double radiansFromCenter, double radPerS) {
-  //   Logger.recordOutput("IntakePivot/radiansFromCenter", radiansFromCenter);
-  //   io.setPositionSetpoint(radiansFromCenter, radPerS);
-  // }
-
-  // private boolean unwrapped(double setpoint) {
-  //   // Radians comparison intentional because this is the raw value going into
-  //   // rotor.
-  //   return (stateTimer.get() - lastStateChangeTime > 0.5)
-  //       || EqualsUtil.epsilonEquals(setpoint, getCurrentPositionRads(), Math.toRadians(10.0));
-  // }
-
-  // private Command positionSetpointUntilUnwrapped(
-  //     DoubleSupplier radiansFromCenter, DoubleSupplier ffVel) {
-  //   return run(() -> {
-  //         // Intentional do not wrap intakePivot
-  //         double setpoint = radiansFromCenter.getAsDouble();
-  //         setPositionSetpointImpl(setpoint, unwrapped(setpoint) ? ffVel.getAsDouble() : 0.0);
-  //         intakePivotPositionSetpointRadiansFromCenter = setpoint;
-  //       })
-  //       .until(() -> unwrapped(radiansFromCenter.getAsDouble()));
-  // }
-
-  // // FF is in rad/s.
-  // public Command positionSetpointCommand(DoubleSupplier radiansFromCenter, DoubleSupplier ffVel)
-  // {
-  //   return positionSetpointUntilUnwrapped(radiansFromCenter, ffVel)
-  //       .andThen(
-  //           run(
-  //               () -> {
-  //                 double setpoint = adjustSetpointForWrap(radiansFromCenter.getAsDouble());
-  //                 setPositionSetpointImpl(setpoint, ffVel.getAsDouble());
-  //                 intakePivotPositionSetpointRadiansFromCenter = setpoint;
-  //               }))
-  //       .withName("IntakePivot positionSetpointCommand");
-  // }
-
-  // public Command waitForPosition(DoubleSupplier radiansFromCenter, double toleranceRadians) {
-  //   return new WaitUntilCommand(
-  //           () -> {
-  //             return Math.abs(
-  //                     new Rotation2d(getCurrentPositionRads())
-  //                         .rotateBy(new Rotation2d(radiansFromCenter.getAsDouble()).unaryMinus())
-  //                         .getRadians())
-  //                 < toleranceRadians;
-  //           })
-  //       .withName("IntakePivot wait for position");
-  // }
-
-  public double getSetpoint() {
-    return this.intakePivotPositionSetpointRadiansFromCenter;
-  }
-
-  // public void setTeleopDefaultCommand() {
-  //   this.setDefaultCommand(
-  //       run(() -> {
-  //             setPositionSetpointImpl(intakePivotPositionSetpointRadiansFromCenter, 0.0);
-  //           })
-  //           .withName("IntakePivot Maintain Setpoint (default)"));
-  // }
 }

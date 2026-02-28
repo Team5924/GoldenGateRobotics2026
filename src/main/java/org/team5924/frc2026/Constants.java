@@ -121,7 +121,7 @@ public final class Constants {
     public static final double OFFSET_RADS = 0.0;
 
     /** how far the intake pivot physically rotates */
-    public static final double MECHANISM_RANGE_PERCENT = 30.0 / 360.0; // TODO: have to very update this value
+    public static final double MECHANISM_RANGE_PERCENT = 140.0 / 360.0; // TODO: have to very update this value
 
     public static final double MIN_POSITION_MULTI = -0.4; // rotations
     public static final double MAX_POSITION_MULTI = 0; // rotations

@@ -148,8 +148,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     positionOut = new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true).withSlot(0);
     magicMotionVoltage = new MotionMagicVoltage(0.0).withEnableFOC(true).withSlot(0);
 
-    // BaseStatusSignal.waitForAll(0.5, cancoderAbsolutePosition);
-    // intakePivotCANCoder.setPosition(0.0);
+    // assuming intake pivot starts at bottom -> uncomment line below
     // intakePivotTalon.setPosition(0.0);
   }
 
@@ -282,17 +281,11 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     return MathUtil.clamp(rads, Constants.IntakePivot.MIN_POSITION_RADS, Constants.IntakePivot.MAX_POSITION_RADS);
   }
 
-  private double radsToMotorPosition(double rads) { // TODO: umm double check!!
-    return rads
-        / Math.PI
-        / 2
-        * Constants.IntakePivot.MOTOR_TO_MECHANISM;
+  private double radsToMotorPosition(double rads) {
+    return Units.radiansToRotations(rads) * Constants.IntakePivot.MOTOR_TO_MECHANISM * Constants.IntakePivot.MECHANISM_RANGE_PERCENT;
   }
 
-  private double motorPositionToRads(double motorPosition) { // TODO: double check this too!!!
-    return motorPosition
-        / Constants.IntakePivot.MOTOR_TO_MECHANISM
-        * Math.PI
-        * 2;
+  private double motorPositionToRads(double motorPosition) {
+    return Units.radiansToRotations(motorPosition) / Constants.IntakePivot.MOTOR_TO_MECHANISM / Constants.IntakePivot.MECHANISM_RANGE_PERCENT;
   }
 }

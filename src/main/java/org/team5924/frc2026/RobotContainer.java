@@ -63,6 +63,7 @@ import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOTalonFX;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIO;
+import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOSim;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
 import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIO;
@@ -79,8 +80,9 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private SwerveDriveSimulation driveSimulation = null;
-  private final Hopper hopper;
   private final Intake intake;
+  private final IntakePivot intakePivot;
+  private final Hopper hopper;
   // private final Indexer indexer;
 
   private final ShooterHood shooterHoodRight;
@@ -117,6 +119,7 @@ public class RobotContainer {
                 (pose) -> {});
 
         intake = new Intake(new IntakeIOKrakenFOC());
+        intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
         hopper = new Hopper(new HopperKrakenFOC());
 
         shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(true), true);
@@ -151,6 +154,7 @@ public class RobotContainer {
                 driveSimulation::setSimulationWorldPose);
 
         intake = new Intake(new IntakeIOSim());
+        intakePivot = new IntakePivot(new IntakePivotIOSim());
         hopper = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
 
         shooterHoodRight = new ShooterHood(new ShooterHoodIOSim(true), true);
@@ -176,6 +180,7 @@ public class RobotContainer {
                 (pose) -> {});
 
         intake = new Intake(new IntakeIO() {});
+        intakePivot = new IntakePivot(new IntakePivotIO() {});
         hopper = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
 
         shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, true);
