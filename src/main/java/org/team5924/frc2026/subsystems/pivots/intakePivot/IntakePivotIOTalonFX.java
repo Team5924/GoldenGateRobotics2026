@@ -105,14 +105,13 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     motionMagicConfigs.MotionMagicJerk = motionJerk.get();
 
     // Apply Configs
-    StatusCode[] statusArray = new StatusCode[6];
+    StatusCode[] statusArray = new StatusCode[5];
 
     statusArray[0] = intakePivotTalonConfig.apply(Constants.IntakePivot.CONFIG);
     statusArray[1] = intakePivotTalonConfig.apply(slot0Configs);
     statusArray[2] = intakePivotTalonConfig.apply(motionMagicConfigs);
     statusArray[3] = intakePivotTalonConfig.apply(Constants.IntakePivot.OPEN_LOOP_RAMPS_CONFIGS);
     statusArray[4] = intakePivotTalonConfig.apply(Constants.IntakePivot.CLOSED_LOOP_RAMPS_CONFIGS);
-    statusArray[5] = intakePivotTalonConfig.apply(Constants.IntakePivot.FEEDBACK_CONFIGS);
     
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
@@ -171,7 +170,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
             / Constants.IntakePivot.MOTOR_TO_MECHANISM;
     inputs.intakePivotPositionRads = Units.rotationsToRadians(inputs.intakePivotPosition);
 
-    inputs.intakePivotVelocityRadsPerSec = Units.rotationsToRadians(intakePivotVelocity.getValueAsDouble());
+    inputs.intakePivotVelocityRadsPerSec = Units.rotationsToRadians(intakePivotVelocity.getValueAsDouble()) / Constants.IntakePivot.MOTOR_TO_MECHANISM;
     inputs.intakePivotAppliedVoltage = intakePivotAppliedVoltage.getValueAsDouble();
     inputs.intakePivotSupplyCurrentAmps = intakePivotSupplyCurrent.getValueAsDouble();
     inputs.intakePivotTorqueCurrentAmps = intakePivotTorqueCurrent.getValueAsDouble();
@@ -226,7 +225,8 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
         kI,
         kD,
         kS,
-        kV);
+        kV,
+        kA);
 
     LoggedTunableNumber.ifChanged(
         0,
@@ -269,6 +269,11 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
 
   @Override
   public void holdPosition(double rads) {
+    if (!DriverStation.isEnabled()) {
+      stop();
+      return;
+    }
+
     intakePivotTalon.setControl(positionOut.withPosition(radsToMotorPosition(rads)));
   }
 
@@ -286,6 +291,6 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   }
 
   private double motorPositionToRads(double motorPosition) {
-    return Units.radiansToRotations(motorPosition) / Constants.IntakePivot.MOTOR_TO_MECHANISM / Constants.IntakePivot.MECHANISM_RANGE_PERCENT;
+    return Units.rotationsToRadians(motorPosition) / Constants.IntakePivot.MOTOR_TO_MECHANISM / Constants.IntakePivot.MECHANISM_RANGE_PERCENT;
   }
 }

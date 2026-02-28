@@ -68,6 +68,9 @@ public class RobotState {
   /* ### Intake ### */
   @Getter @Setter private IntakeState intakeState = IntakeState.OFF;
 
+  /* ### Intake ### */
+  @Getter @Setter private IntakePivotState intakePivotState = IntakePivotState.OFF;
+
   /* ### Hopper ### */
   @Getter @Setter private HopperState hopperState = HopperState.OFF;
 
@@ -87,10 +90,6 @@ public class RobotState {
   @Getter @Setter private ShooterHoodState rightShooterHoodState = ShooterHoodState.OFF;
 
   /*### Shooter Roller ### */
-  @Getter @Setter private ShooterRollerState shooterRollerState = ShooterRollerState.OFF;
-
-  @Getter @Setter private IntakePivotState intakePivotState = IntakePivotState.OFF;
-  
   @Getter @Setter private ShooterRollerState leftShooterRollerState = ShooterRollerState.OFF;
   @Getter @Setter private ShooterRollerState rightShooterRollerState = ShooterRollerState.OFF;
 }

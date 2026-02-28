@@ -51,12 +51,13 @@ public class IntakePivot extends SubsystemBase {
     OFF(() -> 0.0),
     MOVING(() -> 0.0),
 
-    DOWN(new LoggedTunableNumber("IntakePivot/DownRads", 7.0)),
-    STOW(new LoggedTunableNumber("IntakePivot/StowRads", 7.0)),
+    DOWN(new LoggedTunableNumber("IntakePivot/DownRads", 1)), // TODO: tune this, will be higher
+    STOW(new LoggedTunableNumber("IntakePivot/StowRads", 0.0)),
 
     // voltage at which the example subsystem motor moves when controlled by the operator
-    MANUAL(new LoggedTunableNumber("IntakePivot/OperatorVoltage", 7.0));
+    MANUAL(new LoggedTunableNumber("IntakePivot/OperatorVoltage", 4.0));
 
+    /** rads are measured from stow position (+ is down) */
     private final DoubleSupplier rads;
   }
 

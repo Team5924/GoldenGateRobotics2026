@@ -18,7 +18,6 @@ package org.team5924.frc2026;
 
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.DigitalInputsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -28,11 +27,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.S1CloseStateValue;
-import com.ctre.phoenix6.signals.S2CloseStateValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
-
-import edu.wpi.first.math.util.Units;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.util.Units;
@@ -110,36 +104,27 @@ public final class Constants {
   }
 
   public final class IntakePivot {
-    /* Turret */
     public static final int CAN_ID = 41; // TODO: update to real can id
     public static final String BUS = "rio";
-    public static final double MOTOR_TO_CANCODER = 1.0; // TODO: update this!!
-    public static final double CANCODER_TO_MECHANISM = 1.0; // TODO: update this!!!
-    public static final double MOTOR_TO_MECHANISM = (46.0 / 14.0) * (32.0 / 12.0);
+    public static final double MOTOR_TO_MECHANISM = (54.0 / 20.0) * (32.0 / 12.0);
     public static final double SIM_MOI = 0.001;
 
     public static final double OFFSET_RADS = 0.0;
 
     /** how far the intake pivot physically rotates */
-    public static final double MECHANISM_RANGE_PERCENT = 140.0 / 360.0; // TODO: have to very update this value
+    public static final double MECHANISM_RANGE_PERCENT = 140.0 / 360.0; // TODO: have to update this value ??
 
-    public static final double MIN_POSITION_MULTI = -0.4; // rotations
-    public static final double MAX_POSITION_MULTI = 0; // rotations
+    public static final double MIN_POSITION_MULTI = 0; // rotations
+    public static final double MAX_POSITION_MULTI = 0.6; // rotations
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
 
     public static final double JOYSTICK_DEADZONE = 0.05;
 
-    public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
+    public static final double EPSILON_RADS = Units.degreesToRadians(2.0);
 
     public static final double STATE_TIMEOUT = 5.0;
-
-
-    /* CANCoder */
-    public static final int CANCODER_ID = 41; // TODO: update id
-    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0; // TODO: update!! (in rotations of cancoder)
-
 
     /* Configs */
     public static final TalonFXConfiguration CONFIG =
@@ -174,20 +159,6 @@ public final class Constants {
           MAX_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
         .withForwardSoftLimitEnable(true)
         .withReverseSoftLimitEnable(true);
-
-    public static final FeedbackConfigs FEEDBACK_CONFIGS =
-      new FeedbackConfigs()
-        .withFeedbackRemoteSensorID(CANCODER_ID)
-        .withFeedbackRotorOffset(CANCODER_ABSOLUTE_OFFSET)
-        .withSensorToMechanismRatio(CANCODER_TO_MECHANISM)
-        .withRotorToSensorRatio(MOTOR_TO_CANCODER)
-        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
-
-    public static final MagnetSensorConfigs CANCODER_CONFIG =
-      new MagnetSensorConfigs()
-        .withMagnetOffset(-CANCODER_ABSOLUTE_OFFSET) // TODO: update offset -> when the turret is facing forward (units: rotations)
-        .withAbsoluteSensorDiscontinuityPoint(-1)
-        .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
   }
 
   public final class Hopper {
@@ -352,7 +323,6 @@ public final class Constants {
     public static final int BEAM_BREAK_ID = 0;
     // public static final boolean BEAM_BREAK = false;
   
-    // Hopper Motor Config
     public static final TalonFXConfiguration CONFIG = 
       new TalonFXConfiguration()
         .withCurrentLimits(

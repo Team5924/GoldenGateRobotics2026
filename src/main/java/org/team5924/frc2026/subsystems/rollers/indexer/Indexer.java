@@ -22,8 +22,6 @@ import lombok.RequiredArgsConstructor;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
-import org.team5924.frc2026.subsystems.sensors.BeamBreakIO;
-import org.team5924.frc2026.subsystems.sensors.BeamBreakIOInputsAutoLogged;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
@@ -39,13 +37,8 @@ public class Indexer extends GenericRollerSystem<Indexer.IndexerState> {
 
   private IndexerState goalState = IndexerState.OFF;
 
-  // Indexer Beam Break
-  // private final BeamBreakIO beamBreakIO;
-  private final BeamBreakIOInputsAutoLogged beamBreakInputs = new BeamBreakIOInputsAutoLogged();
-
-  public Indexer(IndexerIO indexerIO, BeamBreakIO beamBreakIO) {
+  public Indexer(IndexerIO indexerIO) {
     super("Indexer", indexerIO);
-    // this.beamBreakIO = beamBreakIO;
   }
 
   public void setGoalState(IndexerState goalState) {
@@ -56,7 +49,5 @@ public class Indexer extends GenericRollerSystem<Indexer.IndexerState> {
   @Override
   public void periodic() {
     super.periodic();
-    // beamBreakIO.updateInputs(beamBreakInputs);
-    // Logger.processInputs("Indexer/BeamBreak", beamBreakInputs);
   }
 }
