@@ -26,7 +26,6 @@ import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
@@ -46,7 +45,6 @@ import org.team5924.frc2026.util.LoggedTunableNumber;
 public class IntakePivotIOTalonFX implements IntakePivotIO {
   /* Hardware */
   private final TalonFX intakePivotTalon;
-  private final CANcoder intakePivotCANCoder;
 
   /* Configurators */
   private TalonFXConfigurator intakePivotTalonConfig;
@@ -79,11 +77,6 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   private final StatusSignal<Current> intakePivotTorqueCurrent;
   private final StatusSignal<Temperature> intakePivotTempCelsius;
 
-  private final StatusSignal<Angle> cancoderAbsolutePosition;
-  private final StatusSignal<AngularVelocity> cancoderVelocity;
-  private final StatusSignal<Voltage> cancoderSupplyVoltage;
-  private final StatusSignal<Angle> cancoderPositionRotations;
-
   private final StatusSignal<Double> closedLoopReferenceSlope;
   private double prevClosedLoopReferenceSlope = 0.0;
   private double prevReferenceSlopeTimestamp = 0.0;
@@ -95,7 +88,6 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   public IntakePivotIOTalonFX() {
     intakePivotTalon =
         new TalonFX(Constants.IntakePivot.CAN_ID, new CANBus(Constants.IntakePivot.BUS));
-    intakePivotCANCoder = new CANcoder(Constants.IntakePivot.CANCODER_ID);
 
     intakePivotTalonConfig = intakePivotTalon.getConfigurator();
 
@@ -113,7 +105,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     motionMagicConfigs.MotionMagicJerk = motionJerk.get();
 
     // Apply Configs
-    StatusCode[] statusArray = new StatusCode[7];
+    StatusCode[] statusArray = new StatusCode[6];
 
     statusArray[0] = intakePivotTalonConfig.apply(Constants.IntakePivot.CONFIG);
     statusArray[1] = intakePivotTalonConfig.apply(slot0Configs);
@@ -121,9 +113,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     statusArray[3] = intakePivotTalonConfig.apply(Constants.IntakePivot.OPEN_LOOP_RAMPS_CONFIGS);
     statusArray[4] = intakePivotTalonConfig.apply(Constants.IntakePivot.CLOSED_LOOP_RAMPS_CONFIGS);
     statusArray[5] = intakePivotTalonConfig.apply(Constants.IntakePivot.FEEDBACK_CONFIGS);
-    statusArray[6] =
-        intakePivotCANCoder.getConfigurator().apply(Constants.IntakePivot.CANCODER_CONFIG);
-
+    
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
 
@@ -142,11 +132,6 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     intakePivotTorqueCurrent = intakePivotTalon.getTorqueCurrent();
     intakePivotTempCelsius = intakePivotTalon.getDeviceTemp();
 
-    cancoderAbsolutePosition = intakePivotCANCoder.getAbsolutePosition();
-    cancoderVelocity = intakePivotCANCoder.getVelocity();
-    cancoderSupplyVoltage = intakePivotCANCoder.getSupplyVoltage();
-    cancoderPositionRotations = intakePivotCANCoder.getPosition();
-
     closedLoopReferenceSlope = intakePivotTalon.getClosedLoopReferenceSlope();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
@@ -157,10 +142,6 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
         intakePivotSupplyCurrent,
         intakePivotTorqueCurrent,
         intakePivotTempCelsius,
-        cancoderAbsolutePosition,
-        cancoderVelocity,
-        cancoderSupplyVoltage,
-        cancoderPositionRotations,
         closedLoopReferenceSlope);
 
     voltageOut = new VoltageOut(0.0);
@@ -185,23 +166,13 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
                 closedLoopReferenceSlope)
             .isOK();
 
-    inputs.cancoderConnected =
-        BaseStatusSignal.refreshAll(
-                cancoderAbsolutePosition,
-                cancoderVelocity,
-                cancoderSupplyVoltage,
-                cancoderPositionRotations)
-            .isOK();
-
     inputs.intakePivotPosition =
         BaseStatusSignal.getLatencyCompensatedValueAsDouble(
                 intakePivotPosition, intakePivotVelocity)
-            / Constants.IntakePivot.MOTOR_TO_MECHANISM
-            / Constants.IntakePivot.MOTOR_TO_CANCODER;
+            / Constants.IntakePivot.MOTOR_TO_MECHANISM;
     inputs.intakePivotPositionRads = Units.rotationsToRadians(inputs.intakePivotPosition);
 
-    inputs.intakePivotVelocityRadsPerSec =
-        Units.rotationsToRadians(intakePivotVelocity.getValueAsDouble());
+    inputs.intakePivotVelocityRadsPerSec = Units.rotationsToRadians(intakePivotVelocity.getValueAsDouble());
     inputs.intakePivotAppliedVoltage = intakePivotAppliedVoltage.getValueAsDouble();
     inputs.intakePivotSupplyCurrentAmps = intakePivotSupplyCurrent.getValueAsDouble();
     inputs.intakePivotTorqueCurrentAmps = intakePivotTorqueCurrent.getValueAsDouble();
@@ -223,13 +194,6 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     prevClosedLoopReferenceSlope = inputs.motionMagicVelocityTarget;
     prevReferenceSlopeTimestamp = currentTime;
 
-    inputs.cancoderAbsolutePosition = cancoderAbsolutePosition.getValueAsDouble();
-    inputs.cancoderVelocity = cancoderVelocity.getValueAsDouble();
-    inputs.cancoderSupplyVoltage = cancoderSupplyVoltage.getValueAsDouble();
-    inputs.cancoderPositionRotations = cancoderPositionRotations.getValueAsDouble();
-
-    inputs.intakePivotPositionCancoder =
-        (inputs.cancoderPositionRotations) / Constants.IntakePivot.CANCODER_TO_MECHANISM;
   }
 
   @Override
@@ -315,22 +279,19 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   }
 
   private double clampRads(double rads) {
-    return MathUtil.clamp(
-        rads, Constants.IntakePivot.MIN_POSITION_RADS, Constants.IntakePivot.MAX_POSITION_RADS);
+    return MathUtil.clamp(rads, Constants.IntakePivot.MIN_POSITION_RADS, Constants.IntakePivot.MAX_POSITION_RADS);
   }
 
   private double radsToMotorPosition(double rads) { // TODO: umm double check!!
     return rads
         / Math.PI
         / 2
-        * Constants.IntakePivot.MOTOR_TO_MECHANISM
-        * Constants.IntakePivot.MOTOR_TO_CANCODER;
+        * Constants.IntakePivot.MOTOR_TO_MECHANISM;
   }
 
   private double motorPositionToRads(double motorPosition) { // TODO: double check this too!!!
     return motorPosition
         / Constants.IntakePivot.MOTOR_TO_MECHANISM
-        / Constants.IntakePivot.MOTOR_TO_CANCODER
         * Math.PI
         * 2;
   }

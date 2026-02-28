@@ -21,7 +21,6 @@ import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import java.util.function.DoubleSupplier;
@@ -69,10 +68,7 @@ public class IntakePivot extends SubsystemBase {
   private final Notification intakePivotMotorDisconnectedNotification;
   private boolean wasIntakePivotMotorConnected = true;
 
-  private Timer stateTimer = new Timer();
-
-  private double bounds;
-  private boolean cont;
+  private double lastStateChange = 0.0;
 
   public IntakePivot(IntakePivotIO io) {
     this.io = io;
@@ -90,8 +86,6 @@ public class IntakePivot extends SubsystemBase {
                 Seconds.of(new LoggedTunableNumber("IntakePivot/SysIdTime", 10.0).getAsDouble()),
                 (state) -> Logger.recordOutput("IntakePivot/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism((voltage) -> tryRunVolts(voltage.in(Volts)), null, this));
-
-    stateTimer.reset();
   }
 
   @Override
@@ -107,9 +101,6 @@ public class IntakePivot extends SubsystemBase {
 
     intakePivotMotorDisconnected.set(!inputs.intakePivotMotorConnected);
 
-    Logger.recordOutput("IntakePivot/exceed bounds", bounds);
-    Logger.recordOutput("IntakePivot/continue", cont);
-
     handleManualState();
 
     // prevents error spam
@@ -120,8 +111,9 @@ public class IntakePivot extends SubsystemBase {
   }
 
   public boolean isAtSetpoint() {
-    return EqualsUtil.epsilonEquals(
-        inputs.setpointRads, inputs.intakePivotPositionRads, Constants.IntakePivot.EPSILON_RADS);
+    return RobotState.getTime() - lastStateChange < Constants.IntakePivot.STATE_TIMEOUT
+        || EqualsUtil.epsilonEquals(
+          inputs.setpointRads, inputs.intakePivotPositionRads, Constants.IntakePivot.EPSILON_RADS);
   }
 
   private void handleManualState() {
@@ -139,11 +131,6 @@ public class IntakePivot extends SubsystemBase {
     // if (!(cont = shouldContinueInDirection(volts, inputs.intakePivotPositionRads))) return;
 
     io.runVolts(volts);
-  }
-
-  public boolean shouldContinueInDirection(double volts, double rads) {
-    double voltDirection = Math.signum(volts);
-    return (voltDirection != (bounds = exceedBounds(rads)));
   }
 
   /**
@@ -176,7 +163,7 @@ public class IntakePivot extends SubsystemBase {
         break;
     }
 
-    stateTimer.reset();
+    lastStateChange = RobotState.getTime();
   }
 
   // public void setPositionSetpointImpl(double radiansFromCenter, double radPerS) {
