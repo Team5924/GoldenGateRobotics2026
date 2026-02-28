@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -50,6 +51,8 @@ public class Robot extends LoggedRobot {
       new Alert(
           "Battery voltage is very low, turn off the robot or replace the battery to avoid damage.",
           AlertType.kWarning);
+
+  private final Notifier updateMatchShift = new Notifier(FieldState.getInstance()::updateCurrentMatchShift);
 
   public Robot() {
     // Record metadata
@@ -164,6 +167,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledInit() {
     robotContainer.resetSimulationField();
+    updateMatchShift.close();
   }
 
   /** This function is called periodically when disabled. */
@@ -179,6 +183,8 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(autonomousCommand);
     }
+
+    updateMatchShift.startPeriodic(0.2);
   }
 
   /** This function is called periodically during autonomous. */

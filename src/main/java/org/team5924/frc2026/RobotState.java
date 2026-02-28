@@ -21,7 +21,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import lombok.Getter;
 import lombok.Setter;
 import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.subsystems.SuperShooter.ShooterState;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.subsystems.rollers.hopper.Hopper.HopperState;
@@ -37,10 +36,6 @@ public class RobotState {
   public static RobotState getInstance() {
     if (instance == null) instance = new RobotState();
     return instance;
-  }
-
-  public static double getTime() {
-    return ((double) Logger.getTimestamp() * 1.0E-6);
   }
 
   Rotation2d gyroOffset = Rotation2d.kZero;
