@@ -16,7 +16,6 @@
 
 package org.team5924.frc2026;
 
-import choreo.auto.AutoFactory;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;

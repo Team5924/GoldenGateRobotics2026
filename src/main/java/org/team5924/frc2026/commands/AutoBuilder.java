@@ -30,6 +30,7 @@ import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 
 @RequiredArgsConstructor
 public class AutoBuilder {
+  private final Drive drive;
   private final SuperShooter superShooterLeft;
   private final SuperShooter superShooterRight;
   // private final Climb climb;
@@ -51,11 +52,11 @@ public class AutoBuilder {
     }
     return Commands.defer(() -> Commands.sequence(
         startToHub(startingPositionSupplier.get()),
-        shootersOn(),
+        shootersOn(1.0), // TODO: Edit timout 
         shootersOff(),
         RobotContainer.autoFactory.trajectoryCmd("HubToClimb")
         // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
-    ), Set.of(superShooterLeft, superShooterRight));
+    ), Set.of(drive, superShooterLeft, superShooterRight));
   }
 
   public Command scorePickupAndClimbAuto() {
@@ -65,16 +66,16 @@ public class AutoBuilder {
     }
     return Commands.defer(() -> Commands.sequence(
         startToHub(startingPositionSupplier.get()),
-        shootersOn(),
+        shootersOn(1.0), // TODO: edit timeouts
         shootersOff(),
         RobotContainer.autoFactory.trajectoryCmd("HubToDepot"),
         intakeSequence(),
         RobotContainer.autoFactory.trajectoryCmd("DepotToHub"),
-        shootersOn(),
+        shootersOn(1.0),
         shootersOff(),
         RobotContainer.autoFactory.trajectoryCmd("HubToClimb")
         // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
-        ), Set.of(superShooterLeft, superShooterRight, intake));  
+        ), Set.of(drive, superShooterLeft, superShooterRight, intake));  
   }
 
   private Command startToHub(String startingPosition) {
@@ -87,11 +88,11 @@ public class AutoBuilder {
     }
   }
 
-  private Command shootersOn() {
+  private Command shootersOn(double timeout) {
     return Commands.parallel(
             Commands.run(() -> superShooterLeft.setGoalState(ShooterState.AUTO_SHOOTING), superShooterLeft),
             Commands.run(() -> superShooterRight.setGoalState(ShooterState.AUTO_SHOOTING), superShooterRight)
-          ).withTimeout(1.0); // TODO: Edit timing
+          ).withTimeout(timeout); 
   }
 
   private Command shootersOff() {
