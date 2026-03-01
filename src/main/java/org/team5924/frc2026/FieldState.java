@@ -54,7 +54,6 @@ public class FieldState {
     }
 
 
-
     return MatchShift.INVALID;
   }
 
