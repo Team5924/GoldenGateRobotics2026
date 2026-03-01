@@ -153,7 +153,6 @@ public class ShooterHood extends SubsystemBase {
   }
 
   public boolean isAtSetpoint() {
-
     return Math.abs(getShooterHoodPositionRads() - this.goalState.rads.getAsDouble())
         <= ShooterHoodPivotTolerance.getAsDouble();
   }

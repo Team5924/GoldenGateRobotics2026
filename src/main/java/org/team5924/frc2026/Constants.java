@@ -64,7 +64,7 @@ public final class Constants {
 
   /* General */
   public static final double LOOP_PERIODIC_SECONDS = 0.02;
-  public static final double SYS_ID_TIME = 0;
+  public static final double SYS_ID_TIME = 10.0;
   public static final double JOYSTICK_DEADZONE = 0.05;
   
   public final class Field {
@@ -121,8 +121,6 @@ public final class Constants {
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
-
-    public static final double JOYSTICK_DEADZONE = 0.05;
 
     public static final double EPSILON_RADS = Units.degreesToRadians(2.0);
 
@@ -562,8 +560,6 @@ public final class Constants {
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
-
-    public static final double JOYSTICK_DEADZONE = 0.05;
 
     public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
 

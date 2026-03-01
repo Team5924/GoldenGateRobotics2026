@@ -116,7 +116,7 @@ public class Turret extends SubsystemBase {
   }
 
   public boolean isAtSetpoint() {
-    return RobotState.getTime() - lastStateChange < Constants.GeneralTurret.STATE_TIMEOUT
+    return RobotState.getTime() - lastStateChange > Constants.GeneralTurret.STATE_TIMEOUT
         || EqualsUtil.epsilonEquals(
             inputs.setpointRads, inputs.turretPositionRads, Constants.GeneralTurret.EPSILON_RADS);
   }

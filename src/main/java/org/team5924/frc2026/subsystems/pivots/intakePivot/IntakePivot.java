@@ -110,7 +110,7 @@ public class IntakePivot extends SubsystemBase {
   }
 
   public boolean isAtSetpoint() {
-    return RobotState.getTime() - lastStateChange < Constants.IntakePivot.STATE_TIMEOUT
+    return RobotState.getTime() - lastStateChange > Constants.IntakePivot.STATE_TIMEOUT
         || EqualsUtil.epsilonEquals(
           inputs.setpointRads, inputs.intakePivotPositionRads, Constants.IntakePivot.EPSILON_RADS);
   }
