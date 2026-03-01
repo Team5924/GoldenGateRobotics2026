@@ -22,8 +22,6 @@ public class FieldState {
   }
 
   public enum MatchShift {
-    NONE, // default state on startup
-
     AUTO,
     TRANSITION,
     SHIFT_ONE,
@@ -32,13 +30,30 @@ public class FieldState {
     SHIFT_FOUR,
     END_GAME,
 
+    NONE, // default state on startup
     INVALID // use this state if any info from FMS is invalid
   }
+
+  private final double[] matchShiftTimes = {
+    9999, // auto is not during teleop, so arbitrarily high time!!
+    130,
+    105,
+    80,
+    55,
+    30,
+    0
+  };
 
   @Getter private MatchShift currentMatchShift = MatchShift.NONE;
 
   private MatchShift calculateCurrentMatchShift() {
     double time = getTime();
+
+    if (DriverStation.isAutonomousEnabled()) {
+      return MatchShift.AUTO;
+    }
+
+
 
     return MatchShift.INVALID;
   }
