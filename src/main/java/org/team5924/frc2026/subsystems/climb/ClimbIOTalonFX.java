@@ -173,7 +173,7 @@ public class ClimbIOTalonFX implements ClimbIO {
         closedLoopReferenceSlope);
 
     voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
-    positionOut = new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true);
+    positionOut = new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true).withSlot(0);
     motionMagicVoltage = new MotionMagicVoltage(0.0).withEnableFOC(true).withSlot(0);
 
     BaseStatusSignal.waitForAll(0.5, cancoderAbsolutePosition);

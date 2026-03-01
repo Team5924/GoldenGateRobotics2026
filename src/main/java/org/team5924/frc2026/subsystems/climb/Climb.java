@@ -116,6 +116,7 @@ public class Climb extends SubsystemBase {
   private void handleCurrentState() {
     switch (RobotState.getInstance().getClimbState()) {
       case MOVING -> {
+        io.setPosition(distanceToRadians(goalState.distance.getAsDouble()));
         if (isAtSetpoint()) RobotState.getInstance().setClimbState(goalState);
       }
       case MANUAL -> handleManualState();
@@ -145,7 +146,7 @@ public class Climb extends SubsystemBase {
             "Climb: MOVING is an invalid goal state; it is a transition state!!", null);
         return;
       default:
-        RobotState.getInstance().setClimbState(goalState);
+        RobotState.getInstance().setClimbState(ClimbState.MOVING);
         break;
     }
     this.goalState = goalState;

@@ -598,7 +598,9 @@ public final class Constants {
         .withCurrentLimits(
           new CurrentLimitsConfigs()
             .withSupplyCurrentLimit(60)
-            .withStatorCurrentLimit(60))
+            .withStatorCurrentLimit(60)
+            .withSupplyCurrentLimitEnable(true)
+            .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
           new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
