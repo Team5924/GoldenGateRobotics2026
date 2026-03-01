@@ -251,8 +251,8 @@ public final class Constants {
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(60)
-            .withStatorCurrentLimit(60)
+            .withSupplyCurrentLimit(20)
+            .withStatorCurrentLimit(20)
             .withSupplyCurrentLimitEnable(true)
             .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
@@ -462,8 +462,8 @@ public final class Constants {
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(60)
-            .withStatorCurrentLimit(60)
+            .withSupplyCurrentLimit(20)
+            .withStatorCurrentLimit(20)
             .withSupplyCurrentLimitEnable(true)
             .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
