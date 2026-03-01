@@ -68,7 +68,8 @@ public class TurretIOTalonFX implements TurretIO {
       new LoggedTunableNumber("Turret/MotionCruiseVelocity", 90.0);
   private final LoggedTunableNumber motionAcceleration =
       new LoggedTunableNumber("Turret/MotionAcceleration", 900.0);
-  private final LoggedTunableNumber motionJerk = new LoggedTunableNumber("Turret/MotionJerk", 0.0);
+  private final LoggedTunableNumber motionJerk = 
+      new LoggedTunableNumber("Turret/MotionJerk", 0.0);
 
   /* Status Signals */
   private final StatusSignal<Angle> turretPosition;
