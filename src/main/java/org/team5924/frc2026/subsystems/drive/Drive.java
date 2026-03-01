@@ -134,7 +134,12 @@ public class Drive extends SubsystemBase {
           "Gyro Disconnected",
           "Disconnected gyro, using kinematics as fallback.");
 
+  private final Notification motorOverheatNotification =
+      new Notification(
+          NotificationLevel.WARNING, "Motor Overheat", "Motor Overheat Imminent");
+
   private boolean wasGyroConnected = true;
+  private boolean wasOverheating = false;
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
   private Rotation2d rawGyroRotation = Rotation2d.kZero;
@@ -310,6 +315,15 @@ public class Drive extends SubsystemBase {
     if (!gyroInputs.connected && wasGyroConnected) {
       Elastic.sendNotification(gyroDisconnectedNotification);
     }
+
+    boolean isOverheating = (gyroInputs.temperature > Constants.OVERHEAT_THRESHOLD);
+
+    // prevents error spam
+    if (isOverheating && !wasOverheating) {
+      Elastic.sendNotification(motorOverheatNotification);
+    }
+    wasOverheating = isOverheating;
+
     wasGyroConnected = gyroInputs.connected;
   }
 

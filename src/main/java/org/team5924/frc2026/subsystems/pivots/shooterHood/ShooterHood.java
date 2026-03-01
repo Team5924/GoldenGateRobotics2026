@@ -75,6 +75,10 @@ public class ShooterHood extends SubsystemBase {
   private final Notification shooterHoodMotorDisconnectedNotification;
   private boolean wasShooterHoodMotorConnected = true;
 
+  protected final Alert overheatAlert;
+  protected final Notification overheatNotification;
+  protected boolean wasOverheating = true;
+
   private final Alert notImplementedAlert;
   private boolean showNotImplementedAlert;
 
@@ -89,6 +93,12 @@ public class ShooterHood extends SubsystemBase {
         new Notification(NotificationLevel.WARNING, "Shooter Hood Motor Disconnected", "");
 
     notImplementedAlert = new Alert("Auto Shooting not yet implemented!", Alert.AlertType.kWarning);
+
+    overheatAlert = new Alert("Shooter Hood motor overheating!", Alert.AlertType.kWarning);
+
+    overheatNotification =
+        new Notification(
+            NotificationLevel.WARNING, "Shooter Hood Overheat Warning", " motor overheat imminent!");
 
     sysId =
         new SysIdRoutine(
@@ -118,6 +128,13 @@ public class ShooterHood extends SubsystemBase {
       Elastic.sendNotification(shooterHoodMotorDisconnectedNotification);
     }
     wasShooterHoodMotorConnected = inputs.shooterHoodMotorConnected;
+
+    boolean isOverheating = inputs.shooterHoodTempCelsius > Constants.OVERHEAT_THRESHOLD;
+    overheatAlert.set(isOverheating);
+    if (isOverheating && !wasOverheating) {
+      Elastic.sendNotification(overheatNotification);
+    }
+    wasOverheating = isOverheating;
   }
 
   private void handleCurrentState() {

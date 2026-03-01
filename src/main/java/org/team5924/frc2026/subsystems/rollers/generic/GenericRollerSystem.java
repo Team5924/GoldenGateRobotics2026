@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
+import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
@@ -49,6 +50,10 @@ public abstract class GenericRollerSystem<State extends GenericRollerSystem.Volt
   protected final Notification disconnectedNotification;
   protected boolean wasMotorConnected = true;
 
+  protected final Alert overheatAlert;
+  protected final Notification overheatNotification;
+  protected boolean wasOverheating = true;
+
   protected final Timer stateTimer = new Timer();
 
   public GenericRollerSystem(String name, GenericRollerSystemIO io) {
@@ -60,6 +65,12 @@ public abstract class GenericRollerSystem<State extends GenericRollerSystem.Volt
     disconnectedNotification =
         new Notification(
             NotificationLevel.WARNING, name + " Warning", name + " motor disconnected!");
+
+    overheatAlert = new Alert(name + " motor overheating!", Alert.AlertType.kWarning);
+
+    overheatNotification =
+        new Notification(
+            NotificationLevel.WARNING, name + " Overheat Warning", name + " motor overheat imminent!");
 
     stateTimer.start();
   }
@@ -82,6 +93,13 @@ public abstract class GenericRollerSystem<State extends GenericRollerSystem.Volt
       Elastic.sendNotification(disconnectedNotification);
     }
     wasMotorConnected = inputs.motorConnected;
+
+    boolean isOverheating = inputs.tempCelsius > Constants.OVERHEAT_THRESHOLD;
+    overheatAlert.set(isOverheating);
+    if (isOverheating && !wasOverheating) {
+      Elastic.sendNotification(overheatNotification);
+    }
+    wasOverheating = isOverheating;
   }
 
   protected void handleCurrentState() {
