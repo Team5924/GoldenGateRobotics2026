@@ -207,7 +207,7 @@ public class Drive extends SubsystemBase {
 
     // setpointGenerator = new SwerveSetpointGenerator(kinematics,
     // getModuleTranslations());
-    // previousSetpoint = new SwerveSetpoint(getChassisSpeeds(), getModuleStates());
+    // previousSetpoint = new SwerveSetpoint(getSpeeds(), getModuleStates());
 
     SmartDashboard.putData(
         "Swerve Drive",
@@ -305,6 +305,7 @@ public class Drive extends SubsystemBase {
     // Update RobotState
     RobotState.getInstance().setOdometryPose(getPose());
     RobotState.getInstance().setEstimatedPose(getPose());
+    RobotState.getInstance().setRobotChassisSpeeds(getChassisSpeeds());
 
     // prevents error spam
     if (!gyroInputs.connected && wasGyroConnected) {

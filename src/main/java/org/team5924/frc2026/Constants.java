@@ -30,7 +30,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.util.Units;
-
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -78,6 +78,8 @@ public final class Constants {
     public static final double CENTER_X = WIDTH / 2;
     public static final double CENTER_Y = LENGTH / 2;
     public static final double HUB_X = CENTER_X - 143.50;
+
+    public static final Translation2d[] TRENCH_TRANSLATIONS = {new Translation2d(182.11, 25.7), new Translation2d(182.11, 292.718), new Translation2d(469.11, 25.7), new Translation2d(469.11, 292.718)};
   }
 
   public final class GenericRollerSystem {
