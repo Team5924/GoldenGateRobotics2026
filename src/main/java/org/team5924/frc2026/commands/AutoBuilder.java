@@ -16,43 +16,98 @@
 
 package org.team5924.frc2026.commands;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import java.util.Set;
+import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
-import org.team5924.frc2026.RobotState;
-import org.team5924.frc2026.commands.drive.DriveToPose;
+import org.team5924.frc2026.RobotContainer;
 import org.team5924.frc2026.subsystems.SuperShooter;
+import org.team5924.frc2026.subsystems.SuperShooter.ShooterState;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
-import org.team5924.frc2026.util.AllianceFlipUtil;
+import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 
 @RequiredArgsConstructor
 public class AutoBuilder {
-
   private final Drive drive;
-  private final SuperShooter shooter;
+  private final SuperShooter superShooterLeft;
+  private final SuperShooter superShooterRight;
   // private final Climb climb;
   private final Intake intake;
 
-  public Command basicDriveAuto() {
-    return Commands.runOnce(
-            () ->
-                RobotState.getInstance()
-                    .resetPose(
-                        AllianceFlipUtil.apply(
-                            new Pose2d(
-                                RobotState.getInstance().getEstimatedPose().getTranslation(),
-                                Rotation2d.kPi))))
-        .andThen(
-            new DriveToPose(
-                    drive,
-                    () -> RobotState.getInstance().getEstimatedPose(),
-                    () -> RobotState.getInstance().getEstimatedPose(),
-                    () ->
-                        new Translation2d((AllianceFlipUtil.shouldFlip() ? -1.0 : 1.0) * -1.0, 0.0))
-                .withTimeout(0.6));
+  // Left, Mid, Right 1-5
+  private static Supplier<String> startingPositionSupplier;
+
+  public static void setStartingPosition(Supplier<String> supplier) {
+    if (supplier == null)
+      throw new IllegalArgumentException("startingPositionSupplier can't be null");
+    startingPositionSupplier = supplier;
+  }
+
+  public Command scoreAndClimbAuto() {
+    if (startingPositionSupplier == null) {
+      throw new IllegalStateException(
+          "starting position must be set before building auto commands");
+    }
+    return Commands.defer(() -> Commands.sequence(
+        startToHub(startingPositionSupplier.get()),
+        shootersOn(1.0), // TODO: Edit timout 
+        shootersOff(),
+        RobotContainer.autoFactory.trajectoryCmd("HubToClimb")
+        // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
+    ), Set.of(drive, superShooterLeft, superShooterRight));
+  }
+
+  public Command scorePickupAndClimbAuto() {
+    if (startingPositionSupplier == null) {
+      throw new IllegalStateException(
+          "starting position must be set before building auto commands");
+    }
+    return Commands.defer(() -> Commands.sequence(
+        startToHub(startingPositionSupplier.get()),
+        shootersOn(1.0), // TODO: edit timeouts
+        shootersOff(),
+        RobotContainer.autoFactory.trajectoryCmd("HubToDepot"),
+        intakeSequence(),
+        RobotContainer.autoFactory.trajectoryCmd("DepotToHub"),
+        shootersOn(1.0),
+        shootersOff(),
+        RobotContainer.autoFactory.trajectoryCmd("HubToClimb")
+        // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
+        ), Set.of(drive, superShooterLeft, superShooterRight, intake));  
+  }
+
+  private Command startToHub(String startingPosition) {
+    if ("Mid".equals(startingPosition)) {
+      return Commands.none();
+    } else {
+      return Commands.sequence(
+          RobotContainer.autoFactory.resetOdometry(startingPosition + "StartToHub"),
+          RobotContainer.autoFactory.trajectoryCmd(startingPosition + "StartToHub"));
+    }
+  }
+
+  private Command shootersOn(double timeout) {
+    return Commands.parallel(
+            Commands.run(() -> superShooterLeft.setGoalState(ShooterState.AUTO_SHOOTING), superShooterLeft),
+            Commands.run(() -> superShooterRight.setGoalState(ShooterState.AUTO_SHOOTING), superShooterRight)
+          ).withTimeout(timeout); 
+  }
+
+  private Command shootersOff() {
+    return Commands.parallel(
+            Commands.runOnce(() -> superShooterLeft.setGoalState(ShooterState.OFF), superShooterLeft),
+            Commands.runOnce(() -> superShooterRight.setGoalState(ShooterState.OFF), superShooterRight)
+          );
+  }
+
+  private Command intakeSequence() {
+    return Commands.sequence( 
+            Commands.deadline(
+              RobotContainer.autoFactory.trajectoryCmd("DepotIntake"),
+              Commands.run(() -> intake.setGoalState(IntakeState.INTAKE), intake)
+            ),
+            Commands.runOnce(() -> intake.setGoalState(IntakeState.OFF), intake));
   }
 }

@@ -16,7 +16,7 @@
 
 package org.team5924.frc2026;
 
-import com.pathplanner.lib.auto.AutoBuilder;
+import choreo.auto.AutoFactory;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -29,6 +29,7 @@ import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.team5924.frc2026.commands.AutoBuilder;
 import org.team5924.frc2026.commands.drive.DriveCommands;
 import org.team5924.frc2026.commands.intakePivot.IntakePivotCommands;
 import org.team5924.frc2026.generated.TunerConstants;
@@ -104,101 +105,107 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
-    switch (Constants.currentMode) {
-      case REAL:
-        // Real robot, instantiate hardware IO implementations
-        drive =
-            new Drive(
-                new GyroIOPigeon2(),
-                new ModuleIOTalonFX(TunerConstants.FrontLeft),
-                new ModuleIOTalonFX(TunerConstants.FrontRight),
-                new ModuleIOTalonFX(TunerConstants.BackLeft),
-                new ModuleIOTalonFX(TunerConstants.BackRight),
-                (pose) -> {});
+  public static AutoFactory autoFactory;
+  
+    /** The container for the robot. Contains subsystems, OI devices, and commands. */
+    public RobotContainer() {
+      switch (Constants.currentMode) {
+        case REAL:
+          // Real robot, instantiate hardware IO implementations
+          drive =
+              new Drive(
+                  new GyroIOPigeon2(),
+                  new ModuleIOTalonFX(TunerConstants.FrontLeft),
+                  new ModuleIOTalonFX(TunerConstants.FrontRight),
+                  new ModuleIOTalonFX(TunerConstants.BackLeft),
+                  new ModuleIOTalonFX(TunerConstants.BackRight),
+                  (pose) -> {});
+  
+          intake = new Intake(new IntakeIOKrakenFOC());
+          intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
+          hopper = new Hopper(new HopperKrakenFOC());
+  
+          shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(true), true);
+          shooterRollerRight =
+              new ShooterRoller(
+                  new ShooterRollerIOKrakenFOC(true),
+                  new BeamBreakIOHardware(Constants.ShooterRollerLeaderLeft.BEAM_BREAK_PORT),
+                  true);
+          turretRight = new Turret(new TurretIOTalonFX(true), true);
+  
+          shooterHoodLeft = new ShooterHood(new ShooterHoodIOTalonFX(false), false);
+          shooterRollerLeft =
+              new ShooterRoller(
+                  new ShooterRollerIOKrakenFOC(false),
+                  new BeamBreakIOHardware(Constants.ShooterRollerLeaderLeft.BEAM_BREAK_PORT),
+                  false);
+          turretLeft = new Turret(new TurretIOTalonFX(false), false);
+          break;
+  
+        case SIM:
+          // Sim robot, instantiate physics sim IO implementations
+          driveSimulation =
+              new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
+          SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
+          drive =
+              new Drive(
+                  new GyroIOSim(driveSimulation.getGyroSimulation()),
+                  new ModuleIOTalonFXSim(TunerConstants.FrontLeft, driveSimulation.getModules()[0]),
+                  new ModuleIOTalonFXSim(TunerConstants.FrontRight, driveSimulation.getModules()[1]),
+                  new ModuleIOTalonFXSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
+                  new ModuleIOTalonFXSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
+                  driveSimulation::setSimulationWorldPose);
+  
+          intake = new Intake(new IntakeIO() {});
+          intakePivot = new IntakePivot(new IntakePivotIOSim());
+          hopper = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
+  
+          shooterHoodRight = new ShooterHood(new ShooterHoodIOSim(true), true);
+          shooterRollerRight =
+              new ShooterRoller(new ShooterRollerIOSim(true), new BeamBreakIO() {}, true);
+          turretRight = new Turret(new TurretIOSim(true), true);
+  
+          shooterHoodLeft = new ShooterHood(new ShooterHoodIOSim(false), false);
+          shooterRollerLeft =
+              new ShooterRoller(new ShooterRollerIOSim(false), new BeamBreakIO() {}, false);
+          turretLeft = new Turret(new TurretIOSim(false), false);
+          break;
+  
+        default:
+          // Replayed robot, disable IO implementations
+          drive =
+              new Drive(
+                  new GyroIO() {},
+                  new ModuleIO() {},
+                  new ModuleIO() {},
+                  new ModuleIO() {},
+                  new ModuleIO() {},
+                  (pose) -> {});
+  
+          intake = new Intake(new IntakeIO() {});
+          intakePivot = new IntakePivot(new IntakePivotIO() {});
+          hopper = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
+  
+          shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, true);
+          shooterRollerRight =
+              new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, true);
+          turretRight = new Turret(new TurretIO() {}, true);
+  
+          shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, false);
+          shooterRollerLeft =
+              new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, false);
+          turretLeft = new Turret(new TurretIO() {}, false);
+          break;
+      }
+  
+      superShooterRight = new SuperShooter(shooterRollerRight, shooterHoodRight, turretRight);
+      superShooterLeft = new SuperShooter(shooterRollerLeft, shooterHoodLeft, turretLeft);
+  
+      autoFactory =
+        new AutoFactory(drive::getPose, drive::setPose, drive::followChoreoTrajectory, true, drive);
 
-        intake = new Intake(new IntakeIOKrakenFOC());
-        intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
-        hopper = new Hopper(new HopperKrakenFOC());
-
-        shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(true), true);
-        shooterRollerRight =
-            new ShooterRoller(
-                new ShooterRollerIOKrakenFOC(true),
-                new BeamBreakIOHardware(Constants.ShooterRollerLeaderLeft.BEAM_BREAK_PORT),
-                true);
-        turretRight = new Turret(new TurretIOTalonFX(true), true);
-
-        shooterHoodLeft = new ShooterHood(new ShooterHoodIOTalonFX(false), false);
-        shooterRollerLeft =
-            new ShooterRoller(
-                new ShooterRollerIOKrakenFOC(false),
-                new BeamBreakIOHardware(Constants.ShooterRollerLeaderLeft.BEAM_BREAK_PORT),
-                false);
-        turretLeft = new Turret(new TurretIOTalonFX(false), false);
-        break;
-
-      case SIM:
-        // Sim robot, instantiate physics sim IO implementations
-        driveSimulation =
-            new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
-        SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
-        drive =
-            new Drive(
-                new GyroIOSim(driveSimulation.getGyroSimulation()),
-                new ModuleIOTalonFXSim(TunerConstants.FrontLeft, driveSimulation.getModules()[0]),
-                new ModuleIOTalonFXSim(TunerConstants.FrontRight, driveSimulation.getModules()[1]),
-                new ModuleIOTalonFXSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
-                new ModuleIOTalonFXSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
-                driveSimulation::setSimulationWorldPose);
-
-        intake = new Intake(new IntakeIOSim());
-        intakePivot = new IntakePivot(new IntakePivotIOSim());
-        hopper = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
-
-        shooterHoodRight = new ShooterHood(new ShooterHoodIOSim(true), true);
-        shooterRollerRight =
-            new ShooterRoller(new ShooterRollerIOSim(true), new BeamBreakIO() {}, true);
-        turretRight = new Turret(new TurretIOSim(true), true);
-
-        shooterHoodLeft = new ShooterHood(new ShooterHoodIOSim(false), false);
-        shooterRollerLeft =
-            new ShooterRoller(new ShooterRollerIOSim(false), new BeamBreakIO() {}, false);
-        turretLeft = new Turret(new TurretIOSim(false), false);
-        break;
-
-      default:
-        // Replayed robot, disable IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                (pose) -> {});
-
-        intake = new Intake(new IntakeIO() {});
-        intakePivot = new IntakePivot(new IntakePivotIO() {});
-        hopper = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
-
-        shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, true);
-        shooterRollerRight =
-            new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, true);
-        turretRight = new Turret(new TurretIO() {}, true);
-
-        shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, false);
-        shooterRollerLeft =
-            new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, false);
-        turretLeft = new Turret(new TurretIO() {}, false);
-        break;
-    }
-
-    superShooterRight = new SuperShooter(shooterRollerRight, shooterHoodRight, turretRight);
-    superShooterLeft = new SuperShooter(shooterRollerLeft, shooterHoodLeft, turretLeft);
-
-    // Auto commands
+    // *** OUTDATED AUTO COMMANDS *** Auto commands
+    /* 
     NamedCommands.registerCommand(
         "Run Shooter",
         Commands.runOnce(
@@ -221,9 +228,20 @@ public class RobotContainer {
             () -> {
               // intake.setGoalState(IntakeState.INTAKE);
             }));
+    */
 
     // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices");
+    LoggedDashboardChooser<String> startingPosition =
+        new LoggedDashboardChooser<>("Starting Position?");
+    startingPosition.addDefaultOption("Middle", "Mid");
+    startingPosition.addOption("Right", "Right");
+    startingPosition.addOption("Left", "Left");
+    AutoBuilder.setStartingPosition(startingPosition::get);
+    var autoBuilder = new AutoBuilder(drive, superShooterLeft, superShooterRight, intake);
+
+    autoChooser.addDefaultOption("Score and Climb Auto", autoBuilder.scoreAndClimbAuto());
+    autoChooser.addOption("Score, Depot, and Climb Auto", autoBuilder.scorePickupAndClimbAuto());
 
     // // Set up SysId routines
     // autoChooser.addOption(
