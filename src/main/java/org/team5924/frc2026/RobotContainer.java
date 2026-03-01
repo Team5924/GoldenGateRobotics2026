@@ -204,7 +204,8 @@ public class RobotContainer {
       autoFactory =
         new AutoFactory(drive::getPose, drive::setPose, drive::followChoreoTrajectory, true, drive);
 
-    // Auto commands
+    // *** OUTDATED AUTO COMMANDS *** Auto commands
+    /* 
     NamedCommands.registerCommand(
         "Run Shooter",
         Commands.runOnce(
@@ -227,6 +228,7 @@ public class RobotContainer {
             () -> {
               // intake.setGoalState(IntakeState.INTAKE);
             }));
+    */
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices");
