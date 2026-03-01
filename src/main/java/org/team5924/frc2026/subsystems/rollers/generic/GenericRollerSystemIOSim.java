@@ -39,6 +39,7 @@ public class GenericRollerSystemIOSim implements GenericRollerSystemIO {
     if (DriverStation.isDisabled()) runVolts(0.0);
 
     sim.update(Constants.LOOP_PERIODIC_SECONDS);
+    inputs.motorConnected = true;
     inputs.positionRads = sim.getAngularPositionRad();
     inputs.velocityRadsPerSec = sim.getAngularVelocityRadPerSec();
     inputs.appliedVoltage = appliedVoltage;

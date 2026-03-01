@@ -42,6 +42,7 @@ public class ShooterHoodIOSim implements ShooterHoodIO {
     if (DriverStation.isDisabled()) runVolts(0.0);
 
     sim.update(Constants.LOOP_PERIODIC_SECONDS);
+    inputs.shooterHoodMotorConnected = true;
     inputs.shooterHoodPositionRads = sim.getAngularPositionRad();
     inputs.shooterHoodVelocityRadsPerSec = sim.getAngularVelocityRadPerSec();
     inputs.shooterHoodAppliedVoltage = appliedVoltage;

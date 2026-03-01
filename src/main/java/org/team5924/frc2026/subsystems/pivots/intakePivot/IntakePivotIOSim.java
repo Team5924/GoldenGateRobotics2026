@@ -41,6 +41,7 @@ public class IntakePivotIOSim implements IntakePivotIO {
     if (DriverStation.isDisabled()) runVolts(0.0);
 
     sim.update(Constants.LOOP_PERIODIC_SECONDS);
+    inputs.intakePivotMotorConnected = true;
     inputs.intakePivotPositionRads = sim.getAngularPositionRad();
     inputs.intakePivotVelocityRadsPerSec = sim.getAngularVelocityRadPerSec();
     inputs.intakePivotAppliedVoltage = appliedVoltage;
