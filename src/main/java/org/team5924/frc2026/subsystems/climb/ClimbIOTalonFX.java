@@ -36,7 +36,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.util.Elastic;
@@ -102,7 +101,7 @@ public class ClimbIOTalonFX implements ClimbIO {
 
     climbTalon = new TalonFX(Constants.Climb.CAN_ID, new CANBus(Constants.Climb.BUS));
     climbCANCoder = new CANcoder(Constants.Climb.CANCODER_ID, new CANBus(Constants.Climb.BUS));
-    
+
     climbTalonConfig = climbTalon.getConfigurator();
 
     slot0Configs = new Slot0Configs();
@@ -141,7 +140,7 @@ public class ClimbIOTalonFX implements ClimbIO {
       Elastic.sendNotification(
           new Notification(NotificationLevel.WARNING, "Climb Configs", "Error in climb configs!"));
 
-    Logger.recordOutput("Turret/InitConfReport", statusArray);
+    Logger.recordOutput("Climb/InitConfReport", statusArray);
 
     // Get select status signals and set update frequency
     climbPosition = climbTalon.getPosition();
@@ -271,7 +270,7 @@ public class ClimbIOTalonFX implements ClimbIO {
         kA,
         kG);
 
-      LoggedTunableNumber.ifChanged(
+    LoggedTunableNumber.ifChanged(
         hashCode(),
         () -> {
           motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();

@@ -22,13 +22,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.Setter;
-
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.sensors.BeamBreakIO;
 import org.team5924.frc2026.subsystems.sensors.BeamBreakIOInputsAutoLogged;
-import org.team5924.frc2026.subsystems.turret.Turret.TurretState;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
@@ -54,7 +52,7 @@ public class Climb extends SubsystemBase {
     MOVING(() -> 0.0),
     // voltage at which the climb subsystem motor moves when controlled by the operator
     MANUAL(new LoggedTunableNumber("Climb/OperatorVoltage", 4.5));
-    
+
     @Getter private final DoubleSupplier distance;
 
     ClimbState(DoubleSupplier distance) {
@@ -135,11 +133,14 @@ public class Climb extends SubsystemBase {
 
     io.runVolts(ClimbState.MANUAL.getDistance().getAsDouble() * input);
   }
-  
+
   public void setGoalState(ClimbState goalState) {
     switch (goalState) {
       case MANUAL:
         RobotState.getInstance().setClimbState(ClimbState.MANUAL);
+        break;
+      case OFF:
+        RobotState.getInstance().setClimbState(ClimbState.OFF);
         break;
       case MOVING:
         DriverStation.reportError(
