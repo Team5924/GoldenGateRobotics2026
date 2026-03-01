@@ -39,7 +39,6 @@ import org.team5924.frc2026.subsystems.drive.GyroIOSim;
 import org.team5924.frc2026.subsystems.drive.ModuleIO;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFXSim;
-import org.team5924.frc2026.subsystems.exampleSystem.ExampleSystem;
 import org.team5924.frc2026.subsystems.exampleSystem.ExampleSystem.ExampleSystemState;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
@@ -47,9 +46,12 @@ import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIO;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOTalonFX;
 import org.team5924.frc2026.subsystems.rollers.hopper.Hopper;
+import org.team5924.frc2026.subsystems.rollers.hopper.Hopper.HopperState;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperIO;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperKrakenFOC;
+import org.team5924.frc2026.subsystems.rollers.indexer.Indexer.IndexerState;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
+import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOKrakenFOC;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOSim;
@@ -229,7 +231,6 @@ public class RobotContainer {
     configureButtonBindings();
   }
 
-  
   /* Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
@@ -293,7 +294,7 @@ public class RobotContainer {
                 drive.setPose(
                     driveSimulation
                         .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose during
-            //simulation
+            // simulation
             : () ->
                 drive.setPose(
                     new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
@@ -301,27 +302,23 @@ public class RobotContainer {
 
     // [operator] press a -> deploy example subystem up
     operatorController
-    .a()
-    .onTrue(Commands.runOnce(() ->
-    exampleSystem.setGoalState(ExampleSystemState.UP)));
+        .a()
+        .onTrue(Commands.runOnce(() -> exampleSystem.setGoalState(ExampleSystemState.UP)));
 
     // [operator] release a -> stow example subystem
     operatorController
-    .a()
-    .onFalse(Commands.runOnce(() ->
-    exampleSystem.setGoalState(ExampleSystemState.STOW)));
+        .a()
+        .onFalse(Commands.runOnce(() -> exampleSystem.setGoalState(ExampleSystemState.STOW)));
 
-  //  [operator] press  b -> run example roller
+    //  [operator] press  b -> run example roller
     operatorController
-    .b()
-    .onTrue(Commands.runOnce(() ->
-    exampleRoller.setGoalState(ExampleRollerState.INTAKE)));
+        .b()
+        .onTrue(Commands.runOnce(() -> exampleRoller.setGoalState(ExampleRollerState.INTAKE)));
 
     // // [operator] release b -> run example roller
     operatorController
-    .b()
-    .onFalse(Commands.runOnce(() ->
-    exampleRoller.setGoalState(ExampleRollerState.IDLE)));
+        .b()
+        .onFalse(Commands.runOnce(() -> exampleRoller.setGoalState(ExampleRollerState.IDLE)));
 
     operatorController
         .leftTrigger()
@@ -346,22 +343,32 @@ public class RobotContainer {
                   shooterRollerRight.setGoalState(ShooterRollerState.OFF);
                 }));
 
-    operatorController.leftBumper().onTrue(Commands.runOnce(() ->
-    {
-        hopper.setGoalState(HopperState.ON);
-        indexer.setGoalState(IndexerState.INDEXING);
-    }));
+    operatorController
+        .leftBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  hopper.setGoalState(HopperState.ON);
+                  indexer.setGoalState(IndexerState.INDEXING);
+                }));
 
-    operatorController.leftBumper().onFalse(Commands.runOnce(() ->
-    {
-        hopper.setGoalState(HopperState.OFF);
-        indexer.setGoalState(IndexerState.OFF);
-    }));
+    operatorController
+        .leftBumper()
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  hopper.setGoalState(HopperState.OFF);
+                  indexer.setGoalState(IndexerState.OFF);
+                }));
 
-    operatorController.leftStick().onChange(Commands.runOnce(() -> {
-        shooterHood.setGoalState(ShooterHoodState.MANUAL);
-        shooterHood.setInput(driveController.getLeftY());
-    }));
+    operatorController
+        .leftStick()
+        .onChange(
+            Commands.runOnce(
+                () -> {
+                  shooterHood.setGoalState(ShooterHoodState.MANUAL);
+                  shooterHood.setInput(driveController.getLeftY());
+                }));
 
     shooterHoodRight.setDefaultCommand(
         ShooterCommands.manualShooterHood(shooterHoodRight, () -> operatorController.getRightY()));

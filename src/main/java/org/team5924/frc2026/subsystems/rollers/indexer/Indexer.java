@@ -51,10 +51,10 @@ public class Indexer extends GenericRollerSystem<Indexer.IndexerState> {
   }
 
   public Indexer(IndexerIOTalonFX indexerIOTalonFX) {
-    //TODO Auto-generated constructor stub
-}
+    // TODO Auto-generated constructor stub
+  }
 
-public void setGoalState(IndexerState goalState) {
+  public void setGoalState(IndexerState goalState) {
     this.goalState = goalState;
     RobotState.getInstance().setIndexerState(goalState);
   }
