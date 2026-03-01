@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import java.util.Set;
 import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
-import org.team5924.frc2026.Robot;
+import org.team5924.frc2026.RobotContainer;
 import org.team5924.frc2026.subsystems.SuperShooter;
 import org.team5924.frc2026.subsystems.SuperShooter.ShooterState;
 import org.team5924.frc2026.subsystems.drive.Drive;
@@ -30,8 +30,6 @@ import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 
 @RequiredArgsConstructor
 public class AutoBuilder {
-
-  private final Drive drive;
   private final SuperShooter superShooterLeft;
   private final SuperShooter superShooterRight;
   // private final Climb climb;
@@ -55,9 +53,9 @@ public class AutoBuilder {
         startToHub(startingPositionSupplier.get()),
         shootersOn(),
         shootersOff(),
-        Robot.mAutoFactory.trajectoryCmd("HubToClimb")
+        RobotContainer.autoFactory.trajectoryCmd("HubToClimb")
         // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
-    ), Set.of(drive, superShooterLeft, superShooterRight));
+    ), Set.of(superShooterLeft, superShooterRight));
   }
 
   public Command scorePickupAndClimbAuto() {
@@ -69,14 +67,14 @@ public class AutoBuilder {
         startToHub(startingPositionSupplier.get()),
         shootersOn(),
         shootersOff(),
-        Robot.mAutoFactory.trajectoryCmd("HubToDepot"),
+        RobotContainer.autoFactory.trajectoryCmd("HubToDepot"),
         intakeSequence(),
-        Robot.mAutoFactory.trajectoryCmd("DepotToHub"),
+        RobotContainer.autoFactory.trajectoryCmd("DepotToHub"),
         shootersOn(),
         shootersOff(),
-        Robot.mAutoFactory.trajectoryCmd("HubToClimb")
+        RobotContainer.autoFactory.trajectoryCmd("HubToClimb")
         // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
-        ), Set.of(drive, superShooterLeft, superShooterRight, intake));  
+        ), Set.of(superShooterLeft, superShooterRight, intake));  
   }
 
   private Command startToHub(String startingPosition) {
@@ -84,8 +82,8 @@ public class AutoBuilder {
       return Commands.none();
     } else {
       return Commands.sequence(
-          Robot.mAutoFactory.resetOdometry(startingPosition + "StartToHub"),
-          Robot.mAutoFactory.trajectoryCmd(startingPosition + "StartToHub"));
+          RobotContainer.autoFactory.resetOdometry(startingPosition + "StartToHub"),
+          RobotContainer.autoFactory.trajectoryCmd(startingPosition + "StartToHub"));
     }
   }
 
@@ -106,7 +104,7 @@ public class AutoBuilder {
   private Command intakeSequence() {
     return Commands.sequence( 
             Commands.deadline(
-              Robot.mAutoFactory.trajectoryCmd("DepotIntake"),
+              RobotContainer.autoFactory.trajectoryCmd("DepotIntake"),
               Commands.run(() -> intake.setGoalState(IntakeState.INTAKE), intake)
             ),
             Commands.runOnce(() -> intake.setGoalState(IntakeState.OFF), intake));

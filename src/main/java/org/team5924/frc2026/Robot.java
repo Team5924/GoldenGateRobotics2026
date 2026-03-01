@@ -45,7 +45,6 @@ public class Robot extends LoggedRobot {
 
   private Command autonomousCommand;
   private RobotContainer robotContainer;
-  public static AutoFactory mAutoFactory;
 
   private final Timer disabledTimer = new Timer();
   private final Alert lowBatteryAlert =
