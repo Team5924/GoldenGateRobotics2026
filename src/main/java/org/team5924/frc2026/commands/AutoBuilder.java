@@ -18,6 +18,7 @@ package org.team5924.frc2026.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import java.util.Set;
 import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import org.team5924.frc2026.Robot;
@@ -50,19 +51,13 @@ public class AutoBuilder {
       throw new IllegalStateException(
           "starting position must be set before building auto commands");
     }
-    return Commands.sequence(
+    return Commands.defer(() -> Commands.sequence(
         startToHub(startingPositionSupplier.get()),
-        Commands.parallel(
-          Commands.run(() -> superShooterLeft.setGoalState(ShooterState.AUTO_SHOOTING), superShooterLeft),
-          Commands.run(() -> superShooterRight.setGoalState(ShooterState.AUTO_SHOOTING), superShooterRight)
-        ).withTimeout(1.0), // TODO: Edit timing
-        Commands.parallel(
-          Commands.runOnce(() -> superShooterLeft.setGoalState(ShooterState.OFF), superShooterLeft),
-          Commands.runOnce(() -> superShooterRight.setGoalState(ShooterState.OFF), superShooterRight)
-        ),
+        shootersOn(),
+        shootersOff(),
         Robot.mAutoFactory.trajectoryCmd("HubToClimb")
         // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
-        );
+    ), Set.of(drive, superShooterLeft, superShooterRight));
   }
 
   public Command scorePickupAndClimbAuto() {
@@ -70,33 +65,18 @@ public class AutoBuilder {
       throw new IllegalStateException(
           "starting position must be set before building auto commands");
     }
-    return Commands.sequence(
+    return Commands.defer(() -> Commands.sequence(
         startToHub(startingPositionSupplier.get()),
-        Commands.parallel(
-          Commands.run(() -> superShooterLeft.setGoalState(ShooterState.AUTO_SHOOTING), superShooterLeft),
-          Commands.run(() -> superShooterRight.setGoalState(ShooterState.AUTO_SHOOTING), superShooterRight)
-        ).withTimeout(1.0), // TODO: Edit timing
-        Commands.parallel(
-          Commands.runOnce(() -> superShooterLeft.setGoalState(ShooterState.OFF), superShooterLeft),
-          Commands.runOnce(() -> superShooterRight.setGoalState(ShooterState.OFF), superShooterRight)
-        ),
+        shootersOn(),
+        shootersOff(),
         Robot.mAutoFactory.trajectoryCmd("HubToDepot"),
-        Commands.deadline(
-            Robot.mAutoFactory.trajectoryCmd("DepotIntake"),
-            Commands.run(() -> intake.setGoalState(IntakeState.INTAKE), intake)),
-        Commands.runOnce(() -> intake.setGoalState(IntakeState.OFF), intake),
+        intakeSequence(),
         Robot.mAutoFactory.trajectoryCmd("DepotToHub"),
-        Commands.parallel(
-          Commands.run(() -> superShooterLeft.setGoalState(ShooterState.AUTO_SHOOTING), superShooterLeft),
-          Commands.run(() -> superShooterRight.setGoalState(ShooterState.AUTO_SHOOTING), superShooterRight)
-        ).withTimeout(1.0), // TODO: Edit timing
-        Commands.parallel(
-          Commands.runOnce(() -> superShooterLeft.setGoalState(ShooterState.OFF), superShooterLeft),
-          Commands.runOnce(() -> superShooterRight.setGoalState(ShooterState.OFF), superShooterRight)
-        ),
+        shootersOn(),
+        shootersOff(),
         Robot.mAutoFactory.trajectoryCmd("HubToClimb")
         // Commands.run(() -> climb.setGoalState(ClimbState.L1_CLIMB), climb)
-        );
+        ), Set.of(drive, superShooterLeft, superShooterRight, intake));  
   }
 
   private Command startToHub(String startingPosition) {
@@ -107,5 +87,28 @@ public class AutoBuilder {
           Robot.mAutoFactory.resetOdometry(startingPosition + "StartToHub"),
           Robot.mAutoFactory.trajectoryCmd(startingPosition + "StartToHub"));
     }
+  }
+
+  private Command shootersOn() {
+    return Commands.parallel(
+            Commands.run(() -> superShooterLeft.setGoalState(ShooterState.AUTO_SHOOTING), superShooterLeft),
+            Commands.run(() -> superShooterRight.setGoalState(ShooterState.AUTO_SHOOTING), superShooterRight)
+          ).withTimeout(1.0); // TODO: Edit timing
+  }
+
+  private Command shootersOff() {
+    return Commands.parallel(
+            Commands.runOnce(() -> superShooterLeft.setGoalState(ShooterState.OFF), superShooterLeft),
+            Commands.runOnce(() -> superShooterRight.setGoalState(ShooterState.OFF), superShooterRight)
+          );
+  }
+
+  private Command intakeSequence() {
+    return Commands.sequence( 
+            Commands.deadline(
+              Robot.mAutoFactory.trajectoryCmd("DepotIntake"),
+              Commands.run(() -> intake.setGoalState(IntakeState.INTAKE), intake)
+            ),
+            Commands.runOnce(() -> intake.setGoalState(IntakeState.OFF), intake));
   }
 }

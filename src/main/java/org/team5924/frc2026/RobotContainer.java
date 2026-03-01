@@ -36,7 +36,6 @@ import org.team5924.frc2026.generated.TunerConstants;
 import org.team5924.frc2026.commands.shooter.ShooterCommands;
 import org.team5924.frc2026.subsystems.SuperShooter;
 import org.team5924.frc2026.subsystems.SuperShooter.ShooterState;
-import org.team5924.frc2026.subsystems.SuperShooter.ShooterState;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.drive.GyroIO;
 import org.team5924.frc2026.subsystems.drive.GyroIOPigeon2;
