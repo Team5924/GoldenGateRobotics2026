@@ -67,6 +67,10 @@ public class IntakePivot extends SubsystemBase {
   private final Notification intakePivotMotorDisconnectedNotification;
   private boolean wasIntakePivotMotorConnected = true;
 
+  protected final Alert overheatAlert;
+  protected final Notification overheatNotification;
+  protected boolean wasOverheating = true;
+
   private double lastStateChange = 0.0;
 
   public IntakePivot(IntakePivotIO io) {
@@ -76,6 +80,12 @@ public class IntakePivot extends SubsystemBase {
         new Alert("Intake Pivot Motor Disconnected!", Alert.AlertType.kWarning);
     this.intakePivotMotorDisconnectedNotification =
         new Notification(NotificationLevel.WARNING, "Intake Pivot Motor Disconnected", "");
+
+    overheatAlert = new Alert( " motor overheating!", Alert.AlertType.kWarning);
+
+    overheatNotification =
+        new Notification(
+            NotificationLevel.WARNING, " Overheat Warning", " motor overheat imminent!");
 
     sysId =
         new SysIdRoutine(
@@ -107,6 +117,13 @@ public class IntakePivot extends SubsystemBase {
       Elastic.sendNotification(intakePivotMotorDisconnectedNotification);
     }
     wasIntakePivotMotorConnected = inputs.intakePivotMotorConnected;
+
+    boolean isOverheating = inputs.intakePivotTempCelsius > Constants.OVERHEAT_THRESHOLD;
+    overheatAlert.set(isOverheating);
+    if (isOverheating && !wasOverheating) {
+      Elastic.sendNotification(overheatNotification);
+    }
+    wasOverheating = isOverheating;
   }
 
   public boolean isAtSetpoint() {

@@ -62,6 +62,8 @@ public final class Constants {
   public static final boolean ALLOW_ASSERTS = false;
   public static final double SLOW_MODE_MULTI = 0.5;
 
+  public static final double OVERHEAT_THRESHOLD = 85.0;
+
   /* General */
   public static final double LOOP_PERIODIC_SECONDS = 0.02;
   public static final double SYS_ID_TIME = 10.0;

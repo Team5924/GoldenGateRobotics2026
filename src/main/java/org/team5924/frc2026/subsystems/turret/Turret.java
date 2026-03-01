@@ -68,6 +68,10 @@ public class Turret extends SubsystemBase {
   private final Alert turretMotorDisconnected;
   private final Notification turretMotorDisconnectedNotification;
   private boolean wasTurretMotorConnected = true;
+  
+  protected final Alert overheatAlert;
+  protected final Notification overheatNotification;
+  protected boolean wasOverheating = true;
 
   private double lastStateChange = 0.0;
 
@@ -82,6 +86,13 @@ public class Turret extends SubsystemBase {
     this.turretMotorDisconnectedNotification =
         new Notification(NotificationLevel.WARNING, "Turret Motor Disconnected", "");
     this.isLeft = isLeft;
+
+    overheatAlert = new Alert("Turret motor overheating!", Alert.AlertType.kWarning);
+
+    overheatNotification =
+        new Notification(
+            NotificationLevel.WARNING, "Turret Overheat Warning", " Turret motor overheat imminent!");
+
 
     sysId =
         new SysIdRoutine(
@@ -113,6 +124,13 @@ public class Turret extends SubsystemBase {
       Elastic.sendNotification(turretMotorDisconnectedNotification);
     }
     wasTurretMotorConnected = inputs.turretMotorConnected;
+
+        boolean isOverheating = inputs.turretTempCelsius > Constants.OVERHEAT_THRESHOLD;
+    overheatAlert.set(isOverheating);
+    if (isOverheating && !wasOverheating) {
+      Elastic.sendNotification(overheatNotification);
+    }
+    wasOverheating = isOverheating;
   }
 
   public boolean isAtSetpoint() {
