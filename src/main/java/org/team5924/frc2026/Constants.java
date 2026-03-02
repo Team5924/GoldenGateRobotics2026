@@ -153,9 +153,9 @@ public final class Constants {
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
-        .withForwardSoftLimitThreshold(
-          MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
         .withReverseSoftLimitThreshold(
+          MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
+        .withForwardSoftLimitThreshold(
           MAX_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
         .withForwardSoftLimitEnable(true)
         .withReverseSoftLimitEnable(true);
@@ -274,8 +274,8 @@ public final class Constants {
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
-            .withForwardSoftLimitThreshold(MOTOR_TO_MECHANISM * MIN_POSITION_MULTI) // TODO: get correct value for rotations
-            .withReverseSoftLimitThreshold(MOTOR_TO_MECHANISM * MAX_POSITION_MULTI) // TODO: get correct value for rotations
+            .withReverseSoftLimitThreshold(MOTOR_TO_MECHANISM * MIN_POSITION_MULTI) // TODO: get correct value for rotations
+            .withForwardSoftLimitThreshold(MOTOR_TO_MECHANISM * MAX_POSITION_MULTI) // TODO: get correct value for rotations
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true);
 
@@ -384,9 +384,9 @@ public final class Constants {
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
-        .withForwardSoftLimitThreshold(
-          MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
         .withReverseSoftLimitThreshold(
+          MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
+        .withForwardSoftLimitThreshold(
           MAX_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
         .withForwardSoftLimitEnable(true)
         .withReverseSoftLimitEnable(true);
@@ -485,8 +485,8 @@ public final class Constants {
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
-            .withForwardSoftLimitThreshold(MOTOR_TO_MECHANISM * MIN_POSITION_MULTI) // TODO: get correct value for rotations
-            .withReverseSoftLimitThreshold(MOTOR_TO_MECHANISM * MAX_POSITION_MULTI) // TODO: get correct value for rotations
+            .withReverseSoftLimitThreshold(MOTOR_TO_MECHANISM * MIN_POSITION_MULTI) // TODO: get correct value for rotations
+            .withForwardSoftLimitThreshold(MOTOR_TO_MECHANISM * MAX_POSITION_MULTI) // TODO: get correct value for rotations
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitEnable(true);
 
@@ -598,9 +598,9 @@ public final class Constants {
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
-        .withForwardSoftLimitThreshold(
-          MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
         .withReverseSoftLimitThreshold(
+          MIN_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
+        .withForwardSoftLimitThreshold(
           MAX_POSITION_MULTI * MOTOR_TO_MECHANISM) // motor? rotations
         .withForwardSoftLimitEnable(true)
         .withReverseSoftLimitEnable(true);
