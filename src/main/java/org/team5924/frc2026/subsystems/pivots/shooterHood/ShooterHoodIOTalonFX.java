@@ -23,7 +23,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -91,7 +91,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
 
   private final VoltageOut voltageOut;
   private final PositionVoltage positionOut;
-  private final MotionMagicVoltage magicMotionVoltage;
+  private final MotionMagicTorqueCurrentFOC motionMagicCurrent;
 
   private final double cancoderToMechanism;
   private final double motorToMechanism;
@@ -224,7 +224,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
 
     voltageOut = new VoltageOut(0.0);
     positionOut = new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true).withSlot(0);
-    magicMotionVoltage = new MotionMagicVoltage(0.0).withEnableFOC(true).withSlot(0);
+    motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withSlot(0);
 
     BaseStatusSignal.waitForAll(0.5, cancoderAbsolutePosition);
 
@@ -359,7 +359,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     }
 
     setpointRads = clampRads(rads);
-    shooterHoodTalon.setControl(magicMotionVoltage.withPosition(radsToMotorPosition(setpointRads)));
+    shooterHoodTalon.setControl(motionMagicCurrent.withPosition(radsToMotorPosition(setpointRads)));
   }
 
   /* Unused but nice to have */

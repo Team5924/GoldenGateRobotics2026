@@ -23,7 +23,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -83,7 +83,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
 
   private final VoltageOut voltageOut;
   private final PositionVoltage positionOut;
-  private final MotionMagicVoltage magicMotionVoltage;
+  private final MotionMagicTorqueCurrentFOC motionMagicCurrent;
 
   public IntakePivotIOTalonFX() {
     intakePivotTalon =
@@ -146,7 +146,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
 
     voltageOut = new VoltageOut(0.0);
     positionOut = new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true).withSlot(0);
-    magicMotionVoltage = new MotionMagicVoltage(0.0).withEnableFOC(true).withSlot(0);
+    motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withSlot(0);
 
     // assuming intake pivot starts at bottom -> uncomment line below
     // intakePivotTalon.setPosition(0.0);
@@ -265,7 +265,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     }
 
     setpointRads = clampRads(rads);
-    intakePivotTalon.setControl(magicMotionVoltage.withPosition(radsToMotorPosition(setpointRads)));
+    intakePivotTalon.setControl(motionMagicCurrent.withPosition(radsToMotorPosition(setpointRads)));
   }
 
   @Override
