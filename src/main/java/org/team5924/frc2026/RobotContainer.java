@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -98,8 +99,8 @@ public class RobotContainer {
   // private final ExampleRoller exampleRoller;
 
   // Controller
-  //   private final CommandXboxController driveController = new CommandXboxController(0);
-  //   private final CommandXboxController operatorController = new CommandXboxController(1);
+    private final CommandXboxController driveController = new CommandXboxController(0);
+    private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -253,66 +254,66 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    // if (Constants.currentMode == Constants.Mode.SIM) {
-    //   drive.setDefaultCommand(
-    //       DriveCommands.joystickDrive(
-    //           drive,
-    //           () -> 0 * -driveController.getRawAxis(0),
-    //           () -> 0 * -driveController.getLeftY(),
-    //           () -> 0 * -driveController.getRawAxis(2)));
-    // } else {
-    //   drive.setDefaultCommand(
-    //       DriveCommands.joystickDrive(
-    //           drive,
-    //           () -> 0 * -driveController.getLeftY(),
-    //           () -> 0 * -driveController.getLeftX(),
-    //           () -> 0 * -driveController.getRightX()));
-    // }
-    // // [driver] SLOW MODE YIPE
-    // driveController
-    //     .y()
-    //     .whileTrue(
-    //         DriveCommands.joystickDrive(
-    //             drive,
-    //             () -> -driveController.getLeftY() * Constants.SLOW_MODE_MULTI,
-    //             () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
-    //             () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
+    if (Constants.currentMode == Constants.Mode.SIM) {
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> -driveController.getRawAxis(0),
+              () -> -driveController.getLeftY(),
+              () -> -driveController.getRawAxis(2)));
+    } else {
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> -driveController.getLeftY(),
+              () -> -driveController.getLeftX(),
+              () -> -driveController.getRightX()));
+    }
+    // [driver] SLOW MODE YIPE
+    driveController
+        .y()
+        .whileTrue(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> -driveController.getLeftY() * Constants.SLOW_MODE_MULTI,
+                () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
+                () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
 
-    // // [driver] 0-DEGREE MODE
-    // driveController
-    //     .a()
-    //     .whileTrue(
-    //         DriveCommands.joystickDriveAtAngle(
-    //             drive,
-    //             () -> -driveController.getLeftY(),
-    //             () -> -driveController.getLeftX(),
-    //             () -> Rotation2d.kZero));
+    // [driver] 0-DEGREE MODE
+    driveController
+        .a()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driveController.getLeftY(),
+                () -> -driveController.getLeftX(),
+                () -> Rotation2d.kZero));
 
-    // // [driver] Switch to X pattern when X button is pressed
-    // driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // [driver] Switch to X pattern when X button is pressed
+    driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // // [driver] Reset gyro to 0° when B button is pressed
-    // driveController
-    //     .b()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //                 () ->
-    //                     drive.setPose(
-    //                         new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
-    //                 drive)
-    //             .ignoringDisable(true));
+    // [driver] Reset gyro to 0° when B button is pressed
+    driveController
+        .b()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
+                    drive)
+                .ignoringDisable(true));
 
-    // final Runnable resetGyro =
-    //     Constants.currentMode == Constants.Mode.SIM
-    //         ? () ->
-    //             drive.setPose(
-    //                 driveSimulation
-    //                     .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose during
-    //         // simulation
-    //         : () ->
-    //             drive.setPose(
-    //                 new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
-    // driveController.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+    final Runnable resetGyro =
+        Constants.currentMode == Constants.Mode.SIM
+            ? () ->
+                drive.setPose(
+                    driveSimulation
+                        .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose during
+            // simulation
+            : () ->
+                drive.setPose(
+                    new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
+    driveController.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
     // // [operator] press a -> deploy example subystem up
     // operatorController
