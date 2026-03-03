@@ -26,6 +26,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import org.littletonrobotics.junction.Logger;
+import org.team5924.frc2026.Constants;
 
 public class Module {
   private final ModuleIO io;
@@ -39,6 +40,9 @@ public class Module {
   private final Alert turnDisconnectedAlert;
   private final Alert turnEncoderDisconnectedAlert;
   private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
+
+  private final Alert driveOverheatAlert;
+  private final Alert turnOverheatAlert;
 
   public Module(
       ModuleIO io,
@@ -59,6 +63,14 @@ public class Module {
         new Alert(
             "Disconnected turn encoder on module " + Integer.toString(index) + ".",
             AlertType.kError);
+
+    driveOverheatAlert =
+        new Alert(
+            "Overheating drive motor on module " + Integer.toString(index) + ".",
+            AlertType.kError);
+    turnOverheatAlert =
+        new Alert(
+            "Overheating turn motor on module " + Integer.toString(index) + ".", AlertType.kError);
   }
 
   public void periodic() {
@@ -78,6 +90,9 @@ public class Module {
     driveDisconnectedAlert.set(!inputs.driveConnected);
     turnDisconnectedAlert.set(!inputs.turnConnected);
     turnEncoderDisconnectedAlert.set(!inputs.turnEncoderConnected);
+
+    driveOverheatAlert.set(inputs.driveTempCelsius > Constants.OVERHEAT_THRESHOLD);
+    turnOverheatAlert.set(inputs.turnTempCelsius > Constants.OVERHEAT_THRESHOLD);
   }
 
   /** Runs the module with the specified setpoint state. Mutates the state to optimize it. */
