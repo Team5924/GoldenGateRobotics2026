@@ -27,7 +27,6 @@ import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
-import org.opencv.features2d.FlannBasedMatcher;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.Elastic;
