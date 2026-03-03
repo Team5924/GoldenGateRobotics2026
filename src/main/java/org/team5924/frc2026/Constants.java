@@ -81,7 +81,15 @@ public final class Constants {
     public static final double CENTER_Y = LENGTH / 2;
     public static final double HUB_X = CENTER_X - 143.50;
 
-    public static final Translation2d[] TRENCH_TRANSLATIONS = {new Translation2d(182.11, 25.7), new Translation2d(182.11, 292.718), new Translation2d(469.11, 25.7), new Translation2d(469.11, 292.718)};
+    public static final double TRENCH_X_ALLIANCE = Units.inchesToMeters(182.11);
+    public static final double TRENCH_X_OPPONENT = Units.inchesToMeters(469.11);
+    public static final double TRENCH_Y_LEFT = Units.inchesToMeters(292.718);
+    public static final double TRENCH_Y_RIGHT = Units.inchesToMeters(25.7);
+    public static final Translation2d[] TRENCH_TRANSLATIONS = {
+      new Translation2d(TRENCH_X_ALLIANCE, TRENCH_Y_RIGHT),
+      new Translation2d(TRENCH_X_ALLIANCE, TRENCH_Y_LEFT),
+      new Translation2d(TRENCH_X_OPPONENT, TRENCH_Y_RIGHT),
+      new Translation2d(TRENCH_X_OPPONENT, TRENCH_Y_LEFT)};
   }
 
   public final class GenericRollerSystem {
