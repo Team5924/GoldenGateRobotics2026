@@ -80,7 +80,7 @@ import org.team5924.frc2026.subsystems.turret.TurretIOTalonFX;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private SwerveDriveSimulation driveSimulation = null;
+  // private SwerveDriveSimulation driveSimulation = null;
   // private final Intake intake;
   // private final IntakePivot intakePivot;
   // private final Hopper hopper;
@@ -142,18 +142,25 @@ public class RobotContainer {
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        driveSimulation =
-            new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
-        SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
+        // driveSimulation =
+        //     new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
+        // SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
+        // drive =
+        //     new Drive(
+        //         new GyroIOSim(driveSimulation.getGyroSimulation()),
+        //         new ModuleIOTalonFXSim(TunerConstants.FrontLeft, driveSimulation.getModules()[0]),
+        //         new ModuleIOTalonFXSim(TunerConstants.FrontRight, driveSimulation.getModules()[1]),
+        //         new ModuleIOTalonFXSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
+        //         new ModuleIOTalonFXSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
+        //         driveSimulation::setSimulationWorldPose);
         drive =
             new Drive(
-                new GyroIOSim(driveSimulation.getGyroSimulation()),
-                new ModuleIOTalonFXSim(TunerConstants.FrontLeft, driveSimulation.getModules()[0]),
-                new ModuleIOTalonFXSim(TunerConstants.FrontRight, driveSimulation.getModules()[1]),
-                new ModuleIOTalonFXSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
-                new ModuleIOTalonFXSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
-                driveSimulation::setSimulationWorldPose);
-
+                new GyroIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                (pose) -> {});
         // intake = new Intake(new IntakeIOSim());
         // intakePivot = new IntakePivot(new IntakePivotIOSim());
         // hopper = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
@@ -307,8 +314,9 @@ public class RobotContainer {
         Constants.currentMode == Constants.Mode.SIM
             ? () ->
                 drive.setPose(
-                    driveSimulation
-                        .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose during
+                  new Pose2d())
+                    // driveSimulation
+                    //     .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose during
             // simulation
             : () ->
                 drive.setPose(
@@ -398,19 +406,19 @@ public class RobotContainer {
   public void resetSimulationField() {
     if (Constants.currentMode != Constants.Mode.SIM) return;
 
-    driveSimulation.setSimulationWorldPose(new Pose2d(3, 3, new Rotation2d()));
+    // driveSimulation.setSimulationWorldPose(new Pose2d(3, 3, new Rotation2d()));
     SimulatedArena.getInstance().resetFieldForAuto();
   }
 
   public void updateSimulation() {
     if (Constants.currentMode != Constants.Mode.SIM) return;
 
-    SimulatedArena.getInstance().simulationPeriodic();
-    Logger.recordOutput(
-        "FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
-    Logger.recordOutput(
-        "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
-    Logger.recordOutput(
-        "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
+    // SimulatedArena.getInstance().simulationPeriodic();
+    // Logger.recordOutput(
+    //     "FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
+    // Logger.recordOutput(
+    //     "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
+    // Logger.recordOutput(
+    //     "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
   }
 }

@@ -217,8 +217,6 @@ public class ModuleIOTalonFX implements ModuleIO {
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
-    updateLoggedTunableNumbers();
-
     // Refresh all signals
     var driveStatus =
         BaseStatusSignal.refreshAll(drivePosition, driveVelocity, driveAppliedVolts, driveCurrent, driveTemperature);
@@ -260,6 +258,8 @@ public class ModuleIOTalonFX implements ModuleIO {
     timestampQueue.clear();
     drivePositionQueue.clear();
     turnPositionQueue.clear();
+
+    updateLoggedTunableNumbers();
   }
 
   private void updateLoggedTunableNumbers() {
@@ -292,32 +292,32 @@ public class ModuleIOTalonFX implements ModuleIO {
         TunerConstants.kVSteer,
         TunerConstants.kASteer);
 
-    LoggedTunableNumber.ifChanged(
-        hashCode(),
-        () -> {
-          Slot0Configs driveSlot0 = new Slot0Configs();
-          driveSlot0.kP = TunerConstants.kPDrive.get();
-          driveSlot0.kI = TunerConstants.kIDrive.get();
-          driveSlot0.kD = TunerConstants.kDDrive.get();
-          driveSlot0.kS = TunerConstants.kSDrive.get();
-          driveSlot0.kV = TunerConstants.kVDrive.get();
+    // LoggedTunableNumber.ifChanged(
+    //     hashCode(),
+    //     () -> {
+    //       Slot0Configs driveSlot0 = new Slot0Configs();
+    //       driveSlot0.kP = TunerConstants.kPDrive.get();
+    //       driveSlot0.kI = TunerConstants.kIDrive.get();
+    //       driveSlot0.kD = TunerConstants.kDDrive.get();
+    //       driveSlot0.kS = TunerConstants.kSDrive.get();
+    //       driveSlot0.kV = TunerConstants.kVDrive.get();
 
-          StatusCode statusCode = driveTalon.getConfigurator().apply(driveSlot0);
-          if (!statusCode.isOK()) {
-            Elastic.sendNotification(
-                new Notification(
-                    NotificationLevel.WARNING,
-                    "Drive Turn Slot 0 Configs",
-                    "Error in periodically updating drive slot 0 turn configs!"));
+    //       StatusCode statusCode = driveTalon.getConfigurator().apply(driveSlot0);
+    //       if (!statusCode.isOK()) {
+    //         Elastic.sendNotification(
+    //             new Notification(
+    //                 NotificationLevel.WARNING,
+    //                 "Drive Slot 0 Configs",
+    //                 "Error in periodically updating drive slot 0 configs!"));
 
-            Logger.recordOutput("Drive/UpdateTurnSlot0Report", statusCode);
-          }
-        },
-        TunerConstants.kPDrive,
-        TunerConstants.kIDrive,
-        TunerConstants.kDDrive,
-        TunerConstants.kSDrive,
-        TunerConstants.kVDrive);
+    //         Logger.recordOutput("Drive/UpdateDriveSlot0Report", statusCode);
+    //       }
+    //     },
+    //     TunerConstants.kPDrive,
+    //     TunerConstants.kIDrive,
+    //     TunerConstants.kDDrive,
+    //     TunerConstants.kSDrive,
+    //     TunerConstants.kVDrive);
 }
 
   @Override
