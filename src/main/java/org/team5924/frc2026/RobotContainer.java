@@ -32,7 +32,6 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.team5924.frc2026.commands.drive.DriveCommands;
 import org.team5924.frc2026.generated.TunerConstants;
-import org.team5924.frc2026.subsystems.SuperShooter;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.drive.GyroIO;
 import org.team5924.frc2026.subsystems.drive.GyroIOPigeon2;
@@ -40,23 +39,6 @@ import org.team5924.frc2026.subsystems.drive.GyroIOSim;
 import org.team5924.frc2026.subsystems.drive.ModuleIO;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFXSim;
-import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
-import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIO;
-import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
-import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOTalonFX;
-import org.team5924.frc2026.subsystems.rollers.hopper.Hopper;
-import org.team5924.frc2026.subsystems.rollers.hopper.HopperIO;
-import org.team5924.frc2026.subsystems.rollers.hopper.HopperKrakenFOC;
-import org.team5924.frc2026.subsystems.rollers.intake.Intake;
-import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
-import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOKrakenFOC;
-import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOSim;
-import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller;
-import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIO;
-import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOKrakenFOC;
-import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRollerIOSim;
-import org.team5924.frc2026.subsystems.sensors.BeamBreakIO;
-import org.team5924.frc2026.subsystems.sensors.BeamBreakIOHardware;
 import org.team5924.frc2026.subsystems.vision.Vision;
 import org.team5924.frc2026.subsystems.vision.VisionConstants;
 import org.team5924.frc2026.subsystems.vision.VisionIO;
@@ -69,11 +51,11 @@ public class RobotContainer {
   private SwerveDriveSimulation driveSimulation = null;
 
   private Vision vision;
-  private final SuperShooter shooter;
-  private final ShooterHood shooterHood;
-  private final ShooterRoller shooterRoller;
-  private final Intake intake;
-  private final Hopper hopper;
+  //   private final SuperShooter shooter;
+  //   private final ShooterHood shooterHood;
+  //   private final ShooterRoller shooterRoller;
+  //   private final Intake intake;
+  //   private final Hopper hopper;
 
   // private final ExampleSystem exampleSystem;
   // private final ExampleRoller exampleRoller;
@@ -111,14 +93,14 @@ public class RobotContainer {
                 new VisionIOPhotonVision(
                     VisionConstants.BACK_RIGHT_NAME, VisionConstants.BACK_RIGHT_TRANSFORM));
 
-        shooterHood = new ShooterHood(new ShooterHoodIOTalonFX());
-        shooterRoller =
-            new ShooterRoller(
-                new ShooterRollerIOKrakenFOC(),
-                new BeamBreakIOHardware(Constants.ShooterRoller.BEAM_BREAK_PORT));
-        intake = new Intake(new IntakeIOKrakenFOC());
-        shooter = new SuperShooter(shooterRoller, shooterHood);
-        hopper = new Hopper(new HopperKrakenFOC());
+        // shooterHood = new ShooterHood(new ShooterHoodIOTalonFX());
+        // shooterRoller =
+        //     new ShooterRoller(
+        //         new ShooterRollerIOKrakenFOC(),
+        //         new BeamBreakIOHardware(Constants.ShooterRoller.BEAM_BREAK_PORT));
+        // intake = new Intake(new IntakeIOKrakenFOC());
+        // shooter = new SuperShooter(shooterRoller, shooterHood);
+        // hopper = new Hopper(new HopperKrakenFOC());
         break;
 
       case SIM:
@@ -159,11 +141,11 @@ public class RobotContainer {
                     VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
                     driveSimulation::getSimulatedDriveTrainPose));
 
-        shooterHood = new ShooterHood(new ShooterHoodIOSim());
-        shooterRoller = new ShooterRoller(new ShooterRollerIOSim(), new BeamBreakIO() {});
-        intake = new Intake(new IntakeIOSim());
-        shooter = new SuperShooter(shooterRoller, shooterHood);
-        hopper = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
+        // shooterHood = new ShooterHood(new ShooterHoodIOSim());
+        // shooterRoller = new ShooterRoller(new ShooterRollerIOSim(), new BeamBreakIO() {});
+        // intake = new Intake(new IntakeIOSim());
+        // shooter = new SuperShooter(shooterRoller, shooterHood);
+        // hopper = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
         break;
 
       default:
@@ -183,11 +165,11 @@ public class RobotContainer {
                 new VisionIO() {},
                 new VisionIO() {},
                 new VisionIO() {});
-        shooterHood = new ShooterHood(new ShooterHoodIO() {});
-        shooterRoller = new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {});
-        intake = new Intake(new IntakeIO() {});
-        shooter = new SuperShooter(shooterRoller, shooterHood);
-        hopper = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
+        // shooterHood = new ShooterHood(new ShooterHoodIO() {});
+        // shooterRoller = new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {});
+        // intake = new Intake(new IntakeIO() {});
+        // shooter = new SuperShooter(shooterRoller, shooterHood);
+        // hopper = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
         break;
     }
 
@@ -247,42 +229,42 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
 
-    // TODO: uncomment this out!
-    // if (Constants.currentMode == Constants.Mode.SIM) {
-    //   drive.setDefaultCommand(
-    //       DriveCommands.joystickDrive(
-    //           drive,
-    //           () -> -driveController.getLeftY(),
-    //           () -> -driveController.getRawAxis(0),
-    //           () -> -driveController.getRawAxis(2)));
-    // } else {
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -driveController.getLeftY(),
-            () -> -driveController.getLeftX(),
-            () -> -driveController.getRightX()));
-    // }
+    // // TODO: uncomment this out!
+    // // if (Constants.currentMode == Constants.Mode.SIM) {
+    // //   drive.setDefaultCommand(
+    // //       DriveCommands.joystickDrive(
+    // //           drive,
+    // //           () -> -driveController.getLeftY(),
+    // //           () -> -driveController.getRawAxis(0),
+    // //           () -> -driveController.getRawAxis(2)));
+    // // } else {
+    // drive.setDefaultCommand(
+    //     DriveCommands.joystickDrive(
+    //         drive,
+    //         () -> -driveController.getLeftY(),
+    //         () -> -driveController.getLeftX(),
+    //         () -> -driveController.getRightX()));
+    // // }
 
-    // [driver] SLOW MODE YIPE
-    driveController
-        .y()
-        .whileTrue(
-            DriveCommands.joystickDrive(
-                drive,
-                () -> -driveController.getLeftY() * Constants.SLOW_MODE_MULTI,
-                () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
-                () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
+    // // [driver] SLOW MODE YIPE
+    // driveController
+    //     .y()
+    //     .whileTrue(
+    //         DriveCommands.joystickDrive(
+    //             drive,
+    //             () -> -driveController.getLeftY() * Constants.SLOW_MODE_MULTI,
+    //             () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
+    //             () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
 
-    // [driver] 0-DEGREE MODE
-    driveController
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driveController.getLeftY(),
-                () -> -driveController.getLeftX(),
-                () -> Rotation2d.kZero));
+    // // [driver] 0-DEGREE MODE
+    // driveController
+    //     .a()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -driveController.getLeftY(),
+    //             () -> -driveController.getLeftX(),
+    //             () -> Rotation2d.kZero));
 
     // [driver] Switch to X pattern when X button is pressed
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));

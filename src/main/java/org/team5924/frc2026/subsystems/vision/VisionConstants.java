@@ -25,10 +25,10 @@ import org.photonvision.simulation.SimCameraProperties;
 import org.team5924.frc2026.util.VisionUtil;
 
 public class VisionConstants {
-  public static final String FRONT_RIGHT_NAME = "Front Right";
-  public static final String FRONT_LEFT_NAME = "Front Left";
-  public static final String BACK_RIGHT_NAME = "Back Right";
-  public static final String BACK_LEFT_NAME = "Back Left";
+  public static final String FRONT_RIGHT_NAME = "FR_Camera";
+  public static final String FRONT_LEFT_NAME = "FL_Camera";
+  public static final String BACK_RIGHT_NAME = "BR_Camera";
+  public static final String BACK_LEFT_NAME = "BL_Camera";
 
   // TODO: update these transforms!!
   public static final double CAMERA_X = Units.inchesToMeters(12.5);
@@ -49,7 +49,8 @@ public class VisionConstants {
           new Rotation3d(0.0, CAMERA_PITCH, -Math.PI / 4));
   public static final Transform3d BACK_LEFT_TRANSFORM =
       new Transform3d(
-          new Translation3d(Units.inchesToMeters(-14.25), Units.inchesToMeters(13.0), CAMERA_Z_LEFT),
+          new Translation3d(
+              Units.inchesToMeters(-14.25), Units.inchesToMeters(13.0), CAMERA_Z_LEFT),
           new Rotation3d(0.0, CAMERA_PITCH, 3 * Math.PI / 4));
   public static final Transform3d BACK_RIGHT_TRANSFORM =
       new Transform3d(

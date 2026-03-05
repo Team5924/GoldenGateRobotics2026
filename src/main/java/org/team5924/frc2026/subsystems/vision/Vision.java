@@ -33,7 +33,6 @@ import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.subsystems.vision.VisionIO.PoseObservation;
-import org.team5924.frc2026.subsystems.vision.VisionIO.PoseObservationType;
 
 public class Vision extends SubsystemBase {
   private final VisionConsumer consumer;
