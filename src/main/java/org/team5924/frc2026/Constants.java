@@ -188,17 +188,7 @@ public final class Constants {
    * ### Shooters ###
    */
 
-  public final class GeneralShooterHood {
-    public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
-  }
-
-  public final class GeneralTurret {
-    public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
-    public static final double STATE_TIMEOUT = 5.0;
-  }
-
-  /* Left */
-  public final class IndexerLeft { //TODO: update these later
+  public final class Indexer { //TODO: update these later
     public final static int CAN_ID = 31;
     public final static int CAN_ID_INVERSE = 25;
     public final static int BEAM_BREAK_ID = 0;
@@ -219,6 +209,16 @@ public final class Constants {
             .withNeutralMode(NeutralModeValue.Brake));
   }
 
+  public final class GeneralShooterHood {
+    public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
+  }
+
+  public final class GeneralTurret {
+    public static final double EPSILON_RADS = Units.degreesToRadians(2.0); // TODO: unused -> remove or use!
+    public static final double STATE_TIMEOUT = 5.0;
+  }
+
+  /* Left */
   public final class ShooterHoodLeft {
     public static final int CAN_ID = 22;
     public static final String BUS = "rio";
@@ -409,27 +409,6 @@ public final class Constants {
   }
 
   /* Right */
-  public final class IndexerRight { //TODO: update these later
-    public final static int CAN_ID = 31;
-    public final static int CAN_ID_INVERSE = 25;
-    public final static int BEAM_BREAK_ID = 0;
-    public static final String BUS = "rio";
-    public static final double REDUCTION = 1.0;
-    public static final double REDUCTION_INVERSE = 1.0;
-    public static final double SIM_MOI = 0.001;
-
-    public static final TalonFXConfiguration CONFIG =
-      new TalonFXConfiguration()
-        .withCurrentLimits(
-          new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(60)
-            .withStatorCurrentLimit(60))
-        .withMotorOutput(
-          new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake));
-  }
-
   public final class ShooterHoodRight {
     public static final int CAN_ID = 22;
     public static final String BUS = "rio";

@@ -122,6 +122,7 @@ public class RobotContainer {
         // intake = new Intake(new IntakeIOKrakenFOC());
         // intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
         // hopper = new Hopper(new HopperKrakenFOC());
+        // indexer = new Indexer(new IndexerIOTalonFX());
 
         // shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(true), true);
         // shooterRollerRight =
@@ -169,6 +170,7 @@ public class RobotContainer {
         // shooterRollerRight =
         //     new ShooterRoller(new ShooterRollerIOSim(true), new BeamBreakIO() {}, true);
         // turretRight = new Turret(new TurretIOSim(true), true);
+        // indexer = new Indexer(new IndexerIO() {});
 
         // shooterHoodLeft = new ShooterHood(new ShooterHoodIOSim(false), false);
         // shooterRollerLeft =
@@ -190,6 +192,7 @@ public class RobotContainer {
         // intake = new Intake(new IntakeIO() {});
         // intakePivot = new IntakePivot(new IntakePivotIO() {});
         // hopper = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
+        // indexer = new Indexer(new IndexerIO() {});
 
         // shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, true);
         // shooterRollerRight =
