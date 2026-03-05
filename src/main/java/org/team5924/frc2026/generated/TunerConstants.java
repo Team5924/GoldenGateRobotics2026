@@ -58,11 +58,11 @@ public class TunerConstants {
           .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
   // When using closed-loop control, the drive motor uses the control
   // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
-  public static final LoggedTunableNumber kPDrive = new LoggedTunableNumber("DriveGains/kP", 0.1);
+  public static final LoggedTunableNumber kPDrive = new LoggedTunableNumber("DriveGains/kP", 64.0);
   public static final LoggedTunableNumber kIDrive = new LoggedTunableNumber("DriveGains/kI", 0.0);
-  public static final LoggedTunableNumber kDDrive = new LoggedTunableNumber("DriveGains/kD", 0.0);
-  public static final LoggedTunableNumber kSDrive = new LoggedTunableNumber("DriveGains/kS", 0.0);
-  public static final LoggedTunableNumber kVDrive = new LoggedTunableNumber("DriveGains/kV", 0.124);
+  public static final LoggedTunableNumber kDDrive = new LoggedTunableNumber("DriveGains/kD", 1.0);
+  public static final LoggedTunableNumber kSDrive = new LoggedTunableNumber("DriveGains/kS", 2.0);
+  public static final LoggedTunableNumber kVDrive = new LoggedTunableNumber("DriveGains/kV", 0.0);
   // private static final Slot0Configs driveGains = // TODO: tune
   //     new Slot0Configs().withKP(0.1).withKI(0).withKD(0).withKS(0).withKV(0.124);
   private static final Slot0Configs driveGains = // TODO: tune
@@ -134,7 +134,7 @@ public class TunerConstants {
 
   private static final double kDriveGearRatio = 6.821052631578947;
   private static final double kSteerGearRatio = 12.1;
-  private static final Distance kWheelRadius = Inches.of(2);
+  private static final Distance kWheelRadius = Inches.of(2.126);
 
   private static final boolean kInvertLeftSide = false;
   private static final boolean kInvertRightSide = true;
@@ -284,7 +284,7 @@ public class TunerConstants {
    */
   public static final ModuleLimits moduleLimitsFree =
       new ModuleLimits(
-          Units.feetToMeters(18.0), // max speed
+          Units.feetToMeters(15.35), // max speed
           Units.feetToMeters(75.0), // max acceleration, guess
           Units.degreesToRadians(1080.0));
 
