@@ -121,26 +121,41 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight),
                 (pose) -> {});
 
-        intake = new Intake(new IntakeIOKrakenFOC());
-        intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
-        hopper = new Hopper(new HopperKrakenFOC());
-        indexer = new Indexer(new IndexerIOTalonFX());
+        // intake = new Intake(new IntakeIOKrakenFOC());
+        // intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
+        // hopper = new Hopper(new HopperKrakenFOC());
+        // indexer = new Indexer(new IndexerIOTalonFX());
 
-        shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(true), true);
+        // shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(true), true);
+        // shooterRollerRight =
+        //     new ShooterRoller(
+        //         new ShooterRollerIOKrakenFOC(true),
+        //         new BeamBreakIOHardware(Constants.ShooterRollerLeaderLeft.BEAM_BREAK_PORT),
+        //         true);
+        // turretRight = new Turret(new TurretIOTalonFX(true), true);
+
+        // shooterHoodLeft = new ShooterHood(new ShooterHoodIOTalonFX(false), false);
+        // shooterRollerLeft =
+        //     new ShooterRoller(
+        //         new ShooterRollerIOKrakenFOC(false),
+        //         new BeamBreakIOHardware(Constants.ShooterRollerLeaderLeft.BEAM_BREAK_PORT),
+        //         false);
+        // turretLeft = new Turret(new TurretIOTalonFX(false), false);
+
+        intake = new Intake(new IntakeIO() {});
+        intakePivot = new IntakePivot(new IntakePivotIO() {});
+        hopper = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
+        indexer = new Indexer(new IndexerIO() {});
+
+        shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, true);
         shooterRollerRight =
-            new ShooterRoller(
-                new ShooterRollerIOKrakenFOC(true),
-                new BeamBreakIOHardware(Constants.ShooterRollerLeaderLeft.BEAM_BREAK_PORT),
-                true);
-        turretRight = new Turret(new TurretIOTalonFX(true), true);
+            new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, true);
+        turretRight = new Turret(new TurretIO() {}, true);
 
-        shooterHoodLeft = new ShooterHood(new ShooterHoodIOTalonFX(false), false);
+        shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, false);
         shooterRollerLeft =
-            new ShooterRoller(
-                new ShooterRollerIOKrakenFOC(false),
-                new BeamBreakIOHardware(Constants.ShooterRollerLeaderLeft.BEAM_BREAK_PORT),
-                false);
-        turretLeft = new Turret(new TurretIOTalonFX(false), false);
+            new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, false);
+        turretLeft = new Turret(new TurretIO() {}, false);
         break;
 
       case SIM:
@@ -320,88 +335,90 @@ public class RobotContainer {
                     new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
     driveController.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
-    // [operator] press a -> deploy example subystem up
-    driveController
-        .leftTrigger()
-        .whileTrue(
-            Commands.runOnce(
-                () -> intake.setGoalState(IntakeState.INTAKE)
-        ));
+    // // [operator] press a -> deploy example subystem up
+    // driveController
+    //     .leftTrigger()
+    //     .whileTrue(
+    //         Commands.runOnce(
+    //             () -> intake.setGoalState(IntakeState.INTAKE)
+    //     ));
 
-    driveController
-        .leftTrigger()
-        .whileFalse(
-            Commands.runOnce(
-                () -> intake.setGoalState(IntakeState.OFF)
-        ));
+    // driveController
+    //     .leftTrigger()
+    //     .whileFalse(
+    //         Commands.runOnce(
+    //             () -> intake.setGoalState(IntakeState.OFF)
+    //     ));
 
-    driveController
-        .leftBumper()
-        .toggleOnTrue(
-            Commands.runOnce(
-                () -> {
-                  intakePivot.setGoalState(IntakePivotState.DOWN);
-                  hopper.setGoalState(Hopper.HopperState.ON);
-                  indexer.setGoalState(Indexer.IndexerState.INDEXING);
-                }, intakePivot, hopper, indexer
-        ));
-    driveController
-        .leftBumper()
-        .toggleOnFalse(
-            Commands.runOnce(
-                () -> {
-                  intakePivot.setGoalState(IntakePivotState.STOW);
-                  hopper.setGoalState(Hopper.HopperState.OFF);
-                  indexer.setGoalState(Indexer.IndexerState.OFF);
-                }, intakePivot, hopper, indexer
-        ));
+    // driveController
+    //     .leftBumper()
+    //     .toggleOnTrue(
+    //         Commands.runOnce(
+    //             () -> {
+    //               intakePivot.setGoalState(IntakePivotState.DOWN);
+    //               hopper.setGoalState(Hopper.HopperState.ON);
+    //               indexer.setGoalState(Indexer.IndexerState.INDEXING);
+    //             }, intakePivot, hopper, indexer
+    //     ));
+    // driveController
+    //     .leftBumper()
+    //     .toggleOnFalse(
+    //         Commands.runOnce(
+    //             () -> {
+    //               intakePivot.setGoalState(IntakePivotState.STOW);
+    //               hopper.setGoalState(Hopper.HopperState.OFF);
+    //               indexer.setGoalState(Indexer.IndexerState.OFF);
+    //             }, intakePivot, hopper, indexer
+    //     ));
 
-    driveController
-        .rightTrigger()
-        .whileTrue(
-          Commands.runOnce(() -> {
-              shooterHoodLeft.setGoalState(ShooterHoodState.OFF);
-              shooterHoodRight.setGoalState(ShooterHoodState.OFF);
-              turretLeft.setGoalState(Turret.TurretState.OFF);
-              turretRight.setGoalState(Turret.TurretState.OFF);
-              shooterRollerLeft.setGoalState(ShooterRollerState.OFF);
-              shooterRollerRight.setGoalState(ShooterRollerState.OFF);
-          }, shooterHoodLeft, shooterHoodRight, turretLeft, turretRight, shooterRollerLeft, shooterRollerRight)
-        );
+    // driveController
+    //     .rightTrigger()
+    //     .whileTrue(
+    //       Commands.runOnce(() -> {
+    //           shooterHoodLeft.setGoalState(ShooterHoodState.OFF);
+    //           shooterHoodRight.setGoalState(ShooterHoodState.OFF);
+    //           turretLeft.setGoalState(Turret.TurretState.OFF);
+    //           turretRight.setGoalState(Turret.TurretState.OFF);
+    //           shooterRollerLeft.setGoalState(ShooterRollerState.OFF);
+    //           shooterRollerRight.setGoalState(ShooterRollerState.OFF);
+    //       }, shooterHoodLeft, shooterHoodRight, turretLeft, turretRight, shooterRollerLeft, shooterRollerRight)
+    //     );
 
-    operatorController
-        .leftBumper()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  hopper.setGoalState(HopperState.ON);
-                  indexer.setGoalState(IndexerState.INDEXING);
-                }));
+    // operatorController
+    //     .leftBumper()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //             () -> {
+    //               hopper.setGoalState(HopperState.ON);
+    //               indexer.setGoalState(IndexerState.INDEXING);
+    //             }));
 
-    operatorController
-        .leftBumper()
-        .onFalse(
-            Commands.runOnce(
-                () -> {
-                  hopper.setGoalState(HopperState.OFF);
-                  indexer.setGoalState(IndexerState.OFF);
-                }));
+    // operatorController
+    //     .leftBumper()
+    //     .onFalse(
+    //         Commands.runOnce(
+    //             () -> {
+    //               hopper.setGoalState(HopperState.OFF);
+    //               indexer.setGoalState(IndexerState.OFF);
+    //             }));
 
-    operatorController
-        .leftTrigger()
-        .onTrue(Commands.runOnce(() -> intake.setGoalState(IntakeState.INTAKE)));
-    operatorController
-        .leftTrigger()
-        .onFalse(Commands.runOnce(() -> intake.setGoalState(IntakeState.OFF)));
+    // operatorController
+    //     .leftTrigger()
+    //     .onTrue(Commands.runOnce(() -> intake.setGoalState(IntakeState.INTAKE)));
+    // operatorController
+    //     .leftTrigger()
+    //     .onFalse(Commands.runOnce(() -> intake.setGoalState(IntakeState.OFF)));
 
-    shooterHoodRight.setDefaultCommand(
-        ShooterCommands.manualShooterHood(shooterHoodRight, () -> operatorController.getRightY()));
-    shooterHoodLeft.setDefaultCommand(
-        ShooterCommands.manualShooterHood(shooterHoodLeft, () -> operatorController.getRightY()));
-    turretRight.setDefaultCommand(
-        ShooterCommands.manualTurret(turretRight, () -> operatorController.getLeftX()));
-    turretLeft.setDefaultCommand(
-        ShooterCommands.manualTurret(turretLeft, () -> operatorController.getLeftX()));
+    // shooterHoodRight.setDefaultCommand(
+    //     ShooterCommands.manualShooterHood(shooterHoodRight, () -> operatorController.getRightY()));
+    // shooterHoodLeft.setDefaultCommand(
+    //     ShooterCommands.manualShooterHood(shooterHoodLeft, () -> operatorController.getRightY()));
+    // turretRight.setDefaultCommand(
+    //     ShooterCommands.manualTurret(turretRight, () -> operatorController.getLeftX()));
+    // turretLeft.setDefaultCommand(
+    //     ShooterCommands.manualTurret(turretLeft, () -> operatorController.getLeftX()));
+
+
     // shooterHoodLeft.setDefaultCommand(getAutonomousCommand()); // todo
     // shooterHoodRight.setDefaultCommand(getAutonomousCommand()); // todo
     // turretLeft.setDefaultCommand(getAutonomousCommand()); // todo
