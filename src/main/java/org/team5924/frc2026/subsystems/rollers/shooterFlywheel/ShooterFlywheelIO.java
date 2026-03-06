@@ -6,6 +6,7 @@ public interface ShooterFlywheelIO {
   @AutoLog
   public static class ShooterFlywheelIOInputs {
     public boolean shooterFlywheelMotorConnected = true;
+    public double shooterFlywheelPosition = 0.0;
     public double shooterFlywheelPositionRads = 0.0;
     public double shooterFlywheelVelocityRadsPerSec = 0.0;
     public double shooterFlywheelAppliedVoltage = 0.0;
@@ -13,8 +14,12 @@ public interface ShooterFlywheelIO {
     public double shooterFlywheelTorqueCurrentAmps = 0.0;
     public double shooterFlywheelTempCelsius = 0.0;
     
-    public double followerSupplyCurrentamps;
+    public double followerSupplyCurrentAmps;
     public double followerTempCelsius;
+
+    public double motionMagicVelocityTarget = 0.0;
+
+    public double acceleration = 0.0;
 
     public FlywheelIOOutputMode mode = FlywheelIOOutputMode.COAST;
     public double velocityRadsPerSec = 0.0;

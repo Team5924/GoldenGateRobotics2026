@@ -23,20 +23,22 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.math.MathUtil;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
+
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DriverStation;
+import lombok.Getter;
+import lombok.experimental.Accessors;
+
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.util.Elastic;
@@ -58,10 +60,10 @@ public class ShooterFlywheelKrakenFOC implements ShooterFlywheelIO {
   private final MotionMagicConfigs motionMagicConfigs;
 
   /* Gains */
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("ShooterFlywheel/kP", 3.0);
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("ShooterFlywheel/kP", 0.4);
   private final LoggedTunableNumber kI = new LoggedTunableNumber("ShooterFlywheel/kI", 0.0);
-  private final LoggedTunableNumber kD = new LoggedTunableNumber("ShooterFlywheel/kD", 0.07);
-  private final LoggedTunableNumber kS = new LoggedTunableNumber("ShooterFlywheel/kS", 0.13);
+  private final LoggedTunableNumber kD = new LoggedTunableNumber("ShooterFlywheel/kD", 0.22);
+  private final LoggedTunableNumber kS = new LoggedTunableNumber("ShooterFlywheel/kS", 0.019);
   private final LoggedTunableNumber kV = new LoggedTunableNumber("ShooterFlywheel/kV", 0.4);
   private final LoggedTunableNumber kA = new LoggedTunableNumber("ShooterFlywheel/kA", 0.00);
 
@@ -80,30 +82,35 @@ public class ShooterFlywheelKrakenFOC implements ShooterFlywheelIO {
   private final StatusSignal<Current> shooterFlywheelTorqueCurrent;
   private final StatusSignal<Temperature> shooterFlywheelTempCelsius;
 
-
   private final StatusSignal<Double> closedLoopReferenceSlope;
   private double prevClosedLoopReferenceSlope = 0.0;
   private double prevReferenceSlopeTimestamp = 0.0;
 
   private final VoltageOut voltageOut;
-  private final PositionVoltage positionOut;
-  private final MotionMagicVelocityVoltage motionMagicVelocityVoltage;
+  private final MotionMagicVelocityVoltage motionMagicVelocity;
 
+  private final String sideName;
   private final double reduction;
 
+  
+  @Getter
+  @Accessors(fluent = true)
+  @AutoLogOutput(key = "Flywheel/AtGoal")
+  private boolean atGoal = false;
+
   public ShooterFlywheelKrakenFOC(boolean isLeft) {
+    sideName = isLeft ? "Left" : "Right";
+    reduction = isLeft ?Constants.ShooterFlywheelLeft.REDUCTION : Constants.ShooterFlywheelRight.REDUCTION;
+
     shooterFlywheelLeaderTalon =
         new TalonFX(
-            isLeft ? Constants.ShooterFlywheelLeaderLeft.CAN_ID : Constants.ShooterFlywheelLeaderRight.CAN_ID,
-            new CANBus(isLeft ? Constants.ShooterFlywheelLeaderLeft.BUS : Constants.ShooterFlywheelLeaderRight.BUS));
+            isLeft ? Constants.ShooterFlywheelLeft.CAN_ID : Constants.ShooterFlywheelRight.CAN_ID,
+            new CANBus(isLeft ? Constants.ShooterFlywheelLeft.BUS : Constants.ShooterFlywheelRight.BUS));
 
     shooterFlywheelFollowerTalon =
         new TalonFX(
-            isLeft ? Constants.ShooterFlywheelFollowerLeft.CAN_ID : Constants.ShooterFlywheelFollowerRight.CAN_ID,
-            new CANBus(isLeft ? Constants.ShooterFlywheelFollowerLeft.BUS : Constants.ShooterFlywheelFollowerRight.BUS));
-
-    reduction =
-        isLeft ? Constants.ShooterFlywheelLeft.MOTOR_TO_MECHANISM : Constants.TurretRight.MOTOR_TO_MECHANISM;
+            isLeft ? Constants.ShooterFlywheelLeft.FOLLOWER_CAN_ID : Constants.ShooterFlywheelRight.FOLLOWER_CAN_ID,
+            new CANBus(isLeft ? Constants.ShooterFlywheelLeft.BUS : Constants.ShooterFlywheelRight.BUS));
 
     shooterFlywheelTalonLeaderConfig = shooterFlywheelLeaderTalon.getConfigurator();
     shooterFlywheelTalonFollowerConfig = shooterFlywheelFollowerTalon.getConfigurator();
@@ -122,39 +129,28 @@ public class ShooterFlywheelKrakenFOC implements ShooterFlywheelIO {
     motionMagicConfigs.MotionMagicJerk = motionJerk.get();
 
     // Apply Configs
-    StatusCode[] statusArray = new StatusCode[8];
+    StatusCode[] statusArray = new StatusCode[6];
 
     statusArray[0] =
         shooterFlywheelTalonLeaderConfig.apply(
-            isLeft ? Constants.ShooterFlywheelLeaderLeft.CONFIG : Constants.ShooterFlywheelLeaderRight.CONFIG);
+            isLeft ? Constants.ShooterFlywheelLeft.CONFIG : Constants.ShooterFlywheelRight.CONFIG);
     statusArray[1] =
         shooterFlywheelTalonLeaderConfig.apply(
             isLeft
-                ? Constants.ShooterFlywheelLeaderLeft.OPEN_LOOP_RAMPS_CONFIGS
-                : Constants.ShooterFlywheelLeaderRight.OPEN_LOOP_RAMPS_CONFIGS);
+                ? Constants.ShooterFlywheelLeft.OPEN_LOOP_RAMPS_CONFIGS
+                : Constants.ShooterFlywheelRight.OPEN_LOOP_RAMPS_CONFIGS);
     statusArray[2] =
         shooterFlywheelTalonLeaderConfig.apply(
             isLeft
-                ? Constants.ShooterFlywheelLeaderLeft.CLOSED_LOOP_RAMPS_CONFIGS
-                : Constants.ShooterFlywheelLeaderRight.CLOSED_LOOP_RAMPS_CONFIGS);
-    statusArray[3] = shooterFlywheelTalonLeaderConfig.apply(motionMagicConfigs);
+                ? Constants.ShooterFlywheelLeft.CLOSED_LOOP_RAMPS_CONFIGS
+                : Constants.ShooterFlywheelRight.CLOSED_LOOP_RAMPS_CONFIGS);
+
     statusArray[4] = shooterFlywheelTalonLeaderConfig.apply(slot0Configs);
 
     statusArray[5] =
         shooterFlywheelTalonFollowerConfig.apply(
-            isLeft ? Constants.ShooterFlywheelFollowerLeft.CONFIG : Constants.ShooterFlywheelFollowerRight.CONFIG);
-    statusArray[6] =
-        shooterFlywheelTalonFollowerConfig.apply(
-            isLeft
-                ? Constants.ShooterFlywheelFollowerLeft.OPEN_LOOP_RAMPS_CONFIGS
-                : Constants.ShooterFlywheelFollowerRight.OPEN_LOOP_RAMPS_CONFIGS);
-    statusArray[7] =
-        shooterFlywheelTalonFollowerConfig.apply(
-            isLeft
-                ? Constants.ShooterFlywheelFollowerLeft.CLOSED_LOOP_RAMPS_CONFIGS
-                : Constants.ShooterFlywheelFollowerRight.CLOSED_LOOP_RAMPS_CONFIGS);
-    statusArray[8] = shooterFlywheelTalonFollowerConfig.apply(motionMagicConfigs);
-    statusArray[9] = shooterFlywheelTalonFollowerConfig.apply(slot0Configs);
+            isLeft ? Constants.ShooterFlywheelLeft.CONFIG : Constants.ShooterFlywheelRight.CONFIG);
+
 
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
@@ -162,9 +158,11 @@ public class ShooterFlywheelKrakenFOC implements ShooterFlywheelIO {
     if (isErrorPresent)
       Elastic.sendNotification(
           new Notification(
-              NotificationLevel.WARNING, "ShooterFlywheel Configs", "Error in shooterFlywheel configs!"));
+              NotificationLevel.WARNING, sideName + "ShooterFlywheel Configs", "Error in" + sideName + "shooter flywheel configs!"));
 
     Logger.recordOutput("ShooterFlywheel/InitConfReport", statusArray);
+
+    shooterFlywheelFollowerTalon.setControl(new Follower(Constants.ShooterFlywheelRight.CAN_ID, MotorAlignmentValue.Opposed));
 
     // Get select status signals and set update frequency
     shooterFlywheelPosition = shooterFlywheelLeaderTalon.getPosition();
@@ -183,12 +181,10 @@ public class ShooterFlywheelKrakenFOC implements ShooterFlywheelIO {
         shooterFlywheelAppliedVoltage,
         shooterFlywheelSupplyCurrent,
         shooterFlywheelTorqueCurrent,
-        shooterFlywheelTempCelsius,
-        closedLoopReferenceSlope);
+        shooterFlywheelTempCelsius);
 
     voltageOut = new VoltageOut(0.0);
-    positionOut = new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true).withSlot(0);
-    motionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0.0).withEnableFOC(true).withSlot(0);
+    motionMagicVelocity = new MotionMagicVelocityVoltage(0.0).withEnableFOC(true).withSlot(0);
 
     shooterFlywheelLeaderTalon.setPosition(0.0);
   }
@@ -216,10 +212,8 @@ public class ShooterFlywheelKrakenFOC implements ShooterFlywheelIO {
     inputs.shooterFlywheelTorqueCurrentAmps = shooterFlywheelTorqueCurrent.getValueAsDouble();
     inputs.shooterFlywheelTempCelsius = shooterFlywheelTempCelsius.getValueAsDouble();
 
-    // inputs.motionMagicVelocityTarget =
-    //     motorPositionToRads(shooterFlywheelLeaderTalon.getClosedLoopReferenceSlope().getValueAsDouble());
-    // inputs.motionMagicPositionTarget =
-    //     motorPositionToRads(shooterFlywheelLeaderTalon.getClosedLoopReference().getValueAsDouble());
+    inputs.motionMagicVelocityTarget =
+        motorPositionToRads(shooterFlywheelLeaderTalon.getClosedLoopReferenceSlope().getValueAsDouble());
 
     double currentTime = closedLoopReferenceSlope.getTimestamp().getTime();
     double timeDiff = currentTime - prevReferenceSlopeTimestamp;
@@ -294,6 +288,11 @@ public class ShooterFlywheelKrakenFOC implements ShooterFlywheelIO {
   }
 
   @Override
+  public void runVelocity(double velocity) {
+    shooterFlywheelLeaderTalon.setControl(motionMagicVelocity.withVelocity(velocity));
+  }
+
+  @Override
   public void stop() {
     shooterFlywheelLeaderTalon.stopMotor();
   }
@@ -303,6 +302,6 @@ public class ShooterFlywheelKrakenFOC implements ShooterFlywheelIO {
   }
 
   private double motorPositionToRads(double motorPosition) {
-    return Units.rotationsToRadians(motorPosition / motorToMechanism);
+    return Units.rotationsToRadians(motorPosition / reduction);
   }
 }

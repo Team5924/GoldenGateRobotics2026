@@ -126,7 +126,7 @@ public class RobotContainer {
         shooterFlywheelRight =
             new ShooterFlywheel(
                 new ShooterFlywheelKrakenFOC(true),
-                new BeamBreakIOHardware(Constants.ShooterFlywheelLeaderLeft.BEAM_BREAK_PORT),
+                new BeamBreakIOHardware(Constants.ShooterFlywheelLeft.BEAM_BREAK_PORT),
                 true);
         turretRight = new Turret(new TurretIOTalonFX(true), true);
 
@@ -134,7 +134,7 @@ public class RobotContainer {
         shooterFlywheelLeft =
             new ShooterFlywheel(
                 new ShooterFlywheelKrakenFOC(false),
-                new BeamBreakIOHardware(Constants.ShooterFlywheelLeaderLeft.BEAM_BREAK_PORT),
+                new BeamBreakIOHardware(Constants.ShooterFlywheelLeft.BEAM_BREAK_PORT),
                 false);
         turretLeft = new Turret(new TurretIOTalonFX(false), false);
         break;

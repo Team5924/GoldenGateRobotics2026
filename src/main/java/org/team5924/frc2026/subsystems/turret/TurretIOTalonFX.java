@@ -90,7 +90,7 @@ public class TurretIOTalonFX implements TurretIO {
 
   private final VoltageOut voltageOut;
   private final PositionVoltage positionOut;
-  private final MotionMagicVoltage magicMotionVoltage;
+  private final MotionMagicVoltage motionMagicVoltage;
 
   private final double cancoderToMechanism;
   private final double motorToMechanism;
@@ -208,7 +208,7 @@ public class TurretIOTalonFX implements TurretIO {
 
     voltageOut = new VoltageOut(0.0);
     positionOut = new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true).withSlot(0);
-    magicMotionVoltage = new MotionMagicVoltage(0.0).withEnableFOC(true).withSlot(0);
+    motionMagicVoltage = new MotionMagicVoltage(0.0).withEnableFOC(true).withSlot(0);
 
     BaseStatusSignal.waitForAll(0.5, cancoderAbsolutePosition);
     turretCANCoder.setPosition(0.0);
@@ -340,7 +340,7 @@ public class TurretIOTalonFX implements TurretIO {
     }
 
     setpointRads = clampRads(rads);
-    turretTalon.setControl(magicMotionVoltage.withPosition(radsToMotorPosition(setpointRads)));
+    turretTalon.setControl(motionMagicVoltage.withPosition(radsToMotorPosition(setpointRads)));
   }
 
   @Override
