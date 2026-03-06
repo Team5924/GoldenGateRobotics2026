@@ -110,7 +110,7 @@ public final class Constants {
   public final class IntakePivot {
     public static final int CAN_ID = 40; // TODO: update to real can id
     public static final String BUS = "rio";
-    public static final double MOTOR_TO_MECHANISM = (4.0 / 1.0) * (4.0 / 1.0) * (54.0 / 20.0) * (32.0 / 12.0);
+    public static final double MOTOR_TO_MECHANISM = 115.2;
     public static final double SIM_MOI = 0.001;
 
     public static final double OFFSET_RADS = 0.0;
@@ -136,7 +136,7 @@ public final class Constants {
             .withStatorCurrentLimitEnable(true))
         .withMotorOutput(
           new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive)
+            .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
 
     public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
@@ -161,7 +161,6 @@ public final class Constants {
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
       new FeedbackConfigs()
         .withSensorToMechanismRatio(MOTOR_TO_MECHANISM)
-        .withRotorToSensorRatio(1.0)
         .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
   }
 

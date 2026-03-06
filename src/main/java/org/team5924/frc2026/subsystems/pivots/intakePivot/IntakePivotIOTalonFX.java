@@ -27,6 +27,8 @@ import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -55,20 +57,20 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   private double setpointRads;
 
   /* Gains */
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("IntakePivot/kP", 3.0);
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("IntakePivot/kP", 10.0);
   private final LoggedTunableNumber kI = new LoggedTunableNumber("IntakePivot/kI", 0.0);
   private final LoggedTunableNumber kD = new LoggedTunableNumber("IntakePivot/kD", 0.07);
-  private final LoggedTunableNumber kS = new LoggedTunableNumber("IntakePivot/kS", 0.13);
-  private final LoggedTunableNumber kV = new LoggedTunableNumber("IntakePivot/kV", 92.08);
+  private final LoggedTunableNumber kS = new LoggedTunableNumber("IntakePivot/kS", 0);
+  private final LoggedTunableNumber kV = new LoggedTunableNumber("IntakePivot/kV", 0);
   private final LoggedTunableNumber kG = new LoggedTunableNumber("IntakePivot/kG", 6.2);
-  private final LoggedTunableNumber kA = new LoggedTunableNumber("IntakePivot/kA", 1.21);
+  private final LoggedTunableNumber kA = new LoggedTunableNumber("IntakePivot/kA", 0);
 
   private final LoggedTunableNumber motionCruiseVelocity =
       new LoggedTunableNumber("IntakePivot/MotionCruiseVelocity", 90.0);
   private final LoggedTunableNumber motionAcceleration =
       new LoggedTunableNumber("IntakePivot/MotionAcceleration", 900.0);
   private final LoggedTunableNumber motionJerk =
-      new LoggedTunableNumber("IntakePivot/MotionJerk", 0.0);
+      new LoggedTunableNumber("IntakePivot/MotionJerk", 900.0);
 
   /* Status Signals */
   private final StatusSignal<Angle> intakePivotPosition;
@@ -99,6 +101,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     slot0Configs.kS = kS.get();
     slot0Configs.kV = kV.get();
     slot0Configs.kA = kA.get();
+    slot0Configs.GravityType = GravityTypeValue.Arm_Cosine;
 
     motionMagicConfigs = new MotionMagicConfigs();
     motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
@@ -151,7 +154,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withSlot(0).withUpdateFreqHz(100);
 
     // assuming intake pivot starts stowed -> uncomment line below
-    intakePivotTalon.setPosition(0.0);
+    intakePivotTalon.setPosition(-0.39);
   }
 
   @Override
@@ -265,7 +268,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
       return;
     }
 
-    setpointRads = clampRads(rads);
+    // setpointRads = clampRads(rads);
     intakePivotTalon.setControl(motionMagicCurrent.withPosition(radsToPosition(setpointRads)));
   }
 

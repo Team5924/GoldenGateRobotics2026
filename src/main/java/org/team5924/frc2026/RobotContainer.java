@@ -360,7 +360,7 @@ public class RobotContainer {
 
     driveController
         .leftBumper()
-        .toggleOnTrue(
+        .onTrue(
             Commands.runOnce(
                 () -> {
                   intakePivot.setGoalState(IntakePivotState.DOWN);
@@ -370,7 +370,7 @@ public class RobotContainer {
         ));
     driveController
         .leftBumper()
-        .toggleOnFalse(
+        .onFalse(
             Commands.runOnce(
                 () -> {
                   intakePivot.setGoalState(IntakePivotState.STOW);
