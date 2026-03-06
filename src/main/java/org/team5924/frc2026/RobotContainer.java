@@ -22,6 +22,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -228,21 +229,21 @@ public class RobotContainer {
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
-    // // Set up SysId routines
-    // autoChooser.addOption(
-    //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    // autoChooser.addOption(
-    //     "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    // autoChooser.addOption(
-    //     "Drive SysId (Quasistatic Forward)",
-    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    // autoChooser.addOption(
-    //     "Drive SysId (Quasistatic Reverse)",
-    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    // autoChooser.addOption(
-    //     "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    // autoChooser.addOption(
-    //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    // Set up SysId routines
+    autoChooser.addOption(
+        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addOption(
+        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Forward)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Reverse)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -256,97 +257,66 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    // if (Constants.currentMode == Constants.Mode.SIM) {
-    //   drive.setDefaultCommand(
-    //       DriveCommands.joystickDrive(
-    //           drive,
-    //           () -> 0 * -driveController.getRawAxis(0),
-    //           () -> 0 * -driveController.getLeftY(),
-    //           () -> 0 * -driveController.getRawAxis(2)));
-    // } else {
-    //   drive.setDefaultCommand(
-    //       DriveCommands.joystickDrive(
-    //           drive,
-    //           () -> 0 * -driveController.getLeftY(),
-    //           () -> 0 * -driveController.getLeftX(),
-    //           () -> 0 * -driveController.getRightX()));
-    // }
-    // // [driver] SLOW MODE YIPE
-    // driveController
-    //     .y()
-    //     .whileTrue(
-    //         DriveCommands.joystickDrive(
-    //             drive,
-    //             () -> -driveController.getLeftY() * Constants.SLOW_MODE_MULTI,
-    //             () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
-    //             () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
+    if (Constants.currentMode == Constants.Mode.SIM) {
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> -driveController.getRawAxis(0),
+              () -> -driveController.getLeftY(),
+              () -> -driveController.getRawAxis(2)));
+    } else {
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> -driveController.getLeftY(),
+              () -> -driveController.getLeftX(),
+              () -> -driveController.getRightX()));
+    }
+    // [driver] SLOW MODE YIPE
+    driveController
+        .y()
+        .whileTrue(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> -driveController.getLeftY() * Constants.SLOW_MODE_MULTI,
+                () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
+                () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
 
     // [driver] 0-DEGREE MODE
-    // driveController
-    //     .a()
-    //     .whileTrue(
-    //         DriveCommands.joystickDriveAtAngle(
-    //             drive,
-    //             () -> -driveController.getLeftY(),
-    //             () -> -driveController.getLeftX(),
-    //             () -> Rotation2d.kZero));
+    driveController
+        .a()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driveController.getLeftY(),
+                () -> -driveController.getLeftX(),
+                () -> Rotation2d.kZero));
 
     // [driver] Switch to X pattern when X button is pressed
-    // driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // [driver] Reset gyro to 0° when B button is pressed
-    // driveController
-    //     .b()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //                 () ->
-    //                     drive.setPose(
-    //                         new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
-    //                 drive)
-    //             .ignoringDisable(true));
+    driveController
+        .b()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
+                    drive)
+                .ignoringDisable(true));
 
-    // final Runnable resetGyro =
-    //     Constants.currentMode == Constants.Mode.SIM
-    //         ? () ->
-    //             drive.setPose(
-    //                 driveSimulation
-    //                     .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose during
-    //         // simulation
-    //         : () ->
-    //             drive.setPose(
-    //                 new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
-    // driveController.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
-
-    // // [operator] press a -> deploy example subystem up
-    // operatorController
-    // .a()
-    // .onTrue(Commands.runOnce(() ->
-    // exampleSystem.setGoalState(ExampleSystemState.UP)));
-
-    // // [operator] release a -> stow example subystem
-    // operatorController
-    // .a()
-    // .onFalse(Commands.runOnce(() ->
-    // exampleSystem.setGoalState(ExampleSystemState.STOW)));
-
-    // // [operator] press b -> run example roller
-    // operatorController
-    // .b()
-    // .onTrue(Commands.runOnce(() ->
-    // exampleRoller.setGoalState(ExampleRollerState.INTAKE)));
-
-    // // [operator] release b -> run example roller
-    // operatorController
-    // .b()
-    // .onFalse(Commands.runOnce(() ->
-    // exampleRoller.setGoalState(ExampleRollerState.IDLE)));
-
-    // operatorController
-    //     .leftTrigger()
-    //     .onTrue(Commands.runOnce(() -> intake.setGoalState(IntakeState.INTAKE)));
-    // operatorController
-    //     .leftTrigger()
-    //     .onFalse(Commands.runOnce(() -> intake.setGoalState(IntakeState.OFF)));
+    final Runnable resetGyro =
+        Constants.currentMode == Constants.Mode.SIM
+            ? () ->
+                drive.setPose(
+                    driveSimulation
+                        .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose during
+            // simulation
+            : () ->
+                drive.setPose(
+                    new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
+    driveController.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
     operatorController
         .rightBumper()
