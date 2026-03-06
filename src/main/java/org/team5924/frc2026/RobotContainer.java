@@ -61,6 +61,7 @@ import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIO;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOTalonFX;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIO;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOSim;
@@ -75,6 +76,7 @@ import org.team5924.frc2026.subsystems.turret.Turret;
 import org.team5924.frc2026.subsystems.turret.TurretIO;
 import org.team5924.frc2026.subsystems.turret.TurretIOSim;
 import org.team5924.frc2026.subsystems.turret.TurretIOTalonFX;
+
 
 public class RobotContainer {
   // Subsystems
@@ -256,54 +258,54 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    // if (Constants.currentMode == Constants.Mode.SIM) {
-    //   drive.setDefaultCommand(
-    //       DriveCommands.joystickDrive(
-    //           drive,
-    //           () -> 0 * -driveController.getRawAxis(0),
-    //           () -> 0 * -driveController.getLeftY(),
-    //           () -> 0 * -driveController.getRawAxis(2)));
-    // } else {
-    //   drive.setDefaultCommand(
-    //       DriveCommands.joystickDrive(
-    //           drive,
-    //           () -> 0 * -driveController.getLeftY(),
-    //           () -> 0 * -driveController.getLeftX(),
-    //           () -> 0 * -driveController.getRightX()));
-    // }
-    // // [driver] SLOW MODE YIPE
-    // driveController
-    //     .y()
-    //     .whileTrue(
-    //         DriveCommands.joystickDrive(
-    //             drive,
-    //             () -> -driveController.getLeftY() * Constants.SLOW_MODE_MULTI,
-    //             () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
-    //             () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
+    if (Constants.currentMode == Constants.Mode.SIM) {
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> 0 * -driveController.getRawAxis(0),
+              () -> 0 * -driveController.getLeftY(),
+              () -> 0 * -driveController.getRawAxis(2)));
+    } else {
+      drive.setDefaultCommand(
+          DriveCommands.joystickDrive(
+              drive,
+              () -> 0 * -driveController.getLeftY(),
+              () -> 0 * -driveController.getLeftX(),
+              () -> 0 * -driveController.getRightX()));
+    }
+    // [driver] SLOW MODE YIPE
+    driveController
+        .y()
+        .whileTrue(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> -driveController.getLeftY() * Constants.SLOW_MODE_MULTI,
+                () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
+                () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
 
     // [driver] 0-DEGREE MODE
-    // driveController
-    //     .a()
-    //     .whileTrue(
-    //         DriveCommands.joystickDriveAtAngle(
-    //             drive,
-    //             () -> -driveController.getLeftY(),
-    //             () -> -driveController.getLeftX(),
-    //             () -> Rotation2d.kZero));
+    driveController
+        .a()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driveController.getLeftY(),
+                () -> -driveController.getLeftX(),
+                () -> Rotation2d.kZero));
 
     // [driver] Switch to X pattern when X button is pressed
     // driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // [driver] Reset gyro to 0° when B button is pressed
-    // driveController
-    //     .b()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //                 () ->
-    //                     drive.setPose(
-    //                         new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
-    //                 drive)
-    //             .ignoringDisable(true));
+    driveController
+        .x()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
+                    drive)
+                .ignoringDisable(true));
 
     // final Runnable resetGyro =
     //     Constants.currentMode == Constants.Mode.SIM
@@ -317,74 +319,65 @@ public class RobotContainer {
     //                 new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
     // driveController.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
-    // // [operator] press a -> deploy example subystem up
-    // operatorController
-    // .a()
-    // .onTrue(Commands.runOnce(() ->
-    // exampleSystem.setGoalState(ExampleSystemState.UP)));
-
-    // // [operator] release a -> stow example subystem
-    // operatorController
-    // .a()
-    // .onFalse(Commands.runOnce(() ->
-    // exampleSystem.setGoalState(ExampleSystemState.STOW)));
-
-    // // [operator] press b -> run example roller
-    // operatorController
-    // .b()
-    // .onTrue(Commands.runOnce(() ->
-    // exampleRoller.setGoalState(ExampleRollerState.INTAKE)));
-
-    // // [operator] release b -> run example roller
-    // operatorController
-    // .b()
-    // .onFalse(Commands.runOnce(() ->
-    // exampleRoller.setGoalState(ExampleRollerState.IDLE)));
-
-    // operatorController
-    //     .leftTrigger()
-    //     .onTrue(Commands.runOnce(() -> intake.setGoalState(IntakeState.INTAKE)));
-    // operatorController
-    //     .leftTrigger()
-    //     .onFalse(Commands.runOnce(() -> intake.setGoalState(IntakeState.OFF)));
-
-    operatorController
-        .rightBumper()
-        .onTrue(
+    // [operator] press a -> deploy example subystem up
+    driveController
+        .leftTrigger()
+        .whileTrue(
             Commands.runOnce(
-                () -> {
-                  shooterRollerRight.setGoalState(ShooterRollerState.BUMPER_SHOOTING);
-                }));
+                () -> intake.setGoalState(IntakeState.INTAKE)
+        ));
 
-    operatorController
-        .rightBumper()
-        .onFalse(
+    driveController
+        .leftTrigger()
+        .whileFalse(
             Commands.runOnce(
-                () -> {
-                  shooterRollerRight.setGoalState(ShooterRollerState.OFF);
-                }));
+                () -> intake.setGoalState(IntakeState.OFF)
+        ));
 
-    // operatorController.leftBumper().onTrue(Commands.runOnce(() ->
-    // {
-    //     hopperSystem.setGoalState(HopperState.ON);
-    //     indexerSystem.setGoalState(IndexerState.INDEXING);
-    // }));
+    driveController
+        .leftBumper()
+        .toggleOnTrue(
+            Commands.runOnce(
+                () -> intakePivot.setGoalState(IntakePivotState.DOWN)
+        ));
+    driveController
+        .leftBumper()
+        .toggleOnFalse(
+            Commands.runOnce(
+                () -> intakePivot.setGoalState(IntakePivotState.STOW)
+        ));
 
-    // operatorController.leftBumper().onFalse(Commands.runOnce(() ->
-    // {
-    //     hopperSystem.setGoalState(HopperState.OFF);
-    //     indexerSystem.setGoalState(IndexerState.OFF);
-    // }));
+    driveController
+        .rightTrigger()
+        .whileTrue(
+          Commands.runOnce(() -> {
+              shooterHoodLeft.setGoalState(ShooterHoodState.OFF);
+              shooterHoodRight.setGoalState(ShooterHoodState.OFF);
+              turretLeft.setGoalState(Turret.TurretState.OFF);
+              turretRight.setGoalState(Turret.TurretState.OFF);
+              shooterRollerLeft.setGoalState(ShooterRollerState.OFF);
+              shooterRollerRight.setGoalState(ShooterRollerState.OFF);
+          }, shooterHoodLeft, shooterHoodRight, turretLeft, turretRight, shooterRollerLeft, shooterRollerRight)
+        );
 
-    // operatorController.leftStick().onChange(Commands.runOnce(() -> {
-    //     shooterHood.setGoalState(ShooterHoodState.MANUAL);
-    //     shooterHood.setInput(driveController.getLeftY());
-    // }));
+    // shooterHoodLeft.setDefaultCommand(getAutonomousCommand()); // todo
+    // shooterHoodRight.setDefaultCommand(getAutonomousCommand()); // todo
+    // turretLeft.setDefaultCommand(getAutonomousCommand()); // todo
+    // turretRight.setDefaultCommand(getAutonomousCommand()); // todo
+    // shooterRollerLeft.setDefaultCommand(getAutonomousCommand()); // todo
+    // shooterRollerRight.setDefaultCommand(getAutonomousCommand()); // todo
 
-    shooterHoodRight.setDefaultCommand(
-        ShooterCommands.manualShooterHood(shooterHoodRight, () -> operatorController.getRightY()));
-    turretRight.setDefaultCommand(
-        ShooterCommands.manualTurret(turretRight, () -> operatorController.getLeftX()));
+    // // Climber
+    // // Dpad Down
+    // driveController
+    //     .pov(180)
+    //     .onTrue(Commands.runOnce(() -> climber.setGoalState(Climber.ClimberState.CLIMB)));
+
+    // // Dpad Up
+    // driveController
+    //     .pov(0)
+    //     .onTrue(Commands.runOnce(() -> climber.setGoalState(Climber.ClimberState.REVERSE_CLIMB)));
+
   }
 
   /**
