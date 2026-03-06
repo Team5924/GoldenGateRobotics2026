@@ -39,7 +39,6 @@ public class Turret extends SubsystemBase {
 
   private final TurretIO io;
   private final TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
-  private double turretPositionSetpointRadiansFromCenter = 0.0;
 
   @Setter private double input;
 
@@ -225,6 +224,6 @@ public class Turret extends SubsystemBase {
   }
 
   public double getSetpoint() {
-    return this.turretPositionSetpointRadiansFromCenter;
+    return inputs.setpointRads;
   }
 }

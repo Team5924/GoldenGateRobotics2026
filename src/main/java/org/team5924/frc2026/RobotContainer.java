@@ -364,27 +364,39 @@ public class RobotContainer {
                   shooterRollerRight.setGoalState(ShooterRollerState.OFF);
                 }));
 
-    // operatorController.leftBumper().onTrue(Commands.runOnce(() ->
-    // {
-    //     hopperSystem.setGoalState(HopperState.ON);
-    //     indexerSystem.setGoalState(IndexerState.INDEXING);
-    // }));
+    operatorController
+        .leftBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  hopper.setGoalState(HopperState.ON);
+                  indexer.setGoalState(IndexerState.INDEXING);
+                }));
 
-    // operatorController.leftBumper().onFalse(Commands.runOnce(() ->
-    // {
-    //     hopperSystem.setGoalState(HopperState.OFF);
-    //     indexerSystem.setGoalState(IndexerState.OFF);
-    // }));
+    operatorController
+        .leftBumper()
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  hopper.setGoalState(HopperState.OFF);
+                  indexer.setGoalState(IndexerState.OFF);
+                }));
 
-    // operatorController.leftStick().onChange(Commands.runOnce(() -> {
-    //     shooterHood.setGoalState(ShooterHoodState.MANUAL);
-    //     shooterHood.setInput(driveController.getLeftY());
-    // }));
+    operatorController
+        .leftTrigger()
+        .onTrue(Commands.runOnce(() -> intake.setGoalState(IntakeState.INTAKE)));
+    operatorController
+        .leftTrigger()
+        .onFalse(Commands.runOnce(() -> intake.setGoalState(IntakeState.OFF)));
 
     shooterHoodRight.setDefaultCommand(
         ShooterCommands.manualShooterHood(shooterHoodRight, () -> operatorController.getRightY()));
+    shooterHoodLeft.setDefaultCommand(
+        ShooterCommands.manualShooterHood(shooterHoodLeft, () -> operatorController.getRightY()));
     turretRight.setDefaultCommand(
         ShooterCommands.manualTurret(turretRight, () -> operatorController.getLeftX()));
+    turretLeft.setDefaultCommand(
+        ShooterCommands.manualTurret(turretLeft, () -> operatorController.getLeftX()));
   }
 
   /**
