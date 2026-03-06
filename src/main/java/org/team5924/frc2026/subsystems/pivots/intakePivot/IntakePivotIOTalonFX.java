@@ -156,7 +156,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withSlot(0).withUpdateFreqHz(100);
 
     // assuming intake pivot starts stowed
-    intakePivotTalon.setPosition(IntakePivotState.STOW.getRads().getAsDouble());
+    intakePivotTalon.setPosition(Units.radiansToRotations(IntakePivotState.STOW.getRads().getAsDouble()));
   }
 
   @Override
