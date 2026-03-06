@@ -59,8 +59,9 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   private final LoggedTunableNumber kI = new LoggedTunableNumber("IntakePivot/kI", 0.0);
   private final LoggedTunableNumber kD = new LoggedTunableNumber("IntakePivot/kD", 0.07);
   private final LoggedTunableNumber kS = new LoggedTunableNumber("IntakePivot/kS", 0.13);
-  private final LoggedTunableNumber kV = new LoggedTunableNumber("IntakePivot/kV", 0.4);
-  private final LoggedTunableNumber kA = new LoggedTunableNumber("IntakePivot/kA", 0.00);
+  private final LoggedTunableNumber kV = new LoggedTunableNumber("IntakePivot/kV", 69.6);
+  private final LoggedTunableNumber kG = new LoggedTunableNumber("IntakePivot/kG", 4.27);
+  private final LoggedTunableNumber kA = new LoggedTunableNumber("IntakePivot/kA", 0.91);
 
   private final LoggedTunableNumber motionCruiseVelocity =
       new LoggedTunableNumber("IntakePivot/MotionCruiseVelocity", 90.0);
@@ -209,6 +210,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
           slot0Configs.kD = kD.get();
           slot0Configs.kS = kS.get();
           slot0Configs.kV = kV.get();
+          slot0Configs.kG = kG.get();
           slot0Configs.kA = kA.get();
 
           StatusCode statusCode = intakePivotTalon.getConfigurator().apply(slot0Configs);
@@ -227,6 +229,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
         kD,
         kS,
         kV,
+        kG,
         kA);
 
     LoggedTunableNumber.ifChanged(
