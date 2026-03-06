@@ -368,6 +368,39 @@ public class RobotContainer {
           }, shooterHoodLeft, shooterHoodRight, turretLeft, turretRight, shooterRollerLeft, shooterRollerRight)
         );
 
+    operatorController
+        .leftBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  hopper.setGoalState(HopperState.ON);
+                  indexer.setGoalState(IndexerState.INDEXING);
+                }));
+
+    operatorController
+        .leftBumper()
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  hopper.setGoalState(HopperState.OFF);
+                  indexer.setGoalState(IndexerState.OFF);
+                }));
+
+    operatorController
+        .leftTrigger()
+        .onTrue(Commands.runOnce(() -> intake.setGoalState(IntakeState.INTAKE)));
+    operatorController
+        .leftTrigger()
+        .onFalse(Commands.runOnce(() -> intake.setGoalState(IntakeState.OFF)));
+
+    shooterHoodRight.setDefaultCommand(
+        ShooterCommands.manualShooterHood(shooterHoodRight, () -> operatorController.getRightY()));
+    shooterHoodLeft.setDefaultCommand(
+        ShooterCommands.manualShooterHood(shooterHoodLeft, () -> operatorController.getRightY()));
+    turretRight.setDefaultCommand(
+        ShooterCommands.manualTurret(turretRight, () -> operatorController.getLeftX()));
+    turretLeft.setDefaultCommand(
+        ShooterCommands.manualTurret(turretLeft, () -> operatorController.getLeftX()));
     // shooterHoodLeft.setDefaultCommand(getAutonomousCommand()); // todo
     // shooterHoodRight.setDefaultCommand(getAutonomousCommand()); // todo
     // turretLeft.setDefaultCommand(getAutonomousCommand()); // todo

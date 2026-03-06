@@ -110,7 +110,7 @@ public class IntakePivot extends SubsystemBase {
 
     intakePivotMotorDisconnected.set(!inputs.intakePivotMotorConnected);
 
-    handleManualState();
+    handleCurrentState();
 
     // prevents error spam
     if (!inputs.intakePivotMotorConnected && wasIntakePivotMotorConnected) {
@@ -130,6 +130,17 @@ public class IntakePivot extends SubsystemBase {
     return RobotState.getTime() - lastStateChange > Constants.IntakePivot.STATE_TIMEOUT
         || EqualsUtil.epsilonEquals(
           inputs.setpointRads, inputs.intakePivotPositionRads, Constants.IntakePivot.EPSILON_RADS);
+  }
+
+  private void handleCurrentState() {
+    switch (RobotState.getInstance().getIntakePivotState()) {
+      case MOVING -> {
+        if (isAtSetpoint()) RobotState.getInstance().setIntakePivotState(goalState);
+      }
+      case MANUAL -> handleManualState();
+      case OFF -> io.stop();
+      default -> io.setPosition(goalState.getRads().getAsDouble());
+    }
   }
 
   private void handleManualState() {

@@ -131,9 +131,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
                 ? Constants.ShooterHoodLeft.CANCODER_ID
                 : Constants.ShooterHoodRight.CANCODER_ID);
 
-    shooterHoodTalon
-        .getConfigurator()
-        .apply(isLeft ? Constants.ShooterHoodLeft.CONFIG : Constants.ShooterHoodRight.CONFIG);
+    shooterHoodTalonConfig = shooterHoodTalon.getConfigurator();
 
     slot0Configs = new Slot0Configs();
     slot0Configs.kP = kP.get();
@@ -297,7 +295,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
 
   private void updatedLoggedTunableNumbers() { // TODO: check if updated
     LoggedTunableNumber.ifChanged(
-        0,
+        hashCode(),
         () -> {
           slot0Configs.kP = kP.get();
           slot0Configs.kI = kI.get();

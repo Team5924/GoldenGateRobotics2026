@@ -27,6 +27,9 @@ public class TurretIOSim implements TurretIO {
   private final DCMotorSim sim;
   private final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
   private double appliedVoltage = 0.0;
+  private double setpoint = 0.0;
+  private final double minPositionRads;
+  private final double maxPositionRads;
 
   public TurretIOSim(boolean isLeft) {
     sim =
@@ -37,6 +40,10 @@ public class TurretIOSim implements TurretIO {
                     : Constants.TurretRight.MOTOR_TO_MECHANISM,
                 isLeft ? Constants.TurretLeft.SIM_MOI : Constants.TurretRight.SIM_MOI),
             gearbox);
+    minPositionRads =
+        isLeft ? Constants.TurretLeft.MIN_POSITION_RADS : Constants.TurretRight.MIN_POSITION_RADS;
+    maxPositionRads =
+        isLeft ? Constants.TurretLeft.MAX_POSITION_RADS : Constants.TurretRight.MAX_POSITION_RADS;
   }
 
   @Override
@@ -49,6 +56,7 @@ public class TurretIOSim implements TurretIO {
     inputs.turretVelocityRadsPerSec = sim.getAngularVelocityRadPerSec();
     inputs.turretAppliedVoltage = appliedVoltage;
     inputs.turretSupplyCurrentAmps = sim.getCurrentDrawAmps();
+    inputs.setpointRads = setpoint;
   }
 
   @Override
@@ -59,6 +67,8 @@ public class TurretIOSim implements TurretIO {
 
   @Override
   public void setPosition(double rads) {
+    rads = MathUtil.clamp(rads, minPositionRads, maxPositionRads);
+    setpoint = rads;
     sim.setAngle(rads);
   }
 
