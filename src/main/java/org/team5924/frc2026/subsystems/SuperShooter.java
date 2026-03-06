@@ -69,7 +69,7 @@ public class SuperShooter extends SubsystemBase {
 
   public void setGoalState(ShooterState goalState) {
     this.goalState = goalState;
-    switch (goalState) {
+    switch (goalState) { // intentionally left out MANUAL
       case OFF:
         roller.setGoalState(ShooterRollerState.OFF);
         hood.setGoalState(ShooterHoodState.OFF);

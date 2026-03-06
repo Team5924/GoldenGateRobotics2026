@@ -27,6 +27,7 @@ public class TurretIOSim implements TurretIO {
   private final DCMotorSim sim;
   private final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
   private double appliedVoltage = 0.0;
+  private double setpoint = 0.0;
 
   public TurretIOSim(boolean isLeft) {
     sim =
@@ -49,6 +50,7 @@ public class TurretIOSim implements TurretIO {
     inputs.turretVelocityRadsPerSec = sim.getAngularVelocityRadPerSec();
     inputs.turretAppliedVoltage = appliedVoltage;
     inputs.turretSupplyCurrentAmps = sim.getCurrentDrawAmps();
+    inputs.setpointRads = setpoint;
   }
 
   @Override
@@ -59,6 +61,7 @@ public class TurretIOSim implements TurretIO {
 
   @Override
   public void setPosition(double rads) {
+    setpoint = rads;
     sim.setAngle(rads);
   }
 
