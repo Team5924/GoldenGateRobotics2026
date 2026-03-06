@@ -27,8 +27,11 @@ public class IntakePivotIOSim implements IntakePivotIO {
   private final DCMotorSim sim;
   private final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
   private double appliedVoltage = 0.0;
+  private double setpoint = 0.0;
+  private final double minPositionRads;
+  private final double maxPositionRads;
 
-  public IntakePivotIOSim() {
+  public IntakePivotIOSim(boolean isLeft) {
     sim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
@@ -46,6 +49,7 @@ public class IntakePivotIOSim implements IntakePivotIO {
     inputs.intakePivotVelocityRadsPerSec = sim.getAngularVelocityRadPerSec();
     inputs.intakePivotAppliedVoltage = appliedVoltage;
     inputs.intakePivotSupplyCurrentAmps = sim.getCurrentDrawAmps();
+    inputs.intakePivotPositionRads = setpoint;
   }
 
   @Override
@@ -56,6 +60,8 @@ public class IntakePivotIOSim implements IntakePivotIO {
 
   @Override
   public void setPosition(double rads) {
+    rads = MathUtil.clamp(rads, minPositionRads, maxPositionRads);
+    setpoint = rads;
     sim.setAngle(rads);
   }
 
