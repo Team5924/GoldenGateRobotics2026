@@ -16,13 +16,9 @@
 
 package org.team5924.frc2026.subsystems.turret;
 
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
-
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,8 +37,6 @@ public class Turret extends SubsystemBase {
   private final TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
 
   @Setter private double input;
-
-  public final SysIdRoutine sysId;
 
   private final boolean isLeft;
 
@@ -91,16 +85,6 @@ public class Turret extends SubsystemBase {
     overheatNotification =
         new Notification(
             NotificationLevel.WARNING, "Turret Overheat Warning", "Turret motor overheat imminent!");
-
-
-    sysId =
-        new SysIdRoutine(
-            new SysIdRoutine.Config(
-                Volts.per(Seconds).of(.75),
-                Volts.of(1),
-                Seconds.of(Constants.SYS_ID_TIME),
-                (state) -> Logger.recordOutput("Turret/SysIdState", state.toString())),
-            new SysIdRoutine.Mechanism((voltage) -> tryRunVolts(voltage.in(Volts)), null, this));
   }
 
   @Override

@@ -122,7 +122,7 @@ public class RobotContainer {
                 (pose) -> {});
 
         // intake = new Intake(new IntakeIOKrakenFOC());
-        // intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
+        intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
         // hopper = new Hopper(new HopperKrakenFOC());
         // indexer = new Indexer(new IndexerIOTalonFX());
 
@@ -143,7 +143,7 @@ public class RobotContainer {
         // turretLeft = new Turret(new TurretIOTalonFX(false), false);
 
         intake = new Intake(new IntakeIO() {});
-        intakePivot = new IntakePivot(new IntakePivotIO() {});
+        // intakePivot = new IntakePivot(new IntakePivotIO() {});
         hopper = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
         indexer = new Indexer(new IndexerIO() {});
 
@@ -350,26 +350,26 @@ public class RobotContainer {
     //             () -> intake.setGoalState(IntakeState.OFF)
     //     ));
 
-    // driveController
-    //     .leftBumper()
-    //     .toggleOnTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               intakePivot.setGoalState(IntakePivotState.DOWN);
-    //               hopper.setGoalState(Hopper.HopperState.ON);
-    //               indexer.setGoalState(Indexer.IndexerState.INDEXING);
-    //             }, intakePivot, hopper, indexer
-    //     ));
-    // driveController
-    //     .leftBumper()
-    //     .toggleOnFalse(
-    //         Commands.runOnce(
-    //             () -> {
-    //               intakePivot.setGoalState(IntakePivotState.STOW);
-    //               hopper.setGoalState(Hopper.HopperState.OFF);
-    //               indexer.setGoalState(Indexer.IndexerState.OFF);
-    //             }, intakePivot, hopper, indexer
-    //     ));
+    driveController
+        .leftBumper()
+        .toggleOnTrue(
+            Commands.runOnce(
+                () -> {
+                  intakePivot.setGoalState(IntakePivotState.DOWN);
+                //   hopper.setGoalState(Hopper.HopperState.ON);
+                //   indexer.setGoalState(Indexer.IndexerState.INDEXING);
+                }, intakePivot, hopper, indexer
+        ));
+    driveController
+        .leftBumper()
+        .toggleOnFalse(
+            Commands.runOnce(
+                () -> {
+                  intakePivot.setGoalState(IntakePivotState.STOW);
+                //   hopper.setGoalState(Hopper.HopperState.OFF);
+                //   indexer.setGoalState(Indexer.IndexerState.OFF);
+                }, intakePivot, hopper, indexer
+        ));
 
     // driveController
     //     .rightTrigger()

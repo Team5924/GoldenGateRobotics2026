@@ -16,13 +16,9 @@
 
 package org.team5924.frc2026.subsystems.pivots.intakePivot;
 
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
-
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -42,8 +38,6 @@ public class IntakePivot extends SubsystemBase {
   private final IntakePivotIOInputsAutoLogged inputs = new IntakePivotIOInputsAutoLogged();
 
   @Setter private double input;
-
-  public final SysIdRoutine sysId;
 
   @RequiredArgsConstructor
   @Getter
@@ -86,15 +80,6 @@ public class IntakePivot extends SubsystemBase {
     overheatNotification =
         new Notification(
             NotificationLevel.WARNING, "Intake Pivot Overheat Warning", "intake pivot motor overheat imminent!");
-
-    sysId =
-        new SysIdRoutine(
-            new SysIdRoutine.Config(
-                Volts.per(Seconds).of(.75),
-                Volts.of(1),
-                Seconds.of(Constants.SYS_ID_TIME),
-                (state) -> Logger.recordOutput("IntakePivot/SysIdState", state.toString())),
-            new SysIdRoutine.Mechanism((voltage) -> tryRunVolts(voltage.in(Volts)), null, this));
   }
 
   @Override
