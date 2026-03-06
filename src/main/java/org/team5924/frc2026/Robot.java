@@ -114,7 +114,7 @@ public class Robot extends LoggedRobot {
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
 
     // Camera stream for Elastic
-    CameraServer.startAutomaticCapture();
+    // CameraServer.startAutomaticCapture();
 
     // Silence joystick alerts
     DriverStation.silenceJoystickConnectionWarning(true);
