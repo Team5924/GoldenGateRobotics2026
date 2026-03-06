@@ -93,7 +93,7 @@ public class TunerConstants {
 
   // The stator current at which the wheels start to slip;
   // This needs to be tuned to your individual robot
-  private static final Current kSlipCurrent = Amps.of(120.0);
+  private static final Current kSlipCurrent = Amps.of(16.0);
 
   // Initial configs for the drive and steer motors and the azimuth encoder; these cannot be null.
   // Some configs will be overwritten; check the `with*InitialConfigs()` API documentation.
@@ -125,7 +125,6 @@ public class TunerConstants {
 
   // Theoretical free speed (m/s) at 12 V applied output;
   // This needs to be tuned to your individual robot
-  // TODO: double check this!
   public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(4.69);
 
   // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
@@ -284,7 +283,7 @@ public class TunerConstants {
    */
   public static final ModuleLimits moduleLimitsFree =
       new ModuleLimits(
-          Units.feetToMeters(15.35), // max speed
+          Units.feetToMeters(15.29), // max speed
           Units.feetToMeters(75.0), // max acceleration, guess
           Units.degreesToRadians(1080.0));
 
