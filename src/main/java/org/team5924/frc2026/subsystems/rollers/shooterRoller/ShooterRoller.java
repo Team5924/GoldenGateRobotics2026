@@ -16,7 +16,6 @@
 
 package org.team5924.frc2026.subsystems.rollers.shooterRoller;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +45,10 @@ public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRoll
     OPPONENT_SHUFFLING(() -> 0.0),
 
     // TODO: test and update volts
-    BUMPER_SHOOTING(new LoggedTunableNumber("ShooterRoller/BumperShooting", 12.0));
+    BUMPER_SHOOTING(new LoggedTunableNumber("ShooterRoller/BumperShooting", -8.0)),
+    B4(() -> -4.0),
+    B6(() -> -6.0),
+    B12(() -> -12.0);
 
     private final DoubleSupplier voltageSupplier;
   }
@@ -95,8 +97,9 @@ public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRoll
         break;
 
       default:
-        DriverStation.reportWarning(
-            "Shooter Roller: " + goalState.name() + " is not a state", null);
+        super.handleCurrentState();
+        // DriverStation.reportWarning(
+        //     "Shooter Roller: " + goalState.name() + " is not a state", null);
         break;
     }
   }
@@ -111,7 +114,7 @@ public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRoll
   @Override
   public void periodic() {
     super.periodic();
-    beamBreakIO.updateInputs(beamBreakInputs);
-    Logger.processInputs((isLeft ? "Left" : "Right") + "ShooterRoller/BeamBreak", beamBreakInputs);
+    // beamBreakIO.updateInputs(beamBreakInputs);
+    // Logger.processInputs((isLeft ? "Left" : "Right") + "ShooterRoller/BeamBreak", beamBreakInputs);
   }
 }
