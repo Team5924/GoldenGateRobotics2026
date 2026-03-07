@@ -46,9 +46,6 @@ public class ShooterFlywheel extends SubsystemBase {
     OFF(() -> 0.0),
     MOVING(() -> 0.0),
 
-    DOWN(new LoggedTunableNumber("ShooterFlywheel/DownVelocity", 0)),
-    STOW(new LoggedTunableNumber("ShooterFlywheel/StowVelocity", 150)),
-
     // current at which the example subsystem motor moves when controlled by the operator
     MANUAL(new LoggedTunableNumber("ShooterFlywheel/OperatorCurrent", 200));
 
@@ -71,7 +68,7 @@ public class ShooterFlywheel extends SubsystemBase {
   private double lastStateChange = 0.0;
   private double timeSinceLastStateChange = 0.0;
 
-  public ShooterFlywheel(ShooterFlywheelIO io) {
+  public ShooterFlywheel(ShooterFlywheelIO io, boolean isLeft) {
     this.io = io;
     this.goalState = ShooterFlywheelState.OFF;
     this.shooterFlywheelMotorDisconnected =

@@ -158,7 +158,7 @@ public class ShooterFlywheelKrakenFOC implements ShooterFlywheelIO {
     if (isErrorPresent)
       Elastic.sendNotification(
           new Notification(
-              NotificationLevel.WARNING, sideName + "ShooterFlywheel Configs", "Error in" + sideName + "shooter flywheel configs!"));
+              NotificationLevel.WARNING, sideName + "ShooterFlywheel Configs", "Error in" + sideName + " shooter flywheel configs!"));
 
     Logger.recordOutput("ShooterFlywheel/InitConfReport", statusArray);
 

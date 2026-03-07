@@ -18,20 +18,7 @@ public interface ShooterFlywheelIO {
     public double followerTempCelsius;
 
     public double motionMagicVelocityTarget = 0.0;
-
     public double acceleration = 0.0;
-
-    public FlywheelIOOutputMode mode = FlywheelIOOutputMode.COAST;
-    public double velocityRadsPerSec = 0.0;
-    public double feedforward = 0.0;
-
-    public double kP;
-    public double kD;
-  }
-
-  public static enum FlywheelIOOutputMode {
-    COAST,
-    VELOCITY
   }
 
   /**
