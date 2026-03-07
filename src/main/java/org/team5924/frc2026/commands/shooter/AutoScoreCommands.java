@@ -52,6 +52,7 @@ public class AutoScoreCommands {
   //   return Commands.run(
   //       () -> {
   //         shooter.setRollerInput(hoodSupplier.getAsDouble());
+
   //       },
   //       shooter);    
         

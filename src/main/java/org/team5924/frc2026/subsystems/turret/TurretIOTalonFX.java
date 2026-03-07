@@ -25,10 +25,9 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -57,7 +56,7 @@ public class TurretIOTalonFX implements TurretIO {
   private double setpointRads;
 
   /* Gains Left */
-  private final LoggedTunableNumber kPLeft = new LoggedTunableNumber("Turret/Left/kP", 1.0);
+  private final LoggedTunableNumber kPLeft = new LoggedTunableNumber("Turret/Left/kP", 25.0);
   private final LoggedTunableNumber kILeft = new LoggedTunableNumber("Turret/Left/kI", 0.0);
   private final LoggedTunableNumber kDLeft = new LoggedTunableNumber("Turret/Left/kD", 0.00);
   private final LoggedTunableNumber kSLeft = new LoggedTunableNumber("Turret/Left/kS", 0.0);
@@ -72,7 +71,7 @@ public class TurretIOTalonFX implements TurretIO {
       new LoggedTunableNumber("Turret/Left/MotionJerk", 0.0);
 
   /* Gains Right */
-  private final LoggedTunableNumber kPRight = new LoggedTunableNumber("Turret/Right/kP", 1.0);
+  private final LoggedTunableNumber kPRight = new LoggedTunableNumber("Turret/Right/kP", 10.0);
   private final LoggedTunableNumber kIRight = new LoggedTunableNumber("Turret/Right/kI", 0.0);
   private final LoggedTunableNumber kDRight = new LoggedTunableNumber("Turret/Right/kD", 0.00);
   private final LoggedTunableNumber kSRight = new LoggedTunableNumber("Turret/Right/kS", 0.0);
@@ -80,9 +79,9 @@ public class TurretIOTalonFX implements TurretIO {
   private final LoggedTunableNumber kARight = new LoggedTunableNumber("Turret/Right/kA", 0.00);
 
   private final LoggedTunableNumber motionCruiseVelocityRight =
-      new LoggedTunableNumber("Turret/Right/MotionCruiseVelocity", 90.0);
+      new LoggedTunableNumber("Turret/Right/MotionCruiseVelocity", 10.0);
   private final LoggedTunableNumber motionAccelerationRight =
-      new LoggedTunableNumber("Turret/Right/MotionAcceleration", 900.0);
+      new LoggedTunableNumber("Turret/Right/MotionAcceleration", 100.0);
   private final LoggedTunableNumber motionJerkRight =
       new LoggedTunableNumber("Turret/Right/MotionJerk", 0.0);
 
@@ -103,7 +102,7 @@ public class TurretIOTalonFX implements TurretIO {
   private double prevClosedLoopReferenceSlope = 0.0;
   private double prevReferenceSlopeTimestamp = 0.0;
 
-  private final VoltageOut voltageOut;
+  private final TorqueCurrentFOC currentOut;
   private final PositionVoltage positionOut;
   private final MotionMagicTorqueCurrentFOC motionMagicCurrent;
 
@@ -214,7 +213,7 @@ public class TurretIOTalonFX implements TurretIO {
         cancoderPositionRotations,
         closedLoopReferenceSlope);
 
-    voltageOut = new VoltageOut(0.0);
+    currentOut = new TorqueCurrentFOC(0.0);
     positionOut = new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true).withSlot(0);
     motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withSlot(0);
 
@@ -342,7 +341,7 @@ public class TurretIOTalonFX implements TurretIO {
 
   @Override
   public void runVolts(double volts) {
-    turretTalon.setControl(voltageOut.withOutput(volts));
+    turretTalon.setControl(currentOut.withOutput(40 * volts));
   }
 
   @Override
@@ -367,7 +366,8 @@ public class TurretIOTalonFX implements TurretIO {
   }
 
   private double clampRads(double rads) {
-    return MathUtil.clamp(rads, minPositionRads, maxPositionRads);
+    // return MathUtil.clamp(rads, minPositionRads, maxPositionRads);
+    return rads;
   }
 
   private double radsToMotorPosition(double rads) {

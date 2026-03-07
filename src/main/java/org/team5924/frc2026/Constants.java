@@ -67,9 +67,9 @@ public final class Constants {
   }
 
   public static final double TRACK_WIDTH_Y_METERS = 19.5;
-  public static final boolean TUNING_MODE = true;
+  public static final boolean TUNING_MODE = true; // TODO: tuning mode off
   public static final boolean ALLOW_ASSERTS = false;
-  public static final double SLOW_MODE_MULTI = 0.5;
+  public static final double SLOW_MODE_MULTI = 0.33;
 
   public static final double OVERHEAT_THRESHOLD = 85.0;
 
@@ -219,7 +219,6 @@ public final class Constants {
 
   public final class Indexer {
     public final static int CAN_ID = 51;
-    public final static int CAN_ID_INVERSE = 25;
     public final static int BEAM_BREAK_ID = 0;
     public static final String BUS = "rio";
     public static final double REDUCTION = 1.0;
@@ -234,7 +233,7 @@ public final class Constants {
             .withStatorCurrentLimit(60))
         .withMotorOutput(
           new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
   }
 
@@ -317,8 +316,8 @@ public final class Constants {
     public static final double CANCODER_TO_MECHANISM = (135.0 / 20.0);
     public static final double MOTOR_TO_MECHANISM = MOTOR_TO_CANCODER * CANCODER_TO_MECHANISM;
 
-    public static final double EPSILON_RADS = Units.degreesToRadians(3.0);
-    public static final double STATE_TIMEOUT = 5.0;
+    public static final double EPSILON_RADS = Units.degreesToRadians(10.0);
+    public static final double STATE_TIMEOUT = 1.0;
 
     /* Configs */
     public static final TalonFXConfiguration CONFIG =
@@ -432,6 +431,13 @@ public final class Constants {
 
     public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
     public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
+  
+    public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
+      GeneralTurret.GENERAL_SOFTWARE_LIMIT_CONFIGS
+        .withReverseSoftLimitThreshold(MIN_POSITION_MULTI)
+        .withForwardSoftLimitThreshold(MAX_POSITION_MULTI)
+        .withReverseSoftLimitEnable(false)
+        .withForwardSoftLimitEnable(false);
 
     /* Configs */
     public static final TalonFXConfiguration CONFIG =

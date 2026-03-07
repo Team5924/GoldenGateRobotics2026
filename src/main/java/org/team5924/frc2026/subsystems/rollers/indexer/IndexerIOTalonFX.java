@@ -21,37 +21,21 @@ import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOKrak
 
 public class IndexerIOTalonFX extends GenericRollerSystemIOKrakenFOC implements IndexerIO {
 
-  private class IndexerInverseTalonFX extends GenericRollerSystemIOKrakenFOC {
-    public IndexerInverseTalonFX() {
-      super(
-          Constants.Indexer.CAN_ID_INVERSE,
-          Constants.Indexer.BUS,
-          Constants.Indexer.CONFIG,
-          Constants.Indexer.REDUCTION_INVERSE);
-    }
-  }
-
-  // This is the other motor on indexer, the one that pushes up balls to shooter
-  private final IndexerInverseTalonFX indexerInverse;
-
   public IndexerIOTalonFX() {
     super(
         Constants.Indexer.CAN_ID,
         Constants.Indexer.BUS,
         Constants.Indexer.CONFIG,
         Constants.Indexer.REDUCTION);
-    indexerInverse = new IndexerInverseTalonFX();
   }
 
   @Override
   public void runVolts(double volts) {
     super.runVolts(volts);
-    indexerInverse.runVolts(-volts);
   }
 
   @Override
   public void stop() {
     super.stop();
-    indexerInverse.stop();
   }
 }

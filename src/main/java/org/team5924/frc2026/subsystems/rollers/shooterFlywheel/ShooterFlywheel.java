@@ -47,7 +47,12 @@ public class ShooterFlywheel extends SubsystemBase {
     LAUNCH(() -> 200.0),
 
     // current at which the example subsystem motor moves when controlled by the operator
-    MANUAL(new LoggedTunableNumber("ShooterFlywheel/OperatorCurrent", 200));
+    MANUAL(new LoggedTunableNumber("ShooterFlywheel/OperatorCurrent", 200)),
+
+    B4(() -> 4.0),
+    B6(() -> 6.0),
+    B8(() -> 8.0),
+    B12(() -> 12.0);
 
     /** measured in rads/sec */
     private final DoubleSupplier velocity;
@@ -118,6 +123,9 @@ public class ShooterFlywheel extends SubsystemBase {
       case LAUNCH -> {
         io.setVelocity(LaunchCalculator.getInstance().getParameters(isLeft).flywheelSpeed());
       }
+      case B4, B6, B8, B12 -> {
+        io.runVolts(goalState.getVelocity().getAsDouble());
+      }
       default -> io.setVelocity(goalState.getVelocity().getAsDouble());
     }
   }
@@ -135,8 +143,9 @@ public class ShooterFlywheel extends SubsystemBase {
 
   public void setGoalState(ShooterFlywheelState goalState) {
     if (this.goalState.equals(goalState)) return;
+
     if (goalState.equals(ShooterFlywheelState.MANUAL) && Math.abs(input) <= 0.05)
-      return; // TODO: REMEMBE RTO COMEMR THITS BACK IN WHEN WWEH PULL IN MAINB RNZCH
+      return;
 
     this.goalState = goalState;
     switch (goalState) {
@@ -150,6 +159,9 @@ public class ShooterFlywheel extends SubsystemBase {
       case OFF:
         setRespectiveShooterFlywheelState(ShooterFlywheelState.OFF);
         io.stop();
+        break;
+      case B4, B6, B8, B12:
+        setRespectiveShooterFlywheelState(goalState);
         break;
       default:
         setRespectiveShooterFlywheelState(ShooterFlywheelState.MOVING);
