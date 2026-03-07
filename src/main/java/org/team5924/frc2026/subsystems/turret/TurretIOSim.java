@@ -35,10 +35,7 @@ public class TurretIOSim implements TurretIO {
     sim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
-                isLeft
-                    ? Constants.TurretLeft.MOTOR_TO_MECHANISM
-                    : Constants.TurretRight.MOTOR_TO_MECHANISM,
-                isLeft ? Constants.TurretLeft.SIM_MOI : Constants.TurretRight.SIM_MOI),
+                Constants.GeneralTurret.MOTOR_TO_MECHANISM, Constants.GeneralTurret.SIM_MOI),
             gearbox);
     minPositionRads =
         isLeft ? Constants.TurretLeft.MIN_POSITION_RADS : Constants.TurretRight.MIN_POSITION_RADS;

@@ -38,6 +38,9 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.util.Elastic;
+import org.team5924.frc2026.util.Elastic.Notification;
+import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class TurretIOTalonFX implements TurretIO {
@@ -53,19 +56,35 @@ public class TurretIOTalonFX implements TurretIO {
   private final MotionMagicConfigs motionMagicConfigs;
   private double setpointRads;
 
-  /* Gains */
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("Turret/kP", 3.0);
-  private final LoggedTunableNumber kI = new LoggedTunableNumber("Turret/kI", 0.0);
-  private final LoggedTunableNumber kD = new LoggedTunableNumber("Turret/kD", 0.07);
-  private final LoggedTunableNumber kS = new LoggedTunableNumber("Turret/kS", 0.13);
-  private final LoggedTunableNumber kV = new LoggedTunableNumber("Turret/kV", 0.4);
-  private final LoggedTunableNumber kA = new LoggedTunableNumber("Turret/kA", 0.00);
+  /* Gains Left */
+  private final LoggedTunableNumber kPLeft = new LoggedTunableNumber("Turret/Left/kP", 1.0);
+  private final LoggedTunableNumber kILeft = new LoggedTunableNumber("Turret/Left/kI", 0.0);
+  private final LoggedTunableNumber kDLeft = new LoggedTunableNumber("Turret/Left/kD", 0.00);
+  private final LoggedTunableNumber kSLeft = new LoggedTunableNumber("Turret/Left/kS", 0.0);
+  private final LoggedTunableNumber kVLeft = new LoggedTunableNumber("Turret/Left/kV", 0.0);
+  private final LoggedTunableNumber kALeft = new LoggedTunableNumber("Turret/Left/kA", 0.00);
 
-  private final LoggedTunableNumber motionCruiseVelocity =
-      new LoggedTunableNumber("Turret/MotionCruiseVelocity", 90.0);
-  private final LoggedTunableNumber motionAcceleration =
-      new LoggedTunableNumber("Turret/MotionAcceleration", 900.0);
-  private final LoggedTunableNumber motionJerk = new LoggedTunableNumber("Turret/MotionJerk", 0.0);
+  private final LoggedTunableNumber motionCruiseVelocityLeft =
+      new LoggedTunableNumber("Turret/Left/MotionCruiseVelocity", 90.0);
+  private final LoggedTunableNumber motionAccelerationLeft =
+      new LoggedTunableNumber("Turret/Left/MotionAcceleration", 900.0);
+  private final LoggedTunableNumber motionJerkLeft =
+      new LoggedTunableNumber("Turret/Left/MotionJerk", 0.0);
+
+  /* Gains Right */
+  private final LoggedTunableNumber kPRight = new LoggedTunableNumber("Turret/Right/kP", 1.0);
+  private final LoggedTunableNumber kIRight = new LoggedTunableNumber("Turret/Right/kI", 0.0);
+  private final LoggedTunableNumber kDRight = new LoggedTunableNumber("Turret/Right/kD", 0.00);
+  private final LoggedTunableNumber kSRight = new LoggedTunableNumber("Turret/Right/kS", 0.0);
+  private final LoggedTunableNumber kVRight = new LoggedTunableNumber("Turret/Right/kV", 0.0);
+  private final LoggedTunableNumber kARight = new LoggedTunableNumber("Turret/Right/kA", 0.00);
+
+  private final LoggedTunableNumber motionCruiseVelocityRight =
+      new LoggedTunableNumber("Turret/Right/MotionCruiseVelocity", 90.0);
+  private final LoggedTunableNumber motionAccelerationRight =
+      new LoggedTunableNumber("Turret/Right/MotionAcceleration", 900.0);
+  private final LoggedTunableNumber motionJerkRight =
+      new LoggedTunableNumber("Turret/Right/MotionJerk", 0.0);
 
   /* Status Signals */
   private final StatusSignal<Angle> turretPosition;
@@ -91,7 +110,15 @@ public class TurretIOTalonFX implements TurretIO {
   private final double minPositionRads;
   private final double maxPositionRads;
 
+  private final Runnable periodicUpdateSlot0;
+  private final Runnable periodicUpdateMotionMagic;
+
+  private final boolean isLeft;
+  private final String side;
+
   public TurretIOTalonFX(boolean isLeft) {
+    this.isLeft = isLeft;
+    side = isLeft ? "Left" : "Right";
     minPositionRads =
         isLeft ? Constants.TurretLeft.MIN_POSITION_RADS : Constants.TurretRight.MIN_POSITION_RADS;
     maxPositionRads =
@@ -100,41 +127,44 @@ public class TurretIOTalonFX implements TurretIO {
     turretTalon =
         new TalonFX(
             isLeft ? Constants.TurretLeft.CAN_ID : Constants.TurretRight.CAN_ID,
-            new CANBus(isLeft ? Constants.TurretLeft.BUS : Constants.TurretRight.BUS));
+            new CANBus(Constants.GeneralTurret.BUS));
     turretCANCoder =
         new CANcoder(isLeft ? Constants.TurretLeft.CANCODER_ID : Constants.TurretRight.CANCODER_ID);
 
     turretTalonConfig = turretTalon.getConfigurator();
 
     slot0Configs = new Slot0Configs();
-    slot0Configs.kP = kP.get();
-    slot0Configs.kI = kI.get();
-    slot0Configs.kD = kD.get();
-    slot0Configs.kS = kS.get();
-    slot0Configs.kV = kV.get();
-    slot0Configs.kA = kA.get();
+    updateSlot0Configs();
 
     motionMagicConfigs = new MotionMagicConfigs();
-    motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
-    motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
-    motionMagicConfigs.MotionMagicJerk = motionJerk.get();
+    updateMotionMagicConfigs();
+
+    periodicUpdateSlot0 =
+        () -> {
+          updateSlot0Configs();
+
+          StatusCode statusCode = turretTalon.getConfigurator().apply(slot0Configs);
+          if (!statusCode.isOK()) {
+            Logger.recordOutput("Turret/" + side + "/UpdateSlot0Report", statusCode);
+          }
+        };
+
+    periodicUpdateMotionMagic =
+        () -> {
+          updateMotionMagicConfigs();
+
+          StatusCode statusCode = turretTalon.getConfigurator().apply(motionMagicConfigs);
+          if (!statusCode.isOK()) {
+            Logger.recordOutput("Turret/Right/UpdateStatusCodeReport", statusCode);
+          }
+        };
 
     // Apply Configs
     StatusCode[] statusArray = new StatusCode[8];
 
-    statusArray[0] =
-        turretTalonConfig.apply(
-            isLeft ? Constants.TurretLeft.CONFIG : Constants.TurretRight.CONFIG);
-    statusArray[1] =
-        turretTalonConfig.apply(
-            isLeft
-                ? Constants.TurretLeft.OPEN_LOOP_RAMPS_CONFIGS
-                : Constants.TurretRight.OPEN_LOOP_RAMPS_CONFIGS);
-    statusArray[2] =
-        turretTalonConfig.apply(
-            isLeft
-                ? Constants.TurretLeft.CLOSED_LOOP_RAMPS_CONFIGS
-                : Constants.TurretRight.CLOSED_LOOP_RAMPS_CONFIGS);
+    statusArray[0] = turretTalonConfig.apply(Constants.GeneralTurret.CONFIG);
+    statusArray[1] = turretTalonConfig.apply(Constants.GeneralTurret.OPEN_LOOP_RAMPS_CONFIGS);
+    statusArray[2] = turretTalonConfig.apply(Constants.GeneralTurret.CLOSED_LOOP_RAMPS_CONFIGS);
     statusArray[3] =
         turretTalonConfig.apply(
             isLeft
@@ -155,7 +185,17 @@ public class TurretIOTalonFX implements TurretIO {
                     ? Constants.TurretLeft.CANCODER_CONFIG
                     : Constants.TurretRight.CANCODER_CONFIG);
 
-    Logger.recordOutput("Turret/InitConfReport", statusArray);
+    boolean isErrorPresent = false;
+    for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
+
+    if (isErrorPresent)
+      Elastic.sendNotification(
+          new Notification(
+              NotificationLevel.WARNING,
+              side + " Turret Configs",
+              "Error in applying " + side + " Turret configs!"));
+
+    Logger.recordOutput("Turret/" + side + "/InitConfReport", statusArray);
 
     // Get select status signals and set update frequency
     turretPosition = turretTalon.getPosition();
@@ -260,44 +300,56 @@ public class TurretIOTalonFX implements TurretIO {
     updateLoggedTunableNumbers();
   }
 
+  private void updateSlot0Configs() {
+    if (isLeft) {
+      slot0Configs.kP = kPLeft.get();
+      slot0Configs.kI = kILeft.get();
+      slot0Configs.kD = kDLeft.get();
+      slot0Configs.kS = kSLeft.get();
+      slot0Configs.kV = kVLeft.get();
+      slot0Configs.kA = kALeft.get();
+    } else {
+      slot0Configs.kP = kPRight.get();
+      slot0Configs.kI = kIRight.get();
+      slot0Configs.kD = kDRight.get();
+      slot0Configs.kS = kSRight.get();
+      slot0Configs.kV = kVRight.get();
+      slot0Configs.kA = kARight.get();
+    }
+  }
+
+  private void updateMotionMagicConfigs() {
+    if (isLeft) {
+      motionMagicConfigs.MotionMagicAcceleration = motionAccelerationLeft.get();
+      motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocityLeft.get();
+      motionMagicConfigs.MotionMagicJerk = motionJerkLeft.get();
+    } else {
+      motionMagicConfigs.MotionMagicAcceleration = motionAccelerationRight.get();
+      motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocityRight.get();
+      motionMagicConfigs.MotionMagicJerk = motionJerkRight.get();
+    }
+  }
+
   private void updateLoggedTunableNumbers() {
-    LoggedTunableNumber.ifChanged(
-        hashCode(),
-        () -> {
-          slot0Configs.kP = kP.get();
-          slot0Configs.kI = kI.get();
-          slot0Configs.kD = kD.get();
-          slot0Configs.kS = kS.get();
-          slot0Configs.kV = kV.get();
-          slot0Configs.kA = kA.get();
-
-          StatusCode statusCode = turretTalon.getConfigurator().apply(slot0Configs);
-          if (!statusCode.isOK()) {
-            Logger.recordOutput("Turret/UpdateSlot0Report", statusCode);
-          }
-        },
-        kP,
-        kI,
-        kD,
-        kS,
-        kV,
-        kA);
-
-    LoggedTunableNumber.ifChanged(
-        hashCode() + 1,
-        () -> {
-          motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
-          motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
-          motionMagicConfigs.MotionMagicJerk = motionJerk.get();
-
-          StatusCode statusCode = turretTalon.getConfigurator().apply(motionMagicConfigs);
-          if (!statusCode.isOK()) {
-            Logger.recordOutput("Turret/UpdateStatusCodeReport", statusCode);
-          }
-        },
-        motionAcceleration,
-        motionCruiseVelocity,
-        motionJerk);
+    if (isLeft) {
+      LoggedTunableNumber.ifChanged(
+          hashCode(), periodicUpdateSlot0, kPLeft, kILeft, kDLeft, kSLeft, kVLeft, kALeft);
+      LoggedTunableNumber.ifChanged(
+          hashCode() + 1,
+          periodicUpdateMotionMagic,
+          motionAccelerationLeft,
+          motionCruiseVelocityLeft,
+          motionJerkLeft);
+    } else {
+      LoggedTunableNumber.ifChanged(
+          hashCode(), periodicUpdateSlot0, kPRight, kIRight, kDRight, kSRight, kVRight, kARight);
+      LoggedTunableNumber.ifChanged(
+          hashCode() + 1,
+          periodicUpdateMotionMagic,
+          motionAccelerationRight,
+          motionCruiseVelocityRight,
+          motionJerkRight);
+    }
   }
 
   @Override

@@ -25,9 +25,6 @@ import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.RobotState;
-import org.team5924.frc2026.util.Elastic;
-import org.team5924.frc2026.util.Elastic.Notification;
-import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
@@ -47,7 +44,7 @@ public class Turret extends SubsystemBase {
     // voltage at which the example subsystem motor moves when controlled by the operator
     MANUAL(new LoggedTunableNumber("Turret/OperatorVoltage", 1.0)),
 
-    NINETY(new LoggedTunableNumber("Turret/NINETY", Math.PI / 2)),
+    NINETY(new LoggedTunableNumber("Turret/Ninety", Math.PI / 2)),
 
     ZERO(() -> 0.0);
 
@@ -61,12 +58,8 @@ public class Turret extends SubsystemBase {
   @Getter private TurretState goalState = TurretState.OFF;
 
   private final Alert turretMotorDisconnected;
-  private final Notification turretMotorDisconnectedNotification;
-  private boolean wasTurretMotorConnected = true;
 
   protected final Alert overheatAlert;
-  protected final Notification overheatNotification;
-  protected boolean wasOverheating = false;
 
   private double lastStateChange = 0.0;
 
@@ -78,17 +71,9 @@ public class Turret extends SubsystemBase {
     this.goalState = TurretState.OFF;
     this.turretMotorDisconnected =
         new Alert("Turret Motor Disconnected!", Alert.AlertType.kWarning);
-    this.turretMotorDisconnectedNotification =
-        new Notification(NotificationLevel.WARNING, "Turret Motor Disconnected", "");
     this.isLeft = isLeft;
 
     overheatAlert = new Alert("Turret motor overheating!", Alert.AlertType.kWarning);
-
-    overheatNotification =
-        new Notification(
-            NotificationLevel.WARNING,
-            "Turret Overheat Warning",
-            "Turret motor overheat imminent!");
   }
 
   @Override
@@ -107,17 +92,8 @@ public class Turret extends SubsystemBase {
 
     turretMotorDisconnected.set(!inputs.turretMotorConnected);
 
-    if (!inputs.turretMotorConnected && wasTurretMotorConnected) {
-      Elastic.sendNotification(turretMotorDisconnectedNotification);
-    }
-    wasTurretMotorConnected = inputs.turretMotorConnected;
-
     boolean isOverheating = inputs.turretTempCelsius > Constants.OVERHEAT_THRESHOLD;
     overheatAlert.set(isOverheating);
-    if (isOverheating && !wasOverheating) {
-      Elastic.sendNotification(overheatNotification);
-    }
-    wasOverheating = isOverheating;
   }
 
   public boolean isAtSetpoint() {
@@ -127,16 +103,19 @@ public class Turret extends SubsystemBase {
   }
 
   private void handleCurrentState() {
-    TurretState cTurretState =
+    TurretState currentState =
         isLeft
             ? RobotState.getInstance().getLeftTurretState()
             : RobotState.getInstance().getRightTurretState();
-    switch (cTurretState) {
+    switch (currentState) {
       case MOVING -> {
         if (isAtSetpoint()) setRespectiveTurretState(goalState);
       }
       case MANUAL -> handleManualState();
       case OFF -> io.stop();
+      case NINETY -> {
+        io.setPosition(goalState.rads.getAsDouble() * (isLeft ? 1 : -1));
+      }
       default -> io.setPosition(goalState.rads.getAsDouble());
     }
   }

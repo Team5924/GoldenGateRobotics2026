@@ -290,7 +290,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
 
   @Override
   public void periodicUpdates() {
-    updatedLoggedTunableNumbers();
+    updateLoggedTunableNumbers();
   }
 
   private void updateSlot0Configs() {
@@ -323,7 +323,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     }
   }
 
-  private void updatedLoggedTunableNumbers() { // TODO: check if updated
+  private void updateLoggedTunableNumbers() {
     if (isLeft) {
       LoggedTunableNumber.ifChanged(
           hashCode(), periodicUpdateSlot0, kPLeft, kILeft, kDLeft, kSLeft, kVLeft, kALeft);
