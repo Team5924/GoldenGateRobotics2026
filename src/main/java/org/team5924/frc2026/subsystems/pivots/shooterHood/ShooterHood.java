@@ -30,10 +30,6 @@ import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.RobotState;
-import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
-import org.team5924.frc2026.util.Elastic;
-import org.team5924.frc2026.util.Elastic.Notification;
-import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class ShooterHood extends SubsystemBase {
@@ -46,6 +42,8 @@ public class ShooterHood extends SubsystemBase {
   @Getter
   public enum ShooterHoodState {
     OFF(() -> 0.0),
+    ZERO(() -> 0.0),
+
 
     // voltage speed at which to rotate the hood
     MANUAL((new LoggedTunableNumber("ShooterHood/Manual", 1))),
@@ -56,7 +54,7 @@ public class ShooterHood extends SubsystemBase {
     OPPONENT_SHUFFLING(() -> 0.0),
 
     // TODO: test and update angle (rads)
-    BUMPER_SHOOTING(new LoggedTunableNumber("ShooterHood/BumperShooting", Math.toRadians(82))),
+    BUMPER_SHOOTING(new LoggedTunableNumber("ShooterHood/BumperShooting", Math.toRadians(30))),
 
     // in-between state
     MOVING(() -> 0.0);

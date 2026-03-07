@@ -78,6 +78,7 @@ import org.team5924.frc2026.subsystems.turret.Turret;
 import org.team5924.frc2026.subsystems.turret.TurretIO;
 import org.team5924.frc2026.subsystems.turret.TurretIOSim;
 import org.team5924.frc2026.subsystems.turret.TurretIOTalonFX;
+import org.team5924.frc2026.subsystems.turret.Turret.TurretState;
 
 
 public class RobotContainer {
@@ -336,12 +337,6 @@ public class RobotContainer {
                     new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
     driveController.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
-    intakePivot.setDefaultCommand(
-            Commands.run(
-                () -> {
-                  intakePivot.setGoalState(IntakePivotState.MANUAL);
-                  intakePivot.setInput(operatorController.getLeftY());
-                }, intakePivot));
 
     // // [operator] press a -> deploy example subystem up
     // driveController
@@ -357,6 +352,13 @@ public class RobotContainer {
     //         Commands.runOnce(
     //             () -> intake.setGoalState(IntakeState.OFF)
     //     ));
+
+    intakePivot.setDefaultCommand(
+            Commands.run(
+                () -> {
+                  intakePivot.setGoalState(IntakePivotState.MANUAL);
+                  intakePivot.setInput(driveController.getLeftY());
+                }, intakePivot));
 
     driveController
         .leftBumper()
@@ -377,6 +379,63 @@ public class RobotContainer {
                 //   hopper.setGoalState(Hopper.HopperState.OFF);
                 //   indexer.setGoalState(Indexer.IndexerState.OFF);
                 }, intakePivot, hopper, indexer
+        ));
+
+
+// ---------------------------------------------------------
+
+
+    intakePivot.setDefaultCommand(
+            Commands.run(
+                () -> {
+                  turretLeft.setGoalState(TurretState.MANUAL);
+                  turretLeft.setInput(driveController.getRightX());
+                }, turretLeft));
+
+    driveController
+        .leftTrigger()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  turretLeft.setGoalState(TurretState.NINETY);
+                }, turretLeft
+        ));
+
+    driveController
+        .rightTrigger()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  turretLeft.setGoalState(TurretState.ZERO);
+                }, turretLeft
+        ));
+
+
+// ---------------------------------------------------------
+
+
+    intakePivot.setDefaultCommand(
+            Commands.run(
+                () -> {
+                  shooterHoodLeft.setGoalState(ShooterHoodState.MANUAL);
+                  shooterHoodLeft.setInput(operatorController.getRightY());
+                }, shooterHoodLeft));
+    operatorController
+        .leftTrigger()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  shooterHoodLeft.setGoalState(ShooterHoodState.BUMPER_SHOOTING);
+                }, shooterHoodLeft
+        ));
+
+    operatorController
+        .rightTrigger()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  shooterHoodLeft.setGoalState(ShooterHoodState.ZERO);
+                }, shooterHoodLeft
         ));
 
     // driveController

@@ -93,18 +93,10 @@ public class TurretIOTalonFX implements TurretIO {
   private final PositionVoltage positionOut;
   private final MotionMagicTorqueCurrentFOC motionMagicCurrent;
 
-  private final double cancoderToMechanism;
-  private final double motorToMechanism;
   private final double minPositionRads;
   private final double maxPositionRads;
 
   public TurretIOTalonFX(boolean isLeft) {
-    cancoderToMechanism =
-        isLeft
-            ? Constants.TurretLeft.CANCODER_TO_MECHANISM
-            : Constants.TurretRight.CANCODER_TO_MECHANISM;
-    motorToMechanism =
-        isLeft ? Constants.TurretLeft.MOTOR_TO_MECHANISM : Constants.TurretRight.MOTOR_TO_MECHANISM;
     minPositionRads =
         isLeft ? Constants.TurretLeft.MIN_POSITION_RADS : Constants.TurretRight.MIN_POSITION_RADS;
     maxPositionRads =
@@ -265,7 +257,7 @@ public class TurretIOTalonFX implements TurretIO {
     inputs.cancoderSupplyVoltage = cancoderSupplyVoltage.getValueAsDouble();
     inputs.cancoderPositionRotations = cancoderPositionRotations.getValueAsDouble();
 
-    inputs.turretPositionCancoder = inputs.cancoderPositionRotations / cancoderToMechanism;
+    inputs.turretPositionCancoder = inputs.cancoderPositionRotations;
   }
 
   @Override
@@ -297,7 +289,7 @@ public class TurretIOTalonFX implements TurretIO {
         kA);
 
     LoggedTunableNumber.ifChanged(
-        0,
+        hashCode() + 1,
         () -> {
           motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
           motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
@@ -344,6 +336,10 @@ public class TurretIOTalonFX implements TurretIO {
   }
 
   private double radsToMotorPosition(double rads) {
+    while (rads < minPositionRads) rads += 2 * Math.PI;
+    while (rads > maxPositionRads) rads -= 2 * Math.PI;
+
+    if (rads < minPositionRads) turretPosition.getValueAsDouble();
     return Units.radiansToRotations(rads);
   }
 
