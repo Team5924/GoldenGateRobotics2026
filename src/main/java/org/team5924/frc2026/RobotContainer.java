@@ -87,11 +87,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision(
                     VisionConstants.FRONT_LEFT_NAME, VisionConstants.FRONT_LEFT_TRANSFORM),
                 new VisionIOPhotonVision(
-                    VisionConstants.FRONT_RIGHT_NAME, VisionConstants.FRONT_RIGHT_TRANSFORM),
-                new VisionIOPhotonVision(
-                    VisionConstants.BACK_LEFT_NAME, VisionConstants.BACK_LEFT_TRANSFORM),
-                new VisionIOPhotonVision(
-                    VisionConstants.BACK_RIGHT_NAME, VisionConstants.BACK_RIGHT_TRANSFORM));
+                    VisionConstants.FRONT_RIGHT_NAME, VisionConstants.FRONT_RIGHT_TRANSFORM));
 
         // shooterHood = new ShooterHood(new ShooterHoodIOTalonFX());
         // shooterRoller =
@@ -129,16 +125,6 @@ public class RobotContainer {
                     VisionConstants.FRONT_RIGHT_NAME,
                     VisionConstants.FRONT_RIGHT_TRANSFORM,
                     VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
-                    driveSimulation::getSimulatedDriveTrainPose),
-                new VisionIOPhotonVisionSim(
-                    VisionConstants.BACK_LEFT_NAME,
-                    VisionConstants.BACK_LEFT_TRANSFORM,
-                    VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
-                    driveSimulation::getSimulatedDriveTrainPose),
-                new VisionIOPhotonVisionSim(
-                    VisionConstants.BACK_RIGHT_NAME,
-                    VisionConstants.BACK_RIGHT_TRANSFORM,
-                    VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
                     driveSimulation::getSimulatedDriveTrainPose));
 
         // shooterHood = new ShooterHood(new ShooterHoodIOSim());
@@ -158,13 +144,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 (pose) -> {});
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIO() {},
-                new VisionIO() {},
-                new VisionIO() {},
-                new VisionIO() {});
+        vision = null; // no vision implementation for replay
         // shooterHood = new ShooterHood(new ShooterHoodIO() {});
         // shooterRoller = new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {});
         // intake = new Intake(new IntakeIO() {});
