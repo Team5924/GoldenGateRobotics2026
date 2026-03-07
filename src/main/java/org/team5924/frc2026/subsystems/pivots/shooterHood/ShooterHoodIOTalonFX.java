@@ -151,7 +151,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
 
           StatusCode statusCode = shooterHoodTalon.getConfigurator().apply(motionMagicConfigs);
           if (!statusCode.isOK()) {
-            Logger.recordOutput("ShooterHood/Right/UpdateStatusCodeReport", statusCode);
+            Logger.recordOutput("ShooterHood/" + side + "/UpdateStatusCodeReport", statusCode);
           }
         };
 

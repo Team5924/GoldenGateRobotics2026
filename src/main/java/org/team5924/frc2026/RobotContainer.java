@@ -166,15 +166,15 @@ public class RobotContainer {
         hopper = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
         indexer = new Indexer(new IndexerIO() {});
 
-        shooterHoodRight = new ShooterHood(new ShooterHoodIOSim(true), true);
+        shooterHoodRight = new ShooterHood(new ShooterHoodIOSim(false), false);
         shooterRollerRight =
-            new ShooterRoller(new ShooterRollerIOSim(true), new BeamBreakIO() {}, true);
-        turretRight = new Turret(new TurretIOSim(true), true);
-
-        shooterHoodLeft = new ShooterHood(new ShooterHoodIOSim(false), false);
-        shooterRollerLeft =
             new ShooterRoller(new ShooterRollerIOSim(false), new BeamBreakIO() {}, false);
-        turretLeft = new Turret(new TurretIOSim(false), false);
+        turretRight = new Turret(new TurretIOSim(false), false);
+
+        shooterHoodLeft = new ShooterHood(new ShooterHoodIOSim(true), true);
+        shooterRollerLeft =
+            new ShooterRoller(new ShooterRollerIOSim(true), new BeamBreakIO() {}, true);
+        turretLeft = new Turret(new TurretIOSim(true), true);
         break;
 
       default:
@@ -193,15 +193,14 @@ public class RobotContainer {
         hopper = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
         indexer = new Indexer(new IndexerIO() {});
 
-        shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, true);
+        shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, false);
         shooterRollerRight =
-            new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, true);
-        turretRight = new Turret(new TurretIO() {}, true);
-
-        shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, false);
-        shooterRollerLeft =
             new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, false);
-        turretLeft = new Turret(new TurretIO() {}, false);
+        turretRight = new Turret(new TurretIO() {}, false);
+
+        shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, true);
+        shooterRollerLeft = new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, true);
+        turretLeft = new Turret(new TurretIO() {}, true);
         break;
     }
 
@@ -374,7 +373,7 @@ public class RobotContainer {
 
     // ---------------------------------------------------------
 
-    intakePivot.setDefaultCommand(
+    turretLeft.setDefaultCommand(
         Commands.run(
             () -> {
               turretLeft.setGoalState(TurretState.MANUAL);
@@ -402,7 +401,7 @@ public class RobotContainer {
 
     // ---------------------------------------------------------
 
-    intakePivot.setDefaultCommand(
+    shooterHoodLeft.setDefaultCommand(
         Commands.run(
             () -> {
               shooterHoodLeft.setGoalState(ShooterHoodState.MANUAL);

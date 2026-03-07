@@ -66,27 +66,30 @@ public class Turret extends SubsystemBase {
   private double exceedBoundsDirection;
   private boolean shouldContinue;
 
+  private final String side;
+
   public Turret(TurretIO io, boolean isLeft) {
+    side = isLeft ? "Left" : "Right";
     this.io = io;
     this.goalState = TurretState.OFF;
     this.turretMotorDisconnected =
-        new Alert("Turret Motor Disconnected!", Alert.AlertType.kWarning);
+        new Alert(side + " Turret Motor Disconnected!", Alert.AlertType.kWarning);
     this.isLeft = isLeft;
 
-    overheatAlert = new Alert("Turret motor overheating!", Alert.AlertType.kWarning);
+    overheatAlert = new Alert(side + " Turret motor overheating!", Alert.AlertType.kWarning);
   }
 
   @Override
   public void periodic() {
     io.periodicUpdates();
     io.updateInputs(inputs);
-    Logger.processInputs("Turret", inputs);
+    Logger.processInputs("Turret/" + side, inputs);
 
-    Logger.recordOutput("Turret/GoalState", goalState.toString());
-    Logger.recordOutput("Turret/CurrentState", getRespectiveTurretState());
-    Logger.recordOutput("Turret/TargetRads", goalState.rads.getAsDouble());
-    Logger.recordOutput("Turret/ExceedBoundsDirection", exceedBoundsDirection);
-    Logger.recordOutput("Turret/ShouldContinue", shouldContinue);
+    Logger.recordOutput("Turret/" + side + "/GoalState", goalState.toString());
+    Logger.recordOutput("Turret/" + side + "/CurrentState", getRespectiveTurretState());
+    Logger.recordOutput("Turret/" + side + "/TargetRads", goalState.rads.getAsDouble());
+    Logger.recordOutput("Turret/" + side + "/ExceedBoundsDirection", exceedBoundsDirection);
+    Logger.recordOutput("Turret/" + side + "/ShouldContinue", shouldContinue);
 
     handleCurrentState();
 
@@ -168,7 +171,7 @@ public class Turret extends SubsystemBase {
         break;
       case MOVING:
         DriverStation.reportError(
-            "Turret: MOVING is an invalid goal state; it is a transition state!!", null);
+            side + " Turret: MOVING is an invalid goal state; it is a transition state!!", null);
         break;
       case OFF:
         setRespectiveTurretState(TurretState.OFF);

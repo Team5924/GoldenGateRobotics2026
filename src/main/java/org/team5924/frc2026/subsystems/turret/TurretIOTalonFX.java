@@ -155,7 +155,7 @@ public class TurretIOTalonFX implements TurretIO {
 
           StatusCode statusCode = turretTalon.getConfigurator().apply(motionMagicConfigs);
           if (!statusCode.isOK()) {
-            Logger.recordOutput("Turret/Right/UpdateStatusCodeReport", statusCode);
+            Logger.recordOutput("Turret/" + side + "UpdateStatusCodeReport", statusCode);
           }
         };
 

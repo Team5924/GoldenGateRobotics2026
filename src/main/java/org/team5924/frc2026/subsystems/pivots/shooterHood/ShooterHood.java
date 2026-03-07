@@ -68,27 +68,32 @@ public class ShooterHood extends SubsystemBase {
   private final Alert notImplementedAlert;
   private boolean showNotImplementedAlert;
 
+  private final String side;
+
   public ShooterHood(ShooterHoodIO io, boolean isLeft) {
+    side = isLeft ? "Left" : "Right";
     this.io = io;
     this.isLeft = isLeft;
 
     goalState = ShooterHoodState.OFF;
     shooterHoodMotorDisconnected =
-        new Alert("Shooter Hood Motor Disconnected!", Alert.AlertType.kWarning);
+        new Alert(side + " Shooter Hood Motor Disconnected!", Alert.AlertType.kWarning);
 
-    notImplementedAlert = new Alert("Auto Shooting not yet implemented!", Alert.AlertType.kWarning);
+    notImplementedAlert =
+        new Alert(side + " Auto Shooting not yet implemented!", Alert.AlertType.kWarning);
 
-    overheatAlert = new Alert("Shooter Hood motor overheating!", Alert.AlertType.kWarning);
+    overheatAlert = new Alert(side + " Shooter Hood motor overheating!", Alert.AlertType.kWarning);
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("ShooterHood", inputs);
+    Logger.processInputs("ShooterHood/" + side, inputs);
 
-    Logger.recordOutput("ShooterHood/GoalState", goalState.toString());
-    Logger.recordOutput("ShooterHood/CurrentState", getRespectiveShooterHoodState().toString());
-    Logger.recordOutput("ShooterHood/TargetRads", goalState.rads.getAsDouble());
+    Logger.recordOutput("ShooterHood/" + side + "/GoalState", goalState.toString());
+    Logger.recordOutput(
+        "ShooterHood/" + side + "/CurrentState", getRespectiveShooterHoodState().toString());
+    Logger.recordOutput("ShooterHood/" + side + "/TargetRads", goalState.rads.getAsDouble());
 
     shooterHoodMotorDisconnected.set(!inputs.shooterHoodMotorConnected);
 
@@ -155,7 +160,8 @@ public class ShooterHood extends SubsystemBase {
         break;
       case MOVING:
         DriverStation.reportError(
-            "Shooter Hood: MOVING is an invalid goal state; it is a transition state!!", null);
+            side + " Shooter Hood: MOVING is an invalid goal state; it is a transition state!!",
+            null);
         break;
       default:
         setRespectiveShooterHoodState(goalState);
