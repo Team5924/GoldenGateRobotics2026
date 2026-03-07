@@ -43,6 +43,11 @@ import org.team5924.frc2026.subsystems.drive.GyroIOSim;
 import org.team5924.frc2026.subsystems.drive.ModuleIO;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFX;
 import org.team5924.frc2026.subsystems.drive.ModuleIOTalonFXSim;
+import org.team5924.frc2026.subsystems.vision.Vision;
+import org.team5924.frc2026.subsystems.vision.VisionConstants;
+import org.team5924.frc2026.subsystems.vision.VisionIO;
+import org.team5924.frc2026.subsystems.vision.VisionIOPhotonVision;
+import org.team5924.frc2026.subsystems.vision.VisionIOPhotonVisionSim;
 import org.team5924.frc2026.subsystems.rollers.hopper.Hopper;
 import org.team5924.frc2026.subsystems.rollers.hopper.Hopper.HopperState;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperIO;
@@ -83,6 +88,8 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private SwerveDriveSimulation driveSimulation = null;
+  private Vision vision;
+
   private final Intake intake;
   private final IntakePivot intakePivot;
   private final Hopper hopper;
@@ -121,6 +128,14 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight),
                 (pose) -> {});
 
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVision(
+                    VisionConstants.FRONT_LEFT_NAME, VisionConstants.FRONT_LEFT_TRANSFORM),
+                new VisionIOPhotonVision(
+                    VisionConstants.FRONT_RIGHT_NAME, VisionConstants.FRONT_RIGHT_TRANSFORM));
+
         intake = new Intake(new IntakeIOKrakenFOC());
         intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
         hopper = new Hopper(new HopperKrakenFOC());
@@ -157,6 +172,20 @@ public class RobotContainer {
                 new ModuleIOTalonFXSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
                 driveSimulation::setSimulationWorldPose);
 
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.FRONT_LEFT_NAME,
+                    VisionConstants.FRONT_LEFT_TRANSFORM,
+                    VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
+                    driveSimulation::getSimulatedDriveTrainPose),
+                new VisionIOPhotonVisionSim(
+                    VisionConstants.FRONT_RIGHT_NAME,
+                    VisionConstants.FRONT_RIGHT_TRANSFORM,
+                    VisionConstants.SIM_THRIFTYCAM_PROPERTIES,
+                    driveSimulation::getSimulatedDriveTrainPose));
+
         intake = new Intake(new IntakeIOSim());
         intakePivot = new IntakePivot(new IntakePivotIOSim());
         hopper = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
@@ -183,6 +212,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 (pose) -> {});
+
+        vision = null; // no vision implementation for replay
 
         intake = new Intake(new IntakeIO() {});
         intakePivot = new IntakePivot(new IntakePivotIO() {});
@@ -284,15 +315,42 @@ public class RobotContainer {
                 () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
                 () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
 
-    // [driver] 0-DEGREE MODE
-    driveController
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driveController.getLeftY(),
-                () -> -driveController.getLeftX(),
-                () -> Rotation2d.kZero));
+    // // TODO: uncomment this out!
+    // // if (Constants.currentMode == Constants.Mode.SIM) {
+    // //   drive.setDefaultCommand(
+    // //       DriveCommands.joystickDrive(
+    // //           drive,
+    // //           () -> -driveController.getLeftY(),
+    // //           () -> -driveController.getRawAxis(0),
+    // //           () -> -driveController.getRawAxis(2)));
+    // // } else {
+    // drive.setDefaultCommand(
+    //     DriveCommands.joystickDrive(
+    //         drive,
+    //         () -> -driveController.getLeftY(),
+    //         () -> -driveController.getLeftX(),
+    //         () -> -driveController.getRightX()));
+    // // }
+
+    // // [driver] SLOW MODE YIPE
+    // driveController
+    //     .y()
+    //     .whileTrue(
+    //         DriveCommands.joystickDrive(
+    //             drive,
+    //             () -> -driveController.getLeftY() * Constants.SLOW_MODE_MULTI,
+    //             () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
+    //             () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
+
+    // // [driver] 0-DEGREE MODE
+    // driveController
+    //     .a()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -driveController.getLeftY(),
+    //             () -> -driveController.getLeftX(),
+    //             () -> Rotation2d.kZero));
 
     // [driver] Switch to X pattern when X button is pressed
     driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
