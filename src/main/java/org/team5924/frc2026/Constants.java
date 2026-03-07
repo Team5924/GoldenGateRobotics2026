@@ -190,7 +190,7 @@ public final class Constants {
    * ### Shooters ###
    */
 
-  public final class Indexer { //TODO: update these later
+  public final class Indexer {
     public final static int CAN_ID = 51;
     public final static int CAN_ID_INVERSE = 25;
     public final static int BEAM_BREAK_ID = 0;
@@ -222,7 +222,7 @@ public final class Constants {
 
   /* Left */
   public final class ShooterHoodLeft {
-    public static final int CAN_ID = 22;
+    public static final int CAN_ID = 34;
     public static final String BUS = "rio";
     public static final double REDUCTION = (40.0 / 12.0) * (24.0 / 15.0);
     public static final double SIM_MOI = 0.001;
@@ -248,7 +248,7 @@ public final class Constants {
 
     /* CANCoder */
     public static final double CANCODER_ABSOLUTE_OFFSET = 0.0; // TODO: update!! (in rotations of cancoder)
-    public static final int CANCODER_ID = 41; // TODO: update id
+    public static final int CANCODER_ID = 36; // TODO: update id
 
     /* Configs */
     public static final TalonFXConfiguration CONFIG =
@@ -280,8 +280,8 @@ public final class Constants {
       new SoftwareLimitSwitchConfigs()
             .withReverseSoftLimitThreshold(MOTOR_TO_MECHANISM * MIN_POSITION_MULTI) // TODO: get correct value for rotations
             .withForwardSoftLimitThreshold(MOTOR_TO_MECHANISM * MAX_POSITION_MULTI) // TODO: get correct value for rotations
-            .withForwardSoftLimitEnable(true)
-            .withReverseSoftLimitEnable(true);
+            .withForwardSoftLimitEnable(false)
+            .withReverseSoftLimitEnable(false);
 
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
       new FeedbackConfigs()
@@ -299,7 +299,7 @@ public final class Constants {
   }
 
   public final class ShooterRollerLeaderLeft {
-    public static final int CAN_ID = 23; // TODO: Config later
+    public static final int CAN_ID = 30; // TODO: Config later
     public static final String BUS = "rio";
     public static final double REDUCTION = 16.0 / 30.0;
     public static final double SIM_MOI = 0.001;
@@ -318,7 +318,7 @@ public final class Constants {
   }
 
   public final class ShooterRollerFollowerLeft {
-    public static final int CAN_ID = 24; // TODO: Config later
+    public static final int CAN_ID = 31; // TODO: Config later
     public static final String BUS = "rio";
     public static final double REDUCTION = 16.0 / 30.0;
     public static final double SIM_MOI = 0.001;
@@ -357,7 +357,7 @@ public final class Constants {
 
 
     /* CANCoder */
-    public static final int CANCODER_ID = 41; // TODO: update id
+    public static final int CANCODER_ID = 22; // TODO: update id
     public static final double CANCODER_ABSOLUTE_OFFSET = 0.0; // TODO: update!! (in rotations of cancoder)
 
 
@@ -412,7 +412,7 @@ public final class Constants {
 
   /* Right */
   public final class ShooterHoodRight {
-    public static final int CAN_ID = 22;
+    public static final int CAN_ID = 35;
     public static final String BUS = "rio";
     public static final double REDUCTION = (40.0 / 12.0) * (24.0 / 17.0);
     public static final double SIM_MOI = 0.001;
@@ -438,7 +438,7 @@ public final class Constants {
 
     /* CANCoder */
     public static final double CANCODER_ABSOLUTE_OFFSET = 0.0; // TODO: update!! (in rotations of cancoder)
-    public static final int CANCODER_ID = 41; // TODO: update id
+    public static final int CANCODER_ID = 37; // TODO: update id
 
     /* Configs */
     public static final TalonFXConfiguration CONFIG =
@@ -470,8 +470,8 @@ public final class Constants {
       new SoftwareLimitSwitchConfigs()
             .withReverseSoftLimitThreshold(MOTOR_TO_MECHANISM * MIN_POSITION_MULTI) // TODO: get correct value for rotations
             .withForwardSoftLimitThreshold(MOTOR_TO_MECHANISM * MAX_POSITION_MULTI) // TODO: get correct value for rotations
-            .withForwardSoftLimitEnable(true)
-            .withReverseSoftLimitEnable(true);
+            .withForwardSoftLimitEnable(false)
+            .withReverseSoftLimitEnable(false);
 
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
       new FeedbackConfigs()
@@ -489,7 +489,7 @@ public final class Constants {
   }
 
   public final class ShooterRollerLeaderRight {
-    public static final int CAN_ID = 23; // TODO: Config later
+    public static final int CAN_ID = 32; // TODO: Config later
     public static final String BUS = "rio";
     public static final double REDUCTION = 16.0 / 30.0;
     public static final double SIM_MOI = 0.001;
@@ -508,7 +508,7 @@ public final class Constants {
   }
 
   public final class ShooterRollerFollowerRight {
-    public static final int CAN_ID = 24; // TODO: Config later
+    public static final int CAN_ID = 33; // TODO: Config later
     public static final String BUS = "rio";
     public static final double REDUCTION = 16.0 / 30.0;
     public static final double SIM_MOI = 0.001;
@@ -550,7 +550,7 @@ public final class Constants {
 
 
     /* CANCoder */
-    public static final int CANCODER_ID = 41; // TODO: update id
+    public static final int CANCODER_ID = 23; // TODO: update id
     public static final double CANCODER_ABSOLUTE_OFFSET = 0.0; // TODO: update!! (in rotations of cancoder)
 
 
@@ -602,5 +602,4 @@ public final class Constants {
         .withAbsoluteSensorDiscontinuityPoint(0.5)
         .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
   }
-
 }

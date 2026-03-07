@@ -122,41 +122,41 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight),
                 (pose) -> {});
 
-        // intake = new Intake(new IntakeIOKrakenFOC());
+        intake = new Intake(new IntakeIOKrakenFOC());
         intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
-        // hopper = new Hopper(new HopperKrakenFOC());
-        // indexer = new Indexer(new IndexerIOTalonFX());
+        hopper = new Hopper(new HopperKrakenFOC());
+        indexer = new Indexer(new IndexerIOTalonFX());
 
-        // shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(true), true);
-        // shooterRollerRight =
-        //     new ShooterRoller(
-        //         new ShooterRollerIOKrakenFOC(true),
-        //         new BeamBreakIOHardware(Constants.ShooterRollerLeaderLeft.BEAM_BREAK_PORT),
-        //         true);
-        // turretRight = new Turret(new TurretIOTalonFX(true), true);
-
-        // shooterHoodLeft = new ShooterHood(new ShooterHoodIOTalonFX(false), false);
-        // shooterRollerLeft =
-        //     new ShooterRoller(
-        //         new ShooterRollerIOKrakenFOC(false),
-        //         new BeamBreakIOHardware(Constants.ShooterRollerLeaderLeft.BEAM_BREAK_PORT),
-        //         false);
-        // turretLeft = new Turret(new TurretIOTalonFX(false), false);
-
-        intake = new Intake(new IntakeIO() {});
-        // intakePivot = new IntakePivot(new IntakePivotIO() {});
-        hopper = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
-        indexer = new Indexer(new IndexerIO() {});
-
-        shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, true);
+        shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(false), false);
         shooterRollerRight =
-            new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, true);
-        turretRight = new Turret(new TurretIO() {}, true);
+            new ShooterRoller(
+                new ShooterRollerIOKrakenFOC(false),
+                new BeamBreakIOHardware(Constants.ShooterRollerLeaderLeft.BEAM_BREAK_PORT),
+                false);
+        turretRight = new Turret(new TurretIOTalonFX(false), false);
 
-        shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, false);
+        shooterHoodLeft = new ShooterHood(new ShooterHoodIOTalonFX(true), true);
         shooterRollerLeft =
-            new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, false);
-        turretLeft = new Turret(new TurretIO() {}, false);
+            new ShooterRoller(
+                new ShooterRollerIOKrakenFOC(true),
+                new BeamBreakIOHardware(Constants.ShooterRollerLeaderLeft.BEAM_BREAK_PORT),
+                true);
+        turretLeft = new Turret(new TurretIOTalonFX(true), true);
+
+        // intake = new Intake(new IntakeIO() {});
+        // // intakePivot = new IntakePivot(new IntakePivotIO() {});
+        // hopper = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
+        // indexer = new Indexer(new IndexerIO() {});
+
+        // shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, true);
+        // shooterRollerRight =
+        //     new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, true);
+        // turretRight = new Turret(new TurretIO() {}, true);
+
+        // shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, false);
+        // shooterRollerLeft =
+        //     new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, false);
+        // turretLeft = new Turret(new TurretIO() {}, false);
         break;
 
       case SIM:
@@ -399,6 +399,8 @@ public class RobotContainer {
     //             () -> {
     //               hopper.setGoalState(HopperState.ON);
     //               indexer.setGoalState(IndexerState.INDEXING);
+    //               shooterRollerLeft.setGoalState(ShooterRollerState.BUMPER_SHOOTING);
+    //               shooterRollerRight.setGoalState(ShooterRollerState.BUMPER_SHOOTING);
     //             }));
 
     // operatorController
@@ -408,6 +410,8 @@ public class RobotContainer {
     //             () -> {
     //               hopper.setGoalState(HopperState.OFF);
     //               indexer.setGoalState(IndexerState.OFF);
+    //               shooterRollerLeft.setGoalState(ShooterRollerState.OFF);
+    //               shooterRollerRight.setGoalState(ShooterRollerState.OFF);
     //             }));
 
     // operatorController
