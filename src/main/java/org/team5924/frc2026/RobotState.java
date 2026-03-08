@@ -24,10 +24,10 @@ import lombok.Setter;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
+import org.team5924.frc2026.subsystems.rollers.flywheel.Flywheel.FlywheelState;
 import org.team5924.frc2026.subsystems.rollers.hopper.Hopper.HopperState;
 import org.team5924.frc2026.subsystems.rollers.indexer.Indexer.IndexerState;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
-import org.team5924.frc2026.subsystems.rollers.shooterFlywheel.ShooterFlywheel.ShooterFlywheelState;
 import org.team5924.frc2026.subsystems.turret.Turret.TurretState;
 
 @Getter
@@ -97,6 +97,6 @@ public class RobotState {
   @Getter @Setter private ShooterHoodState rightShooterHoodState = ShooterHoodState.OFF;
 
   /*### Shooter Roller ### */
-  @Getter @Setter private ShooterFlywheelState leftShooterFlywheelState = ShooterFlywheelState.OFF;
-  @Getter @Setter private ShooterFlywheelState rightShooterFlywheelState = ShooterFlywheelState.OFF;
+  @Getter @Setter private FlywheelState leftFlywheelState = FlywheelState.OFF;
+  @Getter @Setter private FlywheelState rightFlywheelState = FlywheelState.OFF;
 }

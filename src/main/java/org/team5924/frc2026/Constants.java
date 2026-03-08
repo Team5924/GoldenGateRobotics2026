@@ -67,7 +67,7 @@ public final class Constants {
   }
 
   public static final double TRACK_WIDTH_Y_METERS = 19.5;
-  public static final boolean TUNING_MODE = true; // TODO: tuning mode off
+  public static final boolean TUNING_MODE = false; // TODO: tuning mode off
 
   public static final boolean ALLOW_ASSERTS = false;
   public static final double SLOW_MODE_MULTI = 0.33;
@@ -199,9 +199,9 @@ public final class Constants {
                 .withNeutralMode(NeutralModeValue.Brake));
   }
 
-  public final class GeneralShooterFlywheel {
+  public final class GeneralFlywheel {
     public static final double EPSILON_Velocity = 10;
-    public static final double REDUCTION = 16.0 / 30.0;
+    public static final double MOTOR_TO_MECHANISM = 15.0 / 26.0;
     public static final String BUS = "rio";
 
     public static final OpenLoopRampsConfigs OPEN_LOOP_RAMPS_CONFIGS =
@@ -215,8 +215,13 @@ public final class Constants {
         .withDutyCycleClosedLoopRampPeriod(0.02)
         .withTorqueClosedLoopRampPeriod(0.02)
         .withVoltageClosedLoopRampPeriod(0.02);
-  }
 
+  public static final FeedbackConfigs FEEDBACK_CONFIGS =
+      new FeedbackConfigs()
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+        .withSensorToMechanismRatio(MOTOR_TO_MECHANISM)
+        .withRotorToSensorRatio(1.0);
+  }
 
   public final class Indexer {
     public final static int CAN_ID = 51;
@@ -380,7 +385,7 @@ public final class Constants {
         .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET);
   }
 
-  public final class ShooterRollerLeaderLeft {
+  public final class FlywheelLeaderLeft {
     public static final int CAN_ID = 30; // TODO: Config later
     public static final double SIM_MOI = 0.001;
     public static final int BEAM_BREAK_PORT = 0; // TODO: update later
@@ -395,11 +400,11 @@ public final class Constants {
             .withStatorCurrentLimit(60))
         .withMotorOutput(
           new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
   }
 
-  public final class ShooterRollerFollowerLeft {
+  public final class FlywheelFollowerLeft {
     public static final int CAN_ID = 31; // TODO: Config later
     public static final double SIM_MOI = 0.001;
     public static final int BEAM_BREAK_ID = 0;
@@ -413,7 +418,7 @@ public final class Constants {
             .withStatorCurrentLimit(60))
         .withMotorOutput(
           new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive)
+            .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
   }
 
@@ -484,7 +489,7 @@ public final class Constants {
         .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET);
   }
 
-  public final class ShooterRollerLeaderRight {
+  public final class FlywheelLeaderRight {
     public static final int CAN_ID = 32; // TODO: Config later
     public static final double SIM_MOI = 0.001;
     public static final int BEAM_BREAK_PORT = 0; // TODO: update later
@@ -499,11 +504,11 @@ public final class Constants {
             .withStatorCurrentLimit(60))
         .withMotorOutput(
           new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
   }
 
-  public final class ShooterRollerFollowerRight {
+  public final class FlywheelFollowerRight {
     public static final int CAN_ID = 33; // TODO: Config later
     public static final double SIM_MOI = 0.001;
 
@@ -515,10 +520,8 @@ public final class Constants {
             .withStatorCurrentLimit(60))
         .withMotorOutput(
           new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive)
+            .withInverted(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
-
-
   }
 
   public final class TurretRight {

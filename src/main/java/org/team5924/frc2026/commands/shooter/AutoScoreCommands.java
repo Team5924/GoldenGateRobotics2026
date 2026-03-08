@@ -20,8 +20,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
-import org.team5924.frc2026.subsystems.rollers.shooterFlywheel.ShooterFlywheel;
-import org.team5924.frc2026.subsystems.rollers.shooterFlywheel.ShooterFlywheel.ShooterFlywheelState;
+import org.team5924.frc2026.subsystems.rollers.flywheel.Flywheel;
+import org.team5924.frc2026.subsystems.rollers.flywheel.Flywheel.FlywheelState;
 import org.team5924.frc2026.subsystems.turret.Turret;
 import org.team5924.frc2026.subsystems.turret.Turret.TurretState;
 import org.team5924.frc2026.util.LaunchCalculator;
@@ -44,21 +44,21 @@ public class AutoScoreCommands {
   private AutoScoreCommands() {}
 
   public static Command runTrackTargetCommand(
-      Turret turret, ShooterHood shooterHood, ShooterFlywheel shooterFlywheel, boolean isLeft) {
+      Turret turret, ShooterHood shooterHood, Flywheel flywheel, boolean isLeft) {
     return Commands.run(
         () -> {
           LaunchingParameters launchParams = LaunchCalculator.getInstance().getParameters(isLeft);
 
           turret.setAutoInput(launchParams.turretRadians());
           shooterHood.setAutoInput(launchParams.hoodAngle());
-          shooterFlywheel.setAutoInput(launchParams.flywheelSpeed());
+          flywheel.setAutoInput(launchParams.flywheelSpeed());
 
           turret.setGoalState(TurretState.AUTO);
           shooterHood.setGoalState(ShooterHoodState.AUTO);
-          shooterFlywheel.setGoalState(ShooterFlywheelState.AUTO);
+          flywheel.setGoalState(FlywheelState.AUTO);
         },
         turret,
         shooterHood,
-        shooterFlywheel);
+        flywheel);
   }
 }

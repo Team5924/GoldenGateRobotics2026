@@ -1,5 +1,5 @@
 /*
- * ShooterFlywheelIO.java
+ * FlywheelIO.java
  */
 
 /* 
@@ -14,21 +14,21 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.shooterFlywheel;
+package org.team5924.frc2026.subsystems.rollers.flywheel;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface ShooterFlywheelIO {
+public interface FlywheelIO {
   @AutoLog
-  public static class ShooterFlywheelIOInputs {
-    public boolean shooterFlywheelMotorConnected = true;
-    public double shooterFlywheelPosition = 0.0;
-    public double shooterFlywheelPositionRads = 0.0;
-    public double shooterFlywheelVelocityRadsPerSec = 0.0;
-    public double shooterFlywheelAppliedVoltage = 0.0;
-    public double shooterFlywheelSupplyCurrentAmps = 0.0;
-    public double shooterFlywheelTorqueCurrentAmps = 0.0;
-    public double shooterFlywheelTempCelsius = 0.0;
+  public static class FlywheelIOInputs {
+    public boolean flywheelMotorConnected = true;
+    public double flywheelPosition = 0.0;
+    public double flywheelPositionRads = 0.0;
+    public double flywheelVelocityRadsPerSec = 0.0;
+    public double flywheelAppliedVoltage = 0.0;
+    public double flywheelSupplyCurrentAmps = 0.0;
+    public double flywheelTorqueCurrentAmps = 0.0;
+    public double flywheelTempCelsius = 0.0;
 
     public double followerSupplyCurrentAmps;
     public double followerTempCelsius;
@@ -44,13 +44,13 @@ public interface ShooterFlywheelIO {
    *
    * @param inputs Inputs to update
    */
-  public default void updateInputs(ShooterFlywheelIOInputs inputs) {}
+  public default void updateInputs(FlywheelIOInputs inputs) {}
 
-  /** Updates that are be called in shooterFlywheel periodic */
+  /** Updates that are be called in flywheel periodic */
   public default void periodicUpdates() {}
 
   /**
-   * Sets the shooterFlywheel motor to the specified voltage
+   * Sets the flywheel motor to the specified voltage
    *
    * @param volts number of volts
    */

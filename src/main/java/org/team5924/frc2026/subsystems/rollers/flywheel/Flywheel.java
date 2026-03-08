@@ -1,5 +1,5 @@
 /*
- * ShooterFlywheel.java
+ * Flywheel.java
  */
 
 /* 
@@ -14,7 +14,7 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.shooterFlywheel;
+package org.team5924.frc2026.subsystems.rollers.flywheel;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -30,23 +30,23 @@ import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.LaunchCalculator;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
-public class ShooterFlywheel extends SubsystemBase {
-  private final ShooterFlywheelIO io;
+public class Flywheel extends SubsystemBase {
+  private final FlywheelIO io;
   private final boolean isLeft;
 
-  private final ShooterFlywheelIOInputsAutoLogged inputs = new ShooterFlywheelIOInputsAutoLogged();
+  private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
 
   @Setter private double input;
 
   @RequiredArgsConstructor
   @Getter
-  public enum ShooterFlywheelState {
+  public enum FlywheelState {
     OFF(() -> 0.0),
     MOVING(() -> 0.0),
     LAUNCH(() -> 200.0),
 
     // current at which the example subsystem motor moves when controlled by the operator
-    MANUAL(new LoggedTunableNumber("ShooterFlywheel/OperatorCurrent", 200)),
+    MANUAL(new LoggedTunableNumber("Flywheel/OperatorCurrent", 200)),
     AUTO(() -> 0.0),
 
     B4(() -> 4.0),
@@ -58,9 +58,9 @@ public class ShooterFlywheel extends SubsystemBase {
     private final DoubleSupplier velocity;
   }
 
-  @Getter private ShooterFlywheelState goalState = ShooterFlywheelState.OFF;
+  @Getter private FlywheelState goalState = FlywheelState.OFF;
 
-  private final Alert shooterFlywheelMotorDisconnected;
+  private final Alert flywheelMotorDisconnected;
 
   private boolean isAtSetpoint = false;
 
@@ -73,12 +73,12 @@ public class ShooterFlywheel extends SubsystemBase {
   // private double lastStateChange = 0.0;
   // private double timeSinceLastStateChange = 0.0;
 
-  public ShooterFlywheel(ShooterFlywheelIO io, boolean isLeft) {
+  public Flywheel(FlywheelIO io, boolean isLeft) {
     side = isLeft ? "Left" : "Right";
     this.isLeft = isLeft;
     this.io = io;
-    this.goalState = ShooterFlywheelState.OFF;
-    this.shooterFlywheelMotorDisconnected =
+    this.goalState = FlywheelState.OFF;
+    this.flywheelMotorDisconnected =
         new Alert(side + " Intake Pivot Motor Disconnected!", Alert.AlertType.kWarning);
 
     overheatAlert = new Alert(side + " intake pivot motor overheating!", Alert.AlertType.kWarning);
@@ -88,44 +88,43 @@ public class ShooterFlywheel extends SubsystemBase {
   public void periodic() {
     io.periodicUpdates();
     io.updateInputs(inputs);
-    Logger.processInputs("ShooterFlywheel/" + side, inputs);
+    Logger.processInputs("Flywheel/" + side, inputs);
 
-    Logger.recordOutput("ShooterFlywheel/" + side + "/GoalState", goalState.toString());
+    Logger.recordOutput("Flywheel/" + side + "/GoalState", goalState.toString());
     Logger.recordOutput(
-        "ShooterFlywheel/" + side + "/CurrentState",
-        getRespectiveShooterFlywheelState().toString());
+        "Flywheel/" + side + "/CurrentState", getRespectiveFlywheelState().toString());
     Logger.recordOutput(
-        "ShooterFlywheel/" + side + "/TargetRads", goalState.velocity.getAsDouble());
-    Logger.recordOutput(
-        "ShooterFlywheel/" + side + "/CurrentRads", inputs.shooterFlywheelPositionRads);
-    Logger.recordOutput("ShooterFlywheel/" + side + "/IsAtSetpoint", isAtSetpoint = isAtSetpoint());
+        "Flywheel/" + side + "/CurrentState", getRespectiveFlywheelState().toString());
+    Logger.recordOutput("Flywheel/" + side + "/TargetRads", goalState.velocity.getAsDouble());
+    Logger.recordOutput("Flywheel/" + side + "/CurrentRads", inputs.flywheelPositionRads);
+    Logger.recordOutput("Flywheel/" + side + "/IsAtSetpoint", isAtSetpoint = isAtSetpoint());
     // Logger.recordOutput(
-    //     "ShooterFlywheel/TimeSinceLastStateChange",
+    //     "Flywheel/TimeSinceLastStateChange",
     //     timeSinceLastStateChange = FieldState.getTime() - lastStateChange);
 
-    shooterFlywheelMotorDisconnected.set(!inputs.shooterFlywheelMotorConnected);
+    flywheelMotorDisconnected.set(!inputs.flywheelMotorConnected);
 
     handleCurrentState();
-    // boolean isOverheating = inputs.shooterFlywheelTempCelsius > Constants.OVERHEAT_THRESHOLD;
+    // boolean isOverheating = inputs.flywheelTempCelsius > Constants.OVERHEAT_THRESHOLD;
     // overheatAlert.set(isOverheating);
   }
 
   public boolean isAtSetpoint() {
-    // return timeSinceLastStateChange > Constants.ShooterFlywheel.STATE_TIMEOUT
+    // return timeSinceLastStateChange > Constants.Flywheel.STATE_TIMEOUT
     //     || EqualsUtil.epsilonEquals(
-    //       inputs.setpointRads, inputs.shooterFlywheelPositionRads,
-    // Constants.ShooterFlywheel.EPSILON_RADS);
+    //       inputs.setpointRads, inputs.flywheelPositionRads,
+    // Constants.Flywheel.EPSILON_RADS);
     return EqualsUtil.epsilonEquals(
         inputs.setpointVelocity,
-        inputs.shooterFlywheelVelocityRadsPerSec,
-        Constants.GeneralShooterFlywheel.EPSILON_Velocity);
+        inputs.flywheelVelocityRadsPerSec,
+        Constants.GeneralFlywheel.EPSILON_Velocity);
   }
 
   private void handleCurrentState() {
-    switch (getRespectiveShooterFlywheelState()) {
+    switch (getRespectiveFlywheelState()) {
       case MOVING -> {
-        if (isAtSetpoint() && goalState != ShooterFlywheelState.AUTO)
-          setRespectiveShooterFlywheelState(goalState);
+        if (isAtSetpoint() && goalState != FlywheelState.AUTO)
+          setRespectiveFlywheelState(goalState);
       }
       case MANUAL -> handleManualState();
       case OFF -> io.stop();
@@ -140,43 +139,44 @@ public class ShooterFlywheel extends SubsystemBase {
   }
 
   private void handleManualState() {
-    if (!goalState.equals(ShooterFlywheelState.MANUAL)) return;
+    if (!goalState.equals(FlywheelState.MANUAL)) return;
 
     if (Math.abs(input) <= 0.05) {
       io.runVolts(0);
       return;
     }
 
-    io.setVelocity(ShooterFlywheelState.MANUAL.getVelocity().getAsDouble() * input);
+    io.setVelocity(FlywheelState.MANUAL.getVelocity().getAsDouble() * input);
   }
 
-  public void setGoalState(ShooterFlywheelState goalState) {
+  public void setGoalState(FlywheelState goalState) {
     if (this.goalState.equals(goalState)) return;
 
-    if (goalState.equals(ShooterFlywheelState.MANUAL) && Math.abs(input) <= 0.05) return;
+    if (goalState.equals(FlywheelState.MANUAL) && Math.abs(input) <= 0.05) return;
 
     this.goalState = goalState;
     switch (goalState) {
       case MANUAL:
-        setRespectiveShooterFlywheelState(ShooterFlywheelState.MANUAL);
+        setRespectiveFlywheelState(FlywheelState.MANUAL);
         break;
       case MOVING:
         DriverStation.reportError(
-            "ShooterFlywheel: MOVING is an invalid goal state; it is a transition state!!", null);
+            "Flywheel: MOVING is an invalid goal state; it is a transition state!!", null);
         break;
       case OFF:
-        setRespectiveShooterFlywheelState(ShooterFlywheelState.OFF);
+        setRespectiveFlywheelState(FlywheelState.OFF);
         io.stop();
         break;
       case B4, B6, B8, B12:
-        setRespectiveShooterFlywheelState(goalState);
+        setRespectiveFlywheelState(goalState);
+        io.runVolts(goalState.getVelocity().getAsDouble());
         break;
       case AUTO:
-        setRespectiveShooterFlywheelState(ShooterFlywheelState.MOVING);
+        setRespectiveFlywheelState(FlywheelState.MOVING);
         io.setVelocity(autoInput);
         break;
       default:
-        setRespectiveShooterFlywheelState(ShooterFlywheelState.MOVING);
+        setRespectiveFlywheelState(FlywheelState.MOVING);
         io.setVelocity(goalState.velocity.getAsDouble());
         break;
     }
@@ -184,14 +184,14 @@ public class ShooterFlywheel extends SubsystemBase {
     // lastStateChange = FieldState.getTime();
   }
 
-  private void setRespectiveShooterFlywheelState(ShooterFlywheelState state) {
-    if (isLeft) RobotState.getInstance().setLeftShooterFlywheelState(state);
-    else RobotState.getInstance().setRightShooterFlywheelState(state);
+  private void setRespectiveFlywheelState(FlywheelState state) {
+    if (isLeft) RobotState.getInstance().setLeftFlywheelState(state);
+    else RobotState.getInstance().setRightFlywheelState(state);
   }
 
-  private ShooterFlywheelState getRespectiveShooterFlywheelState() {
+  private FlywheelState getRespectiveFlywheelState() {
     return isLeft
-        ? RobotState.getInstance().getLeftShooterFlywheelState()
-        : RobotState.getInstance().getRightShooterFlywheelState();
+        ? RobotState.getInstance().getLeftFlywheelState()
+        : RobotState.getInstance().getRightFlywheelState();
   }
 }

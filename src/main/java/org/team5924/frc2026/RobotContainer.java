@@ -31,7 +31,6 @@ import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.team5924.frc2026.commands.drive.DriveCommands;
-import org.team5924.frc2026.commands.shooter.AutoScoreCommands;
 import org.team5924.frc2026.generated.TunerConstants;
 import org.team5924.frc2026.subsystems.drive.Drive;
 import org.team5924.frc2026.subsystems.drive.GyroIO;
@@ -46,10 +45,12 @@ import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIO;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOSim;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOTalonFX;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
-import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIO;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
-import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOTalonFX;
+import org.team5924.frc2026.subsystems.rollers.flywheel.Flywheel;
+import org.team5924.frc2026.subsystems.rollers.flywheel.Flywheel.FlywheelState;
+import org.team5924.frc2026.subsystems.rollers.flywheel.FlywheelIO;
+import org.team5924.frc2026.subsystems.rollers.flywheel.FlywheelKrakenFOC;
 import org.team5924.frc2026.subsystems.rollers.hopper.Hopper;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperIO;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperKrakenFOC;
@@ -61,15 +62,9 @@ import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIO;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOKrakenFOC;
 import org.team5924.frc2026.subsystems.rollers.intake.IntakeIOSim;
-import org.team5924.frc2026.subsystems.rollers.shooterFlywheel.ShooterFlywheel;
-import org.team5924.frc2026.subsystems.rollers.shooterFlywheel.ShooterFlywheel.ShooterFlywheelState;
-import org.team5924.frc2026.subsystems.rollers.shooterFlywheel.ShooterFlywheelIO;
-import org.team5924.frc2026.subsystems.rollers.shooterFlywheel.ShooterFlywheelKrakenFOC;
 import org.team5924.frc2026.subsystems.turret.Turret;
-import org.team5924.frc2026.subsystems.turret.Turret.TurretState;
 import org.team5924.frc2026.subsystems.turret.TurretIO;
 import org.team5924.frc2026.subsystems.turret.TurretIOSim;
-import org.team5924.frc2026.subsystems.turret.TurretIOTalonFX;
 
 public class RobotContainer {
   // Subsystems
@@ -81,11 +76,11 @@ public class RobotContainer {
   private final Indexer indexer;
 
   private final ShooterHood shooterHoodRight;
-  private final ShooterFlywheel shooterFlywheelRight;
+  private final Flywheel flywheelRight;
   private final Turret turretRight;
 
   private final ShooterHood shooterHoodLeft;
-  private final ShooterFlywheel shooterFlywheelLeft;
+  private final Flywheel flywheelLeft;
   private final Turret turretLeft;
   // private final ExampleSystem exampleSystem;
   // private final ExampleRoller exampleRoller;
@@ -111,33 +106,33 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight),
                 (pose) -> {});
 
-                
         intake = new Intake(new IntakeIOKrakenFOC());
         intakePivot = new IntakePivot(new IntakePivotIOTalonFX());
         hopper = new Hopper(new HopperKrakenFOC());
         indexer = new Indexer(new IndexerIOTalonFX());
 
-        shooterHoodLeft = new ShooterHood(new ShooterHoodIOTalonFX(true), true);
-        shooterFlywheelLeft = new ShooterFlywheel(new ShooterFlywheelKrakenFOC(true), true);
-        turretLeft = new Turret(new TurretIOTalonFX(true), true);
+        // shooterHoodLeft = new ShooterHood(new ShooterHoodIOTalonFX(true), true);
+        flywheelLeft = new Flywheel(new FlywheelKrakenFOC(true), true);
+        // turretLeft = new Turret(new TurretIOTalonFX(true), true);
 
-        shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(false), false);
-        shooterFlywheelRight = new ShooterFlywheel(new ShooterFlywheelKrakenFOC(false), false);
-        turretRight = new Turret(new TurretIOTalonFX(false), false);
+        // shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(false), false);
+        flywheelRight = new Flywheel(new FlywheelKrakenFOC(false), false);
+        // turretRight = new Turret(new TurretIOTalonFX(false), false);
 
-        
+        // --------------------------------------- WEOOOOOWEEWWEEWEWEWEEEE
+        // -----------------------------------------
         // intake = new Intake(new IntakeIO() {});
         // intakePivot = new IntakePivot(new IntakePivotIO() {});
         // hopper = new Hopper(new HopperIO() {});
         // indexer = new Indexer(new IndexerIO() {});
 
-        // shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, true);
-        // shooterFlywheelLeft = new ShooterFlywheel(new ShooterFlywheelIO() {}, true);
-        // turretLeft = new Turret(new TurretIO() {}, true);
+        shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, true);
+        // flywheelLeft = new Flywheel(new FlywheelIO() {}, true);
+        turretLeft = new Turret(new TurretIO() {}, true);
 
-        // shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, false);
-        // shooterFlywheelRight = new ShooterFlywheel(new ShooterFlywheelIO() {}, false);
-        // turretRight = new Turret(new TurretIO() {}, false);
+        shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, false);
+        // flywheelRight = new Flywheel(new FlywheelIO() {}, false);
+        turretRight = new Turret(new TurretIO() {}, false);
         break;
 
       case SIM:
@@ -160,13 +155,13 @@ public class RobotContainer {
         indexer = new Indexer(new IndexerIO() {});
 
         shooterHoodLeft = new ShooterHood(new ShooterHoodIOSim(true), true);
-        shooterFlywheelLeft = null;
-        // new ShooterFlywheel(new ShooterFlywheelIOSim(true), true);
+        flywheelLeft = null;
+        // new Flywheel(new FlywheelIOSim(true), true);
         turretLeft = new Turret(new TurretIOSim(true), true);
 
         shooterHoodRight = new ShooterHood(new ShooterHoodIOSim(false), false);
-        shooterFlywheelRight = null;
-        // new ShooterFlywheel(new ShooterFlywheelIOSim(false), false);
+        flywheelRight = null;
+        // new Flywheel(new FlywheelIOSim(false), false);
         turretRight = new Turret(new TurretIOSim(false), false);
 
         break;
@@ -188,11 +183,11 @@ public class RobotContainer {
         indexer = new Indexer(new IndexerIO() {});
 
         shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, true);
-        shooterFlywheelLeft = new ShooterFlywheel(new ShooterFlywheelIO() {}, true);
+        flywheelLeft = new Flywheel(new FlywheelIO() {}, true);
         turretLeft = new Turret(new TurretIO() {}, true);
 
         shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, false);
-        shooterFlywheelRight = new ShooterFlywheel(new ShooterFlywheelIO() {}, false);
+        flywheelRight = new Flywheel(new FlywheelIO() {}, false);
         turretRight = new Turret(new TurretIO() {}, false);
         break;
     }
@@ -269,7 +264,7 @@ public class RobotContainer {
     // [driver] SLOW MODE YIPE
     driveController
         .y()
-        .whileTrue(
+        .onTrue(
             DriveCommands.joystickDrive(
                 drive,
                 () -> -driveController.getLeftY() * Constants.SLOW_MODE_MULTI,
@@ -279,7 +274,7 @@ public class RobotContainer {
     // [driver] 0-DEGREE MODE
     driveController
         .a()
-        .whileTrue(
+        .onTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
                 () -> -driveController.getLeftY(),
@@ -311,31 +306,23 @@ public class RobotContainer {
                 drive.setPose(
                     new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
     driveController.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
-
-    // // [operator] press a -> deploy example subystem up
-    // driveController
-    //     .leftTrigger()
-    //     .whileTrue(
-    //         Commands.runOnce(
-    //             () -> intake.setGoalState(IntakeState.INTAKE)
     //     ));
 
-    // driveController
-    //     .leftTrigger()
-    //     .whileFalse(
-    //         Commands.runOnce(
-    //             () -> intake.setGoalState(IntakeState.OFF)
-    //     ));
-
+    // ### hopper on by default
     hopper.setDefaultCommand(
         Commands.run(() -> hopper.setGoalState(Hopper.HopperState.ON), hopper));
-    shooterFlywheelLeft.setDefaultCommand(
-        Commands.runOnce(
-            () -> shooterFlywheelLeft.setGoalState(ShooterFlywheelState.OFF), shooterFlywheelLeft));
-    shooterFlywheelRight.setDefaultCommand(
-        Commands.runOnce(
-            () -> shooterFlywheelRight.setGoalState(ShooterFlywheelState.OFF), shooterFlywheelRight));
 
+    // flywheelLeft.setDefaultCommand(
+    //     Commands.runOnce(
+    //         () -> flywheelLeft.setGoalState(FlywheelState.OFF),
+    // flywheelLeft));
+
+    // flywheelRight.setDefaultCommand(
+    //     Commands.runOnce(
+    //         () -> flywheelRight.setGoalState(FlywheelState.OFF),
+    //         flywheelRight));
+
+    // ### intake pivot down/stow
     driveController
         .leftBumper()
         .onTrue(
@@ -359,108 +346,110 @@ public class RobotContainer {
                 hopper,
                 intake));
 
-    driveController
-        .leftTrigger()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  intakePivot.setGoalState(IntakePivotState.DOWN);
-                  hopper.setGoalState(Hopper.HopperState.SPIT);
-                  intake.setGoalState(IntakeState.SPITOUT);
-                },
-                intakePivot,
-                hopper,
-                intake));
-    driveController
-        .leftTrigger()
-        .onFalse(
-            Commands.runOnce(
-                () -> {
-                  intakePivot.setGoalState(IntakePivotState.STOW);
-                  hopper.setGoalState(Hopper.HopperState.ON);
-                  intake.setGoalState(IntakeState.OFF);
-                },
-                intakePivot,
-                hopper,
-                intake));
+    // // ### intake pivot spit
+    // driveController
+    //     .leftTrigger()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //             () -> {
+    //               intakePivot.setGoalState(IntakePivotState.DOWN);
+    //               hopper.setGoalState(Hopper.HopperState.SPIT);
+    //               intake.setGoalState(IntakeState.SPITOUT);
+    //             },
+    //             intakePivot,
+    //             hopper,
+    //             intake));
+    // driveController
+    //     .leftTrigger()
+    //     .onFalse(
+    //         Commands.runOnce(
+    //             () -> {
+    //               intakePivot.setGoalState(IntakePivotState.STOW);
+    //               hopper.setGoalState(Hopper.HopperState.ON);
+    //               intake.setGoalState(IntakeState.OFF);
+    //             },
+    //             intakePivot,
+    //             hopper,
+    //             intake));
+
+    // ### indexing
     driveController
         .rightTrigger()
-        .whileTrue(
+        .onTrue(
             Commands.runOnce(
                 () -> {
                   intakePivot.setGoalState(IntakePivotState.SHOOTING);
                   indexer.setGoalState(Indexer.IndexerState.INDEXING);
                 },
                 intakePivot,
-                shooterFlywheelLeft,
-                shooterFlywheelRight,
                 indexer));
-
-    operatorController
-        .a()
-        .whileTrue(
+    driveController
+        .rightTrigger()
+        .onFalse(
             Commands.runOnce(
                 () -> {
-                  shooterFlywheelRight.setGoalState(ShooterFlywheelState.B4);
-                  shooterFlywheelLeft.setGoalState(ShooterFlywheelState.B4);
+                  intakePivot.setGoalState(IntakePivotState.STOW);
+                  indexer.setGoalState(Indexer.IndexerState.OFF);
                 },
-                shooterFlywheelLeft,
-                shooterFlywheelRight));
+                intakePivot,
+                indexer));
+
+    // ### shooting voltages
+    operatorController
+        .a()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  flywheelRight.setGoalState(FlywheelState.B4);
+                  flywheelLeft.setGoalState(FlywheelState.B4);
+                },
+                flywheelLeft,
+                flywheelRight));
 
     operatorController
         .b()
-        .whileTrue(
+        .onTrue(
             Commands.runOnce(
                 () -> {
-                  shooterFlywheelRight.setGoalState(ShooterFlywheelState.B6);
-                  shooterFlywheelLeft.setGoalState(ShooterFlywheelState.B6);
+                  flywheelRight.setGoalState(FlywheelState.B6);
+                  flywheelLeft.setGoalState(FlywheelState.B6);
                 },
-                shooterFlywheelLeft,
-                shooterFlywheelRight));
+                flywheelLeft,
+                flywheelRight));
 
     operatorController
         .x()
-        .whileTrue(
+        .onTrue(
             Commands.runOnce(
                 () -> {
-                  shooterFlywheelRight.setGoalState(ShooterFlywheelState.B8);
-                  shooterFlywheelLeft.setGoalState(ShooterFlywheelState.B8);
+                  flywheelRight.setGoalState(FlywheelState.B8);
+                  flywheelLeft.setGoalState(FlywheelState.B8);
                 },
-                shooterFlywheelLeft,
-                shooterFlywheelRight));
+                flywheelLeft,
+                flywheelRight));
 
     operatorController
         .y()
-        .whileTrue(
+        .onTrue(
             Commands.runOnce(
                 () -> {
-                  shooterFlywheelRight.setGoalState(ShooterFlywheelState.B12);
-                  shooterFlywheelLeft.setGoalState(ShooterFlywheelState.B12);
+                  flywheelRight.setGoalState(FlywheelState.B12);
+                  flywheelLeft.setGoalState(FlywheelState.B12);
                 },
-                shooterFlywheelLeft,
-                shooterFlywheelRight));
+                flywheelLeft,
+                flywheelRight));
 
+    // AJGAOEIBAWIBAEROBIAEROBIJAROIBHAEBOIAERBIOHAERBHIOAERb
     // operatorController
-    //     .rightTrigger()
+    //     .leftTrigger()
     //     .onTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               shooterFlywheelRight.setGoalState(ShooterFlywheelState.OFF);
-    //               shooterFlywheelLeft.setGoalState(ShooterFlywheelState.OFF);
-    //             },
-    //             shooterFlywheelLeft,
-    //             shooterFlywheelRight));
-
-    operatorController
-        .leftTrigger()
-        .whileTrue(
-            AutoScoreCommands.runTrackTargetCommand(
-                turretLeft, shooterHoodLeft, shooterFlywheelLeft, true));
-    operatorController
-        .leftTrigger()
-        .whileTrue(
-            AutoScoreCommands.runTrackTargetCommand(
-                turretRight, shooterHoodRight, shooterFlywheelRight, false));
+    //         AutoScoreCommands.runTrackTargetCommand(
+    //             turretLeft, shooterHoodLeft, flywheelLeft, true));
+    // operatorController
+    //     .leftTrigger()
+    //     .onTrue(
+    //         AutoScoreCommands.runTrackTargetCommand(
+    //             turretRight, shooterHoodRight, flywheelRight, false));
 
     // ---------------------------------------------------------
 
@@ -472,72 +461,72 @@ public class RobotContainer {
     //         },
     //         turretLeft));
 
-    driveController
-        .leftTrigger()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  turretLeft.setGoalState(TurretState.ZERO);
-                },
-                turretLeft));
-
-    driveController
-        .rightTrigger()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  turretLeft.setGoalState(TurretState.NINETY);
-                },
-                turretLeft));
-
-    // ---------------------------------------------------------
-
-    shooterHoodLeft.setDefaultCommand(
-        Commands.run(
-            () -> {
-              shooterHoodLeft.setGoalState(ShooterHoodState.MANUAL);
-              shooterHoodLeft.setInput(operatorController.getRightY());
-              shooterHoodRight.setGoalState(ShooterHoodState.MANUAL);
-              shooterHoodRight.setInput(operatorController.getRightY());
-            },
-            shooterHoodLeft,
-            shooterHoodRight));
-    operatorController
-        .leftTrigger()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  shooterHoodLeft.setGoalState(ShooterHoodState.BUMPER_SHOOTING);
-                },
-                shooterHoodLeft));
-
-    operatorController
-        .rightTrigger()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  shooterHoodLeft.setGoalState(ShooterHoodState.ZERO);
-                },
-                shooterHoodLeft));
+    // driveController
+    //     .leftTrigger()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //             () -> {
+    //               turretLeft.setGoalState(TurretState.ZERO);
+    //             },
+    //             turretLeft));
 
     // driveController
     //     .rightTrigger()
-    //     .whileTrue(
+    //     .onTrue(
+    //         Commands.runOnce(
+    //             () -> {
+    //               turretLeft.setGoalState(TurretState.NINETY);
+    //             },
+    //             turretLeft));
+
+    // ---------------------------------------------------------
+
+    // shooterHoodLeft.setDefaultCommand(
+    //     Commands.run(
+    //         () -> {
+    //           shooterHoodLeft.setGoalState(ShooterHoodState.MANUAL);
+    //           shooterHoodLeft.setInput(operatorController.getRightY());
+    //           shooterHoodRight.setGoalState(ShooterHoodState.MANUAL);
+    //           shooterHoodRight.setInput(operatorController.getRightY());
+    //         },
+    //         shooterHoodLeft,
+    //         shooterHoodRight));
+    // operatorController
+    //     .leftTrigger()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //             () -> {
+    //               shooterHoodLeft.setGoalState(ShooterHoodState.BUMPER_SHOOTING);
+    //             },
+    //             shooterHoodLeft));
+
+    // operatorController
+    //     .rightTrigger()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //             () -> {
+    //               shooterHoodLeft.setGoalState(ShooterHoodState.ZERO);
+    //             },
+    //             shooterHoodLeft));
+
+    // driveController
+    //     .rightTrigger()
+    //     .onTrue(
     //         Commands.runOnce(
     //             () -> {
     //               // shooterHoodLeft.setGoalState(ShooterHoodState.OFF);
     //               // shooterHoodRight.setGoalState(ShooterHoodState.OFF);
     //               // turretLeft.setGoalState(Turret.TurretState.OFF);
     //               // turretRight.setGoalState(Turret.TurretState.OFF);
-    //               shooterFlywheelLeft.setGoalState(ShooterFlywheelState.BUMPER_SHOOTING);
-    //               shooterFlywheelRight.setGoalState(ShooterFlywheelState.BUMPER_SHOOTING);
+    //               flywheelLeft.setGoalState(FlywheelState.BUMPER_SHOOTING);
+    //               flywheelRight.setGoalState(FlywheelState.BUMPER_SHOOTING);
     //             },
     //             shooterHoodLeft,
     //             shooterHoodRight,
     //             turretLeft,
     //             turretRight,
-    //             shooterFlywheelLeft,
-    //             shooterFlywheelRight));
+    //             flywheelLeft,
+    //             flywheelRight));
 
     // operatorController
     //     .leftBumper()
@@ -546,8 +535,8 @@ public class RobotContainer {
     //             () -> {
     //               hopper.setGoalState(HopperState.ON);
     //               indexer.setGoalState(IndexerState.INDEXING);
-    //               shooterFlywheelLeft.setGoalState(ShooterFlywheelState.BUMPER_SHOOTING);
-    //               shooterFlywheelRight.setGoalState(ShooterFlywheelState.BUMPER_SHOOTING);
+    //               flywheelLeft.setGoalState(FlywheelState.BUMPER_SHOOTING);
+    //               flywheelRight.setGoalState(FlywheelState.BUMPER_SHOOTING);
     //             }));
 
     // operatorController
@@ -557,8 +546,8 @@ public class RobotContainer {
     //             () -> {
     //               hopper.setGoalState(HopperState.OFF);
     //               indexer.setGoalState(IndexerState.OFF);
-    //               shooterFlywheelLeft.setGoalState(ShooterFlywheelState.OFF);
-    //               shooterFlywheelRight.setGoalState(ShooterFlywheelState.OFF);
+    //               flywheelLeft.setGoalState(FlywheelState.OFF);
+    //               flywheelRight.setGoalState(FlywheelState.OFF);
     //             }));
 
     // operatorController
@@ -568,21 +557,21 @@ public class RobotContainer {
     //     .leftTrigger()
     //     .onFalse(Commands.runOnce(() -> intake.setGoalState(IntakeState.OFF)));
 
-    operatorController
-        .rightBumper()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  shooterFlywheelRight.setGoalState(ShooterFlywheelState.MANUAL);
-                }));
+    // operatorController
+    //     .rightBumper()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //             () -> {
+    //               flywheelRight.setGoalState(FlywheelState.MANUAL);
+    //             }));
 
-    operatorController
-        .rightBumper()
-        .onFalse(
-            Commands.runOnce(
-                () -> {
-                  shooterFlywheelRight.setGoalState(ShooterFlywheelState.OFF);
-                }));
+    // operatorController
+    //     .rightBumper()
+    //     .onFalse(
+    //         Commands.runOnce(
+    //             () -> {
+    //               flywheelRight.setGoalState(FlywheelState.OFF);
+    //             }));
 
     // shooterHoodRight.setDefaultCommand(
     //     ShooterCommands.manualShooterHood(shooterHoodRight, () ->
@@ -599,8 +588,8 @@ public class RobotContainer {
     // shooterHoodRight.setDefaultCommand(getAutonomousCommand()); // todo
     // turretLeft.setDefaultCommand(getAutonomousCommand()); // todo
     // turretRight.setDefaultCommand(getAutonomousCommand()); // todo
-    // shooterFlywheelLeft.setDefaultCommand(getAutonomousCommand()); // todo
-    // shooterFlywheelRight.setDefaultCommand(getAutonomousCommand()); // todo
+    // flywheelLeft.setDefaultCommand(getAutonomousCommand()); // todo
+    // flywheelRight.setDefaultCommand(getAutonomousCommand()); // todo
 
   }
 
