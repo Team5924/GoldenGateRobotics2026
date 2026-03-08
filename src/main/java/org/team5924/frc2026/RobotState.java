@@ -18,17 +18,16 @@ package org.team5924.frc2026;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import lombok.Getter;
 import lombok.Setter;
 import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
-import org.team5924.frc2026.subsystems.SuperShooter.ShooterState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
 import org.team5924.frc2026.subsystems.rollers.hopper.Hopper.HopperState;
 import org.team5924.frc2026.subsystems.rollers.indexer.Indexer.IndexerState;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
-import org.team5924.frc2026.subsystems.rollers.shooterRoller.ShooterRoller.ShooterRollerState;
+import org.team5924.frc2026.subsystems.rollers.shooterFlywheel.ShooterFlywheel.ShooterFlywheelState;
 import org.team5924.frc2026.subsystems.turret.Turret.TurretState;
 
 @Getter
@@ -40,8 +39,20 @@ public class RobotState {
     return instance;
   }
 
-  public static double getTime() {
-    return ((double) Logger.getTimestamp() * 1.0E-6);
+  @Getter @Setter private ChassisSpeeds robotVelocity = new ChassisSpeeds();
+  @Getter @Setter private ChassisSpeeds robotSetpointVelocity = new ChassisSpeeds();
+
+  /** Get the rotation of the estimated pose. */
+  public Rotation2d getRotation() {
+    return estimatedPose.getRotation();
+  }
+
+  public ChassisSpeeds getFieldVelocity() {
+    return ChassisSpeeds.fromRobotRelativeSpeeds(robotVelocity, getRotation());
+  }
+
+  public ChassisSpeeds getFieldSetpointVelocity() {
+    return ChassisSpeeds.fromRobotRelativeSpeeds(robotSetpointVelocity, getRotation());
   }
 
   Rotation2d gyroOffset = Rotation2d.kZero;
@@ -77,10 +88,6 @@ public class RobotState {
   /* ### Indexer ### */
   @Getter @Setter private IndexerState indexerState = IndexerState.OFF;
 
-  /*### Shooter ### */
-  @Getter @Setter private ShooterState leftShooterState = ShooterState.OFF;
-  @Getter @Setter private ShooterState rightShooterState = ShooterState.OFF;
-
   // Turret
   @Getter @Setter private TurretState leftTurretState = TurretState.OFF;
   @Getter @Setter private TurretState rightTurretState = TurretState.OFF;
@@ -90,6 +97,6 @@ public class RobotState {
   @Getter @Setter private ShooterHoodState rightShooterHoodState = ShooterHoodState.OFF;
 
   /*### Shooter Roller ### */
-  @Getter @Setter private ShooterRollerState leftShooterRollerState = ShooterRollerState.OFF;
-  @Getter @Setter private ShooterRollerState rightShooterRollerState = ShooterRollerState.OFF;
+  @Getter @Setter private ShooterFlywheelState leftShooterFlywheelState = ShooterFlywheelState.OFF;
+  @Getter @Setter private ShooterFlywheelState rightShooterFlywheelState = ShooterFlywheelState.OFF;
 }

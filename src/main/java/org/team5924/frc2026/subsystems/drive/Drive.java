@@ -299,6 +299,7 @@ public class Drive extends SubsystemBase {
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
     }
+    RobotState.getInstance().setRobotVelocity(getChassisSpeeds());
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
@@ -356,6 +357,8 @@ public class Drive extends SubsystemBase {
       modules[i].runSetpoint(setpointStates[i]);
     }
 
+    RobotState.getInstance().setRobotSetpointVelocity(discreteSpeeds);
+
     // Log optimized setpoints (runSetpoint mutates each state)
     Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
   }
@@ -384,6 +387,7 @@ public class Drive extends SubsystemBase {
     for (int i = 0; i < 4; i++) {
       modules[i].runCharacterization(output);
     }
+    RobotState.getInstance().setRobotSetpointVelocity(new ChassisSpeeds());
   }
 
   /** Stops the drive. */

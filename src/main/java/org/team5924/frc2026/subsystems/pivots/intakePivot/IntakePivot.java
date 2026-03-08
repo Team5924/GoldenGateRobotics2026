@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.FieldState;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.LoggedTunableNumber;
@@ -85,9 +86,9 @@ public class IntakePivot extends SubsystemBase {
     Logger.recordOutput("IntakePivot/TargetRads", goalState.rads.getAsDouble());
     Logger.recordOutput("IntakePivot/CurrentRads", inputs.intakePivotPositionRads);
     Logger.recordOutput("IntakePivot/IsAtSetpoint", isAtSetpoint = isAtSetpoint());
-    Logger.recordOutput(
-        "IntakePivot/TimeSinceLastStateChange",
-        timeSinceLastStateChange = RobotState.getTime() - lastStateChange);
+    // Logger.recordOutput(
+    //     "IntakePivot/TimeSinceLastStateChange",
+    //     timeSinceLastStateChange = RobotState.getTime() - lastStateChange);
 
     intakePivotMotorDisconnected.set(!inputs.intakePivotMotorConnected);
 
@@ -168,6 +169,6 @@ public class IntakePivot extends SubsystemBase {
         break;
     }
 
-    lastStateChange = RobotState.getTime();
+    lastStateChange = FieldState.getInstance().getTime();
   }
 }

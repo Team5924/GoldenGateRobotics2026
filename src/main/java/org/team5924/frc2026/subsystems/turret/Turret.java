@@ -24,6 +24,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.FieldState;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.LoggedTunableNumber;
@@ -46,7 +47,9 @@ public class Turret extends SubsystemBase {
 
     NINETY(new LoggedTunableNumber("Turret/Volts/Ninety", Math.PI / 2)),
 
-    ZERO(() -> 0.0);
+    ZERO(() -> 0.0),
+
+    AUTO(() -> 0.0);
 
     @Getter private final DoubleSupplier rads;
 
@@ -67,6 +70,8 @@ public class Turret extends SubsystemBase {
   private boolean shouldContinue;
 
   private final String side;
+
+  @Setter private double autoInput = 0.0;
 
   public Turret(TurretIO io, boolean isLeft) {
     side = isLeft ? "Left" : "Right";
@@ -112,7 +117,7 @@ public class Turret extends SubsystemBase {
             : RobotState.getInstance().getRightTurretState();
     switch (currentState) {
       case MOVING -> {
-        if (isAtSetpoint()) setRespectiveTurretState(goalState);
+        if (isAtSetpoint() && goalState != TurretState.AUTO) setRespectiveTurretState(goalState);
       }
       case MANUAL -> handleManualState();
       case OFF -> io.stop();
@@ -177,13 +182,17 @@ public class Turret extends SubsystemBase {
         setRespectiveTurretState(TurretState.OFF);
         io.stop();
         break;
+      case AUTO:
+        setRespectiveTurretState(TurretState.MOVING);
+        io.setPosition(autoInput);
+        break;
       default:
         setRespectiveTurretState(TurretState.MOVING);
         io.setPosition(goalState.rads.getAsDouble());
         break;
     }
 
-    lastStateChange = RobotState.getTime();
+    lastStateChange = FieldState.getInstance().getTime();
   }
 
   private void setRespectiveTurretState(TurretState state) {

@@ -50,6 +50,7 @@ public class ShooterHood extends SubsystemBase {
 
     // TODO: test and update angle (rads)
     BUMPER_SHOOTING(new LoggedTunableNumber("ShooterHood/BumperShooting", Math.toRadians(30))),
+    AUTO(() -> 0.0),
 
     // in-between state
     MOVING(() -> 0.0);
@@ -69,6 +70,8 @@ public class ShooterHood extends SubsystemBase {
   private boolean showNotImplementedAlert;
 
   private final String side;
+
+  @Setter private double autoInput = 0.0;
 
   public ShooterHood(ShooterHoodIO io, boolean isLeft) {
     side = isLeft ? "Left" : "Right";
@@ -107,7 +110,8 @@ public class ShooterHood extends SubsystemBase {
     showNotImplementedAlert = false;
     switch (getRespectiveShooterHoodState()) {
       case MOVING -> {
-        if (isAtSetpoint()) setRespectiveShooterHoodState(goalState);
+        if (isAtSetpoint() && goalState != ShooterHoodState.AUTO)
+          setRespectiveShooterHoodState(goalState);
       }
       case AUTO_SHOOTING, NEUTRAL_SHUFFLING, OPPONENT_SHUFFLING -> {
         showNotImplementedAlert = true; // TODO: handle this sometime
@@ -162,6 +166,10 @@ public class ShooterHood extends SubsystemBase {
         DriverStation.reportError(
             side + " Shooter Hood: MOVING is an invalid goal state; it is a transition state!!",
             null);
+        break;
+      case AUTO:
+        setRespectiveShooterHoodState(ShooterHoodState.MOVING);
+        io.setPosition(autoInput);
         break;
       default:
         setRespectiveShooterHoodState(goalState);

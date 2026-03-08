@@ -1,5 +1,5 @@
 /*
- * ShooterRollerIO.java
+ * ShooterFlywheelIOSim.java
  */
 
 /* 
@@ -14,8 +14,6 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.shooterRoller;
+package org.team5924.frc2026.subsystems.rollers.shooterFlywheel;
 
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO;
-
-public interface ShooterRollerIO extends GenericRollerSystemIO {}
+public class ShooterFlywheelIOSim {}
