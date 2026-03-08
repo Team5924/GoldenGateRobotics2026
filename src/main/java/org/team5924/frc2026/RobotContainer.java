@@ -113,13 +113,15 @@ public class RobotContainer {
         // indexer = new Indexer(new IndexerIOTalonFX());
 
         // shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(false), false);
-        shooterFlywheelLeft = new ShooterFlywheel(new ShooterFlywheelKrakenFOC(true), true);
+        // shooterFlywheelLeft = new ShooterFlywheel(new ShooterFlywheelKrakenFOC(true), true);
+        shooterFlywheelLeft = new ShooterFlywheel(new ShooterFlywheelIO() {}, true);
         // turretRight = new Turret(new TurretIOTalonFX(false), false);
 
         // shooterHoodLeft = new ShooterHood(new ShooterHoodIOTalonFX(true), true);
         turretLeft = new Turret(new TurretIOTalonFX(true), true);
 
-        shooterFlywheelRight = new ShooterFlywheel(new ShooterFlywheelKrakenFOC(true), false);
+        // shooterFlywheelRight = new ShooterFlywheel(new ShooterFlywheelIO() {}, true);
+        shooterFlywheelRight = new ShooterFlywheel(new ShooterFlywheelKrakenFOC(false), false);
         // turretLeft = new Turret(new TurretIOTalonFX(true), true);
 
         intakePivot = new IntakePivot(new IntakePivotIO() {});
@@ -128,7 +130,8 @@ public class RobotContainer {
 
         // shooterRollerRight =
         //     new ShooterRoller(new ShooterRollerIO() {}, new BeamBreakIO() {}, true);
-        turretRight = new Turret(new TurretIO() {}, false);
+        turretRight = new Turret(new TurretIOTalonFX(false), false);
+        // turretRight = new Turret(new TurretIO() {}, false);
 
         shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, false);
         // shooterRollerLeft =
@@ -593,6 +596,7 @@ public class RobotContainer {
                 () -> {
                   shooterFlywheelRight.setGoalState(ShooterFlywheelState.OFF);
                 }));
+
     // shooterHoodRight.setDefaultCommand(
     //     ShooterCommands.manualShooterHood(shooterHoodRight, () ->
     // operatorController.getRightY()));

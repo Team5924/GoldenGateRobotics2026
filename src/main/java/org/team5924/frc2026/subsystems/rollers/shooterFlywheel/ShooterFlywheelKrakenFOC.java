@@ -151,17 +151,17 @@ public class ShooterFlywheelKrakenFOC implements ShooterFlywheelIO {
                 ? Constants.ShooterRollerFollowerLeft.CONFIG
                 : Constants.ShooterRollerFollowerRight.CONFIG);
 
-    boolean isErrorPresent = false;
-    for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
+    // // boolean isErrorPresent = false;
+    // // for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
 
-    if (isErrorPresent)
-      Elastic.sendNotification(
-          new Notification(
-              NotificationLevel.WARNING,
-              sideName + "ShooterFlywheel Configs",
-              "Error in" + sideName + " shooter flywheel configs!"));
+    // if (isErrorPresent)
+    //   Elastic.sendNotification(
+    //       new Notification(
+    //           NotificationLevel.WARNING,
+    //           sideName + "ShooterFlywheel Configs",
+    //           "Error in" + sideName + " shooter flywheel configs!"));
 
-    Logger.recordOutput("ShooterFlywheel/InitConfReport", statusArray);
+    // Logger.recordOutput("ShooterFlywheel/InitConfReport", statusArray);
 
     shooterFlywheelFollowerTalon.setControl(
         isLeft
