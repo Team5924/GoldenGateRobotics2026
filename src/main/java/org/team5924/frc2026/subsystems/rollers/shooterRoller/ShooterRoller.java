@@ -23,8 +23,6 @@ import lombok.Setter;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
-import org.team5924.frc2026.subsystems.sensors.BeamBreakIO;
-import org.team5924.frc2026.subsystems.sensors.BeamBreakIOInputsAutoLogged;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
@@ -45,27 +43,22 @@ public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRoll
 
     // TODO: test and update volts
     BUMPER_SHOOTING(new LoggedTunableNumber("ShooterRoller/BumperShooting", -8.0)),
-    B4(() -> -4.0),
-    B6(() -> -6.0),
-    B12(() -> -12.0),
-    B8(() -> -8.0);
+    B4(() -> 4.0),
+    B6(() -> 6.0),
+    B12(() -> 12.0),
+    B8(() -> 8.0);
 
     private final DoubleSupplier voltageSupplier;
   }
 
   private ShooterRollerState goalState = ShooterRollerState.OFF;
 
-  // Shooter Beam Break
-  private final BeamBreakIO beamBreakIO;
-  private final BeamBreakIOInputsAutoLogged beamBreakInputs = new BeamBreakIOInputsAutoLogged();
-
   private final boolean isLeft;
 
   @Setter private double input;
 
-  public ShooterRoller(ShooterRollerIO io, BeamBreakIO beamBreakIO, boolean isLeft) {
+  public ShooterRoller(ShooterRollerIO io, boolean isLeft) {
     super("ShooterRoller", io);
-    this.beamBreakIO = beamBreakIO;
     this.isLeft = isLeft;
   }
 

@@ -25,14 +25,10 @@ public class ShooterRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC
   private class ShooterRollerFollower extends GenericRollerSystemIOKrakenFOC {
     public ShooterRollerFollower(boolean isLeft) {
       super(
-          isLeft
-              ? Constants.FlywheelFollowerLeft.CAN_ID
-              : Constants.FlywheelFollowerRight.CAN_ID,
+          isLeft ? Constants.FlywheelFollowerLeft.CAN_ID : Constants.FlywheelFollowerRight.CAN_ID,
           Constants.GeneralFlywheel.BUS,
-          isLeft
-              ? Constants.FlywheelFollowerLeft.CONFIG
-              : Constants.FlywheelFollowerRight.CONFIG,
-              Constants.GeneralFlywheel.MOTOR_TO_MECHANISM);
+          isLeft ? Constants.FlywheelFollowerLeft.CONFIG : Constants.FlywheelFollowerRight.CONFIG,
+          Constants.GeneralFlywheel.MOTOR_TO_MECHANISM);
     }
   }
 
@@ -40,13 +36,9 @@ public class ShooterRollerIOKrakenFOC extends GenericRollerSystemIOKrakenFOC
 
   public ShooterRollerIOKrakenFOC(boolean isLeft) {
     super(
-        isLeft
-            ? Constants.FlywheelLeaderLeft.CAN_ID
-            : Constants.FlywheelLeaderRight.CAN_ID,
+        isLeft ? Constants.FlywheelLeaderLeft.CAN_ID : Constants.FlywheelLeaderRight.CAN_ID,
         Constants.GeneralFlywheel.BUS,
-        isLeft
-            ? Constants.FlywheelLeaderLeft.CONFIG
-            : Constants.FlywheelLeaderRight.CONFIG,
+        isLeft ? Constants.FlywheelLeaderLeft.CONFIG : Constants.FlywheelLeaderRight.CONFIG,
         Constants.GeneralFlywheel.MOTOR_TO_MECHANISM);
 
     shooterFollower = new ShooterRollerFollower(isLeft);
