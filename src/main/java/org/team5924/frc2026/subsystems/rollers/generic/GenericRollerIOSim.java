@@ -28,7 +28,7 @@ public class GenericRollerIOSim implements GenericRollerIO {
   protected final DCMotor gearbox;
   private double appliedVoltage = 0.0;
 
-  public GenericRollerIOSim(DCMotor motorModel, double reduction, double moi) {
+  public GenericRollerIOSim(DCMotor motorModel, double moi, double reduction) {
     gearbox = motorModel;
     sim =
         new DCMotorSim(LinearSystemId.createDCMotorSystem(motorModel, moi, reduction), motorModel);
@@ -44,6 +44,7 @@ public class GenericRollerIOSim implements GenericRollerIO {
     inputs.velocityRadsPerSec = sim.getAngularVelocityRadPerSec();
     inputs.appliedVoltage = appliedVoltage;
     inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
+    inputs.tempCelsius = 25;
   }
 
   @Override

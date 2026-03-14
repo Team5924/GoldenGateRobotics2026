@@ -60,7 +60,7 @@ public class Turret extends SubsystemBase {
 
   @Getter private TurretState goalState = TurretState.OFF;
 
-  private final Alert turretMotorDisconnected;
+  private final Alert motorDisconnected;
 
   protected final Alert overheatAlert;
 
@@ -77,7 +77,7 @@ public class Turret extends SubsystemBase {
     side = isLeft ? "Left" : "Right";
     this.io = io;
     this.goalState = TurretState.OFF;
-    this.turretMotorDisconnected =
+    this.motorDisconnected =
         new Alert(side + " Turret Motor Disconnected!", Alert.AlertType.kWarning);
     this.isLeft = isLeft;
 
@@ -93,22 +93,22 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("Turret/" + side + "/GoalState", goalState.toString());
     Logger.recordOutput("Turret/" + side + "/CurrentState", getRespectiveTurretState());
     Logger.recordOutput("Turret/" + side + "/TargetRads", goalState.rads.getAsDouble());
-    Logger.recordOutput("Turret/" + side + "/CurrentRads", inputs.turretPositionRads);
+    Logger.recordOutput("Turret/" + side + "/CurrentRads", inputs.positionRads);
     Logger.recordOutput("Turret/" + side + "/ExceedBoundsDirection", exceedBoundsDirection);
     Logger.recordOutput("Turret/" + side + "/ShouldContinue", shouldContinue);
 
     handleCurrentState();
 
-    turretMotorDisconnected.set(!inputs.turretMotorConnected);
+    motorDisconnected.set(!inputs.motorConnected);
 
-    boolean isOverheating = inputs.turretTempCelsius > Constants.OVERHEAT_THRESHOLD;
+    boolean isOverheating = inputs.tempCelsius > Constants.OVERHEAT_THRESHOLD;
     overheatAlert.set(isOverheating);
   }
 
   public boolean isAtSetpoint() {
     // return RobotState.getTime() - lastStateChange > Constants.GeneralTurret.STATE_TIMEOUT
     return EqualsUtil.epsilonEquals(
-        inputs.setpointRads, inputs.turretPositionRads, Constants.GeneralTurret.EPSILON_RADS);
+        inputs.setpointRads, inputs.positionRads, Constants.GeneralTurret.EPSILON_RADS);
   }
 
   private void handleCurrentState() {

@@ -27,7 +27,7 @@ public class FlywheelIOSim implements FlywheelIO {
   private final DCMotorSim sim;
   private final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
   private double appliedVoltage = 0.0;
-  private double setpoint = 0.0;
+  private double setpoint;
 
   public FlywheelIOSim() {
     sim =
@@ -49,12 +49,19 @@ public class FlywheelIOSim implements FlywheelIO {
     inputs.velocityRadsPerSec = sim.getAngularVelocityRadPerSec();
     inputs.appliedVoltage = appliedVoltage;
     inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
+    inputs.setpointVelocity = setpoint;
+    inputs.tempCelsius = 25.0;
   }
 
   @Override
   public void runVolts(double volts) {
     appliedVoltage = MathUtil.clamp(volts, -12.0, 12.0);
     sim.setInputVoltage(appliedVoltage);
+  }
+  @Override
+  public void setVelocity(double velocity) {
+    sim.setAngularVelocity(appliedVoltage);
+    setpoint = velocity;
   }
 
   @Override

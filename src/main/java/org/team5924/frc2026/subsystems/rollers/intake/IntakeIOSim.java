@@ -23,6 +23,6 @@ import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerIOSim;
 public class IntakeIOSim extends GenericRollerIOSim implements IntakeIO {
   public IntakeIOSim() {
     super(
-        DCMotor.getKrakenX60Foc(1), Constants.Intake.MOTOR_TO_MECHANISM, Constants.Intake.SIM_MOI);
+        DCMotor.getKrakenX60Foc(1), Constants.Intake.SIM_MOI, Constants.Intake.MOTOR_TO_MECHANISM);
   }
 }

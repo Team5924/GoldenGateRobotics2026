@@ -33,8 +33,9 @@ public class ShooterHoodIOSim implements ShooterHoodIO {
     sim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
-                Constants.GeneralShooterHood.MOTOR_TO_MECHANISM,
-                Constants.GeneralShooterHood.SIM_MOI),
+                gearbox,
+                Constants.GeneralShooterHood.SIM_MOI,
+                Constants.GeneralShooterHood.MOTOR_TO_MECHANISM),
             gearbox);
   }
 
@@ -49,6 +50,7 @@ public class ShooterHoodIOSim implements ShooterHoodIO {
     inputs.appliedVoltage = appliedVoltage;
     inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
     inputs.setpointRads = setpoint;
+    inputs.tempCelsius = 25.0;
   }
 
   @Override

@@ -24,7 +24,7 @@ public class ShooterRollerIOSim extends GenericRollerIOSim implements ShooterRol
   public ShooterRollerIOSim(boolean isLeft) {
     super(
         DCMotor.getKrakenX60Foc(1),
-        Constants.GeneralFlywheel.MOTOR_TO_MECHANISM,
-        Constants.GeneralFlywheel.SIM_MOI);
+        Constants.GeneralFlywheel.SIM_MOI,
+        Constants.GeneralFlywheel.MOTOR_TO_MECHANISM);
   }
 }

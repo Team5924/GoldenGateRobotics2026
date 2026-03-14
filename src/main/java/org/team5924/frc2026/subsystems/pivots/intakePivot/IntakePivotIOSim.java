@@ -47,6 +47,7 @@ public class IntakePivotIOSim implements IntakePivotIO {
     inputs.velocityRadsPerSec = sim.getAngularVelocityRadPerSec();
     inputs.appliedVoltage = appliedVoltage;
     inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
+    inputs.tempCelsius = 25.0;
     inputs.positionRads = setpoint;
   }
 

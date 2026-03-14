@@ -232,7 +232,7 @@ public class TurretIOTalonFX implements TurretIO {
 
   @Override
   public void updateInputs(TurretIOInputs inputs) {
-    inputs.turretMotorConnected =
+    inputs.motorConnected =
         BaseStatusSignal.refreshAll(
                 turretPosition,
                 turretVelocity,
@@ -251,15 +251,15 @@ public class TurretIOTalonFX implements TurretIO {
                 cancoderPositionRotations)
             .isOK();
 
-    inputs.turretPosition =
+    inputs.position =
         BaseStatusSignal.getLatencyCompensatedValueAsDouble(turretPosition, turretVelocity);
-    inputs.turretPositionRads = Units.rotationsToRadians(inputs.turretPosition);
+    inputs.positionRads = Units.rotationsToRadians(inputs.position);
 
-    inputs.turretVelocityRadsPerSec = Units.rotationsToRadians(turretVelocity.getValueAsDouble());
-    inputs.turretAppliedVoltage = turretAppliedVoltage.getValueAsDouble();
-    inputs.turretSupplyCurrentAmps = turretSupplyCurrent.getValueAsDouble();
-    inputs.turretTorqueCurrentAmps = turretTorqueCurrent.getValueAsDouble();
-    inputs.turretTempCelsius = turretTempCelsius.getValueAsDouble();
+    inputs.velocityRadsPerSec = Units.rotationsToRadians(turretVelocity.getValueAsDouble());
+    inputs.appliedVoltage = turretAppliedVoltage.getValueAsDouble();
+    inputs.supplyCurrentAmps = turretSupplyCurrent.getValueAsDouble();
+    inputs.torqueCurrentAmps = turretTorqueCurrent.getValueAsDouble();
+    inputs.tempCelsius = turretTempCelsius.getValueAsDouble();
 
     inputs.motionMagicVelocityTarget =
         motorPositionToRads(turretTalon.getClosedLoopReferenceSlope().getValueAsDouble());
@@ -282,7 +282,7 @@ public class TurretIOTalonFX implements TurretIO {
     inputs.cancoderSupplyVoltage = cancoderSupplyVoltage.getValueAsDouble();
     inputs.cancoderPositionRotations = cancoderPositionRotations.getValueAsDouble();
 
-    inputs.turretPositionCancoder = inputs.cancoderPositionRotations;
+    inputs.positionCancoder = inputs.cancoderPositionRotations;
   }
 
   @Override
