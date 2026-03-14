@@ -87,8 +87,6 @@ public class Flywheel extends SubsystemBase {
     Logger.recordOutput("Flywheel/" + side + "/GoalState", goalState.toString());
     Logger.recordOutput(
         "Flywheel/" + side + "/CurrentState", getRespectiveFlywheelState().toString());
-    Logger.recordOutput(
-        "Flywheel/" + side + "/CurrentState", getRespectiveFlywheelState().toString());
     Logger.recordOutput("Flywheel/" + side + "/TargetRads", goalState.velocity.getAsDouble());
     Logger.recordOutput("Flywheel/" + side + "/CurrentRads", inputs.positionRads);
     Logger.recordOutput("Flywheel/" + side + "/IsAtSetpoint", isAtSetpoint);

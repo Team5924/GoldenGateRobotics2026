@@ -40,7 +40,9 @@ import org.team5924.frc2026.RobotState;
 
 @ExtensionMethod({GeomUtil.class})
 public class LaunchCalculator {
-  private static LaunchCalculator instance;
+  private static final class Holder {
+    private static final LaunchCalculator INSTANCE = new LaunchCalculator();
+  }
 
   @Getter private double hoodAngleOffsetDeg = 0.0;
 
@@ -53,8 +55,7 @@ public class LaunchCalculator {
   private Rotation2d lastDriveAngle;
 
   public static LaunchCalculator getInstance() {
-    if (instance == null) instance = new LaunchCalculator();
-    return instance;
+    return Holder.INSTANCE;
   }
 
   public record LaunchingParameters(

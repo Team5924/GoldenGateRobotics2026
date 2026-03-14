@@ -29,11 +29,13 @@ public class FlywheelIOSim implements FlywheelIO {
   private double appliedVoltage = 0.0;
   private double setpoint = 0.0;
 
-  public FlywheelIOSim(boolean isLeft) {
+  public FlywheelIOSim() {
     sim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
-                Constants.GeneralFlywheel.MOTOR_TO_MECHANISM, Constants.GeneralFlywheel.SIM_MOI),
+                gearbox,
+                Constants.GeneralFlywheel.MOTOR_TO_MECHANISM,
+                Constants.GeneralFlywheel.SIM_MOI),
             gearbox);
   }
 

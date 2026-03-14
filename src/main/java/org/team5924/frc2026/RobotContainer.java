@@ -50,9 +50,11 @@ import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOTalonFX;
 import org.team5924.frc2026.subsystems.rollers.hopper.Hopper;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperIO;
+import org.team5924.frc2026.subsystems.rollers.hopper.HopperIOSim;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperIOTalonFX;
 import org.team5924.frc2026.subsystems.rollers.indexer.Indexer;
 import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIO;
+import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIOSim;
 import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIOTalonFX;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake;
 import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
@@ -86,8 +88,6 @@ public class RobotContainer {
   private final ShooterHood shooterHoodLeft;
   private final ShooterRoller shooterRollerLeft;
   private final Turret turretLeft;
-  // private final ExampleSystem exampleSystem;
-  // private final ExampleRoller exampleRoller;
 
   // Controller
   private final CommandXboxController driveController = new CommandXboxController(0);
@@ -155,8 +155,8 @@ public class RobotContainer {
 
         intake = new Intake(new IntakeIOSim());
         intakePivot = new IntakePivot(new IntakePivotIOSim());
-        hopper = new Hopper(new HopperIO() {}); // TODO: Hopper sim implementation
-        indexer = new Indexer(new IndexerIO() {});
+        hopper = new Hopper(new HopperIOSim());
+        indexer = new Indexer(new IndexerIOSim());
 
         shooterHoodLeft = new ShooterHood(new ShooterHoodIOSim(true), true);
         shooterRollerLeft = new ShooterRoller(new ShooterRollerIOSim(true), true);

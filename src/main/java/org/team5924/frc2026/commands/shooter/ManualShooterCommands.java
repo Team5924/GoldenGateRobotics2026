@@ -45,6 +45,4 @@ public class ManualShooterCommands {
         },
         turret);
   }
-
-  // public
 }

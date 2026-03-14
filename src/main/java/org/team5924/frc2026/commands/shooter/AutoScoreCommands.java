@@ -56,6 +56,8 @@ public class AutoScoreCommands {
           turret.setGoalState(TurretState.AUTO);
           shooterHood.setGoalState(ShooterHoodState.AUTO);
           flywheel.setGoalState(FlywheelState.AUTO);
+
+          LaunchCalculator.getInstance().clearLaunchingParameters();
         },
         turret,
         shooterHood,

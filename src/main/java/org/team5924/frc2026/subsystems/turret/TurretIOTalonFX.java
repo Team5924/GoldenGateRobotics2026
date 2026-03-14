@@ -28,6 +28,7 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -37,7 +38,6 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
-import org.team5924.frc2026.Constants.GeneralShooterHood;
 import org.team5924.frc2026.Constants.GeneralTurret;
 import org.team5924.frc2026.Constants.TurretLeft;
 import org.team5924.frc2026.Constants.TurretRight;
@@ -130,7 +130,7 @@ public class TurretIOTalonFX implements TurretIO {
     turretCANCoder =
         new CANcoder(
             isLeft ? TurretLeft.CANCODER_ID : TurretRight.CANCODER_ID,
-            new CANBus(GeneralShooterHood.BUS));
+            new CANBus(GeneralTurret.BUS));
 
     turretTalonConfig = turretTalon.getConfigurator();
 
@@ -369,8 +369,7 @@ public class TurretIOTalonFX implements TurretIO {
   }
 
   private double clampRads(double rads) {
-    // return MathUtil.clamp(rads, minPositionRads, maxPositionRads);
-    return rads;
+    return MathUtil.clamp(rads, minPositionRads, maxPositionRads);
   }
 
   private double radsToMotorPosition(double rads) {

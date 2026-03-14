@@ -53,7 +53,7 @@ public class FieldState {
     130, 105, 80, 55, 30, 0
   };
 
-  @Getter private MatchShift currentMatchShift = MatchShift.NONE;
+  @Getter private volatile MatchShift currentMatchShift = MatchShift.NONE;
 
   private Alliance autoWinner;
   private boolean hasAutoWinner;
