@@ -1,5 +1,5 @@
 /*
- * IntakePivotIOTalonFX.java
+ * FlywheelIOTalonFX.java
  */
 
 /* 
@@ -14,7 +14,7 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.pivots.intakePivot;
+package org.team5924.frc2026.subsystems.flywheel;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
@@ -23,54 +23,56 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
-import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.GravityTypeValue;
-import edu.wpi.first.math.MathUtil;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DriverStation;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
-import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
+import org.team5924.frc2026.Constants.FlywheelFollowerLeft;
+import org.team5924.frc2026.Constants.FlywheelFollowerRight;
+import org.team5924.frc2026.Constants.FlywheelLeaderLeft;
+import org.team5924.frc2026.Constants.FlywheelLeaderRight;
+import org.team5924.frc2026.Constants.GeneralFlywheel;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
-public class IntakePivotIOTalonFX implements IntakePivotIO {
+public class FlywheelIOTalonFX implements FlywheelIO {
   /* Hardware */
-  private final TalonFX talon;
+  private final TalonFX leaderTalon;
+  private final TalonFX followerTalon;
 
   /* Configurators */
-  private TalonFXConfigurator intakePivotTalonConfig;
+  private TalonFXConfigurator leaderConfig;
+  private TalonFXConfigurator followerConfig;
 
   /* Configs  */
   private final Slot0Configs slot0Configs;
   private final MotionMagicConfigs motionMagicConfigs;
-  private double setpointRads;
 
   /* Gains */
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("IntakePivot/kP", 100.0);
-  private final LoggedTunableNumber kI = new LoggedTunableNumber("IntakePivot/kI", 0.0);
-  private final LoggedTunableNumber kD = new LoggedTunableNumber("IntakePivot/kD", 0.0);
-  private final LoggedTunableNumber kS = new LoggedTunableNumber("IntakePivot/kS", 1.5);
-  private final LoggedTunableNumber kV = new LoggedTunableNumber("IntakePivot/kV", 0.0);
-  private final LoggedTunableNumber kG = new LoggedTunableNumber("IntakePivot/kG", 2.8);
-  private final LoggedTunableNumber kA = new LoggedTunableNumber("IntakePivot/kA", 0.0);
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("Flywheel/kP", 0.4);
+  private final LoggedTunableNumber kI = new LoggedTunableNumber("Flywheel/kI", 0.0);
+  private final LoggedTunableNumber kD = new LoggedTunableNumber("Flywheel/kD", 0.22);
+  private final LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 0.019);
+  private final LoggedTunableNumber kV = new LoggedTunableNumber("Flywheel/kV", 0.4);
+  private final LoggedTunableNumber kA = new LoggedTunableNumber("Flywheel/kA", 0.00);
 
   private final LoggedTunableNumber motionCruiseVelocity =
-      new LoggedTunableNumber("IntakePivot/MotionCruiseVelocity", 10.0);
+      new LoggedTunableNumber("Flywheel/MotionCruiseVelocity", 90.0);
   private final LoggedTunableNumber motionAcceleration =
-      new LoggedTunableNumber("IntakePivot/MotionAcceleration", 100.0);
+      new LoggedTunableNumber("Flywheel/MotionAcceleration", 900.0);
   private final LoggedTunableNumber motionJerk =
-      new LoggedTunableNumber("IntakePivot/MotionJerk", 0.0);
+      new LoggedTunableNumber("Flywheel/MotionJerk", 0.0);
 
   /* Status Signals */
   private final StatusSignal<Angle> position;
@@ -84,14 +86,26 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   private double prevClosedLoopReferenceSlope = 0.0;
   private double prevReferenceSlopeTimestamp = 0.0;
 
-  private final TorqueCurrentFOC currentOut;
-  private final PositionVoltage positionOut;
-  private final MotionMagicTorqueCurrentFOC motionMagicCurrent;
+  private final VoltageOut voltageOut;
+  private final MotionMagicVelocityVoltage motionMagicVelocity;
 
-  public IntakePivotIOTalonFX() {
-    talon = new TalonFX(Constants.IntakePivot.CAN_ID, new CANBus(Constants.IntakePivot.BUS));
+  private final String sideName;
 
-    intakePivotTalonConfig = talon.getConfigurator();
+  public FlywheelIOTalonFX(boolean isLeft) {
+    sideName = isLeft ? "Left" : "Right";
+
+    leaderTalon =
+        new TalonFX(
+            isLeft ? FlywheelLeaderLeft.CAN_ID : FlywheelLeaderRight.CAN_ID,
+            new CANBus(GeneralFlywheel.BUS));
+
+    followerTalon =
+        new TalonFX(
+            isLeft ? FlywheelFollowerLeft.CAN_ID : FlywheelFollowerRight.CAN_ID,
+            new CANBus(GeneralFlywheel.BUS));
+
+    leaderConfig = leaderTalon.getConfigurator();
+    followerConfig = followerTalon.getConfigurator();
 
     slot0Configs = new Slot0Configs();
     slot0Configs.kP = kP.get();
@@ -100,8 +114,6 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     slot0Configs.kS = kS.get();
     slot0Configs.kV = kV.get();
     slot0Configs.kA = kA.get();
-    slot0Configs.kG = kG.get();
-    slot0Configs.GravityType = GravityTypeValue.Arm_Cosine;
 
     motionMagicConfigs = new MotionMagicConfigs();
     motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
@@ -109,15 +121,18 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     motionMagicConfigs.MotionMagicJerk = motionJerk.get();
 
     // Apply Configs
-    StatusCode[] statusArray = new StatusCode[7];
+    StatusCode[] statusArray = new StatusCode[6];
 
-    statusArray[0] = intakePivotTalonConfig.apply(Constants.IntakePivot.CONFIG);
-    statusArray[1] = intakePivotTalonConfig.apply(slot0Configs);
-    statusArray[2] = intakePivotTalonConfig.apply(motionMagicConfigs);
-    statusArray[3] = intakePivotTalonConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
-    statusArray[4] = intakePivotTalonConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
-    statusArray[5] = intakePivotTalonConfig.apply(Constants.IntakePivot.SOFTWARE_LIMIT_CONFIGS);
-    statusArray[6] = intakePivotTalonConfig.apply(Constants.IntakePivot.FEEDBACK_CONFIGS);
+    statusArray[0] =
+        leaderConfig.apply(isLeft ? FlywheelLeaderLeft.CONFIG : FlywheelLeaderRight.CONFIG);
+    statusArray[1] = leaderConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
+    statusArray[2] = leaderConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
+    statusArray[3] = leaderConfig.apply(GeneralFlywheel.FEEDBACK_CONFIGS);
+
+    statusArray[4] = leaderConfig.apply(slot0Configs);
+
+    statusArray[5] =
+        followerConfig.apply(isLeft ? FlywheelFollowerLeft.CONFIG : FlywheelFollowerRight.CONFIG);
 
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
@@ -125,40 +140,38 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     if (isErrorPresent)
       Elastic.sendNotification(
           new Notification(
-              NotificationLevel.WARNING, "Intake Pivot Configs", "Error in Intake Pivot configs!"));
+              NotificationLevel.WARNING,
+              sideName + "Flywheel Configs",
+              "Error in" + sideName + " shooter flywheel configs!"));
 
-    Logger.recordOutput("IntakePivot/InitConfReport", statusArray);
+    Logger.recordOutput("Flywheel/" + sideName + "/InitConfReport", statusArray);
+
+    followerTalon.setControl(
+        isLeft
+            ? new Follower(FlywheelLeaderLeft.CAN_ID, MotorAlignmentValue.Opposed)
+            : new Follower(FlywheelLeaderRight.CAN_ID, MotorAlignmentValue.Opposed));
 
     // Get select status signals and set update frequency
-    position = talon.getPosition();
-    velocity = talon.getVelocity();
-    appliedVoltage = talon.getMotorVoltage();
-    supplyCurrent = talon.getSupplyCurrent();
-    torqueCurrent = talon.getTorqueCurrent();
-    tempCelsius = talon.getDeviceTemp();
+    position = leaderTalon.getPosition();
+    velocity = leaderTalon.getVelocity();
+    appliedVoltage = leaderTalon.getMotorVoltage();
+    supplyCurrent = leaderTalon.getSupplyCurrent();
+    torqueCurrent = leaderTalon.getTorqueCurrent();
+    tempCelsius = leaderTalon.getDeviceTemp();
 
-    closedLoopReferenceSlope = talon.getClosedLoopReferenceSlope();
+    closedLoopReferenceSlope = leaderTalon.getClosedLoopReferenceSlope();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        100.0,
-        position,
-        velocity,
-        appliedVoltage,
-        supplyCurrent,
-        torqueCurrent,
-        tempCelsius,
-        closedLoopReferenceSlope);
+        100.0, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius);
 
-    currentOut = new TorqueCurrentFOC(0.0);
-    positionOut = new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true).withSlot(0);
-    motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withSlot(0).withUpdateFreqHz(100);
+    voltageOut = new VoltageOut(0.0).withEnableFOC(true);
+    motionMagicVelocity = new MotionMagicVelocityVoltage(0.0).withEnableFOC(true).withSlot(0);
 
-    // assuming intake pivot starts stowed
-    talon.setPosition(Units.radiansToRotations(IntakePivotState.STOW.getRads().getAsDouble()));
+    leaderTalon.setPosition(0.0);
   }
 
   @Override
-  public void updateInputs(IntakePivotIOInputs inputs) {
+  public void updateInputs(FlywheelIOInputs inputs) {
     inputs.motorConnected =
         BaseStatusSignal.refreshAll(
                 position,
@@ -179,11 +192,8 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     inputs.torqueCurrentAmps = torqueCurrent.getValueAsDouble();
     inputs.tempCelsius = tempCelsius.getValueAsDouble();
 
-    inputs.motionMagicVelocityTarget = talon.getClosedLoopReferenceSlope().getValueAsDouble();
-    inputs.motionMagicPositionTarget = talon.getClosedLoopReference().getValueAsDouble();
-
-    inputs.setpointRads = setpointRads;
-    inputs.setpointPosition = Units.radiansToRotations(setpointRads);
+    inputs.motionMagicVelocityTarget =
+        motorPositionToRads(leaderTalon.getClosedLoopReferenceSlope().getValueAsDouble());
 
     double currentTime = closedLoopReferenceSlope.getTimestamp().getTime();
     double timeDiff = currentTime - prevReferenceSlopeTimestamp;
@@ -209,18 +219,17 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
           slot0Configs.kD = kD.get();
           slot0Configs.kS = kS.get();
           slot0Configs.kV = kV.get();
-          slot0Configs.kG = kG.get();
           slot0Configs.kA = kA.get();
 
-          StatusCode statusCode = talon.getConfigurator().apply(slot0Configs);
+          StatusCode statusCode = leaderTalon.getConfigurator().apply(slot0Configs);
           if (!statusCode.isOK()) {
             Elastic.sendNotification(
                 new Notification(
                     NotificationLevel.WARNING,
-                    "IntakePivot Slot 0 Configs",
-                    "Error in periodically updating intakePivot Slot0 configs!"));
+                    "Flywheel Slot 0 Configs",
+                    "Error in periodically updating flywheel Slot0 configs!"));
 
-            Logger.recordOutput("IntakePivot/UpdateSlot0Report", statusCode);
+            Logger.recordOutput("Flywheel/UpdateSlot0Report", statusCode);
           }
         },
         kP,
@@ -228,7 +237,6 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
         kD,
         kS,
         kV,
-        kG,
         kA);
 
     LoggedTunableNumber.ifChanged(
@@ -238,15 +246,15 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
           motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
           motionMagicConfigs.MotionMagicJerk = motionJerk.get();
 
-          StatusCode statusCode = talon.getConfigurator().apply(motionMagicConfigs);
+          StatusCode statusCode = leaderTalon.getConfigurator().apply(motionMagicConfigs);
           if (!statusCode.isOK()) {
             Elastic.sendNotification(
                 new Notification(
                     NotificationLevel.WARNING,
-                    "IntakePivot Motion Magic Configs",
-                    "Error in periodically updating intakePivot MotionMagic configs!"));
+                    "Flywheel Motion Magic Configs",
+                    "Error in periodically updating flywheel MotionMagic configs!"));
 
-            Logger.recordOutput("IntakePivot/UpdateStatusCodeReport", statusCode);
+            Logger.recordOutput("Flywheel/UpdateStatusCodeReport", statusCode);
           }
         },
         motionAcceleration,
@@ -255,46 +263,25 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   }
 
   @Override
-  public void runCurrent(double volts) {
-    talon.setControl(currentOut.withOutput(volts));
+  public void runVolts(double volts) {
+    leaderTalon.setControl(voltageOut.withOutput(volts));
   }
 
   @Override
-  public void setPosition(double rads) {
-    if (!DriverStation.isEnabled()) {
-      stop();
-      return;
-    }
-
-    setpointRads = clampRads(rads);
-    talon.setControl(motionMagicCurrent.withPosition(radsToPosition(setpointRads)));
-  }
-
-  @Override
-  public void holdPosition(double rads) {
-    if (!DriverStation.isEnabled()) {
-      stop();
-      return;
-    }
-
-    talon.setControl(positionOut.withPosition(radsToPosition(rads)));
+  public void setVelocity(double velocity) {
+    leaderTalon.setControl(motionMagicVelocity.withVelocity(velocity));
   }
 
   @Override
   public void stop() {
-    talon.stopMotor();
+    leaderTalon.stopMotor();
   }
 
-  private double clampRads(double rads) {
-    return MathUtil.clamp(
-        rads, Constants.IntakePivot.MIN_POSITION_RADS, Constants.IntakePivot.MAX_POSITION_RADS);
-  }
-
-  private double radsToPosition(double rads) {
+  private double radsToMotorPosition(double rads) {
     return Units.radiansToRotations(rads);
   }
 
-  private double positionToRads(double motorPosition) {
+  private double motorPositionToRads(double motorPosition) {
     return Units.rotationsToRadians(motorPosition);
   }
 }

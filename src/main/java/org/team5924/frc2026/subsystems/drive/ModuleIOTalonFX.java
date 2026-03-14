@@ -48,7 +48,6 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import java.util.Queue;
 import lombok.Getter;
-
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.generated.TunerConstants;
 import org.team5924.frc2026.util.Elastic;
@@ -219,9 +218,11 @@ public class ModuleIOTalonFX implements ModuleIO {
   public void updateInputs(ModuleIOInputs inputs) {
     // Refresh all signals
     var driveStatus =
-        BaseStatusSignal.refreshAll(drivePosition, driveVelocity, driveAppliedVolts, driveCurrent, driveTemperature);
+        BaseStatusSignal.refreshAll(
+            drivePosition, driveVelocity, driveAppliedVolts, driveCurrent, driveTemperature);
     var turnStatus =
-        BaseStatusSignal.refreshAll(turnPosition, turnVelocity, turnAppliedVolts, turnCurrent, turnTemperature);
+        BaseStatusSignal.refreshAll(
+            turnPosition, turnVelocity, turnAppliedVolts, turnCurrent, turnTemperature);
     var turnEncoderStatus = BaseStatusSignal.refreshAll(turnAbsolutePosition);
 
     // Update drive inputs
@@ -318,7 +319,7 @@ public class ModuleIOTalonFX implements ModuleIO {
         TunerConstants.kDDrive,
         TunerConstants.kSDrive,
         TunerConstants.kVDrive);
-}
+  }
 
   @Override
   public void setDriveOpenLoop(double output) {

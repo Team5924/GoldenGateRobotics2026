@@ -16,6 +16,6 @@
 
 package org.team5924.frc2026.subsystems.rollers.hopper;
 
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerIO;
 
-public interface HopperIO extends GenericRollerSystemIO {}
+public interface HopperIO extends GenericRollerIO {}

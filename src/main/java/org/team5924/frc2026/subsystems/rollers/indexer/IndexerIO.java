@@ -16,6 +16,6 @@
 
 package org.team5924.frc2026.subsystems.rollers.indexer;
 
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIO;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerIO;
 
-public interface IndexerIO extends GenericRollerSystemIO {}
+public interface IndexerIO extends GenericRollerIO {}

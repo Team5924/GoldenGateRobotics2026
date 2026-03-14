@@ -17,8 +17,15 @@
 package org.team5924.frc2026.commands.shooter;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import org.team5924.frc2026.subsystems.SuperShooter;
-import org.team5924.frc2026.subsystems.drive.Drive;
+import edu.wpi.first.wpilibj2.command.Commands;
+import org.team5924.frc2026.subsystems.flywheel.Flywheel;
+import org.team5924.frc2026.subsystems.flywheel.Flywheel.FlywheelState;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
+import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
+import org.team5924.frc2026.subsystems.turret.Turret;
+import org.team5924.frc2026.subsystems.turret.Turret.TurretState;
+import org.team5924.frc2026.util.LaunchCalculator;
+import org.team5924.frc2026.util.LaunchCalculator.LaunchingParameters;
 
 public class AutoScoreCommands {
   // TODO Make and auto score program
@@ -36,8 +43,24 @@ public class AutoScoreCommands {
   //   }
   private AutoScoreCommands() {}
 
-  public static Command autoScore(Drive drive, SuperShooter shooter) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'autoScore'");
+  public static Command runTrackTargetCommand(
+      Turret turret, ShooterHood shooterHood, Flywheel flywheel, boolean isLeft) {
+    return Commands.run(
+        () -> {
+          LaunchingParameters launchParams = LaunchCalculator.getInstance().getParameters(isLeft);
+
+          turret.setAutoInput(launchParams.turretRadians());
+          shooterHood.setAutoInput(launchParams.hoodAngle());
+          flywheel.setAutoInput(launchParams.flywheelSpeed());
+
+          turret.setGoalState(TurretState.AUTO);
+          shooterHood.setGoalState(ShooterHoodState.AUTO);
+          flywheel.setGoalState(FlywheelState.AUTO);
+
+          LaunchCalculator.getInstance().clearLaunchingParameters();
+        },
+        turret,
+        shooterHood,
+        flywheel);
   }
 }

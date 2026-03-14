@@ -21,15 +21,15 @@ import org.littletonrobotics.junction.AutoLog;
 public interface ShooterHoodIO {
   @AutoLog
   public static class ShooterHoodIOInputs {
-    public boolean shooterHoodMotorConnected = true;
-    public double shooterHoodPosition = 0.0;
-    public double shooterHoodPositionRads = 0.0;
-    public double shooterHoodPositionCancoder = 0.0;
-    public double shooterHoodVelocityRadsPerSec = 0.0;
-    public double shooterHoodAppliedVoltage = 0.0;
-    public double shooterHoodSupplyCurrentAmps = 0.0;
-    public double shooterHoodTorqueCurrentAmps = 0.0;
-    public double shooterHoodTempCelsius = 0.0;
+    public boolean motorConnected = true;
+    public double position = 0.0;
+    public double positionRads = 0.0;
+    public double positionCancoder = 0.0;
+    public double velocityRadsPerSec = 0.0;
+    public double appliedVoltage = 0.0;
+    public double supplyCurrentAmps = 0.0;
+    public double torqueCurrentAmps = 0.0;
+    public double tempCelsius = 0.0;
 
     public double motionMagicVelocityTarget = 0.0;
     public double motionMagicPositionTarget = 0.0;

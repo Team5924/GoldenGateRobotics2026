@@ -66,8 +66,7 @@ public class Module {
 
     driveOverheatAlert =
         new Alert(
-            "Overheating drive motor on module " + Integer.toString(index) + ".",
-            AlertType.kError);
+            "Overheating drive motor on module " + Integer.toString(index) + ".", AlertType.kError);
     turnOverheatAlert =
         new Alert(
             "Overheating turn motor on module " + Integer.toString(index) + ".", AlertType.kError);

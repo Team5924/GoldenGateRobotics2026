@@ -22,11 +22,11 @@ public class BeamBreakIOHardware implements BeamBreakIO {
   private final DigitalInput beamBreak;
 
   public BeamBreakIOHardware(int id) {
-    beamBreak = new DigitalInput(id);
+    beamBreak = null; // new DigitalInput(id);
   }
 
   @Override
   public void updateInputs(BeamBreakIOInputs inputs) {
-    inputs.broken = beamBreak.get();
+    // inputs.broken = beamBreak.get();
   }
 }

@@ -1,5 +1,5 @@
 /*
- * IntakePivotIOSim.java
+ * GenericRollerIOSim.java
  */
 
 /* 
@@ -14,7 +14,7 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.pivots.intakePivot;
+package org.team5924.frc2026.subsystems.rollers.generic;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -23,23 +23,20 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import org.team5924.frc2026.Constants;
 
-public class IntakePivotIOSim implements IntakePivotIO {
-  private final DCMotorSim sim;
-  private final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
+public class GenericRollerIOSim implements GenericRollerIO {
+  protected final DCMotorSim sim;
+  protected final DCMotor gearbox;
   private double appliedVoltage = 0.0;
-  private double setpoint = 0.0;
 
-  public IntakePivotIOSim() {
+  public GenericRollerIOSim(DCMotor motorModel, double moi, double reduction) {
+    gearbox = motorModel;
     sim =
-        new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(
-                gearbox, Constants.IntakePivot.SIM_MOI, Constants.IntakePivot.MOTOR_TO_MECHANISM),
-            gearbox);
+        new DCMotorSim(LinearSystemId.createDCMotorSystem(motorModel, moi, reduction), motorModel);
   }
 
   @Override
-  public void updateInputs(IntakePivotIOInputs inputs) {
-    if (DriverStation.isDisabled()) runCurrent(0.0);
+  public void updateInputs(GenericRollerIOInputs inputs) {
+    if (DriverStation.isDisabled()) runVolts(0.0);
 
     sim.update(Constants.LOOP_PERIODIC_SECONDS);
     inputs.motorConnected = true;
@@ -47,27 +44,17 @@ public class IntakePivotIOSim implements IntakePivotIO {
     inputs.velocityRadsPerSec = sim.getAngularVelocityRadPerSec();
     inputs.appliedVoltage = appliedVoltage;
     inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
-    inputs.tempCelsius = 25.0;
-    inputs.positionRads = setpoint;
+    inputs.tempCelsius = 25;
   }
 
   @Override
-  public void runCurrent(double volts) {
+  public void runVolts(double volts) {
     appliedVoltage = MathUtil.clamp(volts, -12.0, 12.0);
     sim.setInputVoltage(appliedVoltage);
   }
 
   @Override
-  public void setPosition(double rads) {
-    rads =
-        MathUtil.clamp(
-            rads, Constants.IntakePivot.MIN_POSITION_RADS, Constants.IntakePivot.MAX_POSITION_RADS);
-    setpoint = rads;
-    sim.setAngle(rads);
-  }
-
-  @Override
   public void stop() {
-    runCurrent(0.0);
+    runVolts(0.0);
   }
 }

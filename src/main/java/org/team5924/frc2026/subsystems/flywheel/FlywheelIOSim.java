@@ -1,5 +1,5 @@
 /*
- * GenericRollerSystemIOSim.java
+ * FlywheelIOSim.java
  */
 
 /* 
@@ -14,7 +14,7 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.generic;
+package org.team5924.frc2026.subsystems.flywheel;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -23,19 +23,24 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import org.team5924.frc2026.Constants;
 
-public class GenericRollerSystemIOSim implements GenericRollerSystemIO {
-  protected final DCMotorSim sim;
-  protected final DCMotor gearbox;
+public class FlywheelIOSim implements FlywheelIO {
+  private final DCMotorSim sim;
+  private final DCMotor gearbox = DCMotor.getKrakenX60Foc(1);
   private double appliedVoltage = 0.0;
+  private double setpoint;
 
-  public GenericRollerSystemIOSim(DCMotor motorModel, double reduction, double moi) {
-    gearbox = motorModel;
+  public FlywheelIOSim() {
     sim =
-        new DCMotorSim(LinearSystemId.createDCMotorSystem(motorModel, moi, reduction), motorModel);
+        new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(
+                gearbox,
+                Constants.GeneralFlywheel.SIM_MOI,
+                Constants.GeneralFlywheel.MOTOR_TO_MECHANISM),
+            gearbox);
   }
 
   @Override
-  public void updateInputs(GenericRollerSystemIOInputs inputs) {
+  public void updateInputs(FlywheelIOInputs inputs) {
     if (DriverStation.isDisabled()) runVolts(0.0);
 
     sim.update(Constants.LOOP_PERIODIC_SECONDS);
@@ -44,12 +49,19 @@ public class GenericRollerSystemIOSim implements GenericRollerSystemIO {
     inputs.velocityRadsPerSec = sim.getAngularVelocityRadPerSec();
     inputs.appliedVoltage = appliedVoltage;
     inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
+    inputs.setpointVelocity = setpoint;
+    inputs.tempCelsius = 25.0;
   }
 
   @Override
   public void runVolts(double volts) {
     appliedVoltage = MathUtil.clamp(volts, -12.0, 12.0);
     sim.setInputVoltage(appliedVoltage);
+  }
+  @Override
+  public void setVelocity(double velocity) {
+    sim.setAngularVelocity(appliedVoltage);
+    setpoint = velocity;
   }
 
   @Override

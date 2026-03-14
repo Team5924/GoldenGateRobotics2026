@@ -35,10 +35,9 @@ public class TurretIOSim implements TurretIO {
     sim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
-                isLeft
-                    ? Constants.TurretLeft.MOTOR_TO_MECHANISM
-                    : Constants.TurretRight.MOTOR_TO_MECHANISM,
-                isLeft ? Constants.TurretLeft.SIM_MOI : Constants.TurretRight.SIM_MOI),
+                gearbox,
+                Constants.GeneralTurret.MOTOR_TO_MECHANISM,
+                Constants.GeneralTurret.SIM_MOI),
             gearbox);
     minPositionRads =
         isLeft ? Constants.TurretLeft.MIN_POSITION_RADS : Constants.TurretRight.MIN_POSITION_RADS;
@@ -51,12 +50,13 @@ public class TurretIOSim implements TurretIO {
     if (DriverStation.isDisabled()) runVolts(0.0);
 
     sim.update(Constants.LOOP_PERIODIC_SECONDS);
-    inputs.turretMotorConnected = true;
-    inputs.turretPositionRads = sim.getAngularPositionRad();
-    inputs.turretVelocityRadsPerSec = sim.getAngularVelocityRadPerSec();
-    inputs.turretAppliedVoltage = appliedVoltage;
-    inputs.turretSupplyCurrentAmps = sim.getCurrentDrawAmps();
+    inputs.motorConnected = true;
+    inputs.positionRads = sim.getAngularPositionRad();
+    inputs.velocityRadsPerSec = sim.getAngularVelocityRadPerSec();
+    inputs.appliedVoltage = appliedVoltage;
+    inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
     inputs.setpointRads = setpoint;
+    inputs.tempCelsius = 25.0;
   }
 
   @Override

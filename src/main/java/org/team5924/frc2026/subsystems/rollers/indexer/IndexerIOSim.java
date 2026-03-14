@@ -1,5 +1,5 @@
 /*
- * IndexerIOTalonFX.java
+ * IndexerIOSim.java
  */
 
 /* 
@@ -16,22 +16,15 @@
 
 package org.team5924.frc2026.subsystems.rollers.indexer;
 
-import org.team5924.frc2026.Constants.Indexer;
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerIOTalonFX;
+import edu.wpi.first.math.system.plant.DCMotor;
+import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerIOSim;
 
-public class IndexerIOTalonFX extends GenericRollerIOTalonFX implements IndexerIO {
-
-  public IndexerIOTalonFX() {
-    super(Indexer.CAN_ID, Indexer.BUS, Indexer.CONFIG, Indexer.MOTOR_TO_MECHANISM);
-  }
-
-  @Override
-  public void runVolts(double volts) {
-    super.runVolts(volts);
-  }
-
-  @Override
-  public void stop() {
-    super.stop();
+public class IndexerIOSim extends GenericRollerIOSim implements IndexerIO {
+  public IndexerIOSim() {
+    super(
+        DCMotor.getKrakenX60Foc(1),
+        Constants.Indexer.SIM_MOI,
+        Constants.Indexer.MOTOR_TO_MECHANISM);
   }
 }

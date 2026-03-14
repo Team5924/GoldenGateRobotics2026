@@ -1,5 +1,5 @@
 /*
- * GenericRollerSystemIOKrakenFOC.java
+ * GenericRollerIOTalonFX.java
  */
 
 /* 
@@ -19,6 +19,7 @@ package org.team5924.frc2026.subsystems.rollers.generic;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -29,8 +30,9 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import org.team5924.frc2026.Constants.GenericRoller;
 
-public abstract class GenericRollerSystemIOKrakenFOC implements GenericRollerSystemIO {
+public abstract class GenericRollerIOTalonFX implements GenericRollerIO {
   private final TalonFX talon;
 
   private final StatusSignal<Angle> position;
@@ -44,15 +46,15 @@ public abstract class GenericRollerSystemIOKrakenFOC implements GenericRollerSys
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
   private final NeutralOut neutralOut = new NeutralOut();
 
-  private final double reduction;
-
-  public GenericRollerSystemIOKrakenFOC(
-      int id, String bus, TalonFXConfiguration config, double reduction) {
-    this.reduction = reduction;
+  public GenericRollerIOTalonFX(int id, String bus, TalonFXConfiguration config, double reduction) {
     talon = new TalonFX(id, new CANBus(bus));
 
     // Configure TalonFX
     talon.getConfigurator().apply(config);
+
+    FeedbackConfigs feedbackConfigs =
+        GenericRoller.FEEDBACK_CONFIGS.withSensorToMechanismRatio(reduction);
+    talon.getConfigurator().apply(feedbackConfigs);
 
     // Get select status signals and set update frequency
     position = talon.getPosition();
@@ -69,13 +71,13 @@ public abstract class GenericRollerSystemIOKrakenFOC implements GenericRollerSys
   }
 
   @Override
-  public void updateInputs(GenericRollerSystemIOInputs inputs) {
+  public void updateInputs(GenericRollerIOInputs inputs) {
     inputs.motorConnected =
         BaseStatusSignal.refreshAll(
                 position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius)
             .isOK();
-    inputs.positionRads = Units.rotationsToRadians(position.getValueAsDouble()) / reduction;
-    inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble()) / reduction;
+    inputs.positionRads = Units.rotationsToRadians(position.getValueAsDouble());
+    inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());
     inputs.appliedVoltage = appliedVoltage.getValueAsDouble();
     inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
     inputs.torqueCurrentAmps = torqueCurrent.getValueAsDouble();

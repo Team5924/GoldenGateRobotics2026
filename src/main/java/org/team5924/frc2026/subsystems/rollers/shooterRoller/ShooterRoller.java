@@ -16,21 +16,17 @@
 
 package org.team5924.frc2026.subsystems.rollers.shooterRoller;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.RobotState;
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
-import org.team5924.frc2026.subsystems.sensors.BeamBreakIO;
-import org.team5924.frc2026.subsystems.sensors.BeamBreakIOInputsAutoLogged;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRoller;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRoller.VoltageState;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
-public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRollerState> {
+public class ShooterRoller extends GenericRoller<ShooterRoller.ShooterRollerState> {
 
   @RequiredArgsConstructor
   @Getter
@@ -46,24 +42,23 @@ public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRoll
     OPPONENT_SHUFFLING(() -> 0.0),
 
     // TODO: test and update volts
-    BUMPER_SHOOTING(new LoggedTunableNumber("ShooterRoller/BumperShooting", 12.0));
+    BUMPER_SHOOTING(new LoggedTunableNumber("ShooterRoller/BumperShooting", -8.0)),
+    B4(() -> 4.0),
+    B6(() -> 6.0),
+    B12(() -> 12.0),
+    B8(() -> 8.0);
 
     private final DoubleSupplier voltageSupplier;
   }
 
   private ShooterRollerState goalState = ShooterRollerState.OFF;
 
-  // Shooter Beam Break
-  private final BeamBreakIO beamBreakIO;
-  private final BeamBreakIOInputsAutoLogged beamBreakInputs = new BeamBreakIOInputsAutoLogged();
-
   private final boolean isLeft;
 
   @Setter private double input;
 
-  public ShooterRoller(ShooterRollerIO io, BeamBreakIO beamBreakIO, boolean isLeft) {
+  public ShooterRoller(ShooterRollerIO io, boolean isLeft) {
     super("ShooterRoller", io);
-    this.beamBreakIO = beamBreakIO;
     this.isLeft = isLeft;
   }
 
@@ -95,8 +90,9 @@ public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRoll
         break;
 
       default:
-        DriverStation.reportWarning(
-            "Shooter Roller: " + goalState.name() + " is not a state", null);
+        super.handleCurrentState();
+        // DriverStation.reportWarning(
+        //     "Shooter Roller: " + goalState.name() + " is not a state", null);
         break;
     }
   }
@@ -111,7 +107,5 @@ public class ShooterRoller extends GenericRollerSystem<ShooterRoller.ShooterRoll
   @Override
   public void periodic() {
     super.periodic();
-    beamBreakIO.updateInputs(beamBreakInputs);
-    Logger.processInputs((isLeft ? "Left" : "Right") + "ShooterRoller/BeamBreak", beamBreakInputs);
   }
 }

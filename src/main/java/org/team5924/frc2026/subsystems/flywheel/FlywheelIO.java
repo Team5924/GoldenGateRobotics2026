@@ -1,5 +1,5 @@
 /*
- * TurretIO.java
+ * FlywheelIO.java
  */
 
 /* 
@@ -14,34 +14,29 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.turret;
+package org.team5924.frc2026.subsystems.flywheel;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface TurretIO {
+public interface FlywheelIO {
   @AutoLog
-  public static class TurretIOInputs {
+  public static class FlywheelIOInputs {
     public boolean motorConnected = true;
     public double position = 0.0;
     public double positionRads = 0.0;
-    public double positionCancoder = 0.0;
     public double velocityRadsPerSec = 0.0;
     public double appliedVoltage = 0.0;
     public double supplyCurrentAmps = 0.0;
     public double torqueCurrentAmps = 0.0;
     public double tempCelsius = 0.0;
 
+    public double followerSupplyCurrentAmps;
+    public double followerTempCelsius;
+
+    public double setpointVelocity;
+
     public double motionMagicVelocityTarget = 0.0;
-    public double motionMagicPositionTarget = 0.0;
-
-    public double setpointRads = 0.0;
     public double acceleration = 0.0;
-
-    public boolean cancoderConnected = true;
-    public double cancoderAbsolutePosition = 0.0;
-    public double cancoderVelocity = 0.0;
-    public double cancoderSupplyVoltage = 0.0;
-    public double cancoderPositionRotations = 0.0;
   }
 
   /**
@@ -49,31 +44,25 @@ public interface TurretIO {
    *
    * @param inputs Inputs to update
    */
-  public default void updateInputs(TurretIOInputs inputs) {}
+  public default void updateInputs(FlywheelIOInputs inputs) {}
 
-  /** Updates that are be called in turret periodic */
+  /** Updates that are be called in flywheel periodic */
   public default void periodicUpdates() {}
 
   /**
-   * Sets the turret motor to the specified voltage
+   * Sets the flywheel motor to the specified voltage
    *
    * @param volts number of volts
    */
   public default void runVolts(double volts) {}
 
   /**
-   * Sets the turret motor to a specified angle
+   * Runs the shooter roller motor at the specified velocity
    *
-   * @param rads target angle
+   * @param velocity velocity in rads/sec
    */
-  public default void setPosition(double rads) {}
-
-  /** Holds the turret motor at a set position */
-  public default void holdPosition(double rads) {}
+  public default void setVelocity(double velocity) {}
 
   /** stops the motor */
   default void stop() {}
-
-  /** Sets the turret position to specified rads from center */
-  default void setPositionSetpoint(double radiansFromCenter, double radsPerSecond) {}
 }
