@@ -121,7 +121,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     motionMagicConfigs.MotionMagicJerk = motionJerk.get();
 
     // Apply Configs
-    StatusCode[] statusArray = new StatusCode[6];
+    StatusCode[] statusArray = new StatusCode[7];
 
     statusArray[0] =
         leaderConfig.apply(isLeft ? FlywheelLeaderLeft.CONFIG : FlywheelLeaderRight.CONFIG);
@@ -130,8 +130,9 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     statusArray[3] = leaderConfig.apply(GeneralFlywheel.FEEDBACK_CONFIGS);
 
     statusArray[4] = leaderConfig.apply(slot0Configs);
+    statusArray[5] = leaderConfig.apply(motionMagicConfigs);
 
-    statusArray[5] =
+    statusArray[6] =
         followerConfig.apply(isLeft ? FlywheelFollowerLeft.CONFIG : FlywheelFollowerRight.CONFIG);
 
     boolean isErrorPresent = false;

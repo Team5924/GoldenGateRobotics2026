@@ -42,7 +42,8 @@ public class Flywheel extends SubsystemBase {
   public enum FlywheelState {
     OFF(() -> 0.0),
     MOVING(() -> 0.0),
-    LAUNCH(() -> 200.0),
+    big(() -> 20.0),
+    smol(() -> 10.0),
 
     // current at which the example subsystem motor moves when controlled by the operator
     MANUAL(new LoggedTunableNumber("Flywheel/OperatorCurrent", 200)),
