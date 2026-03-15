@@ -51,7 +51,7 @@ public class ShooterHood extends SubsystemBase {
     OPPONENT_SHUFFLING(() -> 0.0),
 
     // TODO: test and update angle (rads)
-    BUMPER_SHOOTING(new LoggedTunableNumber("ShooterHood/BumperShooting", Math.toRadians(30))),
+    MAX(new LoggedTunableNumber("ShooterHood/BumperShooting", Math.toRadians(30))),
     AUTO(() -> 0.0),
 
     // in-between state
@@ -133,7 +133,8 @@ public class ShooterHood extends SubsystemBase {
               side + " Shooter Hood: MOVING is an invalid goal state; it is a transition state!!",
               null);
       case AUTO -> setRespectiveShooterHoodState(ShooterHoodState.MOVING);
-      default -> setRespectiveShooterHoodState(goalState);
+      case OFF -> setRespectiveShooterHoodState(ShooterHoodState.OFF);
+      default -> setRespectiveShooterHoodState(ShooterHoodState.MOVING);
     }
 
     lastStateChange = FieldState.getInstance().getTime();

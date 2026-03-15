@@ -58,6 +58,7 @@ public class FlywheelIOSim implements FlywheelIO {
     appliedVoltage = MathUtil.clamp(volts, -12.0, 12.0);
     sim.setInputVoltage(appliedVoltage);
   }
+
   @Override
   public void setVelocity(double velocity) {
     sim.setAngularVelocity(appliedVoltage);
