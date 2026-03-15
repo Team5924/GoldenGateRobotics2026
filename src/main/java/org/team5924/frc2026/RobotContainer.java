@@ -344,30 +344,26 @@ public class RobotContainer {
     //                         intake*/));
 
     // // // ### intake pivot spit
-    // // driveController
-    // //     .leftTrigger()
-    // //     .onTrue(
-    // //         Commands.runOnce(
-    // //             () -> {
-    // //               intakePivot.setGoalState(IntakePivotState.DOWN);
-    // //               hopper.setGoalState(Hopper.HopperState.SPIT);
-    // //               intake.setGoalState(IntakeState.SPITOUT);
-    // //             },
-    // //             intakePivot,
-    // //             hopper,
-    // //             intake));
-    // // driveController
-    // //     .leftTrigger()
-    // //     .onFalse(
-    // //         Commands.runOnce(
-    // //             () -> {
-    // //               intakePivot.setGoalState(IntakePivotState.STOW);
-    // //               hopper.setGoalState(Hopper.HopperState.ON);
-    // //               intake.setGoalState(IntakeState.OFF);
-    // //             },
-    // //             intakePivot,
-    // //             hopper,
-    // //             intake));
+    driveController
+        .leftTrigger()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  intakePivot.setGoalState(IntakePivotState.DOWN);
+                  intake.setGoalState(IntakeState.SPITOUT);
+                },
+                intakePivot,
+                intake));
+    driveController
+        .leftTrigger()
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  intakePivot.setGoalState(IntakePivotState.STOW);
+                  intake.setGoalState(IntakeState.OFF);
+                },
+                intakePivot,
+                intake));
 
     // // ### indexing
     // driveController
