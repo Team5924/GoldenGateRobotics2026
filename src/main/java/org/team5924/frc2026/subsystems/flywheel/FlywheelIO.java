@@ -24,7 +24,7 @@ public interface FlywheelIO {
     public boolean motorConnected = true;
     public double position = 0.0;
     public double positionRads = 0.0;
-    public double velocityRadsPerSec = 0.0;
+    public double velocityRotationsPerSec = 0.0;
     public double appliedVoltage = 0.0;
     public double supplyCurrentAmps = 0.0;
     public double torqueCurrentAmps = 0.0;
@@ -33,7 +33,7 @@ public interface FlywheelIO {
     public double followerSupplyCurrentAmps;
     public double followerTempCelsius;
 
-    public double setpointVelocity;
+    public double setpointVelocityRotationsPerSec;
 
     public double motionMagicVelocityTarget = 0.0;
     public double acceleration = 0.0;
@@ -59,7 +59,7 @@ public interface FlywheelIO {
   /**
    * Runs the shooter roller motor at the specified velocity
    *
-   * @param velocity velocity in rads/sec
+   * @param velocity velocity in rotations/sec
    */
   public default void setVelocity(double velocity) {}
 

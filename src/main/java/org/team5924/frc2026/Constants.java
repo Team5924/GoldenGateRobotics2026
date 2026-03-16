@@ -266,7 +266,7 @@ public final class Constants {
   }
 
   public final class GeneralFlywheel {
-    public static final double EPSILON_VELOCITY = 10;
+    public static final double EPSILON_VELOCITY = 2.5;
     public static final double MOTOR_TO_MECHANISM = 15.0 / 26.0;
     public static final String BUS = "rio";
     public static final double SIM_MOI = 0.001;
