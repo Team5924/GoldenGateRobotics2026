@@ -46,6 +46,7 @@ import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIO;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOSim;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivotIOTalonFX;
+import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIO;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHoodIOSim;
@@ -55,6 +56,7 @@ import org.team5924.frc2026.subsystems.rollers.hopper.HopperIO;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperIOSim;
 import org.team5924.frc2026.subsystems.rollers.hopper.HopperIOTalonFX;
 import org.team5924.frc2026.subsystems.rollers.indexer.Indexer;
+import org.team5924.frc2026.subsystems.rollers.indexer.Indexer.IndexerState;
 import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIO;
 import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIOSim;
 import org.team5924.frc2026.subsystems.rollers.indexer.IndexerIOTalonFX;
@@ -78,11 +80,9 @@ public class RobotContainer {
 
   private final ShooterHood shooterHoodRight;
   private final Flywheel flywheelRight;
-  private final Turret turretRight;
 
   private final ShooterHood shooterHoodLeft;
   private final Flywheel flywheelLeft;
-  private final Turret turretLeft;
 
   // Controller
   private final CommandXboxController driveController = new CommandXboxController(0);
@@ -114,11 +114,9 @@ public class RobotContainer {
 
         shooterHoodLeft = new ShooterHood(new ShooterHoodIOTalonFX(true), true);
         flywheelLeft = new Flywheel(new FlywheelIOTalonFX(true), true);
-        turretLeft = new Turret(new TurretIOTalonFX(true), true);
 
         shooterHoodRight = new ShooterHood(new ShooterHoodIOTalonFX(false), false);
         flywheelRight = new Flywheel(new FlywheelIOTalonFX(false), false);
-        turretRight = new Turret(new TurretIOTalonFX(false), false);
 
         // ---------------------------- IO ----------------------------
         drive =
@@ -165,11 +163,9 @@ public class RobotContainer {
 
         shooterHoodLeft = new ShooterHood(new ShooterHoodIOSim(true), true);
         flywheelLeft = new Flywheel(new FlywheelIOSim(), true);
-        turretLeft = new Turret(new TurretIOSim(true), true);
 
         shooterHoodRight = new ShooterHood(new ShooterHoodIOSim(false), false);
         flywheelRight = new Flywheel(new FlywheelIOSim(), false);
-        turretRight = new Turret(new TurretIOSim(false), false);
 
         break;
 
@@ -191,11 +187,9 @@ public class RobotContainer {
 
         shooterHoodLeft = new ShooterHood(new ShooterHoodIO() {}, true);
         flywheelLeft = new Flywheel(new FlywheelIO() {}, true);
-        turretLeft = new Turret(new TurretIO() {}, true);
 
         shooterHoodRight = new ShooterHood(new ShooterHoodIO() {}, false);
         flywheelRight = new Flywheel(new FlywheelIO() {}, false);
-        turretRight = new Turret(new TurretIO() {}, false);
         break;
     }
 
@@ -382,8 +376,8 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  // intakePivot.setGoalState(IntakePivotState.SHOOTING);
-                  indexer.setGoalState(Indexer.IndexerState.INDEXING);
+                  intakePivot.setGoalState(IntakePivotState.DOWN);
+                  indexer.setGoalState(IndexerState.INDEXING);
                 },
                 // intakePivot,
                 indexer));
@@ -392,8 +386,8 @@ public class RobotContainer {
         .onFalse(
             Commands.runOnce(
                 () -> {
-                  // intakePivot.setGoalState(IntakePivotState.STOW);
-                  indexer.setGoalState(Indexer.IndexerState.OFF);
+                  intakePivot.setGoalState(IntakePivotState.OFF);
+                  indexer.setGoalState(IndexerState.OFF);
                 },
                 // intakePivot,
                 indexer));
