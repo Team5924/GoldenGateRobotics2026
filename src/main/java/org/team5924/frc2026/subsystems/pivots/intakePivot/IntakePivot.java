@@ -16,23 +16,17 @@
 
 package org.team5924.frc2026.subsystems.pivots.intakePivot;
 
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
-
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.FieldState;
 import org.team5924.frc2026.RobotState;
-import org.team5924.frc2026.util.Elastic;
-import org.team5924.frc2026.util.Elastic.Notification;
-import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
@@ -43,58 +37,39 @@ public class IntakePivot extends SubsystemBase {
 
   @Setter private double input;
 
-  public final SysIdRoutine sysId;
-
   @RequiredArgsConstructor
   @Getter
   public enum IntakePivotState {
     OFF(() -> 0.0),
     MOVING(() -> 0.0),
 
-    DOWN(new LoggedTunableNumber("IntakePivot/DownRads", 1)), // TODO: tune this, will be higher
-    STOW(new LoggedTunableNumber("IntakePivot/StowRads", 0.0)),
+    DOWN(new LoggedTunableNumber("IntakePivot/DownRads", 0)),
+    STOW(new LoggedTunableNumber("IntakePivot/StowRads", 2.05)),
+    PHYSICAL_STOW(() -> 2.1),
+    SHOOTING(new LoggedTunableNumber("IntakePivot/ShootingRads", 1.5)),
 
-    // voltage at which the example subsystem motor moves when controlled by the operator
-    MANUAL(new LoggedTunableNumber("IntakePivot/OperatorVoltage", 4.0));
+    // current at which the example subsystem motor moves when controlled by the operator
+    MANUAL(new LoggedTunableNumber("IntakePivot/OperatorCurrent", 12.5));
 
     /** rads are measured from stow position (+ is down) */
     private final DoubleSupplier rads;
   }
 
-  @Getter private IntakePivotState goalState = IntakePivotState.OFF;
-
   private final Alert intakePivotMotorDisconnected;
-  private final Notification intakePivotMotorDisconnectedNotification;
-  private boolean wasIntakePivotMotorConnected = true;
-
   protected final Alert overheatAlert;
-  protected final Notification overheatNotification;
-  protected boolean wasOverheating = false;
 
+  @Getter private IntakePivotState goalState = IntakePivotState.OFF;
+  private boolean isAtSetpoint = false;
   private double lastStateChange = 0.0;
+  private double timeSinceLastStateChange = 0.0;
 
   public IntakePivot(IntakePivotIO io) {
     this.io = io;
     this.goalState = IntakePivotState.OFF;
+
     this.intakePivotMotorDisconnected =
         new Alert("Intake Pivot Motor Disconnected!", Alert.AlertType.kWarning);
-    this.intakePivotMotorDisconnectedNotification =
-        new Notification(NotificationLevel.WARNING, "Intake Pivot Motor Disconnected", "");
-
-    overheatAlert = new Alert( "intake pivot motor overheating!", Alert.AlertType.kWarning);
-
-    overheatNotification =
-        new Notification(
-            NotificationLevel.WARNING, "Intake Pivot Overheat Warning", "intake pivot motor overheat imminent!");
-
-    sysId =
-        new SysIdRoutine(
-            new SysIdRoutine.Config(
-                Volts.per(Seconds).of(.75),
-                Volts.of(1),
-                Seconds.of(Constants.SYS_ID_TIME),
-                (state) -> Logger.recordOutput("IntakePivot/SysIdState", state.toString())),
-            new SysIdRoutine.Mechanism((voltage) -> tryRunVolts(voltage.in(Volts)), null, this));
+    overheatAlert = new Alert("intake pivot motor overheating!", Alert.AlertType.kWarning);
   }
 
   @Override
@@ -103,43 +78,72 @@ public class IntakePivot extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("IntakePivot", inputs);
 
+    intakePivotMotorDisconnected.set(!inputs.motorConnected);
+    overheatAlert.set(inputs.tempCelsius > Constants.OVERHEAT_THRESHOLD);
+
+    handleCurrentState();
+
     Logger.recordOutput("IntakePivot/GoalState", goalState.toString());
     Logger.recordOutput(
         "IntakePivot/CurrentState", RobotState.getInstance().getIntakePivotState().toString());
     Logger.recordOutput("IntakePivot/TargetRads", goalState.rads.getAsDouble());
-
-    intakePivotMotorDisconnected.set(!inputs.intakePivotMotorConnected);
-
-    handleCurrentState();
-
-    // prevents error spam
-    if (!inputs.intakePivotMotorConnected && wasIntakePivotMotorConnected) {
-      Elastic.sendNotification(intakePivotMotorDisconnectedNotification);
-    }
-    wasIntakePivotMotorConnected = inputs.intakePivotMotorConnected;
-
-    boolean isOverheating = inputs.intakePivotTempCelsius > Constants.OVERHEAT_THRESHOLD;
-    overheatAlert.set(isOverheating);
-    if (isOverheating && !wasOverheating) {
-      Elastic.sendNotification(overheatNotification);
-    }
-    wasOverheating = isOverheating;
+    Logger.recordOutput("IntakePivot/CurrentRads", inputs.positionRads);
+    Logger.recordOutput("IntakePivot/IsAtSetpoint", isAtSetpoint);
+    Logger.recordOutput("IntakePivot/TimeSinceLastStateChange", timeSinceLastStateChange);
   }
 
+  public void runCurrent(double amps) {
+    io.runCurrent(amps);
+  }
+
+  public void setPosition(double rads) {
+    io.setPosition(rads);
+  }
+
+  public void stop() {
+    io.stop();
+  }
+
+  public void setGoalState(IntakePivotState goalState) {
+    if (this.goalState.equals(goalState)) return;
+    if (goalState.equals(IntakePivotState.MANUAL) && Math.abs(input) <= Constants.JOYSTICK_DEADZONE)
+      return;
+
+    this.goalState = goalState;
+    switch (goalState) {
+      case MANUAL -> RobotState.getInstance().setIntakePivotState(IntakePivotState.MANUAL);
+      case MOVING ->
+          DriverStation.reportError(
+              "IntakePivot: MOVING is an invalid goal state; it is a transition state!!", null);
+      case OFF -> RobotState.getInstance().setIntakePivotState(IntakePivotState.OFF);
+      default -> RobotState.getInstance().setIntakePivotState(IntakePivotState.MOVING);
+    }
+
+    lastStateChange = FieldState.getInstance().getTime();
+  }
+
+  @SuppressWarnings({"unused"})
   public boolean isAtSetpoint() {
-    return RobotState.getTime() - lastStateChange > Constants.IntakePivot.STATE_TIMEOUT
-        || EqualsUtil.epsilonEquals(
-          inputs.setpointRads, inputs.intakePivotPositionRads, Constants.IntakePivot.EPSILON_RADS);
+    return (!Constants.IntakePivot.ENABLE_TIMEOUT
+            || timeSinceLastStateChange > Constants.IntakePivot.STATE_TIMEOUT)
+        && EqualsUtil.epsilonEquals(
+            inputs.setpointRads, inputs.positionRads, Constants.IntakePivot.EPSILON_RADS);
   }
 
   private void handleCurrentState() {
+    timeSinceLastStateChange = FieldState.getInstance().getTime() - lastStateChange;
+    isAtSetpoint = isAtSetpoint();
+
     switch (RobotState.getInstance().getIntakePivotState()) {
       case MOVING -> {
-        if (isAtSetpoint()) RobotState.getInstance().setIntakePivotState(goalState);
+        setPosition(goalState.getRads().getAsDouble());
+        if (isAtSetpoint) RobotState.getInstance().setIntakePivotState(goalState);
       }
       case MANUAL -> handleManualState();
-      case OFF -> io.stop();
-      default -> io.setPosition(goalState.getRads().getAsDouble());
+      case OFF -> stop();
+      default -> {
+        if (!isAtSetpoint) setPosition(goalState.getRads().getAsDouble());
+      }
     }
   }
 
@@ -147,49 +151,10 @@ public class IntakePivot extends SubsystemBase {
     if (!goalState.equals(IntakePivotState.MANUAL)) return;
 
     if (Math.abs(input) <= Constants.JOYSTICK_DEADZONE) {
-      io.runVolts(0);
+      stop();
       return;
     }
 
-    tryRunVolts(IntakePivotState.MANUAL.getRads().getAsDouble() * input);
-  }
-
-  public void tryRunVolts(double volts) {
-    // if (!(cont = shouldContinueInDirection(volts, inputs.intakePivotPositionRads))) return;
-
-    io.runVolts(volts);
-  }
-
-  /**
-   * @param rads rads
-   * @return -1 for min bound, 0 for within, 1 for upper bound
-   */
-  public double exceedBounds(double rads) {
-    if (rads <= Constants.IntakePivot.MIN_POSITION_RADS) return -1.0;
-    if (rads >= Constants.IntakePivot.MAX_POSITION_RADS) return 1.0;
-    return 0.0;
-  }
-
-  public void setGoalState(IntakePivotState goalState) {
-    this.goalState = goalState;
-    switch (goalState) {
-      case MANUAL:
-        RobotState.getInstance().setIntakePivotState(IntakePivotState.MANUAL);
-        break;
-      case MOVING:
-        DriverStation.reportError(
-            "IntakePivot: MOVING is an invalid goal state; it is a transition state!!", null);
-        break;
-      case OFF:
-        RobotState.getInstance().setIntakePivotState(IntakePivotState.OFF);
-        io.stop();
-        break;
-      default:
-        RobotState.getInstance().setIntakePivotState(IntakePivotState.MOVING);
-        io.setPosition(goalState.rads.getAsDouble());
-        break;
-    }
-
-    lastStateChange = RobotState.getTime();
+    runCurrent(IntakePivotState.MANUAL.getRads().getAsDouble() * input);
   }
 }

@@ -25,8 +25,9 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -37,6 +38,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
@@ -44,10 +46,10 @@ import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class IntakePivotIOTalonFX implements IntakePivotIO {
   /* Hardware */
-  private final TalonFX intakePivotTalon;
+  private final TalonFX talon;
 
   /* Configurators */
-  private TalonFXConfigurator intakePivotTalonConfig;
+  private TalonFXConfigurator talonConfig;
 
   /* Configs  */
   private final Slot0Configs slot0Configs;
@@ -55,41 +57,41 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   private double setpointRads;
 
   /* Gains */
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("IntakePivot/kP", 3.0);
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("IntakePivot/kP", 40.0);
   private final LoggedTunableNumber kI = new LoggedTunableNumber("IntakePivot/kI", 0.0);
-  private final LoggedTunableNumber kD = new LoggedTunableNumber("IntakePivot/kD", 0.07);
-  private final LoggedTunableNumber kS = new LoggedTunableNumber("IntakePivot/kS", 0.13);
-  private final LoggedTunableNumber kV = new LoggedTunableNumber("IntakePivot/kV", 0.4);
-  private final LoggedTunableNumber kA = new LoggedTunableNumber("IntakePivot/kA", 0.00);
+  private final LoggedTunableNumber kD = new LoggedTunableNumber("IntakePivot/kD", 0.5);
+  private final LoggedTunableNumber kS = new LoggedTunableNumber("IntakePivot/kS", .2);
+  private final LoggedTunableNumber kV = new LoggedTunableNumber("IntakePivot/kV", 0.0);
+  private final LoggedTunableNumber kG = new LoggedTunableNumber("IntakePivot/kG", 2.8);
+  private final LoggedTunableNumber kA = new LoggedTunableNumber("IntakePivot/kA", 0.0);
 
   private final LoggedTunableNumber motionCruiseVelocity =
-      new LoggedTunableNumber("IntakePivot/MotionCruiseVelocity", 90.0);
+      new LoggedTunableNumber("IntakePivot/MotionCruiseVelocity", 10.0);
   private final LoggedTunableNumber motionAcceleration =
-      new LoggedTunableNumber("IntakePivot/MotionAcceleration", 900.0);
+      new LoggedTunableNumber("IntakePivot/MotionAcceleration", 100.0);
   private final LoggedTunableNumber motionJerk =
       new LoggedTunableNumber("IntakePivot/MotionJerk", 0.0);
 
   /* Status Signals */
-  private final StatusSignal<Angle> intakePivotPosition;
-  private final StatusSignal<AngularVelocity> intakePivotVelocity;
-  private final StatusSignal<Voltage> intakePivotAppliedVoltage;
-  private final StatusSignal<Current> intakePivotSupplyCurrent;
-  private final StatusSignal<Current> intakePivotTorqueCurrent;
-  private final StatusSignal<Temperature> intakePivotTempCelsius;
+  private final StatusSignal<Angle> position;
+  private final StatusSignal<AngularVelocity> velocity;
+  private final StatusSignal<Voltage> appliedVoltage;
+  private final StatusSignal<Current> supplyCurrent;
+  private final StatusSignal<Current> torqueCurrent;
+  private final StatusSignal<Temperature> tempCelsius;
 
   private final StatusSignal<Double> closedLoopReferenceSlope;
   private double prevClosedLoopReferenceSlope = 0.0;
   private double prevReferenceSlopeTimestamp = 0.0;
 
-  private final VoltageOut voltageOut;
+  private final TorqueCurrentFOC currentOut;
   private final PositionVoltage positionOut;
   private final MotionMagicTorqueCurrentFOC motionMagicCurrent;
 
   public IntakePivotIOTalonFX() {
-    intakePivotTalon =
-        new TalonFX(Constants.IntakePivot.CAN_ID, new CANBus(Constants.IntakePivot.BUS));
+    talon = new TalonFX(Constants.IntakePivot.CAN_ID, new CANBus(Constants.IntakePivot.BUS));
 
-    intakePivotTalonConfig = intakePivotTalon.getConfigurator();
+    talonConfig = talon.getConfigurator();
 
     slot0Configs = new Slot0Configs();
     slot0Configs.kP = kP.get();
@@ -98,6 +100,8 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     slot0Configs.kS = kS.get();
     slot0Configs.kV = kV.get();
     slot0Configs.kA = kA.get();
+    slot0Configs.kG = kG.get();
+    slot0Configs.GravityType = GravityTypeValue.Arm_Cosine;
 
     motionMagicConfigs = new MotionMagicConfigs();
     motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
@@ -105,15 +109,16 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     motionMagicConfigs.MotionMagicJerk = motionJerk.get();
 
     // Apply Configs
-    StatusCode[] statusArray = new StatusCode[6];
+    StatusCode[] statusArray = new StatusCode[7];
 
-    statusArray[0] = intakePivotTalonConfig.apply(Constants.IntakePivot.CONFIG);
-    statusArray[1] = intakePivotTalonConfig.apply(slot0Configs);
-    statusArray[2] = intakePivotTalonConfig.apply(motionMagicConfigs);
-    statusArray[3] = intakePivotTalonConfig.apply(Constants.IntakePivot.OPEN_LOOP_RAMPS_CONFIGS);
-    statusArray[4] = intakePivotTalonConfig.apply(Constants.IntakePivot.CLOSED_LOOP_RAMPS_CONFIGS);
-    statusArray[5] = intakePivotTalonConfig.apply(Constants.IntakePivot.SOFTWARE_LIMIT_CONFIGS);
-    
+    statusArray[0] = talonConfig.apply(Constants.IntakePivot.CONFIG);
+    statusArray[1] = talonConfig.apply(slot0Configs);
+    statusArray[2] = talonConfig.apply(motionMagicConfigs);
+    statusArray[3] = talonConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
+    statusArray[4] = talonConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
+    statusArray[5] = talonConfig.apply(Constants.IntakePivot.SOFTWARE_LIMIT_CONFIGS);
+    statusArray[6] = talonConfig.apply(Constants.IntakePivot.FEEDBACK_CONFIGS);
+
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
 
@@ -125,64 +130,61 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     Logger.recordOutput("IntakePivot/InitConfReport", statusArray);
 
     // Get select status signals and set update frequency
-    intakePivotPosition = intakePivotTalon.getPosition();
-    intakePivotVelocity = intakePivotTalon.getVelocity();
-    intakePivotAppliedVoltage = intakePivotTalon.getMotorVoltage();
-    intakePivotSupplyCurrent = intakePivotTalon.getSupplyCurrent();
-    intakePivotTorqueCurrent = intakePivotTalon.getTorqueCurrent();
-    intakePivotTempCelsius = intakePivotTalon.getDeviceTemp();
+    position = talon.getPosition();
+    velocity = talon.getVelocity();
+    appliedVoltage = talon.getMotorVoltage();
+    supplyCurrent = talon.getSupplyCurrent();
+    torqueCurrent = talon.getTorqueCurrent();
+    tempCelsius = talon.getDeviceTemp();
 
-    closedLoopReferenceSlope = intakePivotTalon.getClosedLoopReferenceSlope();
+    closedLoopReferenceSlope = talon.getClosedLoopReferenceSlope();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         100.0,
-        intakePivotPosition,
-        intakePivotVelocity,
-        intakePivotAppliedVoltage,
-        intakePivotSupplyCurrent,
-        intakePivotTorqueCurrent,
-        intakePivotTempCelsius,
+        position,
+        velocity,
+        appliedVoltage,
+        supplyCurrent,
+        torqueCurrent,
+        tempCelsius,
         closedLoopReferenceSlope);
 
-    voltageOut = new VoltageOut(0.0);
+    currentOut = new TorqueCurrentFOC(0.0);
     positionOut = new PositionVoltage(0).withUpdateFreqHz(0.0).withEnableFOC(true).withSlot(0);
-    motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withSlot(0);
+    motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withSlot(0).withUpdateFreqHz(100);
 
-    // assuming intake pivot starts at bottom -> uncomment line below
-    // intakePivotTalon.setPosition(0.0);
+    // assuming intake pivot starts stowed
+    talon.setPosition(
+        Units.radiansToRotations(IntakePivotState.PHYSICAL_STOW.getRads().getAsDouble()));
   }
 
   @Override
   public void updateInputs(IntakePivotIOInputs inputs) {
-    inputs.intakePivotMotorConnected =
+    inputs.motorConnected =
         BaseStatusSignal.refreshAll(
-                intakePivotPosition,
-                intakePivotVelocity,
-                intakePivotAppliedVoltage,
-                intakePivotSupplyCurrent,
-                intakePivotTorqueCurrent,
-                intakePivotTempCelsius,
+                position,
+                velocity,
+                appliedVoltage,
+                supplyCurrent,
+                torqueCurrent,
+                tempCelsius,
                 closedLoopReferenceSlope)
             .isOK();
 
-    inputs.intakePivotPosition =
-        BaseStatusSignal.getLatencyCompensatedValueAsDouble(
-                intakePivotPosition, intakePivotVelocity)
-            / Constants.IntakePivot.MOTOR_TO_MECHANISM;
-    inputs.intakePivotPositionRads = Units.rotationsToRadians(inputs.intakePivotPosition) / Constants.IntakePivot.MECHANISM_RANGE_PERCENT;
+    inputs.position = BaseStatusSignal.getLatencyCompensatedValueAsDouble(position, velocity);
+    inputs.positionRads = Units.rotationsToRadians(inputs.position);
 
-    inputs.intakePivotVelocityRadsPerSec = Units.rotationsToRadians(intakePivotVelocity.getValueAsDouble()) / Constants.IntakePivot.MOTOR_TO_MECHANISM;
-    inputs.intakePivotAppliedVoltage = intakePivotAppliedVoltage.getValueAsDouble();
-    inputs.intakePivotSupplyCurrentAmps = intakePivotSupplyCurrent.getValueAsDouble();
-    inputs.intakePivotTorqueCurrentAmps = intakePivotTorqueCurrent.getValueAsDouble();
-    inputs.intakePivotTempCelsius = intakePivotTempCelsius.getValueAsDouble();
+    inputs.velocityRadsPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());
+    inputs.appliedVoltage = appliedVoltage.getValueAsDouble();
+    inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
+    inputs.torqueCurrentAmps = torqueCurrent.getValueAsDouble();
+    inputs.tempCelsius = tempCelsius.getValueAsDouble();
 
-    inputs.motionMagicVelocityTarget =
-        motorPositionToRads(intakePivotTalon.getClosedLoopReferenceSlope().getValueAsDouble());
-    inputs.motionMagicPositionTarget =
-        motorPositionToRads(intakePivotTalon.getClosedLoopReference().getValueAsDouble());
+    inputs.motionMagicVelocityTarget = talon.getClosedLoopReferenceSlope().getValueAsDouble();
+    inputs.motionMagicPositionTarget = talon.getClosedLoopReference().getValueAsDouble();
 
     inputs.setpointRads = setpointRads;
+    inputs.setpointPosition = Units.radiansToRotations(setpointRads);
 
     double currentTime = closedLoopReferenceSlope.getTimestamp().getTime();
     double timeDiff = currentTime - prevReferenceSlopeTimestamp;
@@ -192,7 +194,6 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     }
     prevClosedLoopReferenceSlope = inputs.motionMagicVelocityTarget;
     prevReferenceSlopeTimestamp = currentTime;
-
   }
 
   @Override
@@ -202,16 +203,17 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
 
   private void updateLoggedTunableNumbers() {
     LoggedTunableNumber.ifChanged(
-        0,
+        hashCode(),
         () -> {
           slot0Configs.kP = kP.get();
           slot0Configs.kI = kI.get();
           slot0Configs.kD = kD.get();
           slot0Configs.kS = kS.get();
           slot0Configs.kV = kV.get();
+          slot0Configs.kG = kG.get();
           slot0Configs.kA = kA.get();
 
-          StatusCode statusCode = intakePivotTalon.getConfigurator().apply(slot0Configs);
+          StatusCode statusCode = talon.getConfigurator().apply(slot0Configs);
           if (!statusCode.isOK()) {
             Elastic.sendNotification(
                 new Notification(
@@ -227,16 +229,17 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
         kD,
         kS,
         kV,
+        kG,
         kA);
 
     LoggedTunableNumber.ifChanged(
-        0,
+        hashCode() + 1,
         () -> {
           motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
           motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
           motionMagicConfigs.MotionMagicJerk = motionJerk.get();
 
-          StatusCode statusCode = intakePivotTalon.getConfigurator().apply(motionMagicConfigs);
+          StatusCode statusCode = talon.getConfigurator().apply(motionMagicConfigs);
           if (!statusCode.isOK()) {
             Elastic.sendNotification(
                 new Notification(
@@ -253,8 +256,8 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   }
 
   @Override
-  public void runVolts(double volts) {
-    intakePivotTalon.setControl(voltageOut.withOutput(volts));
+  public void runCurrent(double volts) {
+    talon.setControl(currentOut.withOutput(volts));
   }
 
   @Override
@@ -265,7 +268,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     }
 
     setpointRads = clampRads(rads);
-    intakePivotTalon.setControl(motionMagicCurrent.withPosition(radsToMotorPosition(setpointRads)));
+    talon.setControl(motionMagicCurrent.withPosition(radsToPosition(setpointRads)));
   }
 
   @Override
@@ -275,23 +278,24 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
       return;
     }
 
-    intakePivotTalon.setControl(positionOut.withPosition(radsToMotorPosition(rads)));
+    talon.setControl(positionOut.withPosition(radsToPosition(rads)));
   }
 
   @Override
   public void stop() {
-    intakePivotTalon.stopMotor();
+    talon.stopMotor();
   }
 
   private double clampRads(double rads) {
-    return MathUtil.clamp(rads, Constants.IntakePivot.MIN_POSITION_RADS, Constants.IntakePivot.MAX_POSITION_RADS);
+    return MathUtil.clamp(
+        rads, Constants.IntakePivot.MIN_POSITION_RADS, Constants.IntakePivot.MAX_POSITION_RADS);
   }
 
-  private double radsToMotorPosition(double rads) {
-    return Units.radiansToRotations(rads) * Constants.IntakePivot.MOTOR_TO_MECHANISM * Constants.IntakePivot.MECHANISM_RANGE_PERCENT;
+  private double radsToPosition(double rads) {
+    return Units.radiansToRotations(rads);
   }
 
-  private double motorPositionToRads(double motorPosition) {
-    return Units.rotationsToRadians(motorPosition) / Constants.IntakePivot.MOTOR_TO_MECHANISM / Constants.IntakePivot.MECHANISM_RANGE_PERCENT;
+  private double positionToRads(double motorPosition) {
+    return Units.rotationsToRadians(motorPosition);
   }
 }

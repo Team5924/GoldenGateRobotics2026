@@ -20,12 +20,12 @@ import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.team5924.frc2026.RobotState;
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem;
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystem.VoltageState;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRoller;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRoller.VoltageState;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
-public class Indexer extends GenericRollerSystem<Indexer.IndexerState> {
+public class Indexer extends GenericRoller<Indexer.IndexerState> {
   @RequiredArgsConstructor
   @Getter
   public enum IndexerState implements VoltageState {

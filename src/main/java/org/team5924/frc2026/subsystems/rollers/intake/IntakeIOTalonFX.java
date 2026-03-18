@@ -1,5 +1,5 @@
 /*
- * IntakeIOKrakenFOC.java
+ * IntakeIOTalonFX.java
  */
 
 /* 
@@ -16,16 +16,12 @@
 
 package org.team5924.frc2026.subsystems.rollers.intake;
 
-import org.team5924.frc2026.Constants;
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOKrakenFOC;
+import org.team5924.frc2026.Constants.Intake;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerIOTalonFX;
 
-public class IntakeIOKrakenFOC extends GenericRollerSystemIOKrakenFOC implements IntakeIO {
-  public IntakeIOKrakenFOC() {
-    super(
-        Constants.Intake.CAN_ID,
-        Constants.Intake.BUS,
-        Constants.Intake.CONFIG,
-        Constants.Intake.REDUCTION);
+public class IntakeIOTalonFX extends GenericRollerIOTalonFX implements IntakeIO {
+  public IntakeIOTalonFX() {
+    super(Intake.CAN_ID, Intake.BUS, Intake.CONFIG, Intake.MOTOR_TO_MECHANISM);
   }
 
   @Override

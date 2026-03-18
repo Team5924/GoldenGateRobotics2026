@@ -1,5 +1,5 @@
 /*
- * IntakePivotIO.java
+ * FlywheelIO.java
  */
 
 /* 
@@ -14,27 +14,28 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.pivots.intakePivot;
+package org.team5924.frc2026.subsystems.flywheel;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface IntakePivotIO {
+public interface FlywheelIO {
   @AutoLog
-  public static class IntakePivotIOInputs {
+  public static class FlywheelIOInputs {
     public boolean motorConnected = true;
     public double position = 0.0;
     public double positionRads = 0.0;
-    public double velocityRadsPerSec = 0.0;
+    public double velocityRotationsPerSec = 0.0;
     public double appliedVoltage = 0.0;
     public double supplyCurrentAmps = 0.0;
     public double torqueCurrentAmps = 0.0;
     public double tempCelsius = 0.0;
 
-    public double motionMagicVelocityTarget = 0.0;
-    public double motionMagicPositionTarget = 0.0;
+    public double followerSupplyCurrentAmps;
+    public double followerTempCelsius;
 
-    public double setpointRads = 0.0;
-    public double setpointPosition = 0.0;
+    public double setpointVelocityRotationsPerSec;
+
+    public double motionMagicVelocityTarget = 0.0;
     public double acceleration = 0.0;
   }
 
@@ -43,31 +44,25 @@ public interface IntakePivotIO {
    *
    * @param inputs Inputs to update
    */
-  public default void updateInputs(IntakePivotIOInputs inputs) {}
+  public default void updateInputs(FlywheelIOInputs inputs) {}
 
-  /** Updates that are be called in intakePivot periodic */
+  /** Updates that are be called in flywheel periodic */
   public default void periodicUpdates() {}
 
   /**
-   * Sets the intakePivot motor to the specified current
+   * Sets the flywheel motor to the specified voltage
    *
-   * @param amps number of amps
+   * @param volts number of volts
    */
-  public default void runCurrent(double amps) {}
+  public default void runVolts(double volts) {}
 
   /**
-   * Sets the intakePivot motor to a specified angle
+   * Runs the shooter roller motor at the specified velocity
    *
-   * @param rads target angle
+   * @param velocity velocity in rotations/sec
    */
-  public default void setPosition(double rads) {}
-
-  /** Holds the intakePivot motor at a set position */
-  public default void holdPosition(double rads) {}
+  public default void setVelocity(double velocity) {}
 
   /** stops the motor */
   default void stop() {}
-
-  /** Sets the intakePivot position to specified rads from bottom */
-  default void setPositionSetpoint(double radiansFromBottom, double radsPerSecond) {}
 }

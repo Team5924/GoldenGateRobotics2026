@@ -16,22 +16,16 @@
 
 package org.team5924.frc2026.subsystems.turret;
 
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
-
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.FieldState;
 import org.team5924.frc2026.RobotState;
-import org.team5924.frc2026.util.Elastic;
-import org.team5924.frc2026.util.Elastic.Notification;
-import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
 import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
@@ -42,8 +36,6 @@ public class Turret extends SubsystemBase {
 
   @Setter private double input;
 
-  public final SysIdRoutine sysId;
-
   private final boolean isLeft;
 
   public enum TurretState {
@@ -51,9 +43,13 @@ public class Turret extends SubsystemBase {
     MOVING(() -> 0.0),
 
     // voltage at which the example subsystem motor moves when controlled by the operator
-    MANUAL(new LoggedTunableNumber("Turret/OperatorVoltage", 1.0)),
+    MANUAL(new LoggedTunableNumber("Turret/Volts/OperatorVoltage", 1.0)),
 
-    ZERO(() -> 0.0);
+    NINETY(new LoggedTunableNumber("Turret/Volts/Ninety", Math.PI / 2)),
+
+    ZERO(() -> 0.0),
+
+    AUTO(() -> 0.0);
 
     @Getter private final DoubleSupplier rads;
 
@@ -64,91 +60,71 @@ public class Turret extends SubsystemBase {
 
   @Getter private TurretState goalState = TurretState.OFF;
 
-  private final Alert turretMotorDisconnected;
-  private final Notification turretMotorDisconnectedNotification;
-  private boolean wasTurretMotorConnected = true;
-  
+  private final Alert motorDisconnected;
+
   protected final Alert overheatAlert;
-  protected final Notification overheatNotification;
-  protected boolean wasOverheating = false;
 
   private double lastStateChange = 0.0;
 
   private double exceedBoundsDirection;
   private boolean shouldContinue;
 
+  private final String side;
+
+  @Setter private double autoInput = 0.0;
+
   public Turret(TurretIO io, boolean isLeft) {
+    side = isLeft ? "Left" : "Right";
     this.io = io;
     this.goalState = TurretState.OFF;
-    this.turretMotorDisconnected =
-        new Alert("Turret Motor Disconnected!", Alert.AlertType.kWarning);
-    this.turretMotorDisconnectedNotification =
-        new Notification(NotificationLevel.WARNING, "Turret Motor Disconnected", "");
+    this.motorDisconnected =
+        new Alert(side + " Turret Motor Disconnected!", Alert.AlertType.kWarning);
     this.isLeft = isLeft;
 
-    overheatAlert = new Alert("Turret motor overheating!", Alert.AlertType.kWarning);
-
-    overheatNotification =
-        new Notification(
-            NotificationLevel.WARNING, "Turret Overheat Warning", "Turret motor overheat imminent!");
-
-
-    sysId =
-        new SysIdRoutine(
-            new SysIdRoutine.Config(
-                Volts.per(Seconds).of(.75),
-                Volts.of(1),
-                Seconds.of(Constants.SYS_ID_TIME),
-                (state) -> Logger.recordOutput("Turret/SysIdState", state.toString())),
-            new SysIdRoutine.Mechanism((voltage) -> tryRunVolts(voltage.in(Volts)), null, this));
+    overheatAlert = new Alert(side + " Turret motor overheating!", Alert.AlertType.kWarning);
   }
 
   @Override
   public void periodic() {
     io.periodicUpdates();
     io.updateInputs(inputs);
-    Logger.processInputs("Turret", inputs);
+    Logger.processInputs("Turret/" + side, inputs);
 
-    Logger.recordOutput("Turret/GoalState", goalState.toString());
-    Logger.recordOutput("Turret/CurrentState", getRespectiveTurretState());
-    Logger.recordOutput("Turret/TargetRads", goalState.rads.getAsDouble());
-    Logger.recordOutput("Turret/ExceedBoundsDirection", exceedBoundsDirection);
-    Logger.recordOutput("Turret/ShouldContinue", shouldContinue);
+    Logger.recordOutput("Turret/" + side + "/GoalState", goalState.toString());
+    Logger.recordOutput("Turret/" + side + "/CurrentState", getRespectiveTurretState());
+    Logger.recordOutput("Turret/" + side + "/TargetRads", goalState.rads.getAsDouble());
+    Logger.recordOutput("Turret/" + side + "/CurrentRads", inputs.positionRads);
+    Logger.recordOutput("Turret/" + side + "/ExceedBoundsDirection", exceedBoundsDirection);
+    Logger.recordOutput("Turret/" + side + "/ShouldContinue", shouldContinue);
 
     handleCurrentState();
 
-    turretMotorDisconnected.set(!inputs.turretMotorConnected);
+    motorDisconnected.set(!inputs.motorConnected);
 
-    if (!inputs.turretMotorConnected && wasTurretMotorConnected) {
-      Elastic.sendNotification(turretMotorDisconnectedNotification);
-    }
-    wasTurretMotorConnected = inputs.turretMotorConnected;
-
-    boolean isOverheating = inputs.turretTempCelsius > Constants.OVERHEAT_THRESHOLD;
+    boolean isOverheating = inputs.tempCelsius > Constants.OVERHEAT_THRESHOLD;
     overheatAlert.set(isOverheating);
-    if (isOverheating && !wasOverheating) {
-      Elastic.sendNotification(overheatNotification);
-    }
-    wasOverheating = isOverheating;
   }
 
   public boolean isAtSetpoint() {
-    return RobotState.getTime() - lastStateChange > Constants.GeneralTurret.STATE_TIMEOUT
-        || EqualsUtil.epsilonEquals(
-            inputs.setpointRads, inputs.turretPositionRads, Constants.GeneralTurret.EPSILON_RADS);
+    // return RobotState.getTime() - lastStateChange > Constants.GeneralTurret.STATE_TIMEOUT
+    return EqualsUtil.epsilonEquals(
+        inputs.setpointRads, inputs.positionRads, Constants.GeneralTurret.EPSILON_RADS);
   }
 
   private void handleCurrentState() {
-    TurretState cTurretState =
+    TurretState currentState =
         isLeft
             ? RobotState.getInstance().getLeftTurretState()
             : RobotState.getInstance().getRightTurretState();
-    switch (cTurretState) {
+    switch (currentState) {
       case MOVING -> {
-        if (isAtSetpoint()) setRespectiveTurretState(goalState);
+        if (isAtSetpoint() && goalState != TurretState.AUTO) setRespectiveTurretState(goalState);
       }
       case MANUAL -> handleManualState();
       case OFF -> io.stop();
+      case NINETY -> {
+        io.setPosition(goalState.rads.getAsDouble() * (isLeft ? 1 : -1));
+      }
       default -> io.setPosition(goalState.rads.getAsDouble());
     }
   }
@@ -190,6 +166,10 @@ public class Turret extends SubsystemBase {
   }
 
   public void setGoalState(TurretState goalState) {
+    if (this.goalState.equals(goalState)) return;
+    if (goalState.equals(TurretState.MANUAL) && Math.abs(input) <= Constants.JOYSTICK_DEADZONE)
+      return;
+
     if (goalState != TurretState.MOVING) this.goalState = goalState;
     switch (goalState) {
       case MANUAL:
@@ -197,11 +177,15 @@ public class Turret extends SubsystemBase {
         break;
       case MOVING:
         DriverStation.reportError(
-            "Turret: MOVING is an invalid goal state; it is a transition state!!", null);
+            side + " Turret: MOVING is an invalid goal state; it is a transition state!!", null);
         break;
       case OFF:
         setRespectiveTurretState(TurretState.OFF);
         io.stop();
+        break;
+      case AUTO:
+        setRespectiveTurretState(TurretState.MOVING);
+        io.setPosition(autoInput);
         break;
       default:
         setRespectiveTurretState(TurretState.MOVING);
@@ -209,7 +193,7 @@ public class Turret extends SubsystemBase {
         break;
     }
 
-    lastStateChange = RobotState.getTime();
+    lastStateChange = FieldState.getInstance().getTime();
   }
 
   private void setRespectiveTurretState(TurretState state) {

@@ -29,7 +29,6 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.*;
-
 import org.team5924.frc2026.util.LoggedTunableNumber;
 import org.team5924.frc2026.util.swerve.ModuleLimits;
 
@@ -40,9 +39,10 @@ public class TunerConstants {
 
   // The steer motor uses any SwerveModule.SteerRequestType control request with the
   // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
-  public static final LoggedTunableNumber kPSteer = new LoggedTunableNumber("SteerGains/kP", 2000.0);
+  public static final LoggedTunableNumber kPSteer =
+      new LoggedTunableNumber("SteerGains/kP", 2100.0);
   public static final LoggedTunableNumber kISteer = new LoggedTunableNumber("SteerGains/kI", 0.0);
-  public static final LoggedTunableNumber kDSteer = new LoggedTunableNumber("SteerGains/kD", 5.0);
+  public static final LoggedTunableNumber kDSteer = new LoggedTunableNumber("SteerGains/kD", 25.0);
   public static final LoggedTunableNumber kSSteer = new LoggedTunableNumber("SteerGains/kS", 0.1);
   public static final LoggedTunableNumber kVSteer = new LoggedTunableNumber("SteerGains/kV", 1.91);
   public static final LoggedTunableNumber kASteer = new LoggedTunableNumber("SteerGains/kA", 0.0);
@@ -74,10 +74,12 @@ public class TunerConstants {
 
   // The closed-loop output type to use for the steer motors;
   // This affects the PID/FF gains for the steer motors
-  private static final ClosedLoopOutputType kSteerClosedLoopOutput = ClosedLoopOutputType.TorqueCurrentFOC;
+  private static final ClosedLoopOutputType kSteerClosedLoopOutput =
+      ClosedLoopOutputType.TorqueCurrentFOC;
   // The closed-loop output type to use for the drive motors;
   // This affects the PID/FF gains for the drive motors
-  private static final ClosedLoopOutputType kDriveClosedLoopOutput = ClosedLoopOutputType.TorqueCurrentFOC;
+  private static final ClosedLoopOutputType kDriveClosedLoopOutput =
+      ClosedLoopOutputType.TorqueCurrentFOC;
 
   // The type of motor used for the drive motor
   private static final DriveMotorArrangement kDriveMotorType =
@@ -92,7 +94,7 @@ public class TunerConstants {
 
   // The stator current at which the wheels start to slip;
   // This needs to be tuned to your individual robot
-  private static final Current kSlipCurrent = Amps.of(16.0);
+  private static final Current kSlipCurrent = Amps.of(28.0);
 
   // Initial configs for the drive and steer motors and the azimuth encoder; these cannot be null.
   // Some configs will be overwritten; check the `with*InitialConfigs()` API documentation.
@@ -112,12 +114,12 @@ public class TunerConstants {
 
   // Configs for the Pigeon 2; leave this null to skip applying Pigeon 2 configs
   private static final Pigeon2Configuration pigeonConfigs =
-    new Pigeon2Configuration()
-  		.withMountPose(
-				new MountPoseConfigs()
-					.withMountPosePitch(87.71495056152344)
-					.withMountPoseYaw(0.6359954476356506)
-					.withMountPoseRoll(-178.69863891601562));
+      new Pigeon2Configuration()
+          .withMountPose(
+              new MountPoseConfigs()
+                  .withMountPosePitch(87.24925231933594)
+                  .withMountPoseYaw(-0.7844216227531433)
+                  .withMountPoseRoll(-179.69129943847656));
 
   // CAN bus that the devices are located on;
   // All swerve devices must share the same CAN bus

@@ -1,5 +1,5 @@
 /*
- * GenericRollerSystemIOSim.java
+ * GenericRollerIOSim.java
  */
 
 /* 
@@ -23,19 +23,19 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import org.team5924.frc2026.Constants;
 
-public class GenericRollerSystemIOSim implements GenericRollerSystemIO {
+public class GenericRollerIOSim implements GenericRollerIO {
   protected final DCMotorSim sim;
   protected final DCMotor gearbox;
   private double appliedVoltage = 0.0;
 
-  public GenericRollerSystemIOSim(DCMotor motorModel, double reduction, double moi) {
+  public GenericRollerIOSim(DCMotor motorModel, double moi, double reduction) {
     gearbox = motorModel;
     sim =
         new DCMotorSim(LinearSystemId.createDCMotorSystem(motorModel, moi, reduction), motorModel);
   }
 
   @Override
-  public void updateInputs(GenericRollerSystemIOInputs inputs) {
+  public void updateInputs(GenericRollerIOInputs inputs) {
     if (DriverStation.isDisabled()) runVolts(0.0);
 
     sim.update(Constants.LOOP_PERIODIC_SECONDS);
@@ -44,6 +44,7 @@ public class GenericRollerSystemIOSim implements GenericRollerSystemIO {
     inputs.velocityRadsPerSec = sim.getAngularVelocityRadPerSec();
     inputs.appliedVoltage = appliedVoltage;
     inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
+    inputs.tempCelsius = 25;
   }
 
   @Override

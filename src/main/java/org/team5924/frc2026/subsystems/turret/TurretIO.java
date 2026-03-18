@@ -21,15 +21,15 @@ import org.littletonrobotics.junction.AutoLog;
 public interface TurretIO {
   @AutoLog
   public static class TurretIOInputs {
-    public boolean turretMotorConnected = true;
-    public double turretPosition = 0.0;
-    public double turretPositionRads = 0.0;
-    public double turretPositionCancoder = 0.0;
-    public double turretVelocityRadsPerSec = 0.0;
-    public double turretAppliedVoltage = 0.0;
-    public double turretSupplyCurrentAmps = 0.0;
-    public double turretTorqueCurrentAmps = 0.0;
-    public double turretTempCelsius = 0.0;
+    public boolean motorConnected = true;
+    public double position = 0.0;
+    public double positionRads = 0.0;
+    public double positionCancoder = 0.0;
+    public double velocityRadsPerSec = 0.0;
+    public double appliedVoltage = 0.0;
+    public double supplyCurrentAmps = 0.0;
+    public double torqueCurrentAmps = 0.0;
+    public double tempCelsius = 0.0;
 
     public double motionMagicVelocityTarget = 0.0;
     public double motionMagicPositionTarget = 0.0;

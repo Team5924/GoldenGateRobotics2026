@@ -37,7 +37,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import org.team5924.frc2026.FieldConstants;
 import org.team5924.frc2026.subsystems.drive.Drive;
+import org.team5924.frc2026.util.AllianceFlipUtil;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -157,6 +159,19 @@ public class DriveCommands {
 
         // Reset PID controller when command starts
         .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
+  }
+
+  public static Command driveFacingHub(
+      Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
+
+    return joystickDriveAtAngle(
+        drive,
+        xSupplier,
+        ySupplier,
+        () ->
+            AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint.toTranslation2d())
+                .minus(drive.getPose().getTranslation())
+                .getAngle());
   }
 
   /**

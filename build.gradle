@@ -179,39 +179,39 @@ task(eventDeploy) {
 createVersionFile.dependsOn(eventDeploy)
 
 // Spotless formatting
-// project.compileJava.dependsOn(spotlessApply)
-// spotless {
-//     java {
-//         target fileTree(".") {
-//             include "**/*.java"
-//             exclude "**/build/**", "**/build-*/**", "**.json", "**/Constants.java", "src/main/java/org/team5924/frc2026/util/swerve/**", "src/main/java/org/team5924/frc2026/util/GeomUtil.java", "src/main/java/org/team5924/frc2026/util/EqualsUtil.java", "src/main/java/org/team5924/frc2026/util/Elastic.java"
-//         }
-//         importOrder()
-//         toggleOffOn()
-//         removeUnusedImports()
-//         trimTrailingWhitespace()
-//         endWithNewline()
-//         googleJavaFormat()
-//         formatAnnotations()
-//         licenseHeaderFile 'licenseHeaderFile'
-//     }
-//     groovyGradle {
-//         target fileTree(".") {
-//             include "**/*.gradle"
-//             exclude "**/build/**", "**/build-*/**"
-//         }
-//         greclipse()
-//         leadingTabsToSpaces(4)
-//         trimTrailingWhitespace()
-//         endWithNewline()
-//     }
-//     format "misc", {
-//         target fileTree(".") {
-//             include "**/*.md", "**/.gitignore"
-//             exclude "**/build/**", "**/build-*/**"
-//         }
-//         trimTrailingWhitespace()
-//         leadingTabsToSpaces(2)
-//         endWithNewline()
-//     }
-// }
+project.compileJava.dependsOn(spotlessApply)
+spotless {
+    java {
+        target fileTree(".") {
+            include "**/*.java"
+            exclude "**/build/**", "**/build-*/**", "**.json", "**/Constants.java", "src/main/java/org/team5924/frc2026/util/swerve/**", "src/main/java/org/team5924/frc2026/util/GeomUtil.java", "src/main/java/org/team5924/frc2026/util/EqualsUtil.java", "src/main/java/org/team5924/frc2026/util/Elastic.java"
+        }
+        importOrder()
+        toggleOffOn()
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+        googleJavaFormat()
+        formatAnnotations()
+        licenseHeaderFile 'licenseHeaderFile'
+    }
+    groovyGradle {
+        target fileTree(".") {
+            include "**/*.gradle"
+            exclude "**/build/**", "**/build-*/**"
+        }
+        greclipse()
+        leadingTabsToSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    format "misc", {
+        target fileTree(".") {
+            include "**/*.md", "**/.gitignore"
+            exclude "**/build/**", "**/build-*/**"
+        }
+        trimTrailingWhitespace()
+        leadingTabsToSpaces(2)
+        endWithNewline()
+    }
+}

@@ -1,5 +1,5 @@
 /*
- * ShooterRollerIOSim.java
+ * IndexerIOSim.java
  */
 
 /* 
@@ -14,21 +14,17 @@
  * If you did not, see <https://www.gnu.org/licenses>.
  */
 
-package org.team5924.frc2026.subsystems.rollers.shooterRoller;
+package org.team5924.frc2026.subsystems.rollers.indexer;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import org.team5924.frc2026.Constants;
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOSim;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerIOSim;
 
-public class ShooterRollerIOSim extends GenericRollerSystemIOSim implements ShooterRollerIO {
-  public ShooterRollerIOSim(boolean isLeft) {
+public class IndexerIOSim extends GenericRollerIOSim implements IndexerIO {
+  public IndexerIOSim() {
     super(
         DCMotor.getKrakenX60Foc(1),
-        isLeft
-            ? Constants.ShooterRollerLeaderLeft.REDUCTION
-            : Constants.ShooterRollerLeaderRight.REDUCTION,
-        isLeft
-            ? Constants.ShooterRollerLeaderLeft.SIM_MOI
-            : Constants.ShooterRollerLeaderRight.SIM_MOI);
+        Constants.Indexer.SIM_MOI,
+        Constants.Indexer.MOTOR_TO_MECHANISM);
   }
 }

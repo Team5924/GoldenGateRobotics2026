@@ -18,10 +18,11 @@ package org.team5924.frc2026.subsystems.rollers.intake;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import org.team5924.frc2026.Constants;
-import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerSystemIOSim;
+import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerIOSim;
 
-public class IntakeIOSim extends GenericRollerSystemIOSim implements IntakeIO {
+public class IntakeIOSim extends GenericRollerIOSim implements IntakeIO {
   public IntakeIOSim() {
-    super(DCMotor.getKrakenX60Foc(1), Constants.Intake.REDUCTION, Constants.Intake.SIM_MOI);
+    super(
+        DCMotor.getKrakenX60Foc(1), Constants.Intake.SIM_MOI, Constants.Intake.MOTOR_TO_MECHANISM);
   }
 }
