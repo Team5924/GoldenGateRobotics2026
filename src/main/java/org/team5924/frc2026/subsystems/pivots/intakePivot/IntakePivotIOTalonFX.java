@@ -57,10 +57,10 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   private double setpointRads;
 
   /* Gains */
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("IntakePivot/kP", 70.0);
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("IntakePivot/kP", 40.0);
   private final LoggedTunableNumber kI = new LoggedTunableNumber("IntakePivot/kI", 0.0);
-  private final LoggedTunableNumber kD = new LoggedTunableNumber("IntakePivot/kD", 0.0);
-  private final LoggedTunableNumber kS = new LoggedTunableNumber("IntakePivot/kS", 1.5);
+  private final LoggedTunableNumber kD = new LoggedTunableNumber("IntakePivot/kD", 0.5);
+  private final LoggedTunableNumber kS = new LoggedTunableNumber("IntakePivot/kS", .2);
   private final LoggedTunableNumber kV = new LoggedTunableNumber("IntakePivot/kV", 0.0);
   private final LoggedTunableNumber kG = new LoggedTunableNumber("IntakePivot/kG", 2.8);
   private final LoggedTunableNumber kA = new LoggedTunableNumber("IntakePivot/kA", 0.0);
@@ -154,7 +154,8 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
     motionMagicCurrent = new MotionMagicTorqueCurrentFOC(0.0).withSlot(0).withUpdateFreqHz(100);
 
     // assuming intake pivot starts stowed
-    talon.setPosition(Units.radiansToRotations(IntakePivotState.STOW.getRads().getAsDouble()));
+    talon.setPosition(
+        Units.radiansToRotations(IntakePivotState.PHYSICAL_STOW.getRads().getAsDouble()));
   }
 
   @Override

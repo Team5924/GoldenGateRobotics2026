@@ -143,13 +143,13 @@ public final class Constants {
     public static final boolean ENABLE_TIMEOUT = false;
 
     /** how far the intake pivot physically rotates */
-    public static final double MIN_POSITION_MULTI =
-      Units.radiansToRotations(IntakePivotState.DOWN.getRads().getAsDouble() - EPSILON_RADS);
-    public static final double MAX_POSITION_MULTI =
-      Units.radiansToRotations(IntakePivotState.STOW.getRads().getAsDouble() + EPSILON_RADS);
+    public static final double MIN_POSITION_ROTATIONS =
+      Units.radiansToRotations(IntakePivotState.DOWN.getRads().getAsDouble());
+    public static final double MAX_POSITION_ROTATIONS =
+      Units.radiansToRotations(IntakePivotState.STOW.getRads().getAsDouble());
 
-    public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
-    public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
+    public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_ROTATIONS);
+    public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_ROTATIONS);
 
     /* Configs */
     public static final TalonFXConfiguration CONFIG =
@@ -167,10 +167,10 @@ public final class Constants {
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
-        .withReverseSoftLimitThreshold(MIN_POSITION_MULTI)
-        .withForwardSoftLimitThreshold(MAX_POSITION_MULTI)
-        .withForwardSoftLimitEnable(false)
-        .withReverseSoftLimitEnable(false);
+        .withReverseSoftLimitThreshold(MIN_POSITION_ROTATIONS)
+        .withForwardSoftLimitThreshold(MAX_POSITION_ROTATIONS)
+        .withForwardSoftLimitEnable(true)
+        .withReverseSoftLimitEnable(true);
 
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
       new FeedbackConfigs()
@@ -225,11 +225,11 @@ public final class Constants {
     public static final double STATE_TIMEOUT = 5.0;
     public static final boolean ENABLE_TIMEOUT = false;
 
-    public static final double MIN_POSITION_MULTI = 0.0 - Units.radiansToRotations(EPSILON_RADS);
-    public static final double MAX_POSITION_MULTI = 33.0 / 360.0 + Units.radiansToRotations(EPSILON_RADS);
+    public static final double MIN_POSITION_ROTATIONS = 0.0 - Units.radiansToRotations(EPSILON_RADS);
+    public static final double MAX_POSITION_ROTATIONS = 33.0 / 360.0 + Units.radiansToRotations(EPSILON_RADS);
 
-    public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
-    public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
+    public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_ROTATIONS);
+    public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_ROTATIONS);
 
     /* Configs */
     public static final TalonFXConfiguration CONFIG =
@@ -248,8 +248,8 @@ public final class Constants {
 
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       new SoftwareLimitSwitchConfigs()
-            .withReverseSoftLimitThreshold(MIN_POSITION_MULTI)
-            .withForwardSoftLimitThreshold(MAX_POSITION_MULTI)
+            .withReverseSoftLimitThreshold(MIN_POSITION_ROTATIONS)
+            .withForwardSoftLimitThreshold(MAX_POSITION_ROTATIONS)
             .withForwardSoftLimitEnable(false)
             .withReverseSoftLimitEnable(false);
 
@@ -382,16 +382,16 @@ public final class Constants {
     public static final int CANCODER_ID = 22;
     public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
 
-    public static final double MIN_POSITION_MULTI = 0 - Units.radiansToRotations(GeneralTurret.EPSILON_RADS);
-    public static final double MAX_POSITION_MULTI = 150.0 / 360.0 + Units.radiansToRotations(GeneralTurret.EPSILON_RADS);
+    public static final double MIN_POSITION_ROTATIONS = 0 - Units.radiansToRotations(GeneralTurret.EPSILON_RADS);
+    public static final double MAX_POSITION_ROTATIONS = 150.0 / 360.0 + Units.radiansToRotations(GeneralTurret.EPSILON_RADS);
 
-    public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
-    public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
+    public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_ROTATIONS);
+    public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_ROTATIONS);
   
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       GeneralTurret.GENERAL_SOFTWARE_LIMIT_CONFIGS
-        .withReverseSoftLimitThreshold(MIN_POSITION_MULTI)
-        .withForwardSoftLimitThreshold(MAX_POSITION_MULTI);
+        .withReverseSoftLimitThreshold(MIN_POSITION_ROTATIONS)
+        .withForwardSoftLimitThreshold(MAX_POSITION_ROTATIONS);
 
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
       GeneralTurret.GENERAL_FEEDBACK_CONFIGS
@@ -452,16 +452,16 @@ public final class Constants {
     public static final int CANCODER_ID = 23;
     public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
 
-    public static final double MIN_POSITION_MULTI = -150.0 / 360.0 - Units.radiansToRotations(GeneralTurret.EPSILON_RADS);
-    public static final double MAX_POSITION_MULTI = 0.0 + Units.radiansToRotations(GeneralTurret.EPSILON_RADS);
+    public static final double MIN_POSITION_ROTATIONS = -150.0 / 360.0 - Units.radiansToRotations(GeneralTurret.EPSILON_RADS);
+    public static final double MAX_POSITION_ROTATIONS = 0.0 + Units.radiansToRotations(GeneralTurret.EPSILON_RADS);
 
-    public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_MULTI);
-    public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_MULTI);
+    public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_ROTATIONS);
+    public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_ROTATIONS);
   
     public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
       GeneralTurret.GENERAL_SOFTWARE_LIMIT_CONFIGS
-        .withReverseSoftLimitThreshold(MIN_POSITION_MULTI)
-        .withForwardSoftLimitThreshold(MAX_POSITION_MULTI);
+        .withReverseSoftLimitThreshold(MIN_POSITION_ROTATIONS)
+        .withForwardSoftLimitThreshold(MAX_POSITION_ROTATIONS);
 
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
       GeneralTurret.GENERAL_FEEDBACK_CONFIGS

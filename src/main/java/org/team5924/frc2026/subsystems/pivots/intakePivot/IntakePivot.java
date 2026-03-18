@@ -44,7 +44,8 @@ public class IntakePivot extends SubsystemBase {
     MOVING(() -> 0.0),
 
     DOWN(new LoggedTunableNumber("IntakePivot/DownRads", 0)),
-    STOW(new LoggedTunableNumber("IntakePivot/StowRads", 2.45)),
+    STOW(new LoggedTunableNumber("IntakePivot/StowRads", 2.05)),
+    PHYSICAL_STOW(() -> 2.1),
     SHOOTING(new LoggedTunableNumber("IntakePivot/ShootingRads", 1.5)),
 
     // current at which the example subsystem motor moves when controlled by the operator
