@@ -36,11 +36,7 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
-import org.team5924.frc2026.Constants.FlywheelFollowerLeft;
-import org.team5924.frc2026.Constants.FlywheelFollowerRight;
-import org.team5924.frc2026.Constants.FlywheelLeaderLeft;
-import org.team5924.frc2026.Constants.FlywheelLeaderRight;
-import org.team5924.frc2026.Constants.GeneralFlywheel;
+import org.team5924.frc2026.Constants.Flywheel;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
@@ -60,35 +56,20 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   private final MotionMagicConfigs motionMagicConfigs;
   private double setpointVelocityRotationsPerSec;
 
-  /* Gains Left */
-  private final LoggedTunableNumber kPLeft = new LoggedTunableNumber("Flywheel/Left/kP", 0.5);
-  private final LoggedTunableNumber kILeft = new LoggedTunableNumber("Flywheel/Left/kI", 0.0);
-  private final LoggedTunableNumber kDLeft = new LoggedTunableNumber("Flywheel/Left/kD", 0.0);
-  private final LoggedTunableNumber kSLeft = new LoggedTunableNumber("Flywheel/Left/kS", 0.25);
-  private final LoggedTunableNumber kVLeft = new LoggedTunableNumber("Flywheel/Left/kV", 0.0705);
-  private final LoggedTunableNumber kALeft = new LoggedTunableNumber("Flywheel/Left/kA", 0.0);
+  /* Gains  */
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("Flywheel/kP", 0.5);
+  private final LoggedTunableNumber kI = new LoggedTunableNumber("Flywheel/kI", 0.0);
+  private final LoggedTunableNumber kD = new LoggedTunableNumber("Flywheel/kD", 0.0);
+  private final LoggedTunableNumber kS = new LoggedTunableNumber("Flywheel/kS", 0.25);
+  private final LoggedTunableNumber kV = new LoggedTunableNumber("Flywheel/kV", 0.0705);
+  private final LoggedTunableNumber kA = new LoggedTunableNumber("Flywheel/kA", 0.0);
 
-  private final LoggedTunableNumber motionCruiseVelocityLeft =
-      new LoggedTunableNumber("Flywheel/Left/MotionCruiseVelocity", 10.0);
-  private final LoggedTunableNumber motionAccelerationLeft =
-      new LoggedTunableNumber("Flywheel/Left/MotionAcceleration", 100.0);
-  private final LoggedTunableNumber motionJerkLeft =
-      new LoggedTunableNumber("Flywheel/Left/MotionJerk", 0.0);
-
-  /* Gains Right */
-  private final LoggedTunableNumber kPRight = new LoggedTunableNumber("Flywheel/Right/kP", 0.5);
-  private final LoggedTunableNumber kIRight = new LoggedTunableNumber("Flywheel/Right/kI", 0.0);
-  private final LoggedTunableNumber kDRight = new LoggedTunableNumber("Flywheel/Right/kD", 0.0);
-  private final LoggedTunableNumber kSRight = new LoggedTunableNumber("Flywheel/Right/kS", 0.25);
-  private final LoggedTunableNumber kVRight = new LoggedTunableNumber("Flywheel/Right/kV", 0.0705);
-  private final LoggedTunableNumber kARight = new LoggedTunableNumber("Flywheel/Right/kA", 0.0);
-
-  private final LoggedTunableNumber motionCruiseVelocityRight =
-      new LoggedTunableNumber("Flywheel/Right/MotionCruiseVelocity", 10.0);
-  private final LoggedTunableNumber motionAccelerationRight =
-      new LoggedTunableNumber("Flywheel/Right/MotionAcceleration", 100.0);
-  private final LoggedTunableNumber motionJerkRight =
-      new LoggedTunableNumber("Flywheel/Right/MotionJerk", 0.0);
+  private final LoggedTunableNumber motionCruiseVelocity =
+      new LoggedTunableNumber("Flywheel/MotionCruiseVelocity", 10.0);
+  private final LoggedTunableNumber motionAcceleration =
+      new LoggedTunableNumber("Flywheel/MotionAcceleration", 100.0);
+  private final LoggedTunableNumber motionJerk =
+      new LoggedTunableNumber("Flywheel/MotionJerk", 0.0);
 
   /* Status Signals */
   private final StatusSignal<Angle> position;
@@ -105,25 +86,10 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   private final VoltageOut voltageOut;
   private final MotionMagicVelocityVoltage motionMagicVelocity;
 
-  private final Runnable periodicUpdateSlot0;
-  private final Runnable periodicUpdateMotionMagic;
+  public FlywheelIOTalonFX() {
+    leaderTalon = new TalonFX(Flywheel.CAN_ID, new CANBus(Flywheel.BUS));
 
-  private final boolean isLeft;
-  private final String side;
-
-  public FlywheelIOTalonFX(boolean isLeft) {
-    this.isLeft = isLeft;
-    side = isLeft ? "Left" : "Right";
-
-    leaderTalon =
-        new TalonFX(
-            isLeft ? FlywheelLeaderLeft.CAN_ID : FlywheelLeaderRight.CAN_ID,
-            new CANBus(GeneralFlywheel.BUS));
-
-    followerTalon =
-        new TalonFX(
-            isLeft ? FlywheelFollowerLeft.CAN_ID : FlywheelFollowerRight.CAN_ID,
-            new CANBus(GeneralFlywheel.BUS));
+    followerTalon = new TalonFX(Flywheel.FOLLOWER_CAN_ID, new CANBus(Flywheel.BUS));
 
     leaderConfig = leaderTalon.getConfigurator();
     followerConfig = followerTalon.getConfigurator();
@@ -134,42 +100,20 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     motionMagicConfigs = new MotionMagicConfigs();
     updateMotionMagicConfigs();
 
-    periodicUpdateSlot0 =
-        () -> {
-          updateSlot0Configs();
-
-          StatusCode statusCode = leaderConfig.apply(slot0Configs);
-          if (!statusCode.isOK()) {
-            Logger.recordOutput("Flywheel/" + side + "/UpdateSlot0Report", statusCode);
-          }
-        };
-
-    periodicUpdateMotionMagic =
-        () -> {
-          updateMotionMagicConfigs();
-
-          StatusCode statusCode = leaderConfig.apply(motionMagicConfigs);
-          if (!statusCode.isOK()) {
-            Logger.recordOutput("Flywheel/" + side + "/UpdateStatusCodeReport", statusCode);
-          }
-        };
-
     // Apply Configs
     StatusCode[] statusArray = new StatusCode[10];
 
-    statusArray[0] =
-        leaderConfig.apply(isLeft ? FlywheelLeaderLeft.CONFIG : FlywheelLeaderRight.CONFIG);
+    statusArray[0] = leaderConfig.apply(Flywheel.CONFIG);
     statusArray[1] = leaderConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
     statusArray[2] = leaderConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
-    statusArray[3] = leaderConfig.apply(GeneralFlywheel.FEEDBACK_CONFIGS);
+    statusArray[3] = leaderConfig.apply(Flywheel.FEEDBACK_CONFIGS);
     statusArray[4] = leaderConfig.apply(slot0Configs);
     statusArray[5] = leaderConfig.apply(motionMagicConfigs);
 
-    statusArray[6] =
-        followerConfig.apply(isLeft ? FlywheelFollowerLeft.CONFIG : FlywheelFollowerRight.CONFIG);
+    statusArray[6] = followerConfig.apply(Flywheel.FOLLOWER_CONFIG);
     statusArray[7] = followerConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
     statusArray[8] = followerConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
-    statusArray[9] = followerConfig.apply(GeneralFlywheel.FEEDBACK_CONFIGS);
+    statusArray[9] = followerConfig.apply(Flywheel.FEEDBACK_CONFIGS);
 
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
@@ -177,16 +121,11 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     if (isErrorPresent)
       Elastic.sendNotification(
           new Notification(
-              NotificationLevel.WARNING,
-              side + "Flywheel Configs",
-              "Error in " + side + " shooter flywheel configs!"));
+              NotificationLevel.WARNING, "Flywheel Configs", "Error in shooter flywheel configs!"));
 
-    Logger.recordOutput("Flywheel/" + side + "/InitConfReport", statusArray);
+    Logger.recordOutput("Flywheel/InitConfReport", statusArray);
 
-    followerTalon.setControl(
-        isLeft
-            ? new Follower(FlywheelLeaderLeft.CAN_ID, MotorAlignmentValue.Opposed)
-            : new Follower(FlywheelLeaderRight.CAN_ID, MotorAlignmentValue.Opposed));
+    followerTalon.setControl(new Follower(Flywheel.CAN_ID, MotorAlignmentValue.Opposed));
 
     // Get select status signals and set update frequency
     position = leaderTalon.getPosition();
@@ -250,55 +189,51 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   }
 
   private void updateSlot0Configs() {
-    if (isLeft) {
-      slot0Configs.kP = kPLeft.get();
-      slot0Configs.kI = kILeft.get();
-      slot0Configs.kD = kDLeft.get();
-      slot0Configs.kS = kSLeft.get();
-      slot0Configs.kV = kVLeft.get();
-      slot0Configs.kA = kALeft.get();
-    } else {
-      slot0Configs.kP = kPRight.get();
-      slot0Configs.kI = kIRight.get();
-      slot0Configs.kD = kDRight.get();
-      slot0Configs.kS = kSRight.get();
-      slot0Configs.kV = kVRight.get();
-      slot0Configs.kA = kARight.get();
-    }
+    slot0Configs.kP = kP.get();
+    slot0Configs.kI = kI.get();
+    slot0Configs.kD = kD.get();
+    slot0Configs.kS = kS.get();
+    slot0Configs.kV = kV.get();
+    slot0Configs.kA = kA.get();
   }
 
   private void updateMotionMagicConfigs() {
-    if (isLeft) {
-      motionMagicConfigs.MotionMagicAcceleration = motionAccelerationLeft.get();
-      motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocityLeft.get();
-      motionMagicConfigs.MotionMagicJerk = motionJerkLeft.get();
-    } else {
-      motionMagicConfigs.MotionMagicAcceleration = motionAccelerationRight.get();
-      motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocityRight.get();
-      motionMagicConfigs.MotionMagicJerk = motionJerkRight.get();
-    }
+    motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
+    motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
+    motionMagicConfigs.MotionMagicJerk = motionJerk.get();
   }
 
   private void updateLoggedTunableNumbers() {
-    if (isLeft) {
-      LoggedTunableNumber.ifChanged(
-          hashCode(), periodicUpdateSlot0, kPLeft, kILeft, kDLeft, kSLeft, kVLeft, kALeft);
-      LoggedTunableNumber.ifChanged(
-          hashCode() + 1,
-          periodicUpdateMotionMagic,
-          motionAccelerationLeft,
-          motionCruiseVelocityLeft,
-          motionJerkLeft);
-    } else {
-      LoggedTunableNumber.ifChanged(
-          hashCode(), periodicUpdateSlot0, kPRight, kIRight, kDRight, kSRight, kVRight, kARight);
-      LoggedTunableNumber.ifChanged(
-          hashCode() + 1,
-          periodicUpdateMotionMagic,
-          motionAccelerationRight,
-          motionCruiseVelocityRight,
-          motionJerkRight);
-    }
+    LoggedTunableNumber.ifChanged(
+        hashCode(),
+        () -> {
+          updateSlot0Configs();
+
+          StatusCode statusCode = leaderConfig.apply(slot0Configs);
+          if (!statusCode.isOK()) {
+            Logger.recordOutput("Flywheel/UpdateSlot0Report", statusCode);
+          }
+        },
+        kP,
+        kI,
+        kD,
+        kS,
+        kV,
+        kA);
+
+    LoggedTunableNumber.ifChanged(
+        hashCode() + 1,
+        () -> {
+          updateMotionMagicConfigs();
+
+          StatusCode statusCode = leaderConfig.apply(motionMagicConfigs);
+          if (!statusCode.isOK()) {
+            Logger.recordOutput("Flywheel/UpdateStatusCodeReport", statusCode);
+          }
+        },
+        motionAcceleration,
+        motionCruiseVelocity,
+        motionJerk);
   }
 
   @Override

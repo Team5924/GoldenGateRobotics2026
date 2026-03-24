@@ -34,8 +34,6 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.util.Units;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
-import edu.wpi.first.math.geometry.Translation3d;
-
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -207,9 +205,14 @@ public final class Constants {
 
 
   /* General Subsystems */
-  public final class GeneralShooterHood {
+  public final class ShooterHood {
     public static final String BUS = "rio";
     public static final double SIM_MOI = 0.001;
+    public static final int CAN_ID = 34;
+
+    /* CANCoder */
+    public static final int CANCODER_ID = 36;
+    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
 
     // spur = hood driving gear, mechanism = shooter hood gear
     public static final double MOTOR_TO_CANCODER = (40.0 / 12.0) * (24.0 / 17.0);
@@ -252,25 +255,34 @@ public final class Constants {
             .withForwardSoftLimitEnable(false)
             .withReverseSoftLimitEnable(false);
 
-    public static final FeedbackConfigs GENERAL_FEEDBACK_CONFIGS =
+    public static final FeedbackConfigs FEEDBACK_CONFIGS =
       new FeedbackConfigs()
         .withSensorToMechanismRatio(CANCODER_TO_MECHANISM)
         .withRotorToSensorRatio(MOTOR_TO_CANCODER)
-        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
+        .withFeedbackRemoteSensorID(CANCODER_ID)
+        .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
 
-    public static final MagnetSensorConfigs GENERAL_CANCODER_CONFIGS =
+    public static final MagnetSensorConfigs CANCODER_CONFIGS =
       new MagnetSensorConfigs()
         .withAbsoluteSensorDiscontinuityPoint(1.0)
-        .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
+        .withSensorDirection(SensorDirectionValue.Clockwise_Positive)
+        .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET);
   }
 
-  public final class GeneralFlywheel {
+  public final class Flywheel {
+    public static final int CAN_ID = 30;
+    public static final int BEAM_BREAK_ID = 0; // TODO: update later
+
+    public static final int FOLLOWER_CAN_ID = 31;
+    public static final double FOLLOWER_SIM_MOI = 0.001;
+
     public static final double EPSILON_VELOCITY = 2.5;
     public static final double MOTOR_TO_MECHANISM = 15.0 / 26.0;
     public static final String BUS = "rio";
     public static final double SIM_MOI = 0.001;
 
-    public static final TalonFXConfiguration GENERAL_CONFIG =
+    public static final TalonFXConfiguration CONFIG =
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
@@ -280,195 +292,17 @@ public final class Constants {
           new MotorOutputConfigs()
             .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Coast));
+  
+    public static final TalonFXConfiguration FOLLOWER_CONFIG = 
+      CONFIG
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.CounterClockwise_Positive));
 
   public static final FeedbackConfigs FEEDBACK_CONFIGS =
       new FeedbackConfigs()
         .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
         .withSensorToMechanismRatio(MOTOR_TO_MECHANISM)
         .withRotorToSensorRatio(1.0);
-  }
-
-  public final class GeneralTurret {
-    public static final String BUS = "rio";
-
-    public static final double SIM_MOI = 0.001;
-
-    public static final double MOTOR_TO_CANCODER = (20.0 / 12.0);
-    public static final double CANCODER_TO_MECHANISM = (135.0 / 20.0);
-    public static final double MOTOR_TO_MECHANISM = MOTOR_TO_CANCODER * CANCODER_TO_MECHANISM;
-
-    public static final double EPSILON_RADS = Units.degreesToRadians(10.0);
-    public static final double STATE_TIMEOUT = 1.0;
-
-    /* Configs */
-    public static final TalonFXConfiguration GENERAL_CONFIG =
-      new TalonFXConfiguration()
-        .withCurrentLimits(
-          new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(60)
-            .withStatorCurrentLimit(10)
-            .withStatorCurrentLimitEnable(true))
-        .withMotorOutput(
-          new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Brake));
-
-    public static final SoftwareLimitSwitchConfigs GENERAL_SOFTWARE_LIMIT_CONFIGS =
-      new SoftwareLimitSwitchConfigs()
-        .withForwardSoftLimitEnable(false)
-        .withReverseSoftLimitEnable(false);
-
-    public static final FeedbackConfigs GENERAL_FEEDBACK_CONFIGS =
-      new FeedbackConfigs()
-        .withSensorToMechanismRatio(CANCODER_TO_MECHANISM)
-        .withRotorToSensorRatio(MOTOR_TO_CANCODER)
-        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
-
-    public static final MagnetSensorConfigs GENERAL_CANCODER_CONFIGS =
-      new MagnetSensorConfigs()
-        .withAbsoluteSensorDiscontinuityPoint(1)
-        .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive);
-  }
-
-  /* Left */
-  public final class ShooterHoodLeft {
-    public static final int CAN_ID = 34;
-
-    /* CANCoder */
-    public static final int CANCODER_ID = 36;
-    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
-
-    public static final FeedbackConfigs FEEDBACK_CONFIGS =
-      GeneralShooterHood.GENERAL_FEEDBACK_CONFIGS
-        .withFeedbackRemoteSensorID(CANCODER_ID)
-        .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
-
-    public static final MagnetSensorConfigs CANCODER_CONFIGS =
-      GeneralShooterHood.GENERAL_CANCODER_CONFIGS
-        .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET);
-  }
-
-  public final class FlywheelLeaderLeft {
-    public static final int CAN_ID = 30;
-    public static final int BEAM_BREAK_PORT = 0; // TODO: update later
-
-    public static final TalonFXConfiguration CONFIG = GeneralFlywheel.GENERAL_CONFIG;
-  }
-
-  public final class FlywheelFollowerLeft {
-    public static final int CAN_ID = 31;
-    public static final double SIM_MOI = 0.001;
-    public static final int BEAM_BREAK_ID = 0;
-  
-    public static final TalonFXConfiguration CONFIG = 
-      GeneralFlywheel.GENERAL_CONFIG
-        .withMotorOutput(
-          new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive));
-  }
-
-  public final class TurretLeft {
-    public static final int CAN_ID = 20;
-    
-    // +x -> forward; +y -> left
-    public static final Translation3d ROBOT_TO_TURRET =
-      new Translation3d(
-        Units.inchesToMeters(4.5), 
-        Units.inchesToMeters(7.505), 
-        Units.inchesToMeters(15.340));
-
-    /* CANCoder */
-    public static final int CANCODER_ID = 22;
-    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
-
-    public static final double MIN_POSITION_ROTATIONS = 0 - Units.radiansToRotations(GeneralTurret.EPSILON_RADS);
-    public static final double MAX_POSITION_ROTATIONS = 150.0 / 360.0 + Units.radiansToRotations(GeneralTurret.EPSILON_RADS);
-
-    public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_ROTATIONS);
-    public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_ROTATIONS);
-  
-    public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
-      GeneralTurret.GENERAL_SOFTWARE_LIMIT_CONFIGS
-        .withReverseSoftLimitThreshold(MIN_POSITION_ROTATIONS)
-        .withForwardSoftLimitThreshold(MAX_POSITION_ROTATIONS);
-
-    public static final FeedbackConfigs FEEDBACK_CONFIGS =
-      GeneralTurret.GENERAL_FEEDBACK_CONFIGS
-        .withFeedbackRemoteSensorID(CANCODER_ID)
-        .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
-
-    public static final MagnetSensorConfigs CANCODER_CONFIGS =
-      GeneralTurret.GENERAL_CANCODER_CONFIGS
-        .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET);
-  }
-
-  /* Right */
-  public final class ShooterHoodRight {
-    public static final int CAN_ID = 35;
-
-    /* CANCoder */
-    public static final int CANCODER_ID = 37;
-    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
-
-    public static final FeedbackConfigs FEEDBACK_CONFIGS =
-      GeneralShooterHood.GENERAL_FEEDBACK_CONFIGS
-        .withFeedbackRemoteSensorID(CANCODER_ID)
-        .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
-
-    public static final MagnetSensorConfigs CANCODER_CONFIGS =
-      GeneralShooterHood.GENERAL_CANCODER_CONFIGS
-        .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET);
-  }
-
-  public final class FlywheelLeaderRight {
-    public static final int CAN_ID = 32;
-    public static final int BEAM_BREAK_PORT = 0; // TODO: update later
-
-    public static final TalonFXConfiguration CONFIG = GeneralFlywheel.GENERAL_CONFIG;
-  }
-
-  public final class FlywheelFollowerRight {
-    public static final int CAN_ID = 33;
-
-    public static final TalonFXConfiguration CONFIG =
-      GeneralFlywheel.GENERAL_CONFIG
-        .withMotorOutput(
-          new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive));
-  }
-
-  public final class TurretRight {
-    public static final int CAN_ID = 21;
-    
-    // +x -> forward; +y -> left
-    public static final Translation3d ROBOT_TO_TURRET =
-      new Translation3d(
-        Units.inchesToMeters(4.5), 
-        Units.inchesToMeters(-7.505), 
-        Units.inchesToMeters(15.340));
-
-    /* CANCoder */
-    public static final int CANCODER_ID = 23;
-    public static final double CANCODER_ABSOLUTE_OFFSET = 0.0;
-
-    public static final double MIN_POSITION_ROTATIONS = -150.0 / 360.0 - Units.radiansToRotations(GeneralTurret.EPSILON_RADS);
-    public static final double MAX_POSITION_ROTATIONS = 0.0 + Units.radiansToRotations(GeneralTurret.EPSILON_RADS);
-
-    public static final double MIN_POSITION_RADS = Units.rotationsToRadians(MIN_POSITION_ROTATIONS);
-    public static final double MAX_POSITION_RADS = Units.rotationsToRadians(MAX_POSITION_ROTATIONS);
-  
-    public static final SoftwareLimitSwitchConfigs SOFTWARE_LIMIT_CONFIGS =
-      GeneralTurret.GENERAL_SOFTWARE_LIMIT_CONFIGS
-        .withReverseSoftLimitThreshold(MIN_POSITION_ROTATIONS)
-        .withForwardSoftLimitThreshold(MAX_POSITION_ROTATIONS);
-
-    public static final FeedbackConfigs FEEDBACK_CONFIGS =
-      GeneralTurret.GENERAL_FEEDBACK_CONFIGS
-        .withFeedbackRemoteSensorID(CANCODER_ID)
-        .withFeedbackRotorOffset(-CANCODER_ABSOLUTE_OFFSET);
-
-    public static final MagnetSensorConfigs CANCODER_CONFIGS =
-      GeneralTurret.GENERAL_CANCODER_CONFIGS
-        .withMagnetOffset(-1 * CANCODER_ABSOLUTE_OFFSET);
   }
 }

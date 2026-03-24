@@ -19,7 +19,6 @@ package org.team5924.frc2026.subsystems.rollers.intake;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRoller;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRoller.VoltageState;
 import org.team5924.frc2026.util.LoggedTunableNumber;
@@ -38,6 +37,7 @@ public class Intake extends GenericRoller<Intake.IntakeState> {
   }
 
   private IntakeState goalState = IntakeState.OFF;
+  private IntakeState currentState = IntakeState.OFF;
 
   public Intake(IntakeIO io) {
     super("Intake", io);
@@ -45,6 +45,6 @@ public class Intake extends GenericRoller<Intake.IntakeState> {
 
   public void setGoalState(IntakeState goalState) {
     this.goalState = goalState;
-    RobotState.getInstance().setIntakeState(goalState);
+    currentState = goalState;
   }
 }

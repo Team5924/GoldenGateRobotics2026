@@ -26,7 +26,6 @@ import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.FieldState;
-import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
@@ -59,6 +58,7 @@ public class IntakePivot extends SubsystemBase {
   protected final Alert overheatAlert;
 
   @Getter private IntakePivotState goalState = IntakePivotState.OFF;
+  private IntakePivotState currentState = IntakePivotState.OFF;
   private boolean isAtSetpoint = false;
   private double lastStateChange = 0.0;
   private double timeSinceLastStateChange = 0.0;
@@ -84,8 +84,7 @@ public class IntakePivot extends SubsystemBase {
     handleCurrentState();
 
     Logger.recordOutput("IntakePivot/GoalState", goalState.toString());
-    Logger.recordOutput(
-        "IntakePivot/CurrentState", RobotState.getInstance().getIntakePivotState().toString());
+    Logger.recordOutput("IntakePivot/CurrentState", currentState.toString());
     Logger.recordOutput("IntakePivot/TargetRads", goalState.rads.getAsDouble());
     Logger.recordOutput("IntakePivot/CurrentRads", inputs.positionRads);
     Logger.recordOutput("IntakePivot/IsAtSetpoint", isAtSetpoint);
@@ -111,12 +110,12 @@ public class IntakePivot extends SubsystemBase {
 
     this.goalState = goalState;
     switch (goalState) {
-      case MANUAL -> RobotState.getInstance().setIntakePivotState(IntakePivotState.MANUAL);
+      case MANUAL -> currentState = IntakePivotState.MANUAL;
       case MOVING ->
           DriverStation.reportError(
               "IntakePivot: MOVING is an invalid goal state; it is a transition state!!", null);
-      case OFF -> RobotState.getInstance().setIntakePivotState(IntakePivotState.OFF);
-      default -> RobotState.getInstance().setIntakePivotState(IntakePivotState.MOVING);
+      case OFF -> currentState = IntakePivotState.OFF;
+      default -> currentState = IntakePivotState.MOVING;
     }
 
     lastStateChange = FieldState.getInstance().getTime();
@@ -134,10 +133,10 @@ public class IntakePivot extends SubsystemBase {
     timeSinceLastStateChange = FieldState.getInstance().getTime() - lastStateChange;
     isAtSetpoint = isAtSetpoint();
 
-    switch (RobotState.getInstance().getIntakePivotState()) {
+    switch (currentState) {
       case MOVING -> {
         setPosition(goalState.getRads().getAsDouble());
-        if (isAtSetpoint) RobotState.getInstance().setIntakePivotState(goalState);
+        if (isAtSetpoint) currentState = goalState;
       }
       case MANUAL -> handleManualState();
       case OFF -> stop();

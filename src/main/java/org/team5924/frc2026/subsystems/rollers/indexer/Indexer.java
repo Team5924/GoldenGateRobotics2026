@@ -19,7 +19,6 @@ package org.team5924.frc2026.subsystems.rollers.indexer;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRoller;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRoller.VoltageState;
 import org.team5924.frc2026.util.LoggedTunableNumber;
@@ -36,6 +35,7 @@ public class Indexer extends GenericRoller<Indexer.IndexerState> {
   }
 
   private IndexerState goalState = IndexerState.OFF;
+  private IndexerState currentState = IndexerState.OFF;
 
   public Indexer(IndexerIO indexerIO) {
     super("Indexer", indexerIO);
@@ -43,7 +43,7 @@ public class Indexer extends GenericRoller<Indexer.IndexerState> {
 
   public void setGoalState(IndexerState goalState) {
     this.goalState = goalState;
-    RobotState.getInstance().setIndexerState(goalState);
+    currentState = goalState;
   }
 
   @Override

@@ -22,7 +22,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
@@ -65,7 +64,6 @@ public class LaunchCalculator {
       double hoodAngle,
       double hoodVelocity,
       double flywheelSpeed,
-      double turretRadians,
       double distance,
       double distanceNoLookahead,
       double timeOfFlight,
@@ -111,13 +109,13 @@ public class LaunchCalculator {
       new LaunchPreset(
           new LoggedTunableNumber(
               "LaunchCalculator/Presets/HoodMin/HoodAngle",
-              Units.radiansToDegrees(Constants.GeneralShooterHood.MIN_POSITION_RADS)),
+              Units.radiansToDegrees(Constants.ShooterHood.MIN_POSITION_RADS)),
           new LoggedTunableNumber("LaunchCalculator/Presets/HoodMin/FlywheelSpeed", 50));
   public static final LaunchPreset hoodMaxPreset =
       new LaunchPreset(
           new LoggedTunableNumber(
               "LaunchCalculator/Presets/HoodMax/HoodAngle",
-              Units.radiansToDegrees(Constants.GeneralShooterHood.MAX_POSITION_RADS)),
+              Units.radiansToDegrees(Constants.ShooterHood.MAX_POSITION_RADS)),
           new LoggedTunableNumber("LaunchCalculator/Presets/HoodMax/FlywheelSpeed", 50));
 
   public static final LoggedTunableNumber passingIdleSpeed =
@@ -273,8 +271,7 @@ public class LaunchCalculator {
     return timeOfFlightMap.get(maxDistance);
   }
 
-  public LaunchingParameters getParameters(boolean isLeft) {
-    Transform3d robotToLauncher = isLeft ? robotToLauncherLeft : robotToLauncherRight;
+  public LaunchingParameters getParameters() {
     boolean passing =
         AllianceFlipUtil.applyX(RobotState.getInstance().getEstimatedPose().getX())
             > FieldConstants.LinesVertical.hubCenter;
@@ -331,12 +328,10 @@ public class LaunchCalculator {
       lookaheadLauncherToTargetDistance = target.getDistance(lookaheadPose.getTranslation());
     }
 
-    double turretRads = getTurretAngle(lookaheadPose, target, isLeft).getRadians();
-
     // Account for launcher being off center
     Pose2d lookaheadRobotPose =
         lookaheadPose.transformBy(robotToLauncher.toTransform2d().inverse());
-    Rotation2d driveAngle = getDriveAngleWithLauncherOffset(lookaheadRobotPose, target, isLeft);
+    Rotation2d driveAngle = getDriveAngleWithLauncherOffset(lookaheadRobotPose, target);
 
     // Calculate remaining parameters
     double hoodAngle =
@@ -377,7 +372,6 @@ public class LaunchCalculator {
             hoodAngle + Units.degreesToRadians(hoodAngleOffsetDeg),
             hoodVelocity,
             flywheelVelocity,
-            turretRads,
             lookaheadLauncherToTargetDistance,
             launcherToTargetDistance,
             timeOfFlight,
@@ -392,18 +386,8 @@ public class LaunchCalculator {
     return latestParameters;
   }
 
-  private static Rotation2d getTurretAngle(
-      Pose2d turretPose, Translation2d target, boolean isLeft) {
-
-    Rotation2d turretToHub = target.minus(turretPose.getTranslation()).getAngle();
-    Rotation2d turretRads = turretPose.getRotation().minus(turretToHub);
-    return turretRads;
-  }
-
   private static Rotation2d getDriveAngleWithLauncherOffset(
-      Pose2d robotPose, Translation2d target, boolean isLeft) {
-    Transform3d robotToLauncher = isLeft ? robotToLauncherLeft : robotToLauncherRight;
-
+      Pose2d robotPose, Translation2d target) {
     Rotation2d fieldToHubAngle = target.minus(robotPose.getTranslation()).getAngle();
     Rotation2d hubAngle =
         new Rotation2d(
@@ -461,8 +445,7 @@ public class LaunchCalculator {
    * @param forceBlue Always use the blue hub target
    * @return The target pose for the aimed robot.
    */
-  public static Pose2d getStationaryAimedPose(
-      Translation2d robotTranslation, boolean forceBlue, boolean isLeft) {
+  public static Pose2d getStationaryAimedPose(Translation2d robotTranslation, boolean forceBlue) {
     // Calculate target
     Translation2d target = FieldConstants.Hub.topCenterPoint.toTranslation2d();
     if (!forceBlue) {
@@ -470,8 +453,7 @@ public class LaunchCalculator {
     }
 
     return new Pose2d(
-        robotTranslation,
-        getDriveAngleWithLauncherOffset(robotTranslation.toPose2d(), target, isLeft));
+        robotTranslation, getDriveAngleWithLauncherOffset(robotTranslation.toPose2d(), target));
   }
 
   /** Adjusts the hood angle offset up or down the specified amount. */

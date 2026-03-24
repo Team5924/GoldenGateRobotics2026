@@ -38,9 +38,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
-import org.team5924.frc2026.Constants.GeneralShooterHood;
-import org.team5924.frc2026.Constants.ShooterHoodLeft;
-import org.team5924.frc2026.Constants.ShooterHoodRight;
+import org.team5924.frc2026.Constants.ShooterHood;
 import org.team5924.frc2026.util.Elastic;
 import org.team5924.frc2026.util.Elastic.Notification;
 import org.team5924.frc2026.util.Elastic.Notification.NotificationLevel;
@@ -59,36 +57,20 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   private final MotionMagicConfigs motionMagicConfigs;
   private double setpointRads;
 
-  /* Gains Left */
-  private final LoggedTunableNumber kPLeft = new LoggedTunableNumber("ShooterHood/Left/kP", 250.0);
-  private final LoggedTunableNumber kILeft = new LoggedTunableNumber("ShooterHood/Left/kI", 0.0);
-  private final LoggedTunableNumber kDLeft = new LoggedTunableNumber("ShooterHood/Left/kD", 5.0);
-  private final LoggedTunableNumber kSLeft = new LoggedTunableNumber("ShooterHood/Left/kS", 0.0);
-  private final LoggedTunableNumber kVLeft = new LoggedTunableNumber("ShooterHood/Left/kV", 0.0);
-  private final LoggedTunableNumber kALeft = new LoggedTunableNumber("ShooterHood/Left/kA", 0.0);
+  /* Gains */
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("ShooterHood/kP", 250.0);
+  private final LoggedTunableNumber kI = new LoggedTunableNumber("ShooterHood/kI", 0.0);
+  private final LoggedTunableNumber kD = new LoggedTunableNumber("ShooterHood/kD", 5.0);
+  private final LoggedTunableNumber kS = new LoggedTunableNumber("ShooterHood/kS", 0.0);
+  private final LoggedTunableNumber kV = new LoggedTunableNumber("ShooterHood/kV", 0.0);
+  private final LoggedTunableNumber kA = new LoggedTunableNumber("ShooterHood/kA", 0.0);
 
-  private final LoggedTunableNumber motionCruiseVelocityLeft =
-      new LoggedTunableNumber("ShooterHood/Left/MotionCruiseVelocity", 90.0);
-  private final LoggedTunableNumber motionAccelerationLeft =
-      new LoggedTunableNumber("ShooterHood/Left/MotionAcceleration", 900.0);
-  private final LoggedTunableNumber motionJerkLeft =
-      new LoggedTunableNumber("ShooterHood/Left/MotionJerk", 0.0);
-
-  /* Gains Right */
-  private final LoggedTunableNumber kPRight =
-      new LoggedTunableNumber("ShooterHood/Right/kP", 250.0);
-  private final LoggedTunableNumber kIRight = new LoggedTunableNumber("ShooterHood/Right/kI", 0.0);
-  private final LoggedTunableNumber kDRight = new LoggedTunableNumber("ShooterHood/Right/kD", 5.0);
-  private final LoggedTunableNumber kSRight = new LoggedTunableNumber("ShooterHood/Right/kS", 0.0);
-  private final LoggedTunableNumber kVRight = new LoggedTunableNumber("ShooterHood/Right/kV", 0.0);
-  private final LoggedTunableNumber kARight = new LoggedTunableNumber("ShooterHood/Right/kA", 0.0);
-
-  private final LoggedTunableNumber motionCruiseVelocityRight =
-      new LoggedTunableNumber("ShooterHood/Right/MotionCruiseVelocity", 90.0);
-  private final LoggedTunableNumber motionAccelerationRight =
-      new LoggedTunableNumber("ShooterHood/Right/MotionAcceleration", 900.0);
-  private final LoggedTunableNumber motionJerkRight =
-      new LoggedTunableNumber("ShooterHood/Right/MotionJerk", 0.0);
+  private final LoggedTunableNumber motionCruiseVelocity =
+      new LoggedTunableNumber("ShooterHood/MotionCruiseVelocity", 90.0);
+  private final LoggedTunableNumber motionAcceleration =
+      new LoggedTunableNumber("ShooterHood/MotionAcceleration", 900.0);
+  private final LoggedTunableNumber motionJerk =
+      new LoggedTunableNumber("ShooterHood/MotionJerk", 0.0);
 
   /* Status Signals */
   private final StatusSignal<Angle> position;
@@ -111,24 +93,9 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   private final PositionVoltage positionOut;
   private final MotionMagicTorqueCurrentFOC motionMagicCurrent;
 
-  private final Runnable periodicUpdateSlot0;
-  private final Runnable periodicUpdateMotionMagic;
-
-  private final boolean isLeft;
-  private final String side;
-
-  public ShooterHoodIOTalonFX(boolean isLeft) {
-    this.isLeft = isLeft;
-    side = isLeft ? "Left" : "Right";
-
-    talon =
-        new TalonFX(
-            isLeft ? ShooterHoodLeft.CAN_ID : ShooterHoodRight.CAN_ID,
-            new CANBus(GeneralShooterHood.BUS));
-    cancoder =
-        new CANcoder(
-            isLeft ? ShooterHoodLeft.CANCODER_ID : ShooterHoodRight.CANCODER_ID,
-            new CANBus(GeneralShooterHood.BUS));
+  public ShooterHoodIOTalonFX() {
+    talon = new TalonFX(ShooterHood.CAN_ID, new CANBus(ShooterHood.BUS));
+    cancoder = new CANcoder(ShooterHood.CAN_ID, new CANBus(ShooterHood.BUS));
 
     talonConfig = talon.getConfigurator();
 
@@ -138,42 +105,17 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
     motionMagicConfigs = new MotionMagicConfigs();
     updateMotionMagicConfigs();
 
-    periodicUpdateSlot0 =
-        () -> {
-          updateSlot0Configs();
-
-          StatusCode statusCode = talon.getConfigurator().apply(slot0Configs);
-          if (!statusCode.isOK()) {
-            Logger.recordOutput("ShooterHood/" + side + "/UpdateSlot0Report", statusCode);
-          }
-        };
-
-    periodicUpdateMotionMagic =
-        () -> {
-          updateMotionMagicConfigs();
-
-          StatusCode statusCode = talon.getConfigurator().apply(motionMagicConfigs);
-          if (!statusCode.isOK()) {
-            Logger.recordOutput("ShooterHood/" + side + "/UpdateStatusCodeReport", statusCode);
-          }
-        };
-
     // Apply Configs
     StatusCode[] statusArray = new StatusCode[8];
 
-    statusArray[0] = talonConfig.apply(GeneralShooterHood.CONFIG);
+    statusArray[0] = talonConfig.apply(ShooterHood.CONFIG);
     statusArray[1] = talonConfig.apply(slot0Configs);
     statusArray[2] = talonConfig.apply(motionMagicConfigs);
     statusArray[3] = talonConfig.apply(Constants.GENERIC_OPEN_LOOP_RAMPS_CONFIGS);
     statusArray[4] = talonConfig.apply(Constants.GENERIC_CLOSED_LOOP_RAMPS_CONFIGS);
-    statusArray[5] = talonConfig.apply(GeneralShooterHood.SOFTWARE_LIMIT_CONFIGS);
-    statusArray[6] =
-        talonConfig.apply(
-            isLeft ? ShooterHoodLeft.FEEDBACK_CONFIGS : ShooterHoodRight.FEEDBACK_CONFIGS);
-    statusArray[7] =
-        cancoder
-            .getConfigurator()
-            .apply(isLeft ? ShooterHoodLeft.CANCODER_CONFIGS : ShooterHoodRight.CANCODER_CONFIGS);
+    statusArray[5] = talonConfig.apply(ShooterHood.SOFTWARE_LIMIT_CONFIGS);
+    statusArray[6] = talonConfig.apply(ShooterHood.FEEDBACK_CONFIGS);
+    statusArray[7] = cancoder.getConfigurator().apply(ShooterHood.CANCODER_CONFIGS);
 
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
@@ -182,10 +124,10 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
       Elastic.sendNotification(
           new Notification(
               NotificationLevel.WARNING,
-              side + " Shooter Hood Configs",
-              "Error in applying " + side + " Shooter Hood configs!"));
+              "Shooter Hood Configs",
+              "Error in applying Shooter Hood configs!"));
 
-    Logger.recordOutput("ShooterHood/" + side + "/InitConfReport", statusArray);
+    Logger.recordOutput("ShooterHood/InitConfReport", statusArray);
 
     // Get select status signals and set update frequency
     position = talon.getPosition();
@@ -287,55 +229,51 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   }
 
   private void updateSlot0Configs() {
-    if (isLeft) {
-      slot0Configs.kP = kPLeft.get();
-      slot0Configs.kI = kILeft.get();
-      slot0Configs.kD = kDLeft.get();
-      slot0Configs.kS = kSLeft.get();
-      slot0Configs.kV = kVLeft.get();
-      slot0Configs.kA = kALeft.get();
-    } else {
-      slot0Configs.kP = kPRight.get();
-      slot0Configs.kI = kIRight.get();
-      slot0Configs.kD = kDRight.get();
-      slot0Configs.kS = kSRight.get();
-      slot0Configs.kV = kVRight.get();
-      slot0Configs.kA = kARight.get();
-    }
+    slot0Configs.kP = kP.get();
+    slot0Configs.kI = kI.get();
+    slot0Configs.kD = kD.get();
+    slot0Configs.kS = kS.get();
+    slot0Configs.kV = kV.get();
+    slot0Configs.kA = kA.get();
   }
 
   private void updateMotionMagicConfigs() {
-    if (isLeft) {
-      motionMagicConfigs.MotionMagicAcceleration = motionAccelerationLeft.get();
-      motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocityLeft.get();
-      motionMagicConfigs.MotionMagicJerk = motionJerkLeft.get();
-    } else {
-      motionMagicConfigs.MotionMagicAcceleration = motionAccelerationRight.get();
-      motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocityRight.get();
-      motionMagicConfigs.MotionMagicJerk = motionJerkRight.get();
-    }
+    motionMagicConfigs.MotionMagicAcceleration = motionAcceleration.get();
+    motionMagicConfigs.MotionMagicCruiseVelocity = motionCruiseVelocity.get();
+    motionMagicConfigs.MotionMagicJerk = motionJerk.get();
   }
 
   private void updateLoggedTunableNumbers() {
-    if (isLeft) {
-      LoggedTunableNumber.ifChanged(
-          hashCode(), periodicUpdateSlot0, kPLeft, kILeft, kDLeft, kSLeft, kVLeft, kALeft);
-      LoggedTunableNumber.ifChanged(
-          hashCode() + 1,
-          periodicUpdateMotionMagic,
-          motionAccelerationLeft,
-          motionCruiseVelocityLeft,
-          motionJerkLeft);
-    } else {
-      LoggedTunableNumber.ifChanged(
-          hashCode(), periodicUpdateSlot0, kPRight, kIRight, kDRight, kSRight, kVRight, kARight);
-      LoggedTunableNumber.ifChanged(
-          hashCode() + 1,
-          periodicUpdateMotionMagic,
-          motionAccelerationRight,
-          motionCruiseVelocityRight,
-          motionJerkRight);
-    }
+    LoggedTunableNumber.ifChanged(
+        hashCode(),
+        () -> {
+          updateSlot0Configs();
+
+          StatusCode statusCode = talon.getConfigurator().apply(slot0Configs);
+          if (!statusCode.isOK()) {
+            Logger.recordOutput("ShooterHood/UpdateSlot0Report", statusCode);
+          }
+        },
+        kP,
+        kI,
+        kD,
+        kS,
+        kV,
+        kA);
+
+    LoggedTunableNumber.ifChanged(
+        hashCode() + 1,
+        () -> {
+          updateMotionMagicConfigs();
+
+          StatusCode statusCode = talon.getConfigurator().apply(motionMagicConfigs);
+          if (!statusCode.isOK()) {
+            Logger.recordOutput("ShooterHood/UpdateStatusCodeReport", statusCode);
+          }
+        },
+        motionAcceleration,
+        motionCruiseVelocity,
+        motionJerk);
   }
 
   @Override
@@ -366,8 +304,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   }
 
   private double clampRads(double rads) {
-    return MathUtil.clamp(
-        rads, GeneralShooterHood.MIN_POSITION_RADS, GeneralShooterHood.MAX_POSITION_RADS);
+    return MathUtil.clamp(rads, ShooterHood.MIN_POSITION_RADS, ShooterHood.MAX_POSITION_RADS);
   }
 
   private double radsToMotorPosition(double rads) {

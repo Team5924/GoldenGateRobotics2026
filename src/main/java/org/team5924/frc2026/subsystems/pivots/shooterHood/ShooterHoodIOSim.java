@@ -29,13 +29,11 @@ public class ShooterHoodIOSim implements ShooterHoodIO {
   private double appliedVoltage = 0.0;
   private double setpoint = 0.0;
 
-  public ShooterHoodIOSim(boolean isLeft) {
+  public ShooterHoodIOSim() {
     sim =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
-                gearbox,
-                Constants.GeneralShooterHood.SIM_MOI,
-                Constants.GeneralShooterHood.MOTOR_TO_MECHANISM),
+                gearbox, Constants.ShooterHood.SIM_MOI, Constants.ShooterHood.MOTOR_TO_MECHANISM),
             gearbox);
   }
 
@@ -63,9 +61,7 @@ public class ShooterHoodIOSim implements ShooterHoodIO {
   public void setPosition(double rads) {
     rads =
         MathUtil.clamp(
-            rads,
-            Constants.GeneralShooterHood.MIN_POSITION_RADS,
-            Constants.GeneralShooterHood.MAX_POSITION_RADS);
+            rads, Constants.ShooterHood.MIN_POSITION_RADS, Constants.ShooterHood.MAX_POSITION_RADS);
     setpoint = rads;
     sim.setAngle(rads);
   }

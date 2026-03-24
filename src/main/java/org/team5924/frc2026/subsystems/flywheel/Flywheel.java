@@ -25,13 +25,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
-import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.EqualsUtil;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class Flywheel extends SubsystemBase {
   private final FlywheelIO io;
-  private final boolean isLeft;
 
   private final FlywheelIOInputsAutoLogged inputs = new FlywheelIOInputsAutoLogged();
 
@@ -60,41 +58,36 @@ public class Flywheel extends SubsystemBase {
     private final DoubleSupplier velocityRotationsPerSec;
   }
 
-  private final String side;
-
   private final Alert flywheelMotorDisconnected;
   protected final Alert overheatAlert;
 
   @Getter private FlywheelState goalState = FlywheelState.OFF;
+  private FlywheelState currentState = FlywheelState.OFF;
   private boolean isAtSetpoint = false;
 
   @Setter private double autoInput = 0.0;
 
-  public Flywheel(FlywheelIO io, boolean isLeft) {
-    side = isLeft ? "Left" : "Right";
-    this.isLeft = isLeft;
+  public Flywheel(FlywheelIO io) {
     this.io = io;
     this.goalState = FlywheelState.OFF;
     this.flywheelMotorDisconnected =
-        new Alert(side + " Flywheel Motor Disconnected!", Alert.AlertType.kWarning);
+        new Alert("Flywheel Motor Disconnected!", Alert.AlertType.kWarning);
 
-    overheatAlert = new Alert(side + " Flywheel motor overheating!", Alert.AlertType.kWarning);
+    overheatAlert = new Alert("Flywheel motor overheating!", Alert.AlertType.kWarning);
   }
 
   @Override
   public void periodic() {
     io.periodicUpdates();
     io.updateInputs(inputs);
-    Logger.processInputs("Flywheel/" + side, inputs);
+    Logger.processInputs("Flywheel/", inputs);
 
-    Logger.recordOutput("Flywheel/" + side + "/GoalState", goalState.toString());
+    Logger.recordOutput("Flywheel/GoalState", goalState.toString());
+    Logger.recordOutput("Flywheel/CurrentState", currentState.toString());
     Logger.recordOutput(
-        "Flywheel/" + side + "/CurrentState", getRespectiveFlywheelState().toString());
-    Logger.recordOutput(
-        "Flywheel/" + side + "/TargetVelocityRotationsPerSec", getTargetVelocityRotationsPerSec());
-    Logger.recordOutput(
-        "Flywheel/" + side + "/CurrentVelocityRotationsPerSec", inputs.velocityRotationsPerSec);
-    Logger.recordOutput("Flywheel/" + side + "/IsAtSetpoint", isAtSetpoint);
+        "Flywheel/TargetVelocityRotationsPerSec", getTargetVelocityRotationsPerSec());
+    Logger.recordOutput("Flywheel/CurrentVelocityRotationsPerSec", inputs.velocityRotationsPerSec);
+    Logger.recordOutput("Flywheel/IsAtSetpoint", isAtSetpoint);
 
     flywheelMotorDisconnected.set(!inputs.motorConnected);
 
@@ -123,14 +116,14 @@ public class Flywheel extends SubsystemBase {
 
     this.goalState = goalState;
     switch (goalState) {
-      case MANUAL -> setRespectiveFlywheelState(FlywheelState.MANUAL);
+      case MANUAL -> currentState = FlywheelState.MANUAL;
       case MOVING ->
           DriverStation.reportError(
               "Flywheel: MOVING is an invalid goal state; it is a transition state!!", null);
-      case OFF -> setRespectiveFlywheelState(FlywheelState.OFF);
-      case B4, B6, B8, B12 -> setRespectiveFlywheelState(goalState);
-      case AUTO -> setRespectiveFlywheelState(FlywheelState.AUTO);
-      default -> setRespectiveFlywheelState(FlywheelState.MOVING);
+      case OFF -> currentState = FlywheelState.OFF;
+      case B4, B6, B8, B12 -> currentState = goalState;
+      case AUTO -> currentState = FlywheelState.AUTO;
+      default -> currentState = FlywheelState.MOVING;
     }
   }
 
@@ -138,7 +131,7 @@ public class Flywheel extends SubsystemBase {
     return EqualsUtil.epsilonEquals(
         getTargetVelocityRotationsPerSec(),
         inputs.velocityRotationsPerSec,
-        Constants.GeneralFlywheel.EPSILON_VELOCITY);
+        Constants.Flywheel.EPSILON_VELOCITY);
   }
 
   private double getTargetVelocityRotationsPerSec() {
@@ -150,11 +143,10 @@ public class Flywheel extends SubsystemBase {
   private void handleCurrentState() {
     isAtSetpoint = isAtSetpoint();
 
-    switch (getRespectiveFlywheelState()) {
+    switch (currentState) {
       case MOVING -> {
         setVelocity(getTargetVelocityRotationsPerSec());
-        if (isAtSetpoint() && goalState != FlywheelState.AUTO)
-          setRespectiveFlywheelState(goalState);
+        if (isAtSetpoint() && goalState != FlywheelState.AUTO) currentState = goalState;
       }
       case MANUAL -> handleManualState();
       case OFF -> stop();
@@ -177,17 +169,6 @@ public class Flywheel extends SubsystemBase {
 
   public void updateSetpointState(double change) {
     autoInput = inputs.setpointVelocityRotationsPerSec + change;
-    setGoalState(FlywheelState.SETPOINT);
-  }
-
-  private void setRespectiveFlywheelState(FlywheelState state) {
-    if (isLeft) RobotState.getInstance().setLeftFlywheelState(state);
-    else RobotState.getInstance().setRightFlywheelState(state);
-  }
-
-  private FlywheelState getRespectiveFlywheelState() {
-    return isLeft
-        ? RobotState.getInstance().getLeftFlywheelState()
-        : RobotState.getInstance().getRightFlywheelState();
+    goalState = FlywheelState.SETPOINT;
   }
 }

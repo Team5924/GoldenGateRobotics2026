@@ -22,13 +22,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import lombok.Getter;
 import lombok.Setter;
 import org.littletonrobotics.junction.AutoLogOutput;
-import org.team5924.frc2026.subsystems.flywheel.Flywheel.FlywheelState;
-import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
-import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
-import org.team5924.frc2026.subsystems.rollers.hopper.Hopper.HopperState;
-import org.team5924.frc2026.subsystems.rollers.indexer.Indexer.IndexerState;
-import org.team5924.frc2026.subsystems.rollers.intake.Intake.IntakeState;
-import org.team5924.frc2026.subsystems.turret.Turret.TurretState;
 
 @Getter
 public class RobotState {
@@ -73,28 +66,4 @@ public class RobotState {
 
   @Getter @Setter private Rotation2d yawPosition = new Rotation2d();
   @Getter @Setter private double yawVelocityRadPerSec = 0.0;
-
-  /* ### Intake ### */
-  @Getter @Setter private IntakeState intakeState = IntakeState.OFF;
-
-  /* ### Intake ### */
-  @Getter @Setter private IntakePivotState intakePivotState = IntakePivotState.OFF;
-
-  /* ### Hopper ### */
-  @Getter @Setter private HopperState hopperState = HopperState.OFF;
-
-  /* ### Indexer ### */
-  @Getter @Setter private IndexerState indexerState = IndexerState.OFF;
-
-  // Turret
-  @Getter @Setter private TurretState leftTurretState = TurretState.OFF;
-  @Getter @Setter private TurretState rightTurretState = TurretState.OFF;
-
-  /*### Flywheel ### */
-  @Getter @Setter private FlywheelState leftFlywheelState = FlywheelState.OFF;
-  @Getter @Setter private FlywheelState rightFlywheelState = FlywheelState.OFF;
-
-  /*### Shooter Hood ### */
-  @Getter @Setter private ShooterHoodState leftShooterHoodState = ShooterHoodState.OFF;
-  @Getter @Setter private ShooterHoodState rightShooterHoodState = ShooterHoodState.OFF;
 }

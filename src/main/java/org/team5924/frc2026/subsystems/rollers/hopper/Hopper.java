@@ -19,7 +19,6 @@ package org.team5924.frc2026.subsystems.rollers.hopper;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRoller;
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRoller.VoltageState;
 import org.team5924.frc2026.util.LoggedTunableNumber;
@@ -38,6 +37,7 @@ public class Hopper extends GenericRoller<Hopper.HopperState> {
   }
 
   private HopperState goalState = HopperState.OFF;
+  private HopperState currentState = HopperState.OFF;
 
   public Hopper(HopperIO io) {
     super("Hopper", io);
@@ -45,7 +45,7 @@ public class Hopper extends GenericRoller<Hopper.HopperState> {
 
   public void setGoalState(HopperState goalState) {
     this.goalState = goalState;
-    RobotState.getInstance().setHopperState(goalState);
+    currentState = goalState;
   }
 
   @Override
