@@ -73,7 +73,7 @@ public class Flywheel extends SubsystemBase {
   private double autoInput = 0.0;
 
   public void setAutoInput(double inputRads) {
-    autoInput = MathUtil.clamp(inputRads, 0.0, 100.0);
+    autoInput = MathUtil.clamp(inputRads, 0.0, 150.0);
   }
 
   public Flywheel(FlywheelIO io, boolean isLeft) {
@@ -164,7 +164,7 @@ public class Flywheel extends SubsystemBase {
       case OFF -> stop();
       case B4, B6, B8, B12 -> runVolts(getTargetVelocityRotationsPerSec());
       case AUTO -> {
-        autoInput = LaunchCalculator.getInstance().getParameters(isLeft).flywheelSpeed();
+        setAutoInput(LaunchCalculator.getInstance().getParameters(isLeft).flywheelSpeed());
         setVelocity(autoInput);
       }
       default -> setVelocity(getTargetVelocityRotationsPerSec());

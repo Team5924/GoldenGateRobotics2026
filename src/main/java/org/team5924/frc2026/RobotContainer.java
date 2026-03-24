@@ -72,6 +72,7 @@ import org.team5924.frc2026.subsystems.vision.Vision;
 import org.team5924.frc2026.subsystems.vision.VisionConstants;
 import org.team5924.frc2026.subsystems.vision.VisionIOPhotonVision;
 import org.team5924.frc2026.subsystems.vision.VisionIOPhotonVisionSim;
+import org.team5924.frc2026.util.LaunchCalculator;
 
 public class RobotContainer {
   // Subsystems
@@ -348,27 +349,27 @@ public class RobotContainer {
     hopper.setDefaultCommand(
         Commands.run(() -> hopper.setGoalState(Hopper.HopperState.ON), hopper));
 
-    // // ### indexing
+    // // ### intaking
     driveController
         .rightBumper()
         .onTrue(
             Commands.runOnce(
                 () -> {
-                  intakePivot.setGoalState(IntakePivotState.DOWN);
+                    intakePivot.setGoalState(IntakePivotState.DOWN);
                   intake.setGoalState(IntakeState.INTAKE);
                 },
                 intakePivot,
-                indexer));
+                intake));
     driveController
         .rightBumper()
         .onFalse(
             Commands.runOnce(
                 () -> {
-                  intakePivot.setGoalState(IntakePivotState.STOW);
+                    intakePivot.setGoalState(IntakePivotState.STOW);
                   intake.setGoalState(IntakeState.OFF);
                 },
                 intakePivot,
-                indexer));
+                intake));
 
     // driveController
     //     .leftBumper()
@@ -415,6 +416,28 @@ public class RobotContainer {
     //             flywheelLeft,
     //             indexer));
 
+    // driveController
+    //     .leftBumper()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //             () -> {
+    //               flywheelLeft.setGoalState(FlywheelState.SLOW_LAUNCH);
+    //               indexer.setGoalState(IndexerState.INDEXING);
+    //             },
+    //             flywheelLeft,
+    //             indexer));
+
+    // driveController
+    //     .leftBumper()
+    //     .onFalse(
+    //         Commands.runOnce(
+    //             () -> {
+    //               flywheelLeft.setGoalState(FlywheelState.OFF);
+    //               indexer.setGoalState(IndexerState.OFF);
+    //             },
+    //             flywheelLeft,
+    //             indexer));
+
     driveController
         .leftBumper()
         .onTrue(
@@ -424,25 +447,26 @@ public class RobotContainer {
                         () -> {
                           indexer.setGoalState(IndexerState.INDEXING);
                         },
-                        indexer)));
-    // driveController
-    //     .rightTrigger()
-    //     .whileTrue(
-    //         DriveCommands.joystickDriveWhileLaunching(
-    //             drive, () -> -driveController.getLeftY(), () -> -driveController.getLeftX()));
-
+                        indexer)))
+        .and(() -> LaunchCalculator.getInstance().getParameters().isValid());
     driveController
         .leftBumper()
         .onFalse(
             Commands.runOnce(
                 () -> {
                   flywheelLeft.setGoalState(FlywheelState.OFF);
-                  flywheelRight.setGoalState(FlywheelState.OFF);
                   indexer.setGoalState(IndexerState.OFF);
                 },
                 flywheelLeft,
-                flywheelRight,
                 indexer));
+
+    // driveController
+    //     .rightTrigger()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveWhileLaunching(
+    //             drive, () -> -driveController.getLeftY(), () -> -driveController.getLeftX()));
+
+    // -------
 
     // // driveController
     // //     .rightTrigger()

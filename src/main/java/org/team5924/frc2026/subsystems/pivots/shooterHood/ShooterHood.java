@@ -182,7 +182,7 @@ public class ShooterHood extends SubsystemBase {
       case MANUAL -> handleManualState();
       case OFF -> stop();
       case AUTO -> {
-        autoInput = LaunchCalculator.getInstance().getParameters(isLeft).hoodAngle();
+        setAutoInput(LaunchCalculator.getInstance().getParameters(isLeft).hoodAngle());
         if (!isAtSetpoint) setPosition(autoInput);
       }
       default -> {

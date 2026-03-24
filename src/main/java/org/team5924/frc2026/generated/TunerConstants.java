@@ -118,7 +118,7 @@ public class TunerConstants {
           .withMountPose(
               new MountPoseConfigs()
                   .withMountPosePitch(87.24925231933594)
-                  .withMountPoseYaw(-0.7844216227531433)
+                  .withMountPoseYaw(-0.7844216227531433 + 180.0)
                   .withMountPoseRoll(-179.69129943847656));
 
   // CAN bus that the devices are located on;

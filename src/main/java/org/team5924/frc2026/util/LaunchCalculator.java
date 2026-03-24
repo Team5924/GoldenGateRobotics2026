@@ -16,6 +16,7 @@
 
 package org.team5924.frc2026.util;
 
+import static edu.wpi.first.units.Units.Rotation;
 import static org.team5924.frc2026.util.LauncherConstants.*;
 
 import edu.wpi.first.math.MathUtil;
@@ -319,6 +320,11 @@ public class LaunchCalculator {
     boolean passing =
         AllianceFlipUtil.applyX(RobotState.getInstance().getOdometryPose().getX())
             > FieldConstants.LinesVertical.hubCenter;
+
+		// TODO: passing not implemented yet
+    if (passing)
+			return new LaunchingParameters(false, Rotation2d.kZero, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, true);
+
     if (latestParameters != null) {
       return latestParameters;
     }

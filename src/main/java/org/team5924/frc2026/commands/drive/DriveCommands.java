@@ -204,6 +204,9 @@ public class DriveCommands {
         () -> {
           // Run PID controller
           final var parameters = LaunchCalculator.getInstance().getParameters();
+
+          if (!parameters.isValid()) return;
+
           double omegaOutput =
               parameters.driveVelocity()
                   + (parameters
