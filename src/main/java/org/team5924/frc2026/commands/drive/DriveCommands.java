@@ -258,6 +258,8 @@ public class DriveCommands {
             }
           }
 
+          if (driveLauncherCORMaxErrorDeg.get() < driveLauncherCORMinErrorDeg.get()) return;
+
           // Apply chassis speeds
           double corScalar =
               MathUtil.clamp(

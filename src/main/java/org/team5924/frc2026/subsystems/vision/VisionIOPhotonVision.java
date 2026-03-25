@@ -117,6 +117,7 @@ public class VisionIOPhotonVision implements VisionIO {
   public void updateInputs(VisionIOInputs inputs) {
     updateLoggedTunableNumbers();
     inputs.connected = camera.isConnected();
+    inputs.cameraToTarget = null;
 
     // Read new camera observations
     Set<Short> tagIds = new HashSet<>();
