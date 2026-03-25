@@ -50,10 +50,10 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   private final TalonFX opposerTwoTalon;
 
   /* Configurators */
-  private TalonFXConfigurator leaderConfig;
-  private TalonFXConfigurator followerConfig;
-  private TalonFXConfigurator opposerOneConfig;
-  private TalonFXConfigurator opposerTwoConfig;
+  private final TalonFXConfigurator leaderConfig;
+  private final TalonFXConfigurator followerConfig;
+  private final TalonFXConfigurator opposerOneConfig;
+  private final TalonFXConfigurator opposerTwoConfig;
 
   /* Configs  */
   private final Slot0Configs slot0Configs;

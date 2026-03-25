@@ -49,7 +49,7 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   private final TalonFX talon;
 
   /* Configurators */
-  private TalonFXConfigurator talonConfig;
+  private final TalonFXConfigurator talonConfig;
 
   /* Configs  */
   private final Slot0Configs slot0Configs;

@@ -50,7 +50,7 @@ public class ShooterHoodIOTalonFX implements ShooterHoodIO {
   private final CANcoder cancoder;
 
   /* Configurators */
-  private TalonFXConfigurator talonConfig;
+  private final TalonFXConfigurator talonConfig;
 
   /* Configs */
   private final Slot0Configs slot0Configs;
