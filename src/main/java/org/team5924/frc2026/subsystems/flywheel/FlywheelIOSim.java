@@ -48,7 +48,7 @@ public class FlywheelIOSim implements FlywheelIO {
     inputs.appliedVoltage = appliedVoltage;
     inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
     inputs.setpointVelocityRotationsPerSec = setpoint;
-    
+
     for (int i = 0; i < 4; ++i) {
       inputs.motorConnected[i] = true;
       inputs.tempCelsius[i] = 25.0;

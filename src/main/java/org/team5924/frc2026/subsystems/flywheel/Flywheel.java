@@ -70,17 +70,19 @@ public class Flywheel extends SubsystemBase {
     this.goalState = FlywheelState.OFF;
 
     for (int i = 0; i < 4; ++i) {
-      int id = switch (i) {
-        case 0 -> Constants.Flywheel.CAN_ID;
-        case 1 -> Constants.Flywheel.FOLLOWER_CAN_ID;
-        case 2 -> Constants.Flywheel.OPPOSER_ONE_CAN_ID;
-        case 3 -> Constants.Flywheel.OPPOSER_TWO_CAN_ID;
-        default -> -1;
-      };
+      int id =
+          switch (i) {
+            case 0 -> Constants.Flywheel.CAN_ID;
+            case 1 -> Constants.Flywheel.FOLLOWER_CAN_ID;
+            case 2 -> Constants.Flywheel.OPPOSER_ONE_CAN_ID;
+            case 3 -> Constants.Flywheel.OPPOSER_TWO_CAN_ID;
+            default -> -1;
+          };
 
       motorDisconnected[i] =
-          new Alert("Flywheel Motor (id " + id  + ") Disconnected!", Alert.AlertType.kWarning);
-      overheatAlert[i] = new Alert("Flywheel  motor (id " + id + ") overheating!", Alert.AlertType.kWarning);
+          new Alert("Flywheel Motor (id " + id + ") Disconnected!", Alert.AlertType.kWarning);
+      overheatAlert[i] =
+          new Alert("Flywheel  motor (id " + id + ") overheating!", Alert.AlertType.kWarning);
     }
   }
 

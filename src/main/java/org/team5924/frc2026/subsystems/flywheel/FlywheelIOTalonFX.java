@@ -34,9 +34,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-
 import java.util.ArrayList;
-
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.Constants.Flywheel;
@@ -84,7 +82,8 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   private final StatusSignal<Voltage> appliedVoltage;
   private final StatusSignal<Current> supplyCurrent;
   private final StatusSignal<Current> torqueCurrent;
-  private final ArrayList<StatusSignal<Temperature>> tempCelsius = new ArrayList<StatusSignal<Temperature>>(4);
+  private final ArrayList<StatusSignal<Temperature>> tempCelsius =
+      new ArrayList<StatusSignal<Temperature>>(4);
 
   private final StatusSignal<Double> closedLoopReferenceSlope;
   private double prevClosedLoopReferenceSlope = 0.0;
@@ -151,7 +150,16 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     closedLoopReferenceSlope = leaderTalon.getClosedLoopReferenceSlope();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        100.0, position, velocity, appliedVoltage, supplyCurrent, torqueCurrent, tempCelsius.get(0), tempCelsius.get(1), tempCelsius.get(2), tempCelsius.get(3));
+        100.0,
+        position,
+        velocity,
+        appliedVoltage,
+        supplyCurrent,
+        torqueCurrent,
+        tempCelsius.get(0),
+        tempCelsius.get(1),
+        tempCelsius.get(2),
+        tempCelsius.get(3));
 
     voltageOut = new VoltageOut(0.0).withEnableFOC(true);
     motionMagicVelocity = new MotionMagicVelocityVoltage(0.0).withEnableFOC(true).withSlot(0);
@@ -171,7 +179,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
                 tempCelsius.get(0),
                 closedLoopReferenceSlope)
             .isOK();
-    
+
     for (int i = 1; i < 4; ++i) {
       inputs.motorConnected[i] = BaseStatusSignal.refreshAll(tempCelsius.get(i)).isOK();
     }
@@ -183,7 +191,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     inputs.appliedVoltage = appliedVoltage.getValueAsDouble();
     inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
     inputs.torqueCurrentAmps = torqueCurrent.getValueAsDouble();
-    
+
     for (int i = 0; i < 4; ++i) {
       inputs.tempCelsius[i] = tempCelsius.get(i).getValueAsDouble();
     }

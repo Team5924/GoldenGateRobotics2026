@@ -54,7 +54,7 @@ public class IntakePivot extends SubsystemBase {
     private final DoubleSupplier rads;
   }
 
-  private final Alert intakePivotMotorDisconnected;
+  private final Alert motorDisconnected;
   protected final Alert overheatAlert;
 
   @Getter private IntakePivotState goalState = IntakePivotState.OFF;
@@ -67,7 +67,7 @@ public class IntakePivot extends SubsystemBase {
     this.io = io;
     this.goalState = IntakePivotState.OFF;
 
-    this.intakePivotMotorDisconnected =
+    this.motorDisconnected =
         new Alert("Intake Pivot Motor Disconnected!", Alert.AlertType.kWarning);
     overheatAlert = new Alert("intake pivot motor overheating!", Alert.AlertType.kWarning);
   }
@@ -78,7 +78,7 @@ public class IntakePivot extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("IntakePivot", inputs);
 
-    intakePivotMotorDisconnected.set(!inputs.motorConnected);
+    motorDisconnected.set(!inputs.motorConnected);
     overheatAlert.set(inputs.tempCelsius > Constants.OVERHEAT_THRESHOLD);
 
     handleCurrentState();
