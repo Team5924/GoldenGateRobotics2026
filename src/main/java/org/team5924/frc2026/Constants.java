@@ -182,8 +182,6 @@ public final class Constants {
     public static final double MOTOR_TO_MECHANISM = (16.0 / 12.0) * (24.0 / 16.0);
     public static final double SIM_MOI = 0.001;
 
-    public static final int BEAM_BREAK_ID = 0;
-
     public static final TalonFXConfiguration CONFIG = GenericRoller.CONFIG;
   }
 
@@ -194,8 +192,6 @@ public final class Constants {
     // controls two rollers, so reduction is weird
     public static final double MOTOR_TO_MECHANISM = 36.0 / 16.0;
     public static final double SIM_MOI = 0.001;
-
-    public final static int BEAM_BREAK_ID = 0;
 
     public static final TalonFXConfiguration CONFIG =
       GenericRoller.CONFIG
@@ -272,7 +268,6 @@ public final class Constants {
 
   public final class Flywheel {
     public static final int CAN_ID = 30;
-    public static final int BEAM_BREAK_ID = 0; // TODO: update later
 
     public static final int FOLLOWER_CAN_ID = 31;
     public static final int OPPOSER_ONE_CAN_ID = 32;
