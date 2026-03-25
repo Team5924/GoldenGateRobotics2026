@@ -79,22 +79,22 @@ public class VisionIOPhotonVision implements VisionIO {
             "Vision/Camera" + camera.getName() + "/position z inches",
             Units.metersToInches(robotToCamera.getZ()));
 
-    this.robotToCamera =
-        new Transform3d(
-            new Translation3d(
-                Units.inchesToMeters(xInches.getAsDouble()),
-                Units.inchesToMeters(yInches.getAsDouble()),
-                Units.inchesToMeters(zInches.getAsDouble())),
-            new Rotation3d(
-                Units.degreesToRadians(rollDegrees.getAsDouble()),
-                Units.degreesToRadians(pitchDegrees.getAsDouble()),
-                Units.degreesToRadians(yawDegrees.getAsDouble())));
+    updateRobotToCamera();
   }
 
   private void updateLoggedTunableNumbers() {
     LoggedTunableNumber.ifChanged(
         hashCode(),
-        () ->
+        this::updateRobotToCamera,
+        xInches,
+        yInches,
+        zInches,
+        rollDegrees,
+        pitchDegrees,
+        yawDegrees);
+  }
+
+  private void updateRobotToCamera() {
             robotToCamera =
                 new Transform3d(
                     new Translation3d(
@@ -104,13 +104,7 @@ public class VisionIOPhotonVision implements VisionIO {
                     new Rotation3d(
                         Units.degreesToRadians(rollDegrees.getAsDouble()),
                         Units.degreesToRadians(pitchDegrees.getAsDouble()),
-                        Units.degreesToRadians(yawDegrees.getAsDouble()))),
-        xInches,
-        yInches,
-        zInches,
-        rollDegrees,
-        pitchDegrees,
-        yawDegrees);
+                        Units.degreesToRadians(yawDegrees.getAsDouble())));
   }
 
   @Override
@@ -122,8 +116,6 @@ public class VisionIOPhotonVision implements VisionIO {
     Set<Short> tagIds = new HashSet<>();
     List<PoseObservation> poseObservations = new LinkedList<>();
     for (var result : camera.getAllUnreadResults()) {
-      Transform3d cameraToTarget = Transform3d.kZero;
-
       // Add pose observation
       if (result.multitagResult.isPresent()) { // Multitag result
         var multitagResult = result.multitagResult.get();
@@ -132,6 +124,9 @@ public class VisionIOPhotonVision implements VisionIO {
         Transform3d fieldToCamera = multitagResult.estimatedPose.best;
         Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
         Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
+
+        // no single target, so log invalid cameraToTarget value
+        inputs.cameraToTarget = new TranslationRotation(Translation3d.kZero, -1, -1, -1);
 
         // Calculate average tag distance
         double totalTagDistance = 0.0;
@@ -160,7 +155,15 @@ public class VisionIOPhotonVision implements VisionIO {
         if (tagPose.isPresent()) {
           Transform3d fieldToTarget =
               new Transform3d(tagPose.get().getTranslation(), tagPose.get().getRotation());
-          cameraToTarget = target.bestCameraToTarget;
+          Transform3d cameraToTarget = target.bestCameraToTarget;
+
+          Rotation3d cameraToTargetRotation = cameraToTarget.getRotation();
+          inputs.cameraToTarget =
+              new TranslationRotation(
+                  cameraToTarget.getTranslation(),
+                  Units.radiansToDegrees(cameraToTargetRotation.getX()),
+                  Units.radiansToDegrees(cameraToTargetRotation.getY()),
+                  Units.radiansToDegrees(cameraToTargetRotation.getZ()));
 
           Transform3d fieldToCamera = fieldToTarget.plus(cameraToTarget.inverse());
           Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
@@ -179,13 +182,6 @@ public class VisionIOPhotonVision implements VisionIO {
                   cameraToTarget.getTranslation().getNorm(), // Average tag distance
                   PoseObservationType.PHOTONVISION)); // Observation type
         }
-        Rotation3d cameraToTargetRotation = cameraToTarget.getRotation();
-        inputs.cameraToTarget =
-            new TranslationRotation(
-                cameraToTarget.getTranslation(),
-                Units.radiansToDegrees(cameraToTargetRotation.getX()),
-                Units.radiansToDegrees(cameraToTargetRotation.getY()),
-                Units.radiansToDegrees(cameraToTargetRotation.getZ()));
       }
     }
 

@@ -451,6 +451,7 @@ public class RobotContainer {
                         indexer)));
     driveController
         .leftBumper()
+        .and(() -> LaunchCalculator.getInstance().getParameters().isValid())
         .onFalse(
             Commands.runOnce(
                 () -> {
