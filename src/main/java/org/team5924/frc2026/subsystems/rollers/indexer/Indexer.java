@@ -30,7 +30,7 @@ public class Indexer extends GenericRoller<Indexer.IndexerState> {
   @Getter
   public enum IndexerState implements VoltageState {
     OFF(() -> 0.0),
-    INDEXING(new LoggedTunableNumber("Indexer/IndexingVoltage", 4.0));
+    INDEXING(new LoggedTunableNumber("Indexer/IndexingVoltage", 8.0));
 
     private final DoubleSupplier voltageSupplier;
   }
@@ -44,6 +44,13 @@ public class Indexer extends GenericRoller<Indexer.IndexerState> {
   public void setGoalState(IndexerState goalState) {
     this.goalState = goalState;
     RobotState.getInstance().setIndexerState(goalState);
+  }
+
+  @Override
+  protected void handleCurrentState() {
+    if (RobotState.getInstance().isLeftFlywheelAtSetpoint())
+      io.runVolts(getGoalState().getVoltageSupplier().getAsDouble());
+    else io.stop();
   }
 
   @Override

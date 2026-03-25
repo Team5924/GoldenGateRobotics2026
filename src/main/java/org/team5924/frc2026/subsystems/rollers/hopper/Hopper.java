@@ -30,7 +30,7 @@ public class Hopper extends GenericRoller<Hopper.HopperState> {
   @RequiredArgsConstructor
   @Getter
   public enum HopperState implements VoltageState {
-    ON(new LoggedTunableNumber("Hopper/OnVoltage", 4.0)),
+    ON(new LoggedTunableNumber("Hopper/OnVoltage", 6.0)),
     SPIT(new LoggedTunableNumber("Hopper/SpitVoltage", -4.0)),
     OFF(() -> 0.0);
 

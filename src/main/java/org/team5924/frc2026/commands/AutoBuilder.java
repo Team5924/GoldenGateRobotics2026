@@ -42,13 +42,13 @@ public class AutoBuilder {
                     .resetPose(
                         AllianceFlipUtil.apply(
                             new Pose2d(
-                                RobotState.getInstance().getEstimatedPose().getTranslation(),
+                                RobotState.getInstance().getOdometryPose().getTranslation(),
                                 Rotation2d.kPi))))
         .andThen(
             new DriveToPose(
                     drive,
-                    () -> RobotState.getInstance().getEstimatedPose(),
-                    () -> RobotState.getInstance().getEstimatedPose(),
+                    () -> RobotState.getInstance().getOdometryPose(),
+                    () -> RobotState.getInstance().getOdometryPose(),
                     () ->
                         new Translation2d((AllianceFlipUtil.shouldFlip() ? -1.0 : 1.0) * -1.0, 0.0))
                 .withTimeout(0.6));

@@ -16,6 +16,7 @@
 
 package org.team5924.frc2026.subsystems.flywheel;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -27,6 +28,7 @@ import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.EqualsUtil;
+import org.team5924.frc2026.util.LaunchCalculator;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class Flywheel extends SubsystemBase {
@@ -42,11 +44,11 @@ public class Flywheel extends SubsystemBase {
   public enum FlywheelState {
     OFF(() -> 0.0),
     MOVING(() -> 0.0),
-    FAST_LAUNCH(new LoggedTunableNumber("Flywheel/FastLaunch", 150)),
+    FAST_LAUNCH(new LoggedTunableNumber("Flywheel/FastLaunch", 100)),
     SLOW_LAUNCH(new LoggedTunableNumber("Flywheel/SlowLaunch", 50)),
 
     // current at which the example subsystem motor moves when controlled by the operator
-    MANUAL(new LoggedTunableNumber("Flywheel/OperatorCurrent", 200)),
+    MANUAL(new LoggedTunableNumber("Flywheel/OperatorCurrent", 135)),
     AUTO(() -> 0.0),
 
     SETPOINT(() -> 0.0),
@@ -68,7 +70,11 @@ public class Flywheel extends SubsystemBase {
   @Getter private FlywheelState goalState = FlywheelState.OFF;
   private boolean isAtSetpoint = false;
 
-  @Setter private double autoInput = 0.0;
+  private double autoInput = 0.0;
+
+  public void setAutoInput(double inputRads) {
+    autoInput = MathUtil.clamp(inputRads, 0.0, 150.0);
+  }
 
   public Flywheel(FlywheelIO io, boolean isLeft) {
     side = isLeft ? "Left" : "Right";
@@ -118,9 +124,6 @@ public class Flywheel extends SubsystemBase {
   public void setGoalState(FlywheelState goalState) {
     if (this.goalState.equals(goalState)) return;
 
-    if (goalState.equals(FlywheelState.MANUAL) && Math.abs(input) <= Constants.JOYSTICK_DEADZONE)
-      return;
-
     this.goalState = goalState;
     switch (goalState) {
       case MANUAL -> setRespectiveFlywheelState(FlywheelState.MANUAL);
@@ -149,6 +152,7 @@ public class Flywheel extends SubsystemBase {
 
   private void handleCurrentState() {
     isAtSetpoint = isAtSetpoint();
+    if (isLeft) RobotState.getInstance().setLeftFlywheelAtSetpoint(isAtSetpoint);
 
     switch (getRespectiveFlywheelState()) {
       case MOVING -> {
@@ -159,7 +163,10 @@ public class Flywheel extends SubsystemBase {
       case MANUAL -> handleManualState();
       case OFF -> stop();
       case B4, B6, B8, B12 -> runVolts(getTargetVelocityRotationsPerSec());
-      case AUTO -> setVelocity(autoInput);
+      case AUTO -> {
+        setAutoInput(LaunchCalculator.getInstance().getParameters(isLeft).flywheelSpeed());
+        setVelocity(autoInput);
+      }
       default -> setVelocity(getTargetVelocityRotationsPerSec());
     }
   }
@@ -167,16 +174,16 @@ public class Flywheel extends SubsystemBase {
   private void handleManualState() {
     if (!goalState.equals(FlywheelState.MANUAL)) return;
 
-    if (Math.abs(input) <= Constants.JOYSTICK_DEADZONE) {
-      stop();
-      return;
-    }
+    // if (Math.abs(input) <= Constants.JOYSTICK_DEADZONE) {
+    //   stop();
+    //   return;
+    // }
 
-    setVelocity(FlywheelState.MANUAL.getVelocityRotationsPerSec().getAsDouble() * input);
+    setVelocity(FlywheelState.MANUAL.getVelocityRotationsPerSec().getAsDouble());
   }
 
   public void updateSetpointState(double change) {
-    autoInput = inputs.setpointVelocityRotationsPerSec + change;
+    setAutoInput(inputs.setpointVelocityRotationsPerSec + change);
     setGoalState(FlywheelState.SETPOINT);
   }
 

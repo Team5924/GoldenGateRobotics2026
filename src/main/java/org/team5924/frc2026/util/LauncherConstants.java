@@ -29,5 +29,8 @@ public class LauncherConstants {
       new Transform3d(
           Constants.TurretRight.ROBOT_TO_TURRET, new Rotation3d(0.0, 0.0, Math.PI)); // TODO: update
 
+  public static Transform3d robotToLauncherCenter =
+      robotToLauncherLeft.plus(robotToLauncherRight).div(2);
+
   private LauncherConstants() {}
 }

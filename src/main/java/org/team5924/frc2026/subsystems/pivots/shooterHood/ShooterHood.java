@@ -16,6 +16,7 @@
 
 package org.team5924.frc2026.subsystems.pivots.shooterHood;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,9 +26,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.littletonrobotics.junction.Logger;
 import org.team5924.frc2026.Constants;
+import org.team5924.frc2026.Constants.GeneralShooterHood;
 import org.team5924.frc2026.FieldState;
 import org.team5924.frc2026.RobotState;
 import org.team5924.frc2026.util.EqualsUtil;
+import org.team5924.frc2026.util.LaunchCalculator;
 import org.team5924.frc2026.util.LoggedTunableNumber;
 
 public class ShooterHood extends SubsystemBase {
@@ -49,6 +52,8 @@ public class ShooterHood extends SubsystemBase {
     AUTO_SHOOTING(() -> 0.0),
     NEUTRAL_SHUFFLING(() -> 0.0),
     OPPONENT_SHUFFLING(() -> 0.0),
+
+    MANUAL_ANGLE(new LoggedTunableNumber("ShooterHood/ManualAngle", Math.toRadians(0.0))),
 
     MAX(new LoggedTunableNumber("ShooterHood/Max", Math.toRadians(30))),
     CENTER(new LoggedTunableNumber("ShooterHood/Center", Math.toRadians(15))),
@@ -73,7 +78,13 @@ public class ShooterHood extends SubsystemBase {
   private double timeSinceLastStateChange = 0.0;
 
   @Setter private double input;
-  @Setter private double autoInput = 0.0;
+  private double autoInput = 0.0;
+
+  public void setAutoInput(double inputRads) {
+    autoInput =
+        MathUtil.clamp(
+            inputRads, GeneralShooterHood.MIN_POSITION_RADS, GeneralShooterHood.MAX_POSITION_RADS);
+  }
 
   public ShooterHood(ShooterHoodIO io, boolean isLeft) {
     side = isLeft ? "Left" : "Right";
@@ -134,7 +145,7 @@ public class ShooterHood extends SubsystemBase {
           DriverStation.reportError(
               side + " Shooter Hood: MOVING is an invalid goal state; it is a transition state!!",
               null);
-      case AUTO -> setRespectiveShooterHoodState(ShooterHoodState.MOVING);
+      case AUTO -> setRespectiveShooterHoodState(ShooterHoodState.AUTO);
       case OFF -> setRespectiveShooterHoodState(ShooterHoodState.OFF);
       default -> setRespectiveShooterHoodState(ShooterHoodState.MOVING);
     }
@@ -170,6 +181,10 @@ public class ShooterHood extends SubsystemBase {
       }
       case MANUAL -> handleManualState();
       case OFF -> stop();
+      case AUTO -> {
+        setAutoInput(LaunchCalculator.getInstance().getParameters(isLeft).hoodAngle());
+        if (!isAtSetpoint) setPosition(autoInput);
+      }
       default -> {
         if (!isAtSetpoint) setPosition(getTargetRads());
       }

@@ -35,17 +35,23 @@ public class VisionConstants {
   public static final Transform3d FRONT_LEFT_TRANSFORM =
       new Transform3d(
           new Translation3d(
-            Units.inchesToMeters(10.402),
-            Units.inchesToMeters(12.042),
-            Units.inchesToMeters(8.401)),
-          new Rotation3d(0.0, Units.degreesToRadians(55.0), Units.degreesToRadians(-15.0)));
+              Units.inchesToMeters(10.402),
+              Units.inchesToMeters(12.042),
+              Units.inchesToMeters(8.401)),
+          new Rotation3d(
+              Units.degreesToRadians(8.0),
+              Units.degreesToRadians(-55.0),
+              Units.degreesToRadians(-15.0)));
   public static final Transform3d FRONT_RIGHT_TRANSFORM =
       new Transform3d(
           new Translation3d(
-            Units.inchesToMeters(10.402),
-            Units.inchesToMeters(-12.042),
-            Units.inchesToMeters(8.711)),
-          new Rotation3d(0.0, Units.degreesToRadians(55.0), Units.degreesToRadians(15.0)));
+              Units.inchesToMeters(10.402),
+              Units.inchesToMeters(-12.042),
+              Units.inchesToMeters(8.711)),
+          new Rotation3d(
+              Units.degreesToRadians(-8.0),
+              Units.degreesToRadians(-55.0),
+              Units.degreesToRadians(15.0)));
 
   // public static final ArrayList<Integer> IGNORE_IDS =
   //     new ArrayList<Integer>(List.of());

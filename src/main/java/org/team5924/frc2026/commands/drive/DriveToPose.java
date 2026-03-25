@@ -31,7 +31,7 @@ import org.team5924.frc2026.util.LoggedTunableNumber;
 public class DriveToPose extends Command {
   private final Drive drive;
   private final Supplier<Pose2d> target;
-  private Supplier<Pose2d> robot = RobotState.getInstance()::getEstimatedPose;
+  private Supplier<Pose2d> robot = RobotState.getInstance()::getOdometryPose;
 
   private Supplier<Translation2d> linearFF = () -> Translation2d.kZero;
   private LoggedTunableNumber omegaFF = new LoggedTunableNumber("DriveToPose/omegaFF", 0.0);

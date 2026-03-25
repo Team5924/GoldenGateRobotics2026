@@ -21,7 +21,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import lombok.Getter;
 import lombok.Setter;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.team5924.frc2026.subsystems.flywheel.Flywheel.FlywheelState;
 import org.team5924.frc2026.subsystems.pivots.intakePivot.IntakePivot.IntakePivotState;
 import org.team5924.frc2026.subsystems.pivots.shooterHood.ShooterHood.ShooterHoodState;
@@ -44,7 +43,7 @@ public class RobotState {
 
   /** Get the rotation of the estimated pose. */
   public Rotation2d getRotation() {
-    return estimatedPose.getRotation();
+    return odometryPose.getRotation();
   }
 
   public ChassisSpeeds getFieldVelocity() {
@@ -61,14 +60,11 @@ public class RobotState {
   // @AutoLogOutput(key = "RobotState/OdometryPose")
   @Getter @Setter private Pose2d odometryPose = new Pose2d();
 
-  @Getter @Setter @AutoLogOutput private Pose2d estimatedPose = Pose2d.kZero;
-
   public void resetPose(Pose2d pose) {
     // Gyro offset is the rotation that maps the old gyro rotation (estimated - offset) to the new
     // frame of rotation
     gyroOffset = pose.getRotation().minus(odometryPose.getRotation().minus(gyroOffset));
     odometryPose = pose;
-    estimatedPose = pose;
   }
 
   @Getter @Setter private Rotation2d yawPosition = new Rotation2d();
@@ -93,6 +89,7 @@ public class RobotState {
   /*### Flywheel ### */
   @Getter @Setter private FlywheelState leftFlywheelState = FlywheelState.OFF;
   @Getter @Setter private FlywheelState rightFlywheelState = FlywheelState.OFF;
+  @Getter @Setter private boolean leftFlywheelAtSetpoint = false;
 
   /*### Shooter Hood ### */
   @Getter @Setter private ShooterHoodState leftShooterHoodState = ShooterHoodState.OFF;

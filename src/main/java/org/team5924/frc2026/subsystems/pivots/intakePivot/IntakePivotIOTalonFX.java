@@ -59,16 +59,16 @@ public class IntakePivotIOTalonFX implements IntakePivotIO {
   /* Gains */
   private final LoggedTunableNumber kP = new LoggedTunableNumber("IntakePivot/kP", 40.0);
   private final LoggedTunableNumber kI = new LoggedTunableNumber("IntakePivot/kI", 0.0);
-  private final LoggedTunableNumber kD = new LoggedTunableNumber("IntakePivot/kD", 0.5);
-  private final LoggedTunableNumber kS = new LoggedTunableNumber("IntakePivot/kS", .2);
+  private final LoggedTunableNumber kD = new LoggedTunableNumber("IntakePivot/kD", 0.0);
+  private final LoggedTunableNumber kS = new LoggedTunableNumber("IntakePivot/kS", 0.2);
   private final LoggedTunableNumber kV = new LoggedTunableNumber("IntakePivot/kV", 0.0);
   private final LoggedTunableNumber kG = new LoggedTunableNumber("IntakePivot/kG", 2.8);
   private final LoggedTunableNumber kA = new LoggedTunableNumber("IntakePivot/kA", 0.0);
 
   private final LoggedTunableNumber motionCruiseVelocity =
-      new LoggedTunableNumber("IntakePivot/MotionCruiseVelocity", 10.0);
+      new LoggedTunableNumber("IntakePivot/MotionCruiseVelocity", 100.0);
   private final LoggedTunableNumber motionAcceleration =
-      new LoggedTunableNumber("IntakePivot/MotionAcceleration", 100.0);
+      new LoggedTunableNumber("IntakePivot/MotionAcceleration", 1000.0);
   private final LoggedTunableNumber motionJerk =
       new LoggedTunableNumber("IntakePivot/MotionJerk", 0.0);
 

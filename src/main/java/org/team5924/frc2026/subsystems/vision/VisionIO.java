@@ -17,12 +17,14 @@
 package org.team5924.frc2026.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface VisionIO {
   @AutoLog
   public static class VisionIOInputs {
     public boolean connected = false;
+    public TranslationRotation cameraToTarget;
     public PoseObservation[] poseObservations = new PoseObservation[0];
     public int[] tagIds = new int[0];
   }
@@ -35,6 +37,9 @@ public interface VisionIO {
       int tagCount,
       double averageTagDistance,
       PoseObservationType type) {}
+
+  public static record TranslationRotation(
+      Translation3d translation, double roll, double pitch, double yaw) {}
 
   public static enum PoseObservationType {
     MEGATAG_1,

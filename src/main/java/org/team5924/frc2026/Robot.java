@@ -37,6 +37,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.team5924.frc2026.generated.TunerConstants;
 import org.team5924.frc2026.util.Elastic;
+import org.team5924.frc2026.util.LaunchCalculator;
 
 public class Robot extends LoggedRobot {
   private static final double LOW_BATTERY_VOLTAGE = 11.0;
@@ -147,11 +148,6 @@ public class Robot extends LoggedRobot {
     // Return to non-RT thread priority (do not modify the first argument)
     // Threads.setCurrentThreadPriority(false, 10);
 
-    // Low battery alert
-    if (DriverStation.isEnabled()) {
-      disabledTimer.reset();
-      lowBatteryAlert.set(false);
-    }
     double batteryVoltage = RobotController.getBatteryVoltage();
     if (batteryVoltage > 0.0
         && batteryVoltage <= LOW_BATTERY_VOLTAGE
@@ -203,12 +199,20 @@ public class Robot extends LoggedRobot {
     }
     updateMatchShift.startPeriodic(0.2);
 
+    // Low battery alert
+    if (DriverStation.isEnabled()) {
+      disabledTimer.reset();
+      lowBatteryAlert.set(false);
+    }
+
     Elastic.selectTab("Teleoperated");
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    LaunchCalculator.getInstance().clearLaunchingParameters();
+  }
 
   /** This function is called once when test mode is enabled. */
   @Override
