@@ -28,6 +28,7 @@ import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -101,7 +102,18 @@ public final class Constants {
       .withVoltageClosedLoopRampPeriod(0.02);
 
   public final class GenericRoller {
-    public static final TalonFXConfiguration CONFIG =
+    public static final TalonFXConfiguration CLOCKWISE_CONFIG =
+      new TalonFXConfiguration()
+        .withCurrentLimits(
+          new CurrentLimitsConfigs()
+            .withSupplyCurrentLimit(60)
+            .withStatorCurrentLimit(60))
+        .withMotorOutput(
+          new MotorOutputConfigs()
+            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake));
+
+    public static final TalonFXConfiguration COUNTERCLOCKWISE_CONFIG =
       new TalonFXConfiguration()
         .withCurrentLimits(
           new CurrentLimitsConfigs()
@@ -120,11 +132,12 @@ public final class Constants {
 
   public final class Intake {
     public static final int CAN_ID = 41;
+    public static final int FOLLOWER_CAN_ID = 42;
     public static final String BUS = "rio";
     public static final double MOTOR_TO_MECHANISM = 36.0 / 16.0;
     public static final double SIM_MOI = 0.001;
 
-    public static final TalonFXConfiguration CONFIG = GenericRoller.CONFIG;
+    public static final TalonFXConfiguration CONFIG = GenericRoller.COUNTERCLOCKWISE_CONFIG;
   }
 
   public final class IntakePivot {
@@ -182,7 +195,7 @@ public final class Constants {
     public static final double MOTOR_TO_MECHANISM = (16.0 / 12.0) * (24.0 / 16.0);
     public static final double SIM_MOI = 0.001;
 
-    public static final TalonFXConfiguration CONFIG = GenericRoller.CONFIG;
+    public static final TalonFXConfiguration CONFIG = GenericRoller.COUNTERCLOCKWISE_CONFIG;
   }
 
   public final class Indexer {
@@ -194,7 +207,7 @@ public final class Constants {
     public static final double SIM_MOI = 0.001;
 
     public static final TalonFXConfiguration CONFIG =
-      GenericRoller.CONFIG
+      GenericRoller.COUNTERCLOCKWISE_CONFIG
         .withMotorOutput(
           new MotorOutputConfigs()
             .withInverted(InvertedValue.Clockwise_Positive));
@@ -290,20 +303,6 @@ public final class Constants {
           new MotorOutputConfigs()
             .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Coast));
-  
-    public static final TalonFXConfiguration OPPOSER_CONFIG =
-      new TalonFXConfiguration()
-        .withCurrentLimits(
-          new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(60)
-            .withStatorCurrentLimit(60))
-        .withMotorOutput(
-          new MotorOutputConfigs()
-            .withInverted(InvertedValue.Clockwise_Positive)
-            .withNeutralMode(NeutralModeValue.Coast))
-        .withMotorOutput(
-          new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive));
 
   public static final FeedbackConfigs FEEDBACK_CONFIGS =
       new FeedbackConfigs()

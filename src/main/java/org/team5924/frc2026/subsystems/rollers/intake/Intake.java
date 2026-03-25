@@ -25,7 +25,6 @@ import org.team5924.frc2026.util.LoggedTunableNumber;
 
 @Getter
 public class Intake extends GenericRoller<Intake.IntakeState> {
-
   @RequiredArgsConstructor
   @Getter
   public enum IntakeState implements VoltageState {

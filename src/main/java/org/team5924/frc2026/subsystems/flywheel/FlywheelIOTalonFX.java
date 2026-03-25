@@ -120,8 +120,8 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     statusArray[5] = leaderConfig.apply(motionMagicConfigs);
 
     statusArray[6] = followerConfig.apply(Flywheel.CONFIG);
-    statusArray[7] = opposerOneConfig.apply(Flywheel.OPPOSER_CONFIG);
-    statusArray[8] = opposerTwoConfig.apply(Flywheel.OPPOSER_CONFIG);
+    statusArray[7] = opposerOneConfig.apply(Flywheel.CONFIG);
+    statusArray[8] = opposerTwoConfig.apply(Flywheel.CONFIG);
 
     boolean isErrorPresent = false;
     for (StatusCode s : statusArray) if (!s.isOK()) isErrorPresent = true;
@@ -133,7 +133,9 @@ public class FlywheelIOTalonFX implements FlywheelIO {
 
     Logger.recordOutput("Flywheel/InitConfReport", statusArray);
 
-    followerTalon.setControl(new Follower(Flywheel.CAN_ID, MotorAlignmentValue.Opposed));
+    followerTalon.setControl(new Follower(Flywheel.CAN_ID, MotorAlignmentValue.Aligned));
+    opposerOneTalon.setControl(new Follower(Flywheel.CAN_ID, MotorAlignmentValue.Opposed));
+    opposerTwoTalon.setControl(new Follower(Flywheel.CAN_ID, MotorAlignmentValue.Opposed));
 
     // Get select status signals and set update frequency
     position = leaderTalon.getPosition();
