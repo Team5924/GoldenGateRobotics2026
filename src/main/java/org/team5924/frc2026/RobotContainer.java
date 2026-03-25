@@ -440,6 +440,7 @@ public class RobotContainer {
 
     driveController
         .leftBumper()
+        .and(() -> LaunchCalculator.getInstance().getParameters().isValid())
         .onTrue(
             AutoScoreCommands.runTrackTargetCommand(shooterHoodLeft, flywheelLeft, true)
                 .alongWith(
@@ -447,8 +448,7 @@ public class RobotContainer {
                         () -> {
                           indexer.setGoalState(IndexerState.INDEXING);
                         },
-                        indexer)))
-        .and(() -> LaunchCalculator.getInstance().getParameters().isValid());
+                        indexer)));
     driveController
         .leftBumper()
         .onFalse(

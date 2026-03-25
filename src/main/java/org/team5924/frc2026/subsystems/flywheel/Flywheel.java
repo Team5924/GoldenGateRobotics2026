@@ -183,7 +183,7 @@ public class Flywheel extends SubsystemBase {
   }
 
   public void updateSetpointState(double change) {
-    autoInput = inputs.setpointVelocityRotationsPerSec + change;
+    setAutoInput(inputs.setpointVelocityRotationsPerSec + change);
     setGoalState(FlywheelState.SETPOINT);
   }
 

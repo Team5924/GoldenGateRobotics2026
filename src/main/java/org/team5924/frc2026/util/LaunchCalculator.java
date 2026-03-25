@@ -16,7 +16,6 @@
 
 package org.team5924.frc2026.util;
 
-import static edu.wpi.first.units.Units.Rotation;
 import static org.team5924.frc2026.util.LauncherConstants.*;
 
 import edu.wpi.first.math.MathUtil;
@@ -348,7 +347,7 @@ public class LaunchCalculator {
     double launcherToTargetDistance = target.getDistance(launcherPosition.getTranslation());
 
     // Calculate field relative launcher velocity
-    var robotVelocity = new ChassisSpeeds(); // RobotState.getInstance().getFieldSetpointVelocity();
+    var robotVelocity = RobotState.getInstance().getFieldSetpointVelocity();
     var robotAngle = RobotState.getInstance().getRotation();
     ChassisSpeeds launcherVelocity =
         DriverStation.isAutonomous()
@@ -451,7 +450,6 @@ public class LaunchCalculator {
 
   private static Rotation2d getDriveAngleWithLauncherOffset(
       Pose2d robotPose, Translation2d target, Transform3d robotToLauncher) {
-    ;
 
     Rotation2d fieldToHubAngle = target.minus(robotPose.getTranslation()).getAngle();
     Rotation2d hubAngle =

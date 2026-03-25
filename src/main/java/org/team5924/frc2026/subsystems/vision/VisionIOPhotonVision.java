@@ -122,6 +122,8 @@ public class VisionIOPhotonVision implements VisionIO {
     Set<Short> tagIds = new HashSet<>();
     List<PoseObservation> poseObservations = new LinkedList<>();
     for (var result : camera.getAllUnreadResults()) {
+      Transform3d cameraToTarget = Transform3d.kZero;
+
       // Add pose observation
       if (result.multitagResult.isPresent()) { // Multitag result
         var multitagResult = result.multitagResult.get();
@@ -158,15 +160,7 @@ public class VisionIOPhotonVision implements VisionIO {
         if (tagPose.isPresent()) {
           Transform3d fieldToTarget =
               new Transform3d(tagPose.get().getTranslation(), tagPose.get().getRotation());
-          Transform3d cameraToTarget = target.bestCameraToTarget;
-
-          Rotation3d cameraToTargetRotation = cameraToTarget.getRotation();
-          inputs.cameraToTarget =
-              new TranslationRotation(
-                  cameraToTarget.getTranslation(),
-                  Units.radiansToDegrees(cameraToTargetRotation.getX()),
-                  Units.radiansToDegrees(cameraToTargetRotation.getY()),
-                  Units.radiansToDegrees(cameraToTargetRotation.getZ()));
+          cameraToTarget = target.bestCameraToTarget;
 
           Transform3d fieldToCamera = fieldToTarget.plus(cameraToTarget.inverse());
           Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
@@ -185,6 +179,13 @@ public class VisionIOPhotonVision implements VisionIO {
                   cameraToTarget.getTranslation().getNorm(), // Average tag distance
                   PoseObservationType.PHOTONVISION)); // Observation type
         }
+        Rotation3d cameraToTargetRotation = cameraToTarget.getRotation();
+        inputs.cameraToTarget =
+            new TranslationRotation(
+                cameraToTarget.getTranslation(),
+                Units.radiansToDegrees(cameraToTargetRotation.getX()),
+                Units.radiansToDegrees(cameraToTargetRotation.getY()),
+                Units.radiansToDegrees(cameraToTargetRotation.getZ()));
       }
     }
 
