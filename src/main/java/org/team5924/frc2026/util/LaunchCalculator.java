@@ -320,9 +320,10 @@ public class LaunchCalculator {
         AllianceFlipUtil.applyX(RobotState.getInstance().getOdometryPose().getX())
             > FieldConstants.LinesVertical.hubCenter;
 
-		// TODO: passing not implemented yet
+    // TODO: passing not implemented yet
     if (passing)
-			return new LaunchingParameters(false, Rotation2d.kZero, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, true);
+      return new LaunchingParameters(
+          false, Rotation2d.kZero, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, true);
 
     if (latestParameters != null) {
       return latestParameters;

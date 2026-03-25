@@ -355,7 +355,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                 () -> {
-                    intakePivot.setGoalState(IntakePivotState.DOWN);
+                  intakePivot.setGoalState(IntakePivotState.DOWN);
                   intake.setGoalState(IntakeState.INTAKE);
                 },
                 intakePivot,
@@ -365,7 +365,7 @@ public class RobotContainer {
         .onFalse(
             Commands.runOnce(
                 () -> {
-                    intakePivot.setGoalState(IntakePivotState.STOW);
+                  intakePivot.setGoalState(IntakePivotState.STOW);
                   intake.setGoalState(IntakeState.OFF);
                 },
                 intakePivot,

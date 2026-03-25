@@ -95,16 +95,16 @@ public class VisionIOPhotonVision implements VisionIO {
   }
 
   private void updateRobotToCamera() {
-            robotToCamera =
-                new Transform3d(
-                    new Translation3d(
-                        Units.inchesToMeters(xInches.getAsDouble()),
-                        Units.inchesToMeters(yInches.getAsDouble()),
-                        Units.inchesToMeters(zInches.getAsDouble())),
-                    new Rotation3d(
-                        Units.degreesToRadians(rollDegrees.getAsDouble()),
-                        Units.degreesToRadians(pitchDegrees.getAsDouble()),
-                        Units.degreesToRadians(yawDegrees.getAsDouble())));
+    robotToCamera =
+        new Transform3d(
+            new Translation3d(
+                Units.inchesToMeters(xInches.getAsDouble()),
+                Units.inchesToMeters(yInches.getAsDouble()),
+                Units.inchesToMeters(zInches.getAsDouble())),
+            new Rotation3d(
+                Units.degreesToRadians(rollDegrees.getAsDouble()),
+                Units.degreesToRadians(pitchDegrees.getAsDouble()),
+                Units.degreesToRadians(yawDegrees.getAsDouble())));
   }
 
   @Override
