@@ -33,7 +33,7 @@ import edu.wpi.first.units.measure.Voltage;
 import org.team5924.frc2026.Constants.GenericRoller;
 
 public abstract class GenericRollerIOTalonFX implements GenericRollerIO {
-  private final TalonFX talon;
+  protected final TalonFX talon;
 
   private final StatusSignal<Angle> position;
   private final StatusSignal<AngularVelocity> velocity;

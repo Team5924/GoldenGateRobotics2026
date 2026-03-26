@@ -28,7 +28,6 @@ import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -110,7 +109,7 @@ public final class Constants {
             .withStatorCurrentLimit(60))
         .withMotorOutput(
           new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake));
 
     public static final TalonFXConfiguration COUNTERCLOCKWISE_CONFIG =
@@ -137,7 +136,7 @@ public final class Constants {
     public static final double MOTOR_TO_MECHANISM = 36.0 / 16.0;
     public static final double SIM_MOI = 0.001;
 
-    public static final TalonFXConfiguration CONFIG = GenericRoller.COUNTERCLOCKWISE_CONFIG;
+    public static final TalonFXConfiguration CONFIG = GenericRoller.COUNTERCLOCKWISE_CONFIG.clone();
   }
 
   public final class IntakePivot {
@@ -195,7 +194,7 @@ public final class Constants {
     public static final double MOTOR_TO_MECHANISM = (16.0 / 12.0) * (24.0 / 16.0);
     public static final double SIM_MOI = 0.001;
 
-    public static final TalonFXConfiguration CONFIG = GenericRoller.COUNTERCLOCKWISE_CONFIG;
+    public static final TalonFXConfiguration CONFIG = GenericRoller.COUNTERCLOCKWISE_CONFIG.clone();
   }
 
   public final class Indexer {
@@ -207,7 +206,7 @@ public final class Constants {
     public static final double SIM_MOI = 0.001;
 
     public static final TalonFXConfiguration CONFIG =
-      GenericRoller.COUNTERCLOCKWISE_CONFIG
+      GenericRoller.COUNTERCLOCKWISE_CONFIG.clone()
         .withMotorOutput(
           new MotorOutputConfigs()
             .withInverted(InvertedValue.Clockwise_Positive));

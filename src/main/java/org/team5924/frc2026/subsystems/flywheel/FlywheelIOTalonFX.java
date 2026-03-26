@@ -82,8 +82,7 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   private final StatusSignal<Voltage> appliedVoltage;
   private final StatusSignal<Current> supplyCurrent;
   private final StatusSignal<Current> torqueCurrent;
-  private final ArrayList<StatusSignal<Temperature>> tempCelsius =
-      new ArrayList<StatusSignal<Temperature>>(4);
+  private final ArrayList<StatusSignal<Temperature>> tempCelsius = new ArrayList<>(4);
 
   private final StatusSignal<Double> closedLoopReferenceSlope;
   private double prevClosedLoopReferenceSlope = 0.0;
@@ -144,10 +143,10 @@ public class FlywheelIOTalonFX implements FlywheelIO {
     supplyCurrent = leaderTalon.getSupplyCurrent();
     torqueCurrent = leaderTalon.getTorqueCurrent();
 
-    tempCelsius.set(0, leaderTalon.getDeviceTemp());
-    tempCelsius.set(1, followerTalon.getDeviceTemp());
-    tempCelsius.set(2, opposerOneTalon.getDeviceTemp());
-    tempCelsius.set(3, opposerTwoTalon.getDeviceTemp());
+    tempCelsius.add(leaderTalon.getDeviceTemp());
+    tempCelsius.add(followerTalon.getDeviceTemp());
+    tempCelsius.add(opposerOneTalon.getDeviceTemp());
+    tempCelsius.add(opposerTwoTalon.getDeviceTemp());
 
     closedLoopReferenceSlope = leaderTalon.getClosedLoopReferenceSlope();
 

@@ -38,8 +38,16 @@ public class Intake extends GenericRoller<Intake.IntakeState> {
   private IntakeState goalState = IntakeState.OFF;
   private IntakeState currentState = IntakeState.OFF;
 
+  private final GenericRollerIOInputsAutoLogged inputs = new GenericRollerIOInputsAutoLogged();
+
   public Intake(IntakeIO io) {
     super("Intake", io);
+  }
+
+  @Override
+  public void periodic() {
+    super.periodic();
+    // io.update(inputs);
   }
 
   public void setGoalState(IntakeState goalState) {

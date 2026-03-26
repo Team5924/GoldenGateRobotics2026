@@ -23,9 +23,4 @@ public class HopperIOTalonFX extends GenericRollerIOTalonFX implements HopperIO 
   public HopperIOTalonFX() {
     super(Hopper.CAN_ID, Hopper.BUS, Hopper.CONFIG, Hopper.MOTOR_TO_MECHANISM);
   }
-
-  @Override
-  public void runVolts(double volts) {
-    super.runVolts(volts);
-  }
 }

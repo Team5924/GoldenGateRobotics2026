@@ -25,4 +25,7 @@ public class IntakeIOSim extends GenericRollerIOSim implements IntakeIO {
     super(
         DCMotor.getKrakenX60Foc(1), Constants.Intake.SIM_MOI, Constants.Intake.MOTOR_TO_MECHANISM);
   }
+
+  @Override
+  public void updateFollowerInputs() {}
 }

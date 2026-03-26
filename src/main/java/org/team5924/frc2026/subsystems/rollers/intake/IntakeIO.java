@@ -18,4 +18,8 @@ package org.team5924.frc2026.subsystems.rollers.intake;
 
 import org.team5924.frc2026.subsystems.rollers.generic.GenericRollerIO;
 
-public interface IntakeIO extends GenericRollerIO {}
+public interface IntakeIO extends GenericRollerIO {
+//   public GenericRollerIOInputs followerInputs;
+
+  public void updateFollowerInputs();
+}
