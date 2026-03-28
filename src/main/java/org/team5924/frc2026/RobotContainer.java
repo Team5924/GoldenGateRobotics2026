@@ -358,7 +358,40 @@ public class RobotContainer {
             },
             intakePivot));
 
-    // TODO: shooting, auto shooting
+
+    // shooter
+    driveController
+        .leftBumper()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  flywheel.setGoalState(Flywheel.FlywheelState.B8);
+                  indexer.setGoalState(Indexer.IndexerState.INDEXING);
+                },
+                flywheel,
+                indexer));
+
+    driveController
+        .leftBumper()
+        .onFalse(
+            Commands.runOnce(
+                () -> {
+                  flywheel.setGoalState(Flywheel.FlywheelState.OFF);
+                  indexer.setGoalState(Indexer.IndexerState.OFF);
+                },
+                flywheel,
+                indexer));
+
+    shooterHood.setDefaultCommand(
+        Commands.runOnce(
+            () -> shooterHood.setGoalState(ShooterHood.ShooterHoodState.MANUAL), shooterHood));
+
+    driveController
+        .rightStick()
+        .onTrue(
+            Commands.runOnce(() -> shooterHood.setInput(driveController.getRightY()), shooterHood));
+
+    // TODO: auto shooting
   }
 
   /**
