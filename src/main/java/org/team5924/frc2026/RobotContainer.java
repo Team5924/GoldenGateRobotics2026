@@ -328,7 +328,7 @@ public class RobotContainer {
 
     /* ### intake ### */
     driveController
-        .leftBumper()
+        .rightBumper()
         .onTrue(
             Commands.runOnce(
                 () -> {
@@ -389,7 +389,7 @@ public class RobotContainer {
     driveController
         .rightStick()
         .onTrue(
-            Commands.runOnce(() -> shooterHood.setInput(driveController.getRightY()), shooterHood));
+            Commands.run(() -> shooterHood.setInput(() -> driveController.getRightY()), shooterHood));
 
     // TODO: auto shooting
   }

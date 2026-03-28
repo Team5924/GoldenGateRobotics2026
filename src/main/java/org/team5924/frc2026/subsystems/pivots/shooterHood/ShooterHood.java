@@ -73,8 +73,12 @@ public class ShooterHood extends SubsystemBase {
   private double lastStateChange = 0.0;
   private double timeSinceLastStateChange = 0.0;
 
-  @Setter private double input;
+  private double input;
   private double autoInput = 0.0;
+
+  public void setInput(DoubleSupplier inputSupplier) {
+    input = inputSupplier.getAsDouble();
+  }
 
   public void setAutoInput(double inputRads) {
     autoInput =
@@ -136,7 +140,7 @@ public class ShooterHood extends SubsystemBase {
       case MOVING ->
           DriverStation.reportError(
               "Shooter Hood: MOVING is an invalid goal state; it is a transition state!!", null);
-      case AUTO -> currentState = ShooterHoodState.MOVING;
+      case AUTO -> currentState = ShooterHoodState.AUTO;
       case OFF -> currentState = ShooterHoodState.OFF;
       default -> currentState = ShooterHoodState.MOVING;
     }
