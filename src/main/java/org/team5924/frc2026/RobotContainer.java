@@ -87,6 +87,7 @@ public class RobotContainer {
 
   // Real/IO implementation
   private final boolean realDrive = true;
+  private final boolean realVision = true;
   private final boolean realIntake = true;
   private final boolean realIntakePivot = true;
   private final boolean realHopper = true;
@@ -125,12 +126,14 @@ public class RobotContainer {
                     (pose) -> {});
 
         vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOPhotonVision(
-                    VisionConstants.FRONT_LEFT_NAME, VisionConstants.FRONT_LEFT_TRANSFORM),
-                new VisionIOPhotonVision(
-                    VisionConstants.FRONT_RIGHT_NAME, VisionConstants.FRONT_RIGHT_TRANSFORM));
+            realVision
+                ? new Vision(
+                    drive::addVisionMeasurement,
+                    new VisionIOPhotonVision(
+                        VisionConstants.FRONT_LEFT_NAME, VisionConstants.FRONT_LEFT_TRANSFORM),
+                    new VisionIOPhotonVision(
+                        VisionConstants.FRONT_RIGHT_NAME, VisionConstants.FRONT_RIGHT_TRANSFORM))
+                : null;
 
         intake = realIntake ? new Intake(new IntakeIOTalonFX()) : new Intake(new IntakeIO() {});
         intakePivot =
@@ -138,9 +141,9 @@ public class RobotContainer {
                 ? new IntakePivot(new IntakePivotIOTalonFX())
                 : new IntakePivot(new IntakePivotIO() {});
         hopper = realHopper ? new Hopper(new HopperIOTalonFX()) : new Hopper(new HopperIO() {});
+
         indexer =
             realIndexer ? new Indexer(new IndexerIOTalonFX()) : new Indexer(new IndexerIO() {});
-
         shooterHood =
             realShooterHood
                 ? new ShooterHood(new ShooterHoodIOTalonFX())
@@ -182,8 +185,8 @@ public class RobotContainer {
         intake = new Intake(new IntakeIOSim());
         intakePivot = new IntakePivot(new IntakePivotIOSim());
         hopper = new Hopper(new HopperIOSim());
-        indexer = new Indexer(new IndexerIOSim());
 
+        indexer = new Indexer(new IndexerIOSim());
         shooterHood = new ShooterHood(new ShooterHoodIOSim());
         flywheel = new Flywheel(new FlywheelIOSim());
 
@@ -200,13 +203,13 @@ public class RobotContainer {
                 new ModuleIO() {},
                 (pose) -> {});
 
-        vision = null; // no vision implementation for replay
+        vision = null;
 
         intake = new Intake(new IntakeIO() {});
         intakePivot = new IntakePivot(new IntakePivotIO() {});
-        hopper = new Hopper(new HopperIO() {}); // TODO: Add replay IO implementation
-        indexer = new Indexer(new IndexerIO() {});
+        hopper = new Hopper(new HopperIO() {});
 
+        indexer = new Indexer(new IndexerIO() {});
         shooterHood = new ShooterHood(new ShooterHoodIO() {});
         flywheel = new Flywheel(new FlywheelIO() {});
         break;
@@ -291,18 +294,18 @@ public class RobotContainer {
                 () -> -driveController.getLeftX() * Constants.SLOW_MODE_MULTI,
                 () -> -driveController.getRightX() * Constants.SLOW_MODE_MULTI));
 
-    // // [driver] 0-DEGREE MODE
-    // driveController
-    //     .a()
-    //     .onTrue(
-    //         DriveCommands.joystickDriveAtAngle(
-    //             drive,
-    //             () -> -driveController.getLeftY(),
-    //             () -> -driveController.getLeftX(),
-    //             () -> Rotation2d.kZero));
+    // [driver] 0-DEGREE MODE
+    driveController
+        .a()
+        .onTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driveController.getLeftY(),
+                () -> -driveController.getLeftX(),
+                () -> Rotation2d.kZero));
 
-    // // [driver] Switch to X pattern when X button is pressed
-    // driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // [driver] Switch to X pattern when X button is pressed
+    driveController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     final Runnable resetGyro =
         Constants.currentMode == Constants.Mode.SIM
@@ -354,28 +357,6 @@ public class RobotContainer {
               intakePivot.setInput(operatorController.getLeftX());
             },
             intakePivot));
-
-    // // ### intake pivot spit
-    // driveController
-    //     .leftTrigger()
-    //     .onTrue(
-    //         Commands.runOnce(
-    //             () -> {
-    //               intakePivot.setGoalState(IntakePivotState.DOWN);
-    //               intake.setGoalState(IntakeState.SPITOUT);
-    //             },
-    //             intakePivot,
-    //             intake));
-    // driveController
-    //     .leftTrigger()
-    //     .onFalse(
-    //         Commands.runOnce(
-    //             () -> {
-    //               intakePivot.setGoalState(IntakePivotState.STOW);
-    //               intake.setGoalState(IntakeState.OFF);
-    //             },
-    //             intakePivot,
-    //             intake));
 
     // TODO: shooting, auto shooting
   }
